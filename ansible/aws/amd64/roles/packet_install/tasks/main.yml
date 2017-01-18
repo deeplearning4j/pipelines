@@ -1,0 +1,6 @@
+---
+- name: install Defined packet(s)
+  yum:
+     name: "{{ packet_name }}"
+     state: present
+

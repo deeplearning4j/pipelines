@@ -1,0 +1,34 @@
+---
+- name: Add Docker repository
+  yum_repository:
+    name: "docker"
+    description: "docker"
+    baseurl: "{{ baseurl }}"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "{{ gpgkey }}"
+    state: present
+
+- name: Install Docker
+  yum:
+    update_cache: yes
+    name: "{{ package_name }}" 
+    state: present
+
+- name: Ensure that Docker service is running
+  systemd:
+    name: "{{ service_name }}"
+    enabled: yes
+    name: "{{ daemon_name }}"
+    state: started
+
+
+- name: Download Nvidia-docker rpm
+  copy:
+    src: "{{ source_rpm }}"
+    dest: /tmp/nvidia-docker
+- name:  Install nvidia-docker
+  yum:
+    name: /tmp/nvidia-docker.rpm #nvidia-docker*.rpm
+    state: present
+

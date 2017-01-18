@@ -1,0 +1,10 @@
+---
+
+baseurl: "https://yum.dockerproject.org/repo/main/centos/7/"
+gpgkey: "https://yum.dockerproject.org/gpg"
+package_name: docker-engine # for Centos and Ubuntu
+#dependecis_of_packages: "install linux-image-extra-$(uname -r) linux-image-extra-virtual" # additional for Ubuntu 14-16
+service_name: "docker.service"
+daemon_name: "docker"
+source_rpm: "https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.0-rc.3/nvidia-docker-1.0.0.rc.3-1.x86_64.rpm"
+
