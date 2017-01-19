@@ -2,9 +2,7 @@ node('master') {
 // node('ec2_x86_64') {
    // install Maven and add it to the path
    // env.PATH = "${tool 'M3'}/bin:${env.PATH}"
-   step([$class: 'WsCleanup'])
-   checkout scm
-   tool name: 'M339', type: 'maven'
+  tool name: 'M339', type: 'maven'
    def mvnHome
    mvnHome = tool 'M339'
   //  mvnHome = tool 'M3'
@@ -99,9 +97,5 @@ node('master') {
               //}
          }
      }
-   stage('Build DATAVEC') {
-     load 'jobs/build-02-datavec.groovy'
-
-   }
    step([$class: 'WsCleanup'])
 }

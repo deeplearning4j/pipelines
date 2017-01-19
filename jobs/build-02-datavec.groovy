@@ -2,7 +2,7 @@
    tool name: 'M339', type: 'maven'
    def mvnHome
    mvnHome = tool 'M339'
-   stage('Preparation')    {
+   stage('DATAVEC Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
        doGenerateSubmoduleConfigurations: false,
@@ -22,7 +22,7 @@
 
     }
   }
-   stage ('Build') {
+   stage ('DATAVEC Build') {
     dir("$DATAVEC_PROJECT") {
      sh "./change-scala-versions.sh 2.10"
      sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
