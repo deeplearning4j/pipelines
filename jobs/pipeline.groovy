@@ -17,6 +17,10 @@ node ('master') {
   stage('ARBITER') {
   	load 'jobs/build-04-arbiter.groovy'
   }
+
+  stage('ND4S') {
+  	load 'jobs/build-05-nd4s.groovy'
+  }
   
   step([$class: 'WsCleanup'])
 }

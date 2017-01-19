@@ -1,12 +1,10 @@
-node('master') {
-
-   stage('Preparation')    {
+   stage('Nd4s Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
        doGenerateSubmoduleConfigurations: false,
        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$ND4S_PROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
        submoduleCfg: [],
-       userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$ARBITER_PROJECT.git', credentialsId: 'b0fc06e6-a23c-4886-a0c3-f53800a41663']]])
+       userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$ND4S_PROJECT.git']]])
     }
     echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
     echo 'Check if $RELEASE_VERSION has been released already'
@@ -21,7 +19,7 @@ node('master') {
       sh ("sbt +publishSigned")
     }
 
-   stage ('Build') {
+   stage ('Nd4s Build') {
     dir("$ND4S_PROJECT") {
       //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
       //sh "git tag -a -m '$ND4S_PROJECT-$RELEASE_VERSION" "$ND4S_PROJECT-$RELEASE_VERSION'"
@@ -31,4 +29,3 @@ node('master') {
       sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
       }
    } 
-}
