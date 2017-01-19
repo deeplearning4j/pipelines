@@ -16,7 +16,7 @@
 
       sh ("sed -i 's/version := \".*\",/version := \"$RELEASE_VERSION\",/' build.sbt")
       sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"$RELEASE_VERSION\",/' build.sbt")
-      sh ("sbt +publishSigned")
+      //sh ("sbt +publishSigned")
     }
 
    stage ('Nd4s Build') {
