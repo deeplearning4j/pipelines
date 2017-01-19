@@ -11,7 +11,7 @@
        userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$DATAVEC_PROJECT.git']]])
 
     echo "Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY"
-    dir("$DEEPLEARNING4J_PROJECT") {
+    dir("$DATAVEC_PROJECT") {
       def exitValue = sh (returnStdout: true, script: """git tag -l \"$DATAVEC_PROJECT-$RELEASE_VERSION\"""")
         if (exitValue != '') {
            echo "Error: Version $RELEASE_VERSION has already been released!"
@@ -23,7 +23,7 @@
     }
   }
    stage ('Build') {
-    dir("$ARBITER_PROJECT") {
+    dir("$DATAVEC_PROJECT") {
      sh "./change-scala-versions.sh 2.10"
      sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
 
