@@ -1,6 +1,5 @@
-node('master') {
+//node('master') {
    def mvnHome
-
    stage('Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
@@ -40,4 +39,4 @@ node('master') {
     //  sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
     }
   }
-}
+//}
