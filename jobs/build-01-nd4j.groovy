@@ -8,7 +8,7 @@ node('master') {
   //  mvnHome = tool 'M3'
   //  sh 'echo $PATH'
   
-   stage('Preparation')    {
+   stage('Nd4j Preparation')    {
      checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
       //  branches: [[name: '*/intropro']],
@@ -47,7 +47,7 @@ node('master') {
   //    echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
   //  }
 
-   stage('Build') {
+   stage('Nd4j Build') {
      echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
      echo 'Check if $RELEASE_VERSION has been released already'
      dir("$PROJECT") {
