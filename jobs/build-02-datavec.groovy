@@ -1,8 +1,8 @@
-//node('master') {
+
    tool name: 'M339', type: 'maven'
    def mvnHome
    mvnHome = tool 'M339'
-   stage('DATAVEC Preparation')    {
+   stage('Datavec Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
        doGenerateSubmoduleConfigurations: false,
@@ -22,13 +22,13 @@
 
     }
   }
-   stage ('DATAVEC Build') {
+   stage ('Datavec Build') {
     dir("$DATAVEC_PROJECT") {
      sh "./change-scala-versions.sh 2.10"
-     sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
+     //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
 
      sh "./change-scala-versions.sh 2.11" 
-     sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
+     //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
    
 
     sh "./change-scala-versions.sh 2.10"
@@ -41,4 +41,4 @@
     //  sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
     }
   }
-//}
+
