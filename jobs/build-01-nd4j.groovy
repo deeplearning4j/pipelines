@@ -98,7 +98,7 @@ node('master') {
               //}
          }
      }
-   stage(Build DATAVEC) {
+   stage('Build DATAVEC') {
      load 'jobs/build-02-datavec.groovy'
 
    }
