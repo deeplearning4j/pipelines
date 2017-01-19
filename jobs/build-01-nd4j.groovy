@@ -99,7 +99,7 @@ node('master') {
          }
      }
    stage(Build DATAVEC) {
-     load 'build-02-datavec.groovy'
+     load 'jobs/build-02-datavec.groovy'
 
    }
    step([$class: 'WsCleanup'])
