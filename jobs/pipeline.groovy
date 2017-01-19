@@ -22,5 +22,9 @@ node ('master') {
   	load 'jobs/build-05-nd4s.groovy'
   }
   
+  stage('GYM-JAVA-CLIENT') {
+  	load 'jobs/build-06-gym-java-client.groovy'
+  }
+
   step([$class: 'WsCleanup'])
 }
