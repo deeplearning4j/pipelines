@@ -10,4 +10,9 @@ node ('master') {
     load 'jobs/build-02-datavec.groovy'
   }
 
+  stage('DEEPLEARNING4J') {
+  	load  'jobs/build-03-deeplearning4j.groovy'
+  }
+  
+  step([$class: 'WsCleanup'])
 }

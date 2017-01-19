@@ -1,7 +1,7 @@
-node('master') {
+  tool name: 'M339', type: 'maven'
    def mvnHome
-
-   stage('Preparation')    {
+   mvnHome = tool 'M339'
+   stage('Deeplearning4j Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
        doGenerateSubmoduleConfigurations: false,
@@ -23,15 +23,15 @@ node('master') {
     }
 
 
-   stage ('Build') {
+   stage ('Deeplearning4j Build') {
     dir("$DEEPLEARNING4J_PROJECT") {
       sh "./change-scala-versions.sh 2.10"
       sh "./change-cuda-versions.sh 7.5"
-      sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
+      //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
 
       sh "./change-scala-versions.sh 2.11"
       sh "./change-cuda-versions.sh 8.0"
-      sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
+      //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
       //  configFileProvider(
       //   [configFile(fileId: '$MAVENSETS', variable: 'MAVEN_SETTINGS')]) {
       //  sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
@@ -47,5 +47,4 @@ node('master') {
       //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
       //sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
       }
-   } 
-}
+   }
