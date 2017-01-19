@@ -7,7 +7,7 @@
        doGenerateSubmoduleConfigurations: false,
        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$DEEPLEARNING4J_PROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
        submoduleCfg: [],
-       userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$DEEPLEARNING4J_PROJECT.git', credentialsId: 'b0fc06e6-a23c-4886-a0c3-f53800a41663']]])
+       userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$DEEPLEARNING4J_PROJECT.git']]])
     }
     echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
     echo 'Check if $RELEASE_VERSION has been released already'
