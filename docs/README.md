@@ -1,3 +1,2 @@
-### Additional docs
 
-#### [Skymind SKIL release notes](./SKIL.md)
+##### This folder contains descriptions and manuals for pipeline project

@@ -69,9 +69,9 @@ node('master') {
         //  if (check_tag == null) {
              echo "Checkpoint #1"
              // input 'Pipeline has paused and needs your input before proceeding'
-             sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
-             sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
-             sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
+           //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
+           //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
+           //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
             //  sh "git tag -a -m "libnd4j-$RELEASE_VERSION""
          }
      }
@@ -79,24 +79,27 @@ node('master') {
      echo 'Build components with Maven'
      dir("$PROJECT") {
        echo 'Set Project Version'
-       sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
+       //sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
        echo 'Maven Build, Package and Deploy'
        def check_repo = "$STAGING_REPOSITORY"
       //  echo check_repo
-         if (check_repo == '') {
-           echo 'STAGING_REPOSITORY is not set'
-           sh "./change-scala-versions.sh 2.10"
-           sh "./change-cuda-versions.sh 7.5"
-           configFileProvider(
-             [configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
-              configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
-                sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
-                       -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
-                       -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
-                       -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
-              }
+         //if (check_repo == '') {
+          // echo 'STAGING_REPOSITORY is not set'
+           //sh "./change-scala-versions.sh 2.10"
+           //sh "./change-cuda-versions.sh 7.5"
+         //  configFileProvider(
+          //   [configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
+           //   configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
+            //    sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
+             //          -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
+              //         -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
+              //         -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
+              //}
          }
      }
+   stage(Build DATAVEC) {
+     load 'build-02-datavec.groovy'
+
    }
    step([$class: 'WsCleanup'])
 }

@@ -1,3 +1,4 @@
 tmp/
-*.tmp
 *.old
+*.tmp
+*.retry

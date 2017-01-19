@@ -4,6 +4,5 @@
   gather_facts: no
   sudo: yes
   roles:
-     - docker_install
-     - packet_install
+     - common
 
