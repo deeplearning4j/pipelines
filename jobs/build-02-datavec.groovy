@@ -6,7 +6,7 @@
        doGenerateSubmoduleConfigurations: false,
        extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$DATAVEC_PROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
        submoduleCfg: [],
-       userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$DATAVEC_PROJECT.git']]])
+       userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$DATAVEC_PROJECT.git']]])
 
     echo "Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY"
     dir("$DEEPLEARNING4J_PROJECT") {
