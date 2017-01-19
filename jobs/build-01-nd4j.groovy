@@ -2,13 +2,14 @@ node('master') {
 // node('ec2_x86_64') {
    // install Maven and add it to the path
    // env.PATH = "${tool 'M3'}/bin:${env.PATH}"
+   step([$class: 'WsCleanup'])
    checkout scm
    tool name: 'M339', type: 'maven'
    def mvnHome
    mvnHome = tool 'M339'
   //  mvnHome = tool 'M3'
   //  sh 'echo $PATH'
-   step([$class: 'WsCleanup'])
+  
    stage('Preparation')    {
      checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
