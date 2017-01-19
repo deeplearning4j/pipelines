@@ -23,6 +23,7 @@
     }
    
    stage ('Rl4j Build') {
+    dir("$RL4J_PROJECT") {
     //  configFileProvider(
     //   [configFile(fileId: '$MAVENSETS', variable: 'MAVEN_SETTINGS')]) {
      //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
@@ -36,5 +37,6 @@
      //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
      sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
     }
+   } 
 
 
