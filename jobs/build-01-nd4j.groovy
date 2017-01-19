@@ -2,6 +2,7 @@ node('master') {
 // node('ec2_x86_64') {
    // install Maven and add it to the path
    // env.PATH = "${tool 'M3'}/bin:${env.PATH}"
+   checkout scm
    tool name: 'M339', type: 'maven'
    def mvnHome
    mvnHome = tool 'M339'
