@@ -13,6 +13,10 @@ node ('master') {
   stage('DEEPLEARNING4J') {
   	load  'jobs/build-03-deeplearning4j.groovy'
   }
+
+  stage('ARBITER') {
+  	load 'jobs/build-04-arbiter.groovy'
+  }
   
   step([$class: 'WsCleanup'])
 }
