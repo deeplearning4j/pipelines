@@ -1,5 +1,7 @@
 //node('master') {
+   tool name: 'M339', type: 'maven'
    def mvnHome
+   mvnHome = tool 'M339'
    stage('Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
@@ -14,7 +16,7 @@
         if (exitValue != '') {
            echo "Error: Version $RELEASE_VERSION has already been released!"
         }
-     mvnHome = tool 'M3'
+     
      sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
      sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
 
