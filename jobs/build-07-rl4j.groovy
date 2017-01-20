@@ -4,9 +4,9 @@ stage('Rl4j Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$RL4J_PROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${RL4J_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$RL4J_PROJECT.git']]])
+             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${RL4J_PROJECT}.git']]])
 
   echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"

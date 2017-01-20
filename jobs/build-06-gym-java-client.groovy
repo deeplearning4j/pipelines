@@ -5,9 +5,9 @@ stage('Gym-Java-Client Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$GYM_JAVA_CLIENT_PROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${GYM_JAVA_CLIENT_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$GYM_JAVA_CLIENT_PROJECT.git']]])
+             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${GYM_JAVA_CLIENT_PROJECT}.git']]])
 
   echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"

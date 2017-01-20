@@ -80,13 +80,13 @@ stage('Nd4j Build') {
         sh "./change-scala-versions.sh 2.10"
         sh "./change-cuda-versions.sh 7.5"
 
-        configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
-                            configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
-                              sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
-                                   -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
-                                   -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
-                                   -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
-                            }
+        // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
+        //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
+        //                       sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
+        //                            -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
+        //                            -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
+        //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
+        //                     }
       }
   }
 
