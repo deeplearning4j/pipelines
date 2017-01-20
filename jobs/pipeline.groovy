@@ -30,5 +30,9 @@ node ('master') {
   	load 'jobs/build-07-rl4j.groovy'
   }
 
+  stage('SCALNET') {
+  	load 'jobs/build-08-scalnet.groovy'
+  }
+
   step([$class: 'WsCleanup'])
 }
