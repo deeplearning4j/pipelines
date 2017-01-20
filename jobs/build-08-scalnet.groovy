@@ -1,6 +1,6 @@
-node('master') {
+   tool name: 'M339', type: 'maven'
    def mvnHome
-   
+   mvnHome = tool 'M339'
    stage('Scalnet Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
@@ -12,7 +12,7 @@ node('master') {
     echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
     echo 'Check if $RELEASE_VERSION has been released already'
     dir("$SCALNET_PROJECT") {
-      if ($SNAPSHOT_VERSION != *-SNAPSHOT ) {
+      if ($SNAPSHOT_VERSION != '*-SNAPSHOT' ) {
          // error statement stops pipeline if if is true
          error 'Error: Version $SNAPSHOT_VERSION should finish with -SNAPSHOT'
       }
@@ -21,7 +21,6 @@ node('master') {
        if (exitValue != '') {
           echo 'Error: Version $RELEASE_VERSION has already been released!'
        }
-      mvnHome = tool 'M3'
       sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
       sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
       sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$RELEASE_VERSION<\\/dl4j.version>/' pom.xml")
@@ -45,5 +44,5 @@ node('master') {
      //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
      sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
     }
-}
+
 
