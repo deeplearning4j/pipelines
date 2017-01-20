@@ -1,4 +1,6 @@
 ---
+- include_vars: docker_vars.yml
+
 - name: Add Docker repository
   yum_repository:
     name: "docker"
@@ -22,11 +24,11 @@
     name: "{{ daemon_name }}"
     state: started
 
-
 - name: Download Nvidia-docker rpm
   get_url:
     url: "{{ source_rpm }}"
     dest: /tmp/nvidia-docker
+
 - name:  Install nvidia-docker
   yum:
     name: /tmp/nvidia-docker.rpm #nvidia-docker*.rpm

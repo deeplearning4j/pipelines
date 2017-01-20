@@ -1,4 +1,6 @@
 ---
+- include_vars: package_vars.yml
+
 - name: install Defined packet(s)
   yum:
      name: "{{ packet_name }}"
