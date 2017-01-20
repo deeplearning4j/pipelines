@@ -39,5 +39,7 @@ timestamps {
     step([$class: 'WsCleanup'])
   }
   // Messages for debugging
-  echo 'MARK: end of pipeline.groovy'
+  echo 'MARK: end of pipeline.groovy (in timestamps)'
 }
+// Messages for debugging
+echo 'MARK: end of pipeline.groovy'

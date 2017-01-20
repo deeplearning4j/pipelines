@@ -65,8 +65,8 @@ stage('Nd4j Build') {
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
         // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
         //  sh "git tag -a -m "libnd4j-$RELEASE_VERSION""
-     }
   }
+}
 
   echo 'Build components with Maven'
   dir("${PROJECT}") {
@@ -89,6 +89,6 @@ stage('Nd4j Build') {
                             }
       }
   }
-}
+
 // Messages for debugging
 echo 'MARK: end of build-01-nd4j.groovy'
