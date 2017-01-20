@@ -117,7 +117,7 @@ timestamps {
         sh "git status"
         // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
         // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
-        // sh "git tag -a -m "${RL4J_PROJECT}-${RELEASE_VERSION}""
+        sh "git tag -a "${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}" -m "${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}""
       }
     }
       step([$class: 'WsCleanup'])
