@@ -1,5 +1,0 @@
----
-- include_vars:
-    - docker_vars.yml
-    - package_vars.yml
-
