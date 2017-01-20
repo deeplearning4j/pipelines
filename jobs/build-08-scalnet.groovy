@@ -1,5 +1,6 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
+def CREDID = 'github-private-deeplearning4j-id-1'
 stage('Scalnet Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
