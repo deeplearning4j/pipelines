@@ -23,8 +23,8 @@ stage('Scalnet Preparation') {
         println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}" )
     }
     else {
-        println ("Version exists: " + check_tag)
-        error("Fail to proceed with current version: " + check_tag)
+        // println ("Version exists: " + check_tag)
+        error("Fail to proceed with current version: " + check_tag + "The version already exists")
     }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
