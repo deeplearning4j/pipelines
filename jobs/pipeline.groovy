@@ -4,10 +4,9 @@ timestamps {
 
     checkout scm
 
-    sh 'env > env.txt'
-    readFile('env.txt').split("\r?\n").each {
-        println it
-    }
+    sh ("env > env.txt && cat env.txt")
+    // sh ("cat env.txt")
+
 
     stage('ND4J') {
       load 'jobs/build-01-nd4j.groovy'
