@@ -13,15 +13,16 @@
     echo 'Check if $RELEASE_VERSION has been released already'
     dir("$RL4J_PROJECT") {
       def exitValue = sh (returnStdout: true, script: """git tag -l \"$RL4J_PROJECT-$RELEASE_VERSION\"""")
-       if (exitValue != '') {
-          echo 'Error: Version $RELEASE_VERSION has already been released!'
-       }
+      if (exitValue != null) {
+        //  echo "Error: Version $RELEASE_VERSION has already been released!"
+        error 'Version $RELEASE_VERSION has already been released!'
+      }
       sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
       sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
       sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$RELEASE_VERSION<\\/dl4j.version>/' pom.xml")
       sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
     }
-   
+
    stage ('Rl4j Build') {
     dir("$RL4J_PROJECT") {
     //  configFileProvider(
@@ -37,6 +38,6 @@
      //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
      sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
     }
-   } 
-
-
+   }
+   // Message for debugging 
+   echo 'MARK: end of build-07-rl4j.groovy'

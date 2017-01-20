@@ -43,7 +43,7 @@ stage('Nd4j Build') {
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
-        // all of "git -a -m ..." actions should be in pipeline.groovy after user "Release" input
+        // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
         //  sh "git tag -a -m "libnd4j-$RELEASE_VERSION""
      }
   }
@@ -66,7 +66,9 @@ stage('Nd4j Build') {
                  -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
                  -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
                  -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
-             }
-        }
+           }
+      }
   }
 }
+// Message for debugging 
+echo 'MARK: end of build-01-nd4j.groovy'
