@@ -66,7 +66,7 @@ stage('Nd4j Build') {
                  -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
                  -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
                  -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
-           }
-      }
+             }
+        }
   }
 }
