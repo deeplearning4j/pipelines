@@ -27,7 +27,7 @@
 - name: Download Nvidia-docker rpm
   get_url:
     url: "{{ source_rpm }}"
-    dest: /tmp/nvidia-docker
+    dest: /tmp/nvidia-docker.rpm
 
 - name:  Install nvidia-docker
   yum:
