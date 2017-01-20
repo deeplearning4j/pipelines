@@ -30,11 +30,21 @@ stage('Nd4j Build') {
   echo 'Check if $RELEASE_VERSION has been released already'
 
   dir("$PROJECT") {
-    def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
-    if (exitValue != null) {
-     //  echo 'Error: Version $RELEASE_VERSION has already been released!'
-      error 'Version $RELEASE_VERSION has already been released!'
+    def exitValue = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
+    if (!exitValue) {
+        println ("There is no version with provided value: ${PROJECT}-${RELEASE_VERSION}" )
     }
+    else {
+        println ("Version exists: " + exitValue)
+        error("Fail to proceed with current version!")
+    }
+    // def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
+    // echo ${exitValue}
+    // if (exitValue != null) {
+    //  //  echo 'Error: Version $RELEASE_VERSION has already been released!'
+    //   // error 'Version $RELEASE_VERSION has already been released!'
+    //   error 'Version ${exitValue} has already been released!'
+    // }
   }
 
   echo 'Build Native Operations'
@@ -43,7 +53,6 @@ stage('Nd4j Build') {
     echo check_tag
       if (check_tag == '') {
         echo "Checkpoint #1"
-        // input 'Pipeline has paused and needs your input before proceeding'
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
