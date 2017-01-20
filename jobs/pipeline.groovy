@@ -2,6 +2,8 @@ timestamps {
   node ('master') {
     step([$class: 'WsCleanup'])
 
+    def CREDID = 'github-private-deeplearning4j-id-1'
+
     checkout scm
 
     // sh ("env > env.txt && cat env.txt")
@@ -112,12 +114,14 @@ timestamps {
 
       echo "Adding tag ${SCALNET_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${SCALNET_PROJECT}"
       dir("${SCALNET_PROJECT}") {
-        // sh "ls -la ${pwd()}"
-        // TODO: send command to bintray to mirror release to Maven Central
-        sh ("git status")
-        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-        // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
-        sh ("git tag -a ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION} -m ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}")
+        sshagent(credentials: ["${CREDID}"]) {
+          // sh "ls -la ${pwd()}"
+          // TODO: send command to bintray to mirror release to Maven Central
+          sh ("git status")
+          // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+          // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
+          // sh ("git tag -a ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION} -m ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}")
+        }
       }
     }
       step([$class: 'WsCleanup'])
