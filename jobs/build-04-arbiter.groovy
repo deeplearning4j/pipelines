@@ -10,11 +10,14 @@ stage('Arbiter Preparation') {
 
   echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
   echo 'Check if $RELEASE_VERSION has been released already'
-  dir("$ARBITER_PROJECT") {
-    def exitValue = sh (returnStdout: true, script: """git tag -l \"$ARBITER_PROJECT-$RELEASE_VERSION\"""")
-    if (exitValue != null) {
-      //  echo "Error: Version $RELEASE_VERSION has already been released!"
-      error 'Version $RELEASE_VERSION has already been released!'
+  dir("${ARBITER_PROJECT}") {
+    def check_tag = sh(returnStdout: true, script: "git tag -l ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}")
+    if (!check_tag) {
+        println ("There is no version with provided value: ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}" )
+    }
+    else {
+        println ("Version exists: " + check_tag)
+        error("Fail to proceed with current version: " + check_tag)
     }
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")

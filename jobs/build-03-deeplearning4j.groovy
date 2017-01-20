@@ -8,13 +8,17 @@ stage('Deeplearning4j Preparation') {
              submoduleCfg: [],
              userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$DEEPLEARNING4J_PROJECT.git']]])
 
-  echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
-  echo 'Check if $RELEASE_VERSION has been released already'
-  dir("$DEEPLEARNING4J_PROJECT") {
-    def exitValue = sh (returnStdout: true, script: """git tag -l \"$DEEPLEARNING4J_PROJECT-$RELEASE_VERSION\"""")
-    if (exitValue != null) {
-      //  echo "Error: Version $RELEASE_VERSION has already been released!"
-      error 'Version $RELEASE_VERSION has already been released!'
+  echo "Releasing version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Check if ${RELEASE_VERSION} has been released already"
+
+  dir("${DEEPLEARNING4J_PROJECT}") {
+    def check_tag = sh(returnStdout: true, script: "git tag -l ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}")
+    if (!check_tag) {
+        println ("There is no version with provided value: ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}" )
+    }
+    else {
+        println ("Version exists: " + check_tag)
+        error("Fail to proceed with current version: " + check_tag)
     }
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
@@ -27,7 +31,7 @@ stage('Deeplearning4j Preparation') {
 // }
 
 stage ('Deeplearning4j Build') {
-  dir("$DEEPLEARNING4J_PROJECT") {
+  dir("${DEEPLEARNING4J_PROJECT}") {
     sh "./change-scala-versions.sh 2.10"
     sh "./change-cuda-versions.sh 7.5"
     //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"

@@ -26,16 +26,16 @@ stage('Nd4j Preparation') {
 // }
 
 stage('Nd4j Build') {
-  echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
-  echo 'Check if $RELEASE_VERSION has been released already'
+  echo "Releasing version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo ("Check if ${RELEASE_VERSION} has been released already")
 
   dir("$PROJECT") {
-    def exitValue = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
-    if (!exitValue) {
+    def check_tag = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
+    if (!check_tag) {
         println ("There is no version with provided value: ${PROJECT}-${RELEASE_VERSION}" )
     }
     else {
-        println ("Version exists: " + exitValue)
+        println ("Version exists: " + check_tag)
         error("Fail to proceed with current version!")
     }
     // def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
