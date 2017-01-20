@@ -38,18 +38,80 @@ timestamps {
 
     stage('RELEASE') {
       // timeout(time:1, unit:'HOURS') {
-      timeout(2) {
+      timeout(1) {
           input message:"Approve release of version ${RELEASE_VERSION} ?"
+      }
+      echo "Adding tag ${PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJECT}"
+      dir("${PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${PROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${LIBPROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${LIBPROJECT}"
+      dir("${LIBPROJECT}") {
+        // Define what to do with linbnd4j build
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${LIBPROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${DATAVEC_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${DATAVEC_PROJECT}"
+      dir("${DATAVEC_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${DATAVEC_PROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${DEEPLEARNING4J_PROJECT}"
+      dir("${DEEPLEARNING4J_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${DEEPLEARNING4J_PROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${ARBITER_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${ARBITER_PROJECT}"
+      dir("${ARBITER_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${ARBITER_PROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${ND4S_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${ND4S_PROJECT}"
+      dir("${ND4S_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${ND4S_PROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${GYM_JAVA_CLIENT_PROJECT}"
+      dir("${GYM_JAVA_CLIENT_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${GYM_JAVA_CLIENT_PROJECT}-$RELEASE_VERSION""
+      }
+
+      echo "Adding tag ${RL4J_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${RL4J_PROJECT}"
+      dir("${RL4J_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        sh ("echo aaa-${RL4J_PROJECT} ${RELEASE_VERSION} && echo bbb-$RL4J_PROJECT-$RELEASE_VERSION")
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${RL4J_PROJECT}-${RELEASE_VERSION}""
+      }
+
+      echo "Adding tag ${SCALNET_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${SCALNET_PROJECT}"
+      dir("${SCALNET_PROJECT}") {
+        // TODO: send command to bintray to mirror release to Maven Central
+        sh ("echo ccc-${SCALNET_PROJECT} ${RELEASE_VERSION} && echo ddd-$SCALNET_PROJECT-$RELEASE_VERSION")
+        // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh "git tag -a -m "${RL4J_PROJECT}-${RELEASE_VERSION}""
       }
     }
 
-    step([$class: 'WsCleanup'])
-
   }
+
+  step([$class: 'WsCleanup'])
+
   // Messages for debugging
-  echo 'MARK: end of pipeline.groovy (in timestamps)'
+  echo 'MARK: end of pipeline.groovy'
 
 }
-
-// Messages for debugging
-echo 'MARK: end of pipeline.groovy'
