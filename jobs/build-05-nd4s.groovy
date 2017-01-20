@@ -3,6 +3,7 @@ stage('Nd4s Preparation') {
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ND4S_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ND4S_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
              userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${ND4S_PROJECT}.git']]])
 

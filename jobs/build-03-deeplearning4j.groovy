@@ -5,6 +5,7 @@ stage('Deeplearning4j Preparation') {
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${DEEPLEARNING4J_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${DEEPLEARNING4J_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
              userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${DEEPLEARNING4J_PROJECT}.git']]])
 
