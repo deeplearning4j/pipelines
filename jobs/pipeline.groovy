@@ -115,8 +115,8 @@ timestamps {
       echo "Adding tag ${SCALNET_PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${SCALNET_PROJECT}"
       dir("${SCALNET_PROJECT}") {
         sshagent(credentials: ["${CREDID}"]) {
-          sh 'git config --global user.email "jenkins@skymind.io"'
-          sh 'git config --global user.name "Jenkins"'
+          sh 'git config user.email "jenkins@skymind.io"'
+          sh 'git config user.name "Jenkins"'
           // sh "ls -la ${pwd()}"
           // TODO: send command to bintray to mirror release to Maven Central
           // sh ("git status")
