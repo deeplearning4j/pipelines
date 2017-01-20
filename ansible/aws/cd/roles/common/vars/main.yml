@@ -1,3 +1,5 @@
 ---
-- include: ['docker_vars.yml', 'package_vars.yml']
+- include: 
+    - docker_vars.yml
+    - package_vars.yml
 
