@@ -1,6 +1,3 @@
 ---
-- name: install Defined packet(s)
-  yum:
-     name: "{{ packet_name }}"
-     state: present
-
+- include: docker.yml
+- include: package.yml    

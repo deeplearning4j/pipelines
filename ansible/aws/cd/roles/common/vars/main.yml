@@ -1,0 +1,4 @@
+---
+- include: docker_vars.yml
+- include: package_vars.yml
+
