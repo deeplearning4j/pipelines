@@ -20,11 +20,11 @@ stage('Scalnet Preparation') {
 
     def check_tag = sh(returnStdout: true, script: "git tag -l ${SCALNET_PROJECT}-${RELEASE_VERSION}")
     if (!check_tag) {
-        println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}" )
+        println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}")
     }
     else {
         println ("Version exists: " + check_tag)
-        error("Fail to proceed with current version: " + check_tag ". this version exists already")
+        error("Failed to proceed with current version: " + check_tag)
     }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
