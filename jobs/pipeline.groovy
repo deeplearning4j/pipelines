@@ -38,7 +38,7 @@ timestamps {
 
     stage('RELEASE') {
       // timeout(time:1, unit:'HOURS') {
-      timeout(1) {
+      timeout(10) {
           input message:"Approve release of version ${RELEASE_VERSION} ?"
       }
       echo "Adding tag ${PROJECT}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJECT}"
