@@ -2,7 +2,8 @@ timestamps {
   node ('master') {
     step([$class: 'WsCleanup'])
 
-    def CREDID = 'github-private-skymind-id-1'
+    // def CREDID = 'github-private-skymind-id-1'
+    def CREDID = 'github-private-deeplearning4j-id-1'
 
     checkout scm
 
@@ -117,12 +118,13 @@ timestamps {
         sshagent(credentials: ["${CREDID}"]) {
           sh 'git config user.email "jenkins@skymind.io"'
           sh 'git config user.name "Jenkins"'
-          // sh "ls -la ${pwd()}"
+          sh "ls -la ${pwd()}"
           // TODO: send command to bintray to mirror release to Maven Central
-          // sh ("git status")
+          sh ("git status")
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
           // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
-          sh 'git tag -a ${SCALNET_PROJECT}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git tag -a ${SCALNET_PROJECT}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${SCALNET_PROJECT}-${RELEASE_VERSION}'
         }
       }
     }
