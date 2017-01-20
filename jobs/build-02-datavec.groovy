@@ -1,7 +1,8 @@
-
+timestamps {
    tool name: 'M339', type: 'maven'
-   def mvnHome
-   mvnHome = tool 'M339'
+  //  def mvnHome
+   def mvnHome = tool 'M339'
+  //  mvnHome = tool 'M339'
    stage('Datavec Preparation')    {
     checkout([$class: 'GitSCM',
        branches: [[name: '*/intropro']],
@@ -16,7 +17,7 @@
         if (exitValue != '') {
            echo "Error: Version $RELEASE_VERSION has already been released!"
         }
-     
+
      sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
      sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
 
@@ -27,18 +28,18 @@
      sh "./change-scala-versions.sh 2.10"
      //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
 
-     sh "./change-scala-versions.sh 2.11" 
+     sh "./change-scala-versions.sh 2.11"
      //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
-   
+
 
     sh "./change-scala-versions.sh 2.10"
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     //sh "git tag -a -m '$DATAVEC_PROJECT-$RELEASE_VERSION" "$DATAVEC_PROJECT-$RELEASE_VERSION'"
-    
+
     //  sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/'' pom.xml"
     //  sh "${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$SNAPSHOT_VERSION"
     //  sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
     //  sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
     }
   }
-
+}
