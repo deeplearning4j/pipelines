@@ -37,17 +37,19 @@ timestamps {
     }
 
     stage('RELEASE') {
-      timeout(time:1, unit:'HOURS') {
-          input message:'Approve release of version ${RELEASE_VERSION} ?'
+      // timeout(time:1, unit:'HOURS') {
+      timeout(2) {
+          input message:"Approve release of version ${RELEASE_VERSION} ?"
       }
-
-
     }
 
     step([$class: 'WsCleanup'])
+
   }
   // Messages for debugging
   echo 'MARK: end of pipeline.groovy (in timestamps)'
+
 }
+
 // Messages for debugging
 echo 'MARK: end of pipeline.groovy'
