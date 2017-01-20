@@ -1,4 +1,4 @@
-timestamps {
+// timestamps {
   node ('master') {
     step([$class: 'WsCleanup'])
 
@@ -6,7 +6,6 @@ timestamps {
 
     sh ("env > env.txt && cat env.txt")
     // sh ("cat env.txt")
-
 
     stage('ND4J') {
       load 'jobs/build-01-nd4j.groovy'
@@ -105,8 +104,9 @@ timestamps {
       dir("${RL4J_PROJECT}") {
         sh "ls -la ${pwd()}"
         // TODO: send command to bintray to mirror release to Maven Central
-        sh ("echo aaa-${RL4J_PROJECT} ${RELEASE_VERSION}")
+        sh ("echo ${RL4J_PROJECT} ${RELEASE_VERSION}")
         // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
         // sh "git tag -a -m "${RL4J_PROJECT}-${RELEASE_VERSION}""
       }
 
@@ -114,9 +114,9 @@ timestamps {
       dir("${SCALNET_PROJECT}") {
         sh "ls -la ${pwd()}"
         // TODO: send command to bintray to mirror release to Maven Central
-        sh ("echo ${SCALNET_PROJECT} ${RELEASE_VERSION}")
         sh "git status"
         // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
         // sh "git tag -a -m "${RL4J_PROJECT}-${RELEASE_VERSION}""
       }
     }
@@ -127,4 +127,4 @@ timestamps {
   // Messages for debugging
   echo 'MARK: end of pipeline.groovy'
 
-}
+// }
