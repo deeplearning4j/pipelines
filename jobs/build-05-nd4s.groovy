@@ -6,14 +6,17 @@ stage('Nd4s Preparation') {
              submoduleCfg: [],
              userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$ND4S_PROJECT.git']]])
 
-  echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
-  echo 'Check if $RELEASE_VERSION has been released already'
+  echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Check if ${RELEASE_VERSION} has been released already"
 
-  dir("$ND4S_PROJECT") {
-    def exitValue = sh (returnStdout: true, script: """git tag -l \"$ND4S_PROJECT-$RELEASE_VERSION\"""")
-    if (exitValue != null) {
-      //  echo "Error: Version $RELEASE_VERSION has already been released!"
-      error 'Version $RELEASE_VERSION has already been released!'
+  dir("${ND4S_PROJECT}") {
+    def check_tag = sh(returnStdout: true, script: "git tag -l ${ND4S_PROJECT}-${RELEASE_VERSION}")
+    if (!check_tag) {
+        println ("There is no tag with provided value: ${ND4S_PROJECT}-${RELEASE_VERSION}" )
+    }
+    else {
+        println ("Version exists: " + check_tag)
+        error("Fail to proceed with current version: " + check_tag)
     }
 
     sh ("sed -i 's/version := \".*\",/version := \"$RELEASE_VERSION\",/' build.sbt")
@@ -27,14 +30,14 @@ stage('Nd4s Preparation') {
 // }
 
 stage ('Nd4s Build') {
-  dir("$ND4S_PROJECT") {
+  dir("${ND4S_PROJECT}") {
     // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     //sh "git tag -a -m '$ND4S_PROJECT-$RELEASE_VERSION" "$ND4S_PROJECT-$RELEASE_VERSION'"
     sh ("sed -i 's/version := \".*\",/version := \"$SNAPSHOT_VERSION\",/' build.sbt")
     sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"$SNAPSHOT_VERSION\",/' build.sbt")
     //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
-    sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
+    // echo "Successfully performed release of ${ND4S_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
 }
 // Messages for debugging

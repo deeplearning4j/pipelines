@@ -8,18 +8,19 @@ stage('Deeplearning4j Preparation') {
              submoduleCfg: [],
              userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$DEEPLEARNING4J_PROJECT.git']]])
 
-  echo "Releasing version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${DEEPLEARNING4J_PROJECT}") {
     def check_tag = sh(returnStdout: true, script: "git tag -l ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}")
     if (!check_tag) {
-        println ("There is no version with provided value: ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}" )
+        println ("There is no tag with provided value: ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}" )
     }
     else {
         println ("Version exists: " + check_tag)
         error("Fail to proceed with current version: " + check_tag)
     }
+
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
     sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
@@ -53,7 +54,7 @@ stage ('Deeplearning4j Build') {
     //sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$SNAPSHOT_VERSION<\\/datavec.version>/' pom.xml")
     //sh "${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$SNAPSHOT_VERSION"
     //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
-    //sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
+    // echo "Successfully performed release of ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
 }
 // Messages for debugging

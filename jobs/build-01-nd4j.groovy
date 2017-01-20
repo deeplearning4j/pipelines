@@ -4,17 +4,17 @@ stage('Nd4j Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$PROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$PROJECT.git']]])
+             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${PROJECT}.git']]])
              // userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$PROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '$LIBPROJECT'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/$ACCOUNT/$LIBPROJECT.git']]])
+             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${LIBPROJECT}.git']]])
              // userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$LIBPROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 }
 
@@ -26,18 +26,19 @@ stage('Nd4j Preparation') {
 // }
 
 stage('Nd4j Build') {
-  echo "Releasing version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo ("Check if ${RELEASE_VERSION} has been released already")
 
-  dir("$PROJECT") {
+  dir("${PROJECT}") {
     def check_tag = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
     if (!check_tag) {
-        println ("There is no version with provided value: ${PROJECT}-${RELEASE_VERSION}" )
+        println ("There is no tag with provided value: ${PROJECT}-${RELEASE_VERSION}" )
     }
     else {
         println ("Version exists: " + check_tag)
         error("Fail to proceed with current version!")
     }
+
     // def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
     // echo ${exitValue}
     // if (exitValue != null) {
@@ -48,11 +49,17 @@ stage('Nd4j Build') {
   }
 
   echo 'Build Native Operations'
-  dir("$LIBPROJECT") {
-    def check_tag = sh (returnStdout: true, script: """git tag -l \"$LIBPROJECT-$RELEASE_VERSION\"""")
-    echo check_tag
-      if (check_tag == '') {
-        echo "Checkpoint #1"
+  dir("${LIBPROJECT}") {
+    def check_tag = sh(returnStdout: true, script: "git tag -l ${LIBPROJECT}-${RELEASE_VERSION}")
+    if (!check_tag) {
+        println ("There is no tag with provided value: ${LIBPROJECT}-${RELEASE_VERSION}" )
+    }
+    else {
+        println ("Version exists: " + check_tag)
+        error("Fail to proceed with current version!")
+    }
+
+        echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
@@ -62,13 +69,13 @@ stage('Nd4j Build') {
   }
 
   echo 'Build components with Maven'
-  dir("$PROJECT") {
+  dir("${PROJECT}") {
     echo 'Set Project Version'
     //  sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
     echo 'Maven Build, Package and Deploy'
-    def check_repo = "$STAGING_REPOSITORY"
+    def check_repo = "${STAGING_REPOSITORY}"
     echo check_repo
-      if (check_repo == '') {
+      if (!check_repo) {
         echo 'STAGING_REPOSITORY is not set'
         sh "./change-scala-versions.sh 2.10"
         sh "./change-cuda-versions.sh 7.5"
