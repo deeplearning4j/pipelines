@@ -36,6 +36,14 @@ timestamps {
     	load 'jobs/build-08-scalnet.groovy'
     }
 
+    stage('RELEASE') {
+      timeout(time:1, unit:'HOURS') {
+          input message:'Approve release of version ${RELEASE_VERSION} ?'
+      }
+
+
+    }
+
     step([$class: 'WsCleanup'])
   }
   // Messages for debugging
