@@ -24,7 +24,7 @@ stage('Scalnet Preparation') {
     }
     else {
         // println ("Version exists: " + check_tag)
-        error("Fail to proceed with current version: " + check_tag + "The version already exists")
+        error("Fail to proceed with current version: " + check_tag + ". This version exists already")
     }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
