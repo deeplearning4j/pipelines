@@ -4,8 +4,8 @@ stage('Scalnet Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${SCALNET_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${SCALNET_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${SCALNET_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${SCALNET_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
              userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${SCALNET_PROJECT}.git']]])
 
@@ -23,8 +23,8 @@ stage('Scalnet Preparation') {
         println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}" )
     }
     else {
-        // println ("Version exists: " + check_tag)
-        error("Aborting, version exists " + check_tag)
+        println ("Version exists: " + check_tag)
+        error("Fail to proceed with current version: " + check_tag ". this version exists already")
     }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
