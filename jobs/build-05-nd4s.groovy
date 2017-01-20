@@ -8,17 +8,24 @@ stage('Nd4s Preparation') {
 
   echo 'Releasing version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'
   echo 'Check if $RELEASE_VERSION has been released already'
+
   dir("$ND4S_PROJECT") {
     def exitValue = sh (returnStdout: true, script: """git tag -l \"$ND4S_PROJECT-$RELEASE_VERSION\"""")
     if (exitValue != null) {
       //  echo "Error: Version $RELEASE_VERSION has already been released!"
       error 'Version $RELEASE_VERSION has already been released!'
     }
+
     sh ("sed -i 's/version := \".*\",/version := \"$RELEASE_VERSION\",/' build.sbt")
     sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"$RELEASE_VERSION\",/' build.sbt")
     //sh ("sbt +publishSigned")
   }
 }
+
+// stage('Nd4s Codecheck') {
+//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
+// }
+
 stage ('Nd4s Build') {
   dir("$ND4S_PROJECT") {
     // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
@@ -30,5 +37,5 @@ stage ('Nd4s Build') {
     sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
   }
 }
-// Message for debugging
+// Messages for debugging
 echo 'MARK: end of build-05-nd4s.groovy'

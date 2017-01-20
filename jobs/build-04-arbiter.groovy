@@ -22,6 +22,11 @@ stage('Arbiter Preparation') {
     sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
   }
 }
+
+// stage('Arbiter Codecheck') {
+//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
+// }
+
 stage ('Arbiter Build') {
   dir("$ARBITER_PROJECT") {
     sh "./change-scala-versions.sh 2.10"
@@ -46,5 +51,5 @@ stage ('Arbiter Build') {
     //sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
   }
 }
-// Message for debugging
+// Messages for debugging
 echo 'MARK: end of build-04-arbiter.groovy'

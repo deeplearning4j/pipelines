@@ -22,6 +22,10 @@ stage('Deeplearning4j Preparation') {
   }
 }
 
+// stage('Deeplearning4j Codecheck') {
+//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
+// }
+
 stage ('Deeplearning4j Build') {
   dir("$DEEPLEARNING4J_PROJECT") {
     sh "./change-scala-versions.sh 2.10"
@@ -48,5 +52,5 @@ stage ('Deeplearning4j Build') {
     //sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
   }
 }
-// Message for debugging
+// Messages for debugging
 echo 'MARK: end of build-03-deeplearning4j.groovy'

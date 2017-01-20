@@ -19,6 +19,11 @@ stage('Datavec Preparation') {
     sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
   }
 }
+
+// stage('Datavec Codecheck') {
+//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
+// }
+
 stage ('Datavec Build') {
   dir("$DATAVEC_PROJECT") {
     sh "./change-scala-versions.sh 2.10"
@@ -38,5 +43,5 @@ stage ('Datavec Build') {
     //  sh "echo 'Successfully performed release of version $RELEASE_VERSION ($SNAPSHOT_VERSION) to repository $STAGING_REPOSITORY'"
   }
 }
-// Message for debugging
+// Messages for debugging
 echo 'MARK: end of build-02-datavec.groovy'
