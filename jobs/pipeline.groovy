@@ -2,7 +2,7 @@ timestamps {
   node ('master') {
     step([$class: 'WsCleanup'])
 
-    def CREDID = 'github-private-deeplearning4j-id-1'
+    def CREDID = 'github-private-skymind-id-1'
 
     checkout scm
 
