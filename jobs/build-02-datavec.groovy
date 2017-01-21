@@ -4,10 +4,10 @@ stage('Datavec Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${DATAVEC_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${DATAVEC_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${DATAVEC_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${DATAVEC_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${DATAVEC_PROJECT}.git']]])
+             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${DATAVEC_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 
   echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
@@ -19,7 +19,7 @@ stage('Datavec Preparation') {
     }
     else {
         println ("Version exists: " + check_tag)
-        error("Fail to proceed with current version: " + check_tag)
+        error("Failed to proceed with current version: " + check_tag)
     }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")

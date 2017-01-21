@@ -119,10 +119,10 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           // TODO: send command to bintray to mirror release to Maven Central
           sh 'git status'
-          // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
-          sh 'git tag -a ${SCALNET_PROJECT}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
-          sh 'git push origin ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+          // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+          // sh 'git commit -a -m "Update to version ${RELEASE_VERSION}"'
+          // sh 'git tag -a ${SCALNET_PROJECT}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${SCALNET_PROJECT}-${RELEASE_VERSION}'
         }
       }
     }

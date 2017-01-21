@@ -28,10 +28,10 @@ stage('Scalnet Preparation') {
         error("Failed to proceed with current version: " + check_tag)
     }
 
-    // sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
-    // sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
-    // sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$RELEASE_VERSION<\\/dl4j.version>/' pom.xml")
-    // sh ("sed -i 's/<version>.*-SNAPSHOT<\\/version>/<version>$RELEASE_VERSION<\\/version>/' pom.xml")
+    sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
+    sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
+    sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$RELEASE_VERSION<\\/dl4j.version>/' pom.xml")
+    sh ("sed -i 's/<version>.*-SNAPSHOT<\\/version>/<version>$RELEASE_VERSION<\\/version>/' pom.xml")
   }
 }
 
@@ -49,10 +49,10 @@ stage ('Scalnet Build') {
     // sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     // sh "git tag -a -m '$RSCALNET_PROJECT-$RELEASE_VERSION" "$SCALNET_PROJECT-$RELEASE_VERSION'"
 
-    // sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/' pom.xml")
-    // sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$SNAPSHOT_VERSION<\\/datavec.version>/' pom.xml")
-    // sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$SNAPSHOT_VERSION<\\/dl4j.version>/' pom.xml")
-    // sh ("sed -i 's/<version>$RELEASE_VERSION<\\/version>/<version>$SNAPSHOT_VERSION<\\/version>/' pom.xml")
+    sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/' pom.xml")
+    sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$SNAPSHOT_VERSION<\\/datavec.version>/' pom.xml")
+    sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$SNAPSHOT_VERSION<\\/dl4j.version>/' pom.xml")
+    sh ("sed -i 's/<version>$RELEASE_VERSION<\\/version>/<version>$SNAPSHOT_VERSION<\\/version>/' pom.xml")
 
     // sh "${mvnHome}/bin/mvn' -DscalaVersion=2.10 versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$SNAPSHOT_VERSION"
     // sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"

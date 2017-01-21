@@ -4,20 +4,18 @@ stage('Nd4j Preparation') {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-            //  userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${PROJECT}.git']]])
-             userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$PROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-            //  userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${LIBPROJECT}.git']]])
-             userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$LIBPROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 }
 
 // stage('Nd4j Codecheck') {
@@ -38,7 +36,7 @@ stage('Nd4j Build') {
     }
     else {
         println ("Version exists: " + check_tag)
-        error("Fail to proceed with current version!")
+        error("Failed to proceed with current version: " + check_tag)
     }
 
     // def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
@@ -58,7 +56,7 @@ stage('Nd4j Build') {
     }
     else {
         println ("Version exists: " + check_tag)
-        error("Fail to proceed with current version!")
+        error("Failed to proceed with current version: " + check_tag)
     }
 
         echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
