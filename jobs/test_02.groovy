@@ -17,5 +17,4 @@ for (int i = 0; i < splits.size(); i++) {
     }
   }
 }
-sh([script: 'cat exclusions.txt])
 parallel branches
