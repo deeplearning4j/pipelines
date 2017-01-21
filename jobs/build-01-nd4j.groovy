@@ -7,8 +7,8 @@ stage('Nd4j Preparation') {
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${PROJECT}.git']]])
-             // userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$PROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+            //  userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${PROJECT}.git']]])
+             userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$PROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
@@ -16,8 +16,8 @@ stage('Nd4j Preparation') {
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-             userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${LIBPROJECT}.git']]])
-             // userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$LIBPROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+            //  userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${LIBPROJECT}.git']]])
+             userRemoteConfigs: [[url: 'git@github.com:$ACCOUNT/$LIBPROJECT.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 }
 
 // stage('Nd4j Codecheck') {
