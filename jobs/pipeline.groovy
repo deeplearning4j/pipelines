@@ -31,7 +31,7 @@ timestamps {
     stage('GYM-JAVA-CLIENT') {
     	load 'jobs/build-06-gym-java-client.groovy'
     }
-    
+
     stage('RL4J') {
     	load 'jobs/build-07-rl4j.groovy'
     }
@@ -55,7 +55,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${PROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${PROJECT}-${RELEASE_VERSION} -m ${PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${PROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -68,7 +69,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${LIBPROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${LIBPROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -81,7 +83,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${DATAVEC_PROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${DATAVEC_PROJECT}-${RELEASE_VERSION} -m ${DATAVEC_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${DATAVEC_PROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -94,7 +97,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${DEEPLEARNING4J_PROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION} -m ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -106,7 +110,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${ARBITER_PROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${ARBITER_PROJECT}-${RELEASE_VERSION} -m ${ARBITER_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${ARBITER_PROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -117,7 +122,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${ND4S_PROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${ND4S_PROJECT}-${RELEASE_VERSION} -m ${ND4S_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${ND4S_PROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -128,7 +134,8 @@ timestamps {
           sh 'git config user.name "Jenkins"'
           sh 'git status'
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-          // sh "git tag -a -m "${GYM_JAVA_CLIENT_PROJECT}-$RELEASE_VERSION""
+          // sh 'git tag -a ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION} -m ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}'
         }
       }
 
@@ -141,7 +148,8 @@ timestamps {
           // sh ("echo ${RL4J_PROJECT} ${RELEASE_VERSION}")
           // DO NOT ENABLE TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
           // sh ("git commit -a -m 'Update to version ${RELEASE_VERSION}'")
-          // sh "git tag -a -m "${RL4J_PROJECT}-${RELEASE_VERSION}""
+          // sh 'git tag -a ${RL4J_PROJECT}-${RELEASE_VERSION} -m ${RL4J_PROJECT}-${RELEASE_VERSION}'
+          // sh 'git push origin ${RL4J_PROJECT}-${RELEASE_VERSION}'
         }
       }
 
