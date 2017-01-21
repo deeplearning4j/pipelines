@@ -17,4 +17,7 @@ for (int i = 0; i < splits.size(); i++) {
     }
   }
 }
+new File('exclusions.txt').eachLine { line ->
+  println line
+}
 parallel branches
