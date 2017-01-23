@@ -1,15 +1,15 @@
 ---
 - include_vars: docker_vars.yml
 
-- name: Add Docker repository
-  yum_repository:
-    name: "docker"
-    description: "docker"
-    baseurl: "{{ baseurl }}"
-    enabled: yes
-    gpgcheck: yes
-    gpgkey: "{{ gpgkey }}"
-    state: present
+#- name: Add Docker repository
+#  yum_repository:
+#    name: "docker"
+#    description: "docker"
+#    baseurl: "{{ baseurl }}"
+#    enabled: yes
+#    gpgcheck: yes
+#   gpgkey: "{{ gpgkey }}"
+#    state: present
 
 - name: Install Docker
   yum:
@@ -18,10 +18,9 @@
     state: present
 
 - name: Ensure that Docker service is running
-  systemd:
+  service:
     name: "{{ service_name }}"
     enabled: yes
-    name: "{{ daemon_name }}"
     state: started
 
 - name: Download Nvidia-docker rpm
@@ -33,4 +32,3 @@
   yum:
     name: /tmp/nvidia-docker.rpm #nvidia-docker*.rpm
     state: present
-
