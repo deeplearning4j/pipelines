@@ -1,23 +1,29 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
-stage('Nd4j Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: "${GITCREDID}"]]])
-            //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: "${GITCREDID}"]]])
-            //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+echo "Load Functions"
+functions = load 'jobs/functions.groovy'
+
+stage('Nd4j Preparation') {
+  functions.get_project_code("${PROJECT}")
+  functions.get_project_code("${LIBPROJECT}")
+  // checkout([$class: 'GitSCM',
+  //            branches: [[name: '*/intropro']],
+  //            doGenerateSubmoduleConfigurations: false,
+  //           //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+  //            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+  //            submoduleCfg: [],
+  //            userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: "${GITCREDID}"]]])
+  //           //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+  //
+  // checkout([$class: 'GitSCM',
+  //            branches: [[name: '*/intropro']],
+  //            doGenerateSubmoduleConfigurations: false,
+  //           //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+  //            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+  //            submoduleCfg: [],
+  //            userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: "${GITCREDID}"]]])
+  //           //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 }
 
 // stage('Nd4j Codecheck') {
@@ -26,10 +32,6 @@ stage('Nd4j Preparation') {
 // stage('Libnd4j Codecheck') {
 //   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
 // }
-stage('Test functions') {
-  echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-}
-
 
 stage('Nd4j Build') {
   echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
@@ -93,10 +95,6 @@ stage('Nd4j Build') {
       //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
       //                     }
     }
-  }
-
-  stage('Test functions') {
-    release("${PROJECT}")
   }
 }
 // Messages for debugging

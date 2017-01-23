@@ -1,3 +1,13 @@
+def get_project_code(PROJ) {
+  checkout([$class: 'GitSCM',
+             branches: [[name: '*/intropro']],
+             doGenerateSubmoduleConfigurations: false,
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJ}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
+             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJ}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+             submoduleCfg: [],
+             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJ}.git', credentialsId: "${GITCREDID}"]]])
+}
+
 def release(PROJ) {
   echo "Adding tag ${PROJ}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJ}"
   dir("${PROJ}") {
