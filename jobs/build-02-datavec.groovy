@@ -12,15 +12,16 @@ stage('Datavec Preparation') {
 
   fscm.checktag("${DATAVEC_PROJECT}")
 
-  // dir("${DATAVEC_PROJECT}") {
-  //   def check_tag = sh(returnStdout: true, script: "git tag -l ${DATAVEC_PROJECT}-${RELEASE_VERSION}")
-  //   if (!check_tag) {
-  //       println ("There is no tag with provided value: ${DATAVEC_PROJECT}-${RELEASE_VERSION}" )
-  //   }
-  //   else {
-  //       println ("Version exists: " + check_tag)
-  //       error("Failed to proceed with current version: " + check_tag)
-  //   }
+  dir("${DATAVEC_PROJECT}") {
+    fscm.checktag("${DATAVEC_PROJECT}")
+    // def check_tag = sh(returnStdout: true, script: "git tag -l ${DATAVEC_PROJECT}-${RELEASE_VERSION}")
+    // if (!check_tag) {
+    //     println ("There is no tag with provided value: ${DATAVEC_PROJECT}-${RELEASE_VERSION}" )
+    // }
+    // else {
+    //     println ("Version exists: " + check_tag)
+    //     error("Failed to proceed with current version: " + check_tag)
+    // }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
