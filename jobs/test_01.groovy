@@ -55,15 +55,15 @@ timestamps {
 
       functions.release("${DEEPLEARNING4J_PROJECT}")
 
-      functions.release("${ARBITER_PROJECT}")
-
-      functions.release("${ND4S_PROJECT}")
-
-      functions.release("${GYM_JAVA_CLIENT_PROJECT}")
-
-      functions.release("${RL4J_PROJECT}")
-
-      functions.release("${SCALNET_PROJECT}")
+      // functions.release("${ARBITER_PROJECT}")
+      //
+      // functions.release("${ND4S_PROJECT}")
+      //
+      // functions.release("${GYM_JAVA_CLIENT_PROJECT}")
+      //
+      // functions.release("${RL4J_PROJECT}")
+      //
+      // functions.release("${SCALNET_PROJECT}")
 
     }
     step([$class: 'WsCleanup'])
