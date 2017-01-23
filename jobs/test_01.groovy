@@ -6,6 +6,9 @@ timestamps {
 
     sh ("env")
 
+    echo "Load Functions"
+    functions = load 'jobs/functions.groovy'
+
     stage('ND4J') {
       load 'jobs/build-01-nd4j.groovy'
     }
@@ -44,42 +47,42 @@ timestamps {
           input message:"Approve release of version ${RELEASE_VERSION} ?"
       }
 
-      release("${PROJECT}")
+      functions.release("${PROJECT}")
 
-      release("${LIBPROJECT}")
+      functions.release("${LIBPROJECT}")
 
-      release("${DATAVEC_PROJECT}")
+      functions.release("${DATAVEC_PROJECT}")
 
-      release("${DEEPLEARNING4J_PROJECT}")
+      functions.release("${DEEPLEARNING4J_PROJECT}")
 
-      release("${ARBITER_PROJECT}")
+      functions.release("${ARBITER_PROJECT}")
 
-      release("${ND4S_PROJECT}")
+      functions.release("${ND4S_PROJECT}")
 
-      release("${GYM_JAVA_CLIENT_PROJECT}")
+      functions.release("${GYM_JAVA_CLIENT_PROJECT}")
 
-      release("${RL4J_PROJECT}")
+      functions.release("${RL4J_PROJECT}")
 
-      release("${SCALNET_PROJECT}")
+      functions.release("${SCALNET_PROJECT}")
 
     }
     step([$class: 'WsCleanup'])
   }
 }
-
-def release(PROJ) {
-  echo "Adding tag ${PROJ}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJ}"
-  dir("${PROJ}") {
-    sshagent(credentials: ["${GITCREDID}"]) {
-      sh "ls -al"
-      echo "hello from ${PROJ}"
-      sh 'git config user.email "jenkins@skymind.io"'
-      sh 'git config user.name "Jenkins"'
-      sh 'git status'
-      // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-      // sh 'git commit -a -m "Update to version ${RELEASE_VERSION}"'
-      // sh 'git tag -a ${SCALNET_PROJECT}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
-      // sh 'git push origin ${SCALNET_PROJECT}-${RELEASE_VERSION}'
-    }
-  }
-}
+//
+// def release(PROJ) {
+//   echo "Adding tag ${PROJ}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJ}"
+//   dir("${PROJ}") {
+//     sshagent(credentials: ["${GITCREDID}"]) {
+//       sh "ls -al"
+//       echo "hello from ${PROJ}"
+//       sh 'git config user.email "jenkins@skymind.io"'
+//       sh 'git config user.name "Jenkins"'
+//       sh 'git status'
+//       // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+//       // sh 'git commit -a -m "Update to version ${RELEASE_VERSION}"'
+//       // sh 'git tag -a ${SCALNET_PROJECT}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+//       // sh 'git push origin ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+//     }
+//   }
+// }
