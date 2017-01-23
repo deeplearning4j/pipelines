@@ -30,8 +30,11 @@ def sonar(proj) {
   def scannerHome = tool 'SS28';
   dir("${proj}") {
     withSonarQubeEnv('SonarQubeServer') {
-      sh "${scannerHome}/bin/sonar-scanner"
-    }  
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
+          -Dsonar.projectName=${proj} -Dsonar.projectVersion=${RELEASE_VERSION} \
+          -Dsonar.sources=."
+          // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
+    }
   }
 }
 
