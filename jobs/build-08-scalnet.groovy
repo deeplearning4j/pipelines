@@ -1,7 +1,6 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-echo "Load Functions"
 functions = load 'jobs/functions.groovy'
 
 stage('Scalnet Preparation') {
@@ -17,14 +16,6 @@ stage('Scalnet Preparation') {
     //    error("Error: Version ${SNAPSHOT_VERSION} should finish with -SNAPSHOT")
     // }
     functions.checktag("${SCALNET_PROJECT}")
-    // def check_tag = sh(returnStdout: true, script: "git tag -l ${SCALNET_PROJECT}-${RELEASE_VERSION}")
-    // if (!check_tag) {
-    //     println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}")
-    // }
-    // else {
-    //     println ("Version exists: " + check_tag)
-    //     error("Failed to proceed with current version: " + check_tag)
-    // }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
@@ -43,6 +34,7 @@ stage ('Scalnet Build') {
       // [configFile(fileId: '$MAVENSETS', variable: 'MAVEN_SETTINGS')]) {
     // sh "'${mvnHome}/bin/mvn' -DscalaVersion=2.10 clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip"
     // sh "'${mvnHome}/bin/mvn' -DscalaVersion=2.11 clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip"
+
     // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
     // sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     // sh "git tag -a -m '$RSCALNET_PROJECT-$RELEASE_VERSION" "$SCALNET_PROJECT-$RELEASE_VERSION'"

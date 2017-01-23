@@ -1,4 +1,3 @@
-echo "Load Functions"
 functions = load 'jobs/functions.groovy'
 
 stage('Nd4s Preparation') {
@@ -10,14 +9,6 @@ stage('Nd4s Preparation') {
 
   dir("${ND4S_PROJECT}") {
     functions.checktag("${ND4S_PROJECT}")
-    // def check_tag = sh(returnStdout: true, script: "git tag -l ${ND4S_PROJECT}-${RELEASE_VERSION}")
-    // if (!check_tag) {
-    //     println ("There is no tag with provided value: ${ND4S_PROJECT}-${RELEASE_VERSION}" )
-    // }
-    // else {
-    //     println ("Version exists: " + check_tag)
-    //     error("Failed to proceed with current version: " + check_tag)
-    // }
 
     sh ("sed -i 's/version := \".*\",/version := \"$RELEASE_VERSION\",/' build.sbt")
     sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"$RELEASE_VERSION\",/' build.sbt")

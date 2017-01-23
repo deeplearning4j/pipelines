@@ -1,29 +1,12 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-echo "Load Functions"
 functions = load 'jobs/functions.groovy'
 
 stage('Nd4j Preparation') {
   functions.get_project_code("${PROJECT}")
   functions.get_project_code("${LIBPROJECT}")
-  // checkout([$class: 'GitSCM',
-  //            branches: [[name: '*/intropro']],
-  //            doGenerateSubmoduleConfigurations: false,
-  //           //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-  //            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-  //            submoduleCfg: [],
-  //            userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: "${GITCREDID}"]]])
-  //           //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
-  //
-  // checkout([$class: 'GitSCM',
-  //            branches: [[name: '*/intropro']],
-  //            doGenerateSubmoduleConfigurations: false,
-  //           //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-  //            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-  //            submoduleCfg: [],
-  //            userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: "${GITCREDID}"]]])
-  //           //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+
 }
 
 // stage('Nd4j Codecheck') {
@@ -39,42 +22,17 @@ stage('Nd4j Build') {
 
   dir("${PROJECT}") {
     functions.checktag("${PROJECT}")
-    // def check_tag = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
-    // if (!check_tag) {
-    //     println ("There is no tag with provided value: ${PROJECT}-${RELEASE_VERSION}" )
-    // }
-    // else {
-    //     println ("Version exists: " + check_tag)
-    //     error("Failed to proceed with current version: " + check_tag)
-    // }
-
-    // def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
-    // echo ${exitValue}
-    // if (exitValue != null) {
-    //  //  echo 'Error: Version $RELEASE_VERSION has already been released!'
-    //   // error 'Version $RELEASE_VERSION has already been released!'
-    //   error 'Version ${exitValue} has already been released!'
-    // }
   }
 
   echo 'Build Native Operations'
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
-    // def check_tag = sh(returnStdout: true, script: "git tag -l ${LIBPROJECT}-${RELEASE_VERSION}")
-    // if (!check_tag) {
-    //     println ("There is no tag with provided value: ${LIBPROJECT}-${RELEASE_VERSION}" )
-    // }
-    // else {
-    //     println ("Version exists: " + check_tag)
-    //     error("Failed to proceed with current version: " + check_tag)
-    // }
 
-        echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
-        //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
-        //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
-        //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
-        // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
-        //  sh "git tag -a -m "libnd4j-$RELEASE_VERSION""
+      echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
+      //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
+      //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
+      //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
+
   }
 
   echo 'Build components with Maven'

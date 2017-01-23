@@ -1,7 +1,6 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-echo "Load Functions"
 functions = load 'jobs/functions.groovy'
 
 stage('Gym-Java-Client Preparation') {
@@ -13,14 +12,6 @@ stage('Gym-Java-Client Preparation') {
 
   dir("${GYM_JAVA_CLIENT_PROJECT}") {
     functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
-    // def check_tag = sh(returnStdout: true, script: "git tag -l ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}")
-    // if (!check_tag) {
-    //     println ("There is no tag with provided value: ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}" )
-    // }
-    // else {
-    //     println ("Version exists: " + check_tag)
-    //     error("Failed to proceed with current version: " + check_tag)
-    // }
 
   sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
   sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
