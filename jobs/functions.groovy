@@ -1,5 +1,3 @@
-def mvnHome = tool 'M339'
-
 def get_project_code(proj) {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
