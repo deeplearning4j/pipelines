@@ -1,5 +1,5 @@
 tool name: 'M339', type: 'maven'
-def mvnHome = tool 'M339'
+// def mvnHome = tool 'M339'
 
 echo "Load Functions"
 functions = load 'jobs/functions.groovy'

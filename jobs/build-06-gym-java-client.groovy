@@ -1,14 +1,12 @@
 tool name: 'M339', type: 'maven'
-def mvnHome
-mvnHome = tool 'M339'
+// def mvnHome = tool 'M339'
+
+echo "Load Functions"
+functions = load 'jobs/functions.groovy'
+
 stage('Gym-Java-Client Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${GYM_JAVA_CLIENT_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${GYM_JAVA_CLIENT_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${GYM_JAVA_CLIENT_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+
+  functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 
   echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"

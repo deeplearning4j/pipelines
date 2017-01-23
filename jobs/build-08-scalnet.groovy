@@ -1,14 +1,12 @@
 tool name: 'M339', type: 'maven'
-def mvnHome = tool 'M339'
+// def mvnHome = tool 'M339'
+
+echo "Load Functions"
+functions = load 'jobs/functions.groovy'
+
 stage('Scalnet Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${SCALNET_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${SCALNET_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-            //  userRemoteConfigs: [[url: 'https://github.com/${ACCOUNT}/${SCALNET_PROJECT}.git']]])
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${SCALNET_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+
+  functions.get_project_code("${SCALNET_PROJECT}")
 
   echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"

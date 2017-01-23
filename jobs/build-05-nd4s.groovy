@@ -1,11 +1,9 @@
+echo "Load Functions"
+functions = load 'jobs/functions.groovy'
+
 stage('Nd4s Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ND4S_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ND4S_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${ND4S_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+
+  functions.get_project_code("${ND4S_PROJECT}")
 
   echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
