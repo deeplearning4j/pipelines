@@ -47,28 +47,19 @@ timestamps {
       }
 
       release("${PROJECT}")
-
       release("${LIBPROJECT}")
-
       release("${DATAVEC_PROJECT}")
-
       release("${DEEPLEARNING4J_PROJECT}")
-
       release("${ARBITER_PROJECT}")
-
       release("${ND4S_PROJECT}")
-
       release("${GYM_JAVA_CLIENT_PROJECT}")
-
       release("${RL4J_PROJECT}")
-
       release("${SCALNET_PROJECT}")
-
     }
 
     step([$class: 'WsCleanup'])
-
   }
+
   // Messages for debugging
   echo 'MARK: end of pipeline.groovy'
 }
