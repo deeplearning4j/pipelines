@@ -19,6 +19,12 @@ def checktag(proj) {
     }
 }
 
+// def check_suff()
+// if (${SNAPSHOT_VERSION} != '*-SNAPSHOT' ) {
+//    // error statement stops pipeline if if is true
+//    error("Error: Version ${SNAPSHOT_VERSION} should finish with -SNAPSHOT")
+// }
+
 def release(proj) {
   echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
   dir("${proj}") {

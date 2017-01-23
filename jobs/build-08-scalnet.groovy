@@ -16,15 +16,15 @@ stage('Scalnet Preparation') {
     //    // error statement stops pipeline if if is true
     //    error("Error: Version ${SNAPSHOT_VERSION} should finish with -SNAPSHOT")
     // }
-
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${SCALNET_PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}")
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${SCALNET_PROJECT}")
+    // def check_tag = sh(returnStdout: true, script: "git tag -l ${SCALNET_PROJECT}-${RELEASE_VERSION}")
+    // if (!check_tag) {
+    //     println ("There is no tag with provided value: ${SCALNET_PROJECT}-${RELEASE_VERSION}")
+    // }
+    // else {
+    //     println ("Version exists: " + check_tag)
+    //     error("Failed to proceed with current version: " + check_tag)
+    // }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")

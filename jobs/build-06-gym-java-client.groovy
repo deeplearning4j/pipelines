@@ -12,14 +12,15 @@ stage('Gym-Java-Client Preparation') {
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${GYM_JAVA_CLIENT_PROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
+    // def check_tag = sh(returnStdout: true, script: "git tag -l ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}")
+    // if (!check_tag) {
+    //     println ("There is no tag with provided value: ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}" )
+    // }
+    // else {
+    //     println ("Version exists: " + check_tag)
+    //     error("Failed to proceed with current version: " + check_tag)
+    // }
 
   sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
   sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")

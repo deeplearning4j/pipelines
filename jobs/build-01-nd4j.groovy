@@ -38,14 +38,15 @@ stage('Nd4j Build') {
   echo ("Check if ${RELEASE_VERSION} has been released already")
 
   dir("${PROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${PROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${PROJECT}")
+    // def check_tag = sh(returnStdout: true, script: "git tag -l ${PROJECT}-${RELEASE_VERSION}")
+    // if (!check_tag) {
+    //     println ("There is no tag with provided value: ${PROJECT}-${RELEASE_VERSION}" )
+    // }
+    // else {
+    //     println ("Version exists: " + check_tag)
+    //     error("Failed to proceed with current version: " + check_tag)
+    // }
 
     // def exitValue = sh (returnStdout: true, script: """git tag -l \"$PROJECT-$RELEASE_VERSION\"""")
     // echo ${exitValue}
@@ -58,14 +59,15 @@ stage('Nd4j Build') {
 
   echo 'Build Native Operations'
   dir("${LIBPROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${LIBPROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${LIBPROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${LIBPROJECT}")
+    // def check_tag = sh(returnStdout: true, script: "git tag -l ${LIBPROJECT}-${RELEASE_VERSION}")
+    // if (!check_tag) {
+    //     println ("There is no tag with provided value: ${LIBPROJECT}-${RELEASE_VERSION}" )
+    // }
+    // else {
+    //     println ("Version exists: " + check_tag)
+    //     error("Failed to proceed with current version: " + check_tag)
+    // }
 
         echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
         //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
