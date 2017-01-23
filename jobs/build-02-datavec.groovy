@@ -2,23 +2,25 @@ tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
 echo "Load Functions"
-functions = load 'jobs/functions.groovy'
+functions = load 'jobs/fscm.groovy'
 
 stage('Datavec Preparation') {
-  functions.get_project_code("${DATAVEC_PROJECT}")
+  fscm.get_project_code("${DATAVEC_PROJECT}")
 
   echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
-  dir("${DATAVEC_PROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${DATAVEC_PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${DATAVEC_PROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+  fscm.checktag("${DATAVEC_PROJECT}")
+
+  // dir("${DATAVEC_PROJECT}") {
+  //   def check_tag = sh(returnStdout: true, script: "git tag -l ${DATAVEC_PROJECT}-${RELEASE_VERSION}")
+  //   if (!check_tag) {
+  //       println ("There is no tag with provided value: ${DATAVEC_PROJECT}-${RELEASE_VERSION}" )
+  //   }
+  //   else {
+  //       println ("Version exists: " + check_tag)
+  //       error("Failed to proceed with current version: " + check_tag)
+  //   }
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
