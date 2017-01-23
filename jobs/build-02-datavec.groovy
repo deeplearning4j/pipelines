@@ -17,13 +17,16 @@ stage('Datavec Preparation') {
   }
 }
 
-stage('Datavec Codecheck') {
-  functions.sonar("${DATAVEC_PROJECT}")
-}
+// stage('Datavec Codecheck') {
+//   functions.sonar("${DATAVEC_PROJECT}")
+// }
 
 
 stage ('Datavec Build') {
   dir("${DATAVEC_PROJECT}") {
+
+    functions.sonar("${DATAVEC_PROJECT}")
+
     sh "./change-scala-versions.sh 2.10"
     //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
 

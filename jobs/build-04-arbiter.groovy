@@ -19,12 +19,15 @@ stage('Arbiter Preparation') {
   }
 }
 
-stage('Arbiter Codecheck') {
-  functions.sonar("${ARBITER_PROJECT}")
-}
+// stage('Arbiter Codecheck') {
+//   functions.sonar("${ARBITER_PROJECT}")
+// }
 
 stage ('Arbiter Build') {
   dir("${ARBITER_PROJECT}") {
+
+    functions.sonar("${ARBITER_PROJECT}")
+
     sh "./change-scala-versions.sh 2.10"
     //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -Dmaven.test.skip -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
 
