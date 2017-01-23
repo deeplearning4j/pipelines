@@ -19,9 +19,9 @@ stage('Arbiter Preparation') {
   }
 }
 
-// stage('Arbiter Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Arbiter Codecheck') {
+  functions.sonar("${ARBITER_PROJECT}")
+}
 
 stage ('Arbiter Build') {
   dir("${ARBITER_PROJECT}") {

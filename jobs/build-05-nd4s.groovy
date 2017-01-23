@@ -16,9 +16,9 @@ stage('Nd4s Preparation') {
   }
 }
 
-// stage('Nd4s Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Nd4s Codecheck') {
+  functions.sonar("${ND4S_PROJECT}")
+}
 
 stage ('Nd4s Build') {
   dir("${ND4S_PROJECT}") {

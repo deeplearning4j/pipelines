@@ -19,9 +19,9 @@ stage('Gym-Java-Client Preparation') {
   }
 }
 
-// stage('Gym-Java-Client Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Gym-Java-Client Codecheck') {
+  functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
+}
 
 stage ('Gym-Java-Client Build') {
   dir("${GYM_JAVA_CLIENT_PROJECT}") {

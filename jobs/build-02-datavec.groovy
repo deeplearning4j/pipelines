@@ -17,9 +17,10 @@ stage('Datavec Preparation') {
   }
 }
 
-// stage('Datavec Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Datavec Codecheck') {
+  functions.sonar("${DATAVEC_PROJECT}")
+}
+
 
 stage ('Datavec Build') {
   dir("${DATAVEC_PROJECT}") {

@@ -10,12 +10,11 @@ stage('Nd4j Preparation') {
 }
 
 stage('Nd4j Codecheck') {
-  echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
   functions.sonar("${PROJECT}")
-
 }
+
 stage('Libnd4j Codecheck') {
-  echo 'Check $ACCOUNT/$LIBPROJECT code with SonarQube'
+  functions.sonar("${LIBPROJECT}")
 }
 
 stage('Nd4j Build') {

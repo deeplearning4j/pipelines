@@ -24,9 +24,9 @@ stage('Scalnet Preparation') {
   }
 }
 
-// stage('Scalnet Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Scalnet Codecheck') {
+  functions.sonar("${SCALNET_PROJECT}")
+}
 
 stage ('Scalnet Build') {
   dir("${SCALNET_PROJECT}") {

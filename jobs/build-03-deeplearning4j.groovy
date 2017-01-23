@@ -18,9 +18,10 @@ stage('Deeplearning4j Preparation') {
   }
 }
 
-// stage('Deeplearning4j Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Deeplearning4j Codecheck') {
+  functions.sonar("${DEEPLEARNING4J_PROJECT}")
+}
+
 
 stage ('Deeplearning4j Build') {
   dir("${DEEPLEARNING4J_PROJECT}") {

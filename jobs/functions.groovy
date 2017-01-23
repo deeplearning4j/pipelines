@@ -26,9 +26,11 @@ def checktag(proj) {
 // }
 
 def sonar(proj) {
+  echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
   // requires SonarQube Scanner 2.8+
   def scannerHome = tool 'SS28';
   dir("${proj}") {
+    // withSonarQubeEnv("${SQS}") {
     withSonarQubeEnv('SonarQubeServer') {
       sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
           -Dsonar.projectName=${proj} -Dsonar.projectVersion=${RELEASE_VERSION} \
