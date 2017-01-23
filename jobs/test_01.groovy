@@ -52,15 +52,15 @@ timestamps {
 
       release("${DEEPLEARNING4J_PROJECT}")
 
-      // release ${ARBITER_PROJECT}
-      //
-      // release "${ND4S_PROJECT}"
-      //
-      // release "${GYM_JAVA_CLIENT_PROJECT}"
-      //
-      // release "${RL4J_PROJECT}"
-      //
-      // release "${SCALNET_PROJECT}"
+      release("${ARBITER_PROJECT}")
+
+      release("${ND4S_PROJECT}")
+
+      release("${GYM_JAVA_CLIENT_PROJECT}")
+
+      release("${RL4J_PROJECT}")
+
+      release("${SCALNET_PROJECT}")
 
     }
     step([$class: 'WsCleanup'])
