@@ -19,29 +19,29 @@ timestamps {
       load 'jobs/build-02-datavec.groovy'
     }
 
-    // stage('DEEPLEARNING4J') {
-    // 	load  'jobs/build-03-deeplearning4j.groovy'
-    // }
-    //
-    // stage('ARBITER') {
-    // 	load 'jobs/build-04-arbiter.groovy'
-    // }
-    //
-    // stage('ND4S') {
-    // 	load 'jobs/build-05-nd4s.groovy'
-    // }
-    //
-    // stage('GYM-JAVA-CLIENT') {
-    // 	load 'jobs/build-06-gym-java-client.groovy'
-    // }
-    //
-    // stage('RL4J') {
-    // 	load 'jobs/build-07-rl4j.groovy'
-    // }
-    //
-    // stage('SCALNET') {
-    // 	load 'jobs/build-08-scalnet.groovy'
-    // }
+    stage('DEEPLEARNING4J') {
+    	load  'jobs/build-03-deeplearning4j.groovy'
+    }
+
+    stage('ARBITER') {
+    	load 'jobs/build-04-arbiter.groovy'
+    }
+
+    stage('ND4S') {
+    	load 'jobs/build-05-nd4s.groovy'
+    }
+
+    stage('GYM-JAVA-CLIENT') {
+    	load 'jobs/build-06-gym-java-client.groovy'
+    }
+
+    stage('RL4J') {
+    	load 'jobs/build-07-rl4j.groovy'
+    }
+
+    stage('SCALNET') {
+    	load 'jobs/build-08-scalnet.groovy'
+    }
 
     stage('RELEASE') {
       // timeout(time:1, unit:'HOURS') {
@@ -52,12 +52,12 @@ timestamps {
       functions.release("${PROJECT}")
       functions.release("${LIBPROJECT}")
       functions.release("${DATAVEC_PROJECT}")
-      // functions.release("${DEEPLEARNING4J_PROJECT}")
-      // functions.release("${ARBITER_PROJECT}")
-      // functions.release("${ND4S_PROJECT}")
-      // functions.release("${GYM_JAVA_CLIENT_PROJECT}")
-      // functions.release("${RL4J_PROJECT}")
-      // functions.release("${SCALNET_PROJECT}")
+      functions.release("${DEEPLEARNING4J_PROJECT}")
+      functions.release("${ARBITER_PROJECT}")
+      functions.release("${ND4S_PROJECT}")
+      functions.release("${GYM_JAVA_CLIENT_PROJECT}")
+      functions.release("${RL4J_PROJECT}")
+      functions.release("${SCALNET_PROJECT}")
     }
 
     step([$class: 'WsCleanup'])
