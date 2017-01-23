@@ -25,6 +25,16 @@ def checktag(proj) {
 //    error("Error: Version ${SNAPSHOT_VERSION} should finish with -SNAPSHOT")
 // }
 
+def sonar(proj) {
+  // requires SonarQube Scanner 2.8+
+  def scannerHome = tool 'SS28';
+  dir("${proj}") {
+    withSonarQubeEnv('SonarQubeServer') {
+      sh "${scannerHome}/bin/sonar-scanner"
+    }  
+  }
+}
+
 def release(proj) {
   echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
   dir("${proj}") {

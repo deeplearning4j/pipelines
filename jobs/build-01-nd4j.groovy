@@ -9,12 +9,14 @@ stage('Nd4j Preparation') {
 
 }
 
-// stage('Nd4j Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
-// stage('Libnd4j Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Nd4j Codecheck') {
+  echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
+  functions.sonar("${PROJECT}")
+
+}
+stage('Libnd4j Codecheck') {
+  echo 'Check $ACCOUNT/$LIBPROJECT code with SonarQube'
+}
 
 stage('Nd4j Build') {
   echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
