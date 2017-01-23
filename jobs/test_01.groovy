@@ -14,9 +14,9 @@ timestamps {
       load 'jobs/build-02-datavec.groovy'
     }
 
-    // stage('DEEPLEARNING4J') {
-    // 	load  'jobs/build-03-deeplearning4j.groovy'
-    // }
+    stage('DEEPLEARNING4J') {
+    	load  'jobs/build-03-deeplearning4j.groovy'
+    }
     //
     // stage('ARBITER') {
     // 	load 'jobs/build-04-arbiter.groovy'
@@ -50,8 +50,8 @@ timestamps {
 
       release("${DATAVEC_PROJECT}")
 
-      // release ${DEEPLEARNING4J_PROJECT}
-      //
+      release("${DEEPLEARNING4J_PROJECT}")
+
       // release ${ARBITER_PROJECT}
       //
       // release "${ND4S_PROJECT}"
