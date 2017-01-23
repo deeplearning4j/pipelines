@@ -17,7 +17,7 @@ stage('Nd4j Codecheck') {
   functions.sonar("${PROJECT}")
 }
 
-stage('Libnd4j build')
+stage('Libnd4j build') {
   echo 'Build Native Operations'
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
