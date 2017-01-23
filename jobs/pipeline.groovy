@@ -49,7 +49,7 @@ timestamps {
           input message:"Approve release of version ${RELEASE_VERSION} ?"
       }
 
-      // release("${PROJECT}")
+      release("${PROJECT}")
       release("${LIBPROJECT}")
       release("${DATAVEC_PROJECT}")
       release("${DEEPLEARNING4J_PROJECT}")
