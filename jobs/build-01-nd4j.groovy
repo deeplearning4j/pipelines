@@ -7,8 +7,8 @@ stage('Nd4j Preparation') {
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-            //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: '${GITCREDID}']]])
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: "${GITCREDID}"]]])
+            //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
@@ -16,8 +16,8 @@ stage('Nd4j Preparation') {
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${LIBPROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
-            //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: '${GITCREDID}']]])
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: "${GITCREDID}"]]])
+            //  userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${LIBPROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
 }
 
 // stage('Nd4j Codecheck') {
@@ -26,6 +26,10 @@ stage('Nd4j Preparation') {
 // stage('Libnd4j Codecheck') {
 //   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
 // }
+stage('Test functions') {
+  echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
+}
+
 
 stage('Nd4j Build') {
   echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
@@ -68,7 +72,6 @@ stage('Nd4j Build') {
         // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
         //  sh "git tag -a -m "libnd4j-$RELEASE_VERSION""
   }
-}
 
   echo 'Build components with Maven'
   dir("${PROJECT}") {
@@ -77,20 +80,24 @@ stage('Nd4j Build') {
     echo 'Maven Build, Package and Deploy'
     def check_repo = "${STAGING_REPOSITORY}"
     echo check_repo
-      if (!check_repo) {
-        echo 'STAGING_REPOSITORY is not set'
-        sh "./change-scala-versions.sh 2.10"
-        sh "./change-cuda-versions.sh 7.5"
+    if (!check_repo) {
+      echo 'STAGING_REPOSITORY is not set'
+      sh "./change-scala-versions.sh 2.10"
+      sh "./change-cuda-versions.sh 7.5"
 
-        // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
-        //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
-        //                       sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
-        //                            -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
-        //                            -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
-        //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
-        //                     }
-      }
+      // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
+      //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
+      //                       sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
+      //                            -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
+      //                            -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
+      //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
+      //                     }
+    }
   }
 
+  stage('Test functions') {
+    release("${PROJECT}")
+  }
+}
 // Messages for debugging
 echo 'MARK: end of build-01-nd4j.groovy'
