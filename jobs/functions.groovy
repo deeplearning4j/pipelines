@@ -2,18 +2,49 @@ def get_project_code(proj) {
   checkout([$class: 'GitSCM',
              branches: [[name: '*/intropro']],
              doGenerateSubmoduleConfigurations: false,
+             // DO NOT FORGET TO SET noTags TO FALSE !!!
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
              userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
 }
 
+def checktag(proj) {
+  def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${RELEASE_VERSION}")
+    if (!check_tag) {
+        println ("There is no tag with provided value: ${proj}-${RELEASE_VERSION}" )
+    }
+    else {
+        println ("Version exists: " + check_tag)
+        error("Failed to proceed with current version: " + check_tag)
+    }
+}
+
+// def check_suff()
+// if (${SNAPSHOT_VERSION} != '*-SNAPSHOT' ) {
+//    // error statement stops pipeline if if is true
+//    error("Error: Version ${SNAPSHOT_VERSION} should finish with -SNAPSHOT")
+// }
+
+def sonar(proj) {
+  echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
+  // requires SonarQube Scanner 2.8+
+  def scannerHome = tool 'SS28';
+  dir("${proj}") {
+    // withSonarQubeEnv("${SQS}") {
+    withSonarQubeEnv('SonarQubeServer') {
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
+          -Dsonar.projectName=${proj} -Dsonar.projectVersion=${RELEASE_VERSION} \
+          -Dsonar.sources=."
+          // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
+    }
+  }
+}
+
 def release(proj) {
   echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
   dir("${proj}") {
     sshagent(credentials: ["${GITCREDID}"]) {
-      sh "ls -al"
-      echo "hello from ${proj}"
       sh 'git config user.email "jenkins@skymind.io"'
       sh 'git config user.name "Jenkins"'
       sh 'git status'

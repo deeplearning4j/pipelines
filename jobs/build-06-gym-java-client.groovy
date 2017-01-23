@@ -1,27 +1,17 @@
 tool name: 'M339', type: 'maven'
-def mvnHome
-mvnHome = tool 'M339'
+def mvnHome = tool 'M339'
+
+functions = load 'jobs/functions.groovy'
+
 stage('Gym-Java-Client Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${GYM_JAVA_CLIENT_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${GYM_JAVA_CLIENT_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${GYM_JAVA_CLIENT_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+
+  functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 
   echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${GYM_JAVA_CLIENT_PROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${GYM_JAVA_CLIENT_PROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
 
   sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
   sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
@@ -29,9 +19,9 @@ stage('Gym-Java-Client Preparation') {
   }
 }
 
-// stage('Gym-Java-Client Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Gym-Java-Client Codecheck') {
+  functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
+}
 
 stage ('Gym-Java-Client Build') {
   dir("${GYM_JAVA_CLIENT_PROJECT}") {

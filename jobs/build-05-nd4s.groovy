@@ -1,24 +1,14 @@
+functions = load 'jobs/functions.groovy'
+
 stage('Nd4s Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ND4S_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ND4S_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${ND4S_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+
+  functions.get_project_code("${ND4S_PROJECT}")
 
   echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${ND4S_PROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${ND4S_PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${ND4S_PROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${ND4S_PROJECT}")
 
     sh ("sed -i 's/version := \".*\",/version := \"$RELEASE_VERSION\",/' build.sbt")
     sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"$RELEASE_VERSION\",/' build.sbt")
@@ -26,9 +16,9 @@ stage('Nd4s Preparation') {
   }
 }
 
-// stage('Nd4s Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Nd4s Codecheck') {
+  functions.sonar("${ND4S_PROJECT}")
+}
 
 stage ('Nd4s Build') {
   dir("${ND4S_PROJECT}") {

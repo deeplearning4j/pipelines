@@ -1,26 +1,16 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
+
+functions = load 'jobs/functions.groovy'
+
 stage('Arbiter Preparation') {
-  checkout([$class: 'GitSCM',
-             branches: [[name: '*/intropro']],
-             doGenerateSubmoduleConfigurations: false,
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ARBITER_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
-             extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '${ARBITER_PROJECT}'], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-             submoduleCfg: [],
-             userRemoteConfigs: [[url: 'git@github.com:${ACCOUNT}/${ARBITER_PROJECT}.git', credentialsId: 'github-private-deeplearning4j-id-1']]])
+  functions.get_project_code("${ARBITER_PROJECT}")
 
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${ARBITER_PROJECT}") {
-    def check_tag = sh(returnStdout: true, script: "git tag -l ${ARBITER_PROJECT}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        println ("There is no tag with provided value: ${ARBITER_PROJECT}-${RELEASE_VERSION}" )
-    }
-    else {
-        println ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
-    }
+    functions.checktag("${ARBITER_PROJECT}")
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>$RELEASE_VERSION<\\/datavec.version>/' pom.xml")
@@ -29,9 +19,9 @@ stage('Arbiter Preparation') {
   }
 }
 
-// stage('Arbiter Codecheck') {
-//   echo 'Check $ACCOUNT/$PROJECT code with SonarQube'
-// }
+stage('Arbiter Codecheck') {
+  functions.sonar("${ARBITER_PROJECT}")
+}
 
 stage ('Arbiter Build') {
   dir("${ARBITER_PROJECT}") {

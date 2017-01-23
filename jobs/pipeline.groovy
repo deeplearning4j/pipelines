@@ -49,8 +49,8 @@ timestamps {
           input message:"Approve release of version ${RELEASE_VERSION} ?"
       }
 
-      functions.release("${PROJECT}")
       functions.release("${LIBPROJECT}")
+      functions.release("${PROJECT}")
       functions.release("${DATAVEC_PROJECT}")
       functions.release("${DEEPLEARNING4J_PROJECT}")
       functions.release("${ARBITER_PROJECT}")
