@@ -1,17 +1,17 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-echo "Load SCM functions"
-functions = load 'jobs/fscm.groovy'
+echo "Load functions"
+functions = load 'jobs/functions.groovy'
 
 stage('Datavec Preparation') {
-  fscm.get_project_code("${DATAVEC_PROJECT}")
+  functions.get_project_code("${DATAVEC_PROJECT}")
 
   echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${DATAVEC_PROJECT}") {
-    fscm.checktag("${DATAVEC_PROJECT}")
+    functions.checktag("${DATAVEC_PROJECT}")
     // def check_tag = sh(returnStdout: true, script: "git tag -l ${DATAVEC_PROJECT}-${RELEASE_VERSION}")
     // if (!check_tag) {
     //     println ("There is no tag with provided value: ${DATAVEC_PROJECT}-${RELEASE_VERSION}" )
