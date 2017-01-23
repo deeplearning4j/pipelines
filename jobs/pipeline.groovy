@@ -11,10 +11,6 @@ timestamps {
     echo "Load Functions"
     functions = load 'jobs/functions.groovy'
 
-    stage('Pipeline Codecheck') {
-      functions.sonar('pipelines')
-    }
-
     stage('ND4J') {
       load 'jobs/build-01-nd4j.groovy'
     }

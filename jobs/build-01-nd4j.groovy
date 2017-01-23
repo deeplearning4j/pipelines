@@ -9,22 +9,15 @@ stage('Nd4j Preparation') {
 
 }
 
-stage('Nd4j Codecheck') {
-  functions.sonar("${PROJECT}")
-}
-
 stage('Libnd4j Codecheck') {
   functions.sonar("${LIBPROJECT}")
 }
 
-stage('Nd4j Build') {
-  echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
-  echo ("Check if ${RELEASE_VERSION} has been released already")
+stage('Nd4j Codecheck') {
+  functions.sonar("${PROJECT}")
+}
 
-  dir("${PROJECT}") {
-    functions.checktag("${PROJECT}")
-  }
-
+stage('Libnd4j build')
   echo 'Build Native Operations'
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
@@ -34,6 +27,14 @@ stage('Nd4j Build') {
       //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
       //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
 
+  }
+}
+stage('Nd4j Build') {
+  echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+
+  echo ("Check if ${RELEASE_VERSION} has been released already")
+  dir("${PROJECT}") {
+    functions.checktag("${PROJECT}")
   }
 
   echo 'Build components with Maven'
