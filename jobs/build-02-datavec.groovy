@@ -1,7 +1,7 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-echo "Load Functions"
+echo "Load SCM functions"
 functions = load 'jobs/fscm.groovy'
 
 stage('Datavec Preparation') {
@@ -9,8 +9,6 @@ stage('Datavec Preparation') {
 
   echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
-
-  fscm.checktag("${DATAVEC_PROJECT}")
 
   dir("${DATAVEC_PROJECT}") {
     fscm.checktag("${DATAVEC_PROJECT}")
