@@ -60,7 +60,7 @@ timestamps {
       functions.release("${SCALNET_PROJECT}")
     }
 
-    step([$class: 'WsCleanup'])
+    // step([$class: 'WsCleanup'])
     sh "rm -rf $HOME/.sonar"
   }
 
