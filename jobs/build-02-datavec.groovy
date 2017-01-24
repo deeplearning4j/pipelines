@@ -18,10 +18,9 @@ stage('Datavec Preparation') {
   }
 }
 
-stage('Datavec Codecheck') {
-  functions.sonar("${DATAVEC_PROJECT}")
-}
-
+// stage('Datavec Codecheck') {
+//   functions.sonar("${DATAVEC_PROJECT}")
+// }
 
 stage ('Datavec Build') {
   dir("${DATAVEC_PROJECT}") {
@@ -34,7 +33,7 @@ stage ('Datavec Build') {
 
     sh "./change-scala-versions.sh 2.10"
 
-    sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/'' pom.xml"
+    sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/' pom.xml"
     //  sh "${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$SNAPSHOT_VERSION"
     functions.verset("${SNAPSHOT_VERSION}", true)
     //  sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"

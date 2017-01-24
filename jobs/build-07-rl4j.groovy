@@ -22,9 +22,9 @@ stage('Rl4j Preparation') {
   }
 }
 
-stage('Rl4j Codecheck') {
-  functions.sonar("${RL4J_PROJECT}")
-}
+// stage('Rl4j Codecheck') {
+//   functions.sonar("${RL4J_PROJECT}")
+// }
 
 stage ('Rl4j Build') {
   dir("${RL4J_PROJECT}") {

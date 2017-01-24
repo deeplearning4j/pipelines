@@ -19,9 +19,9 @@ stage('Deeplearning4j Preparation') {
   }
 }
 
-stage('Deeplearning4j Codecheck') {
-  functions.sonar("${DEEPLEARNING4J_PROJECT}")
-}
+// stage('Deeplearning4j Codecheck') {
+//   functions.sonar("${DEEPLEARNING4J_PROJECT}")
+// }
 
 stage ('Deeplearning4j Build') {
   dir("${DEEPLEARNING4J_PROJECT}") {
@@ -43,7 +43,7 @@ stage ('Deeplearning4j Build') {
     // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     //sh "git tag -a -m '$DEEPLEARNING4J_PROJECT-$RELEASE_VERSION" "$DEEPLEARNING4J_PROJECT-$RELEASE_VERSION'"
-    sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${SNAPSHOT_VERSION}<\\/nd4j.version>/'' pom.xml")
+    sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${SNAPSHOT_VERSION}<\\/nd4j.version>/' pom.xml")
     sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>${SNAPSHOT_VERSION}<\\/datavec.version>/' pom.xml")
     //sh "${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${SNAPSHOT_VERSION}"
     functions.verset("${SNAPSHOT_VERSION}", true)
