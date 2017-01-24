@@ -63,8 +63,8 @@ stage('Nd4j Build') {
       echo 'STAGING_REPOSITORY is not set'
       // sh "./change-scala-versions.sh 2.10"
       // sh "./change-cuda-versions.sh 7.5"
-      sh "source change-scala-versions.sh 2.10"
-      sh "source change-cuda-versions.sh 7.5"
+      sh "./change-scala-versions.sh 2.10"
+      sh "./change-cuda-versions.sh 7.5"
 
       // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
       //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
@@ -74,8 +74,8 @@ stage('Nd4j Build') {
       //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
       //                     }
 
-      sh "source change-scala-versions.sh 2.11"
-      sh "source change-cuda-versions.sh 8.0"
+      sh "./change-scala-versions.sh 2.11"
+      sh "./change-cuda-versions.sh 8.0"
 
       // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
       //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
@@ -86,8 +86,8 @@ stage('Nd4j Build') {
       //                     }
     }
 
-    sh "source change-scala-versions.sh 2.10"
-    sh "source change-cuda-versions.sh 8.0"
+    sh "./change-scala-versions.sh 2.10"
+    sh "./change-cuda-versions.sh 8.0"
     // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
     functions.verset("${SNAPSHOT_VERSION}", true)
 
