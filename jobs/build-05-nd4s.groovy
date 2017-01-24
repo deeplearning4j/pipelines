@@ -16,9 +16,10 @@ stage('Nd4s Preparation') {
   }
 }
 
-stage('Nd4s Codecheck') {
-  functions.sonar("${ND4S_PROJECT}")
-}
+// There is no scala plugin for SonarQube
+// stage('Nd4s Codecheck') {
+//   functions.sonar("${ND4S_PROJECT}")
+// }
 
 stage ('Nd4s Build') {
   dir("${ND4S_PROJECT}") {

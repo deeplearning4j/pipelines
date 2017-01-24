@@ -24,6 +24,7 @@ stage('Scalnet Preparation') {
   }
 }
 
+// There is no scala plugin for SonarQube
 // stage('Scalnet Codecheck') {
 //   functions.sonar("${SCALNET_PROJECT}")
 // }
