@@ -24,14 +24,18 @@ stage('Libnd4j build') {
     functions.checktag("${LIBPROJECT}")
 
     withEnv(['TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
-    echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
-    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cpu"
-    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 7.5"
-    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 8.0"
-    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"
-    sh "./buildnativeoperations.sh -c cpu"
-    sh "./buildnativeoperations.sh -c cuda -v 7.5"
-    sh "./buildnativeoperations.sh -c cuda -v 8.0"
+      echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
+      // Check TRICK_NVCC and LIBND4J_HOME existence
+      sh "env"
+      // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cpu"
+      // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 7.5"
+      // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 8.0"
+
+      sh "./buildnativeoperations.sh -c cpu"
+      sh "./buildnativeoperations.sh -c cuda -v 7.5"
+      sh "./buildnativeoperations.sh -c cuda -v 8.0"
+
+      // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
     }
   }
 }
@@ -47,15 +51,31 @@ stage('Nd4j Build') {
 
   echo 'Build components with Maven'
   dir("${PROJECT}") {
+
     echo 'Set Project Version'
-    //  sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
+    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
+    functions.verset("${RELEASE_VERSION}", true)
+
     echo 'Maven Build, Package and Deploy'
     def check_repo = "${STAGING_REPOSITORY}"
     echo check_repo
     if (!check_repo) {
       echo 'STAGING_REPOSITORY is not set'
-      sh "./change-scala-versions.sh 2.10"
-      sh "./change-cuda-versions.sh 7.5"
+      // sh "./change-scala-versions.sh 2.10"
+      // sh "./change-cuda-versions.sh 7.5"
+      sh "source change-scala-versions.sh 2.10"
+      sh "source change-cuda-versions.sh 7.5"
+
+      // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
+      //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
+      //                       sh ("'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean deploy \
+      //                            -Dsettings.security=$MAVEN_SECURITY_SETTINGS \
+      //                            -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease \
+      //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
+      //                     }
+
+      sh "source change-scala-versions.sh 2.11"
+      sh "source change-cuda-versions.sh 8.0"
 
       // configFileProvider([configFile(fileId: 'maven-release-bintray-settings-1', variable: 'MAVEN_SETTINGS'),
       //                     configFile(fileId: 'maven-release-bintray-settings-security-1', variable: 'MAVEN_SECURITY_SETTINGS')]) {
@@ -65,6 +85,12 @@ stage('Nd4j Build') {
       //                            -DskipTests -Denforcer.skip -DstagingRepositoryId=$STAGING_REPOSITORY")
       //                     }
     }
+
+    sh "source change-scala-versions.sh 2.10"
+    sh "source change-cuda-versions.sh 8.0"
+    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
+    functions.verset("${SNAPSHOT_VERSION}", true)
+
   }
 }
 // Messages for debugging

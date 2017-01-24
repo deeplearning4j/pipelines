@@ -41,6 +41,11 @@ def sonar(proj) {
   }
 }
 
+// mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION
+def verset(ver, allowss) {
+  sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+}
+
 def release(proj) {
   echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
   dir("${proj}") {
@@ -50,10 +55,11 @@ def release(proj) {
       sh 'git status'
       // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
       // sh 'git commit -a -m "Update to version ${RELEASE_VERSION}"'
-      // sh 'git tag -a ${proj}-${RELEASE_VERSION} -m ${SCALNET_PROJECT}-${RELEASE_VERSION}'
+      // sh 'git tag -a ${proj}-${RELEASE_VERSION} -m ${proj}-${RELEASE_VERSION}'
       // sh 'git push origin ${proj}-${RELEASE_VERSION}'
     }
   }
 }
+
 
 return this;

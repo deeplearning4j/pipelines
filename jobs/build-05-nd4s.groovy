@@ -1,3 +1,6 @@
+tool name: 'SBT100M4', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'
+def sbtHome = tool 'SBT100M4'
+
 functions = load 'jobs/functions.groovy'
 
 stage('Nd4s Preparation') {
@@ -10,9 +13,11 @@ stage('Nd4s Preparation') {
   dir("${ND4S_PROJECT}") {
     functions.checktag("${ND4S_PROJECT}")
 
-    sh ("sed -i 's/version := \".*\",/version := \"$RELEASE_VERSION\",/' build.sbt")
-    sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"$RELEASE_VERSION\",/' build.sbt")
+    sh ("sed -i 's/version := \".*\",/version := \"${RELEASE_VERSION}\",/' build.sbt")
+    sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${RELEASE_VERSION}\",/' build.sbt")
     //sh ("sbt +publishSigned")
+    // sh "'${sbtHome}/bin/sbt' +publishSigned"
+    sh "'${sbtHome}/bin/sbt' test -Dsbt.log.noformat=true"
   }
 }
 
@@ -24,7 +29,6 @@ stage('Nd4s Preparation') {
 stage ('Nd4s Build') {
   dir("${ND4S_PROJECT}") {
 
-    // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     //sh "git tag -a -m '$ND4S_PROJECT-$RELEASE_VERSION" "$ND4S_PROJECT-$RELEASE_VERSION'"
     sh ("sed -i 's/version := \".*\",/version := \"$SNAPSHOT_VERSION\",/' build.sbt")

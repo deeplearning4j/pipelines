@@ -13,7 +13,8 @@ stage('Datavec Preparation') {
     functions.checktag("${DATAVEC_PROJECT}")
 
     sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$RELEASE_VERSION<\\/nd4j.version>/' pom.xml")
-    sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
+    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
+    functions.verset("${RELEASE_VERSION}", true)
   }
 }
 
@@ -33,8 +34,9 @@ stage ('Datavec Build') {
 
     sh "./change-scala-versions.sh 2.10"
 
-    //  sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/'' pom.xml"
+    sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$SNAPSHOT_VERSION<\\/nd4j.version>/'' pom.xml"
     //  sh "${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$SNAPSHOT_VERSION"
+    functions.verset("${SNAPSHOT_VERSION}", true)
     //  sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
     // echo "Successfully performed release of ${DATAVEC_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
