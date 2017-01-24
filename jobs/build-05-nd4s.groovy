@@ -17,7 +17,7 @@ stage('Nd4s Preparation') {
     sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${RELEASE_VERSION}\",/' build.sbt")
     //sh ("sbt +publishSigned")
     // sh "'${sbtHome}/bin/sbt' +publishSigned"
-    sh "'${sbtHome}/bin/sbt' test -Dsbt.log.noformat=true"
+    // sh "'${sbtHome}/bin/sbt' test -Dsbt.log.noformat=true"
   }
 }
 
