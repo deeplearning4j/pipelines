@@ -33,11 +33,11 @@
 #  get_url:
 #    url: "{{ source_nvidia_docker }}"
 #    dest: /tmp/
-- name: Download ant unarchive nvidia-docker
+- name: Download and unarchive nvidia-docker
   unarchive:
     remote_src: yes
     src: "{{ source_nvidia_docker }}"
-    dst: "/usr/bin"
+    dest: "/usr/bin"
     extra_opts: "--strip-components=1"
 
 
