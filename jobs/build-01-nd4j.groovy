@@ -13,9 +13,9 @@ stage('Nd4j Preparation') {
 //   functions.sonar("${LIBPROJECT}")
 // }
 
-stage('Nd4j Codecheck') {
-  functions.sonar("${PROJECT}")
-}
+// stage('Nd4j Codecheck') {
+//   functions.sonar("${PROJECT}")
+// }
 
 stage('Libnd4j build') {
 
@@ -23,13 +23,16 @@ stage('Libnd4j build') {
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
 
-    // functions.sonar("${LIBPROJECT}")
-
-      echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
-      //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
-      //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 7.5"
-      //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cuda -v 8.0"
-
+    withEnv(['TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
+    echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
+    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cpu"
+    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 7.5"
+    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 8.0"
+    // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"
+    sh "./buildnativeoperations.sh -c cpu"
+    sh "./buildnativeoperations.sh -c cuda -v 7.5"
+    sh "./buildnativeoperations.sh -c cuda -v 8.0"
+    }
   }
 }
 stage('Nd4j Build') {
