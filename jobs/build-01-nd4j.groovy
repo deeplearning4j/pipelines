@@ -31,9 +31,9 @@ stage('Libnd4j build') {
       // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 7.5"
       // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 8.0"
 
-      sh "./buildnativeoperations.sh -c cpu"
-      sh "./buildnativeoperations.sh -c cuda -v 7.5"
-      sh "./buildnativeoperations.sh -c cuda -v 8.0"
+      // sh "./buildnativeoperations.sh -c cpu"
+      // sh "./buildnativeoperations.sh -c cuda -v 7.5"
+      // sh "./buildnativeoperations.sh -c cuda -v 8.0"
 
       // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
     }

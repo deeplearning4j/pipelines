@@ -43,6 +43,7 @@ def sonar(proj) {
 
 // mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION
 def verset(ver, allowss) {
+  def mvnHome = tool 'M339'
   sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
 }
 
