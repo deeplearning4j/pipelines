@@ -19,15 +19,13 @@ stage('Gym-Java-Client Preparation') {
   }
 }
 
-// stage('Gym-Java-Client Codecheck') {
-//   functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-// }
+stage('Gym-Java-Client Codecheck') {
+  functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
+}
 
 stage ('Gym-Java-Client Build') {
   dir("${GYM_JAVA_CLIENT_PROJECT}") {
 
-    functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-    
     // sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
     // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
     // sh "git commit -a -m 'Update to version $RELEASE_VERSION'"

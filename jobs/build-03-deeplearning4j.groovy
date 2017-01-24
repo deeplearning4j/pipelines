@@ -18,16 +18,13 @@ stage('Deeplearning4j Preparation') {
   }
 }
 
-// stage('Deeplearning4j Codecheck') {
-//   functions.sonar("${DEEPLEARNING4J_PROJECT}")
-// }
-
+stage('Deeplearning4j Codecheck') {
+  functions.sonar("${DEEPLEARNING4J_PROJECT}")
+}
 
 stage ('Deeplearning4j Build') {
   dir("${DEEPLEARNING4J_PROJECT}") {
 
-    functions.sonar("${DEEPLEARNING4J_PROJECT}")
-    
     sh "./change-scala-versions.sh 2.10"
     sh "./change-cuda-versions.sh 7.5"
     //sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"

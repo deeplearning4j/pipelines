@@ -13,9 +13,9 @@ stage('Nd4j Preparation') {
 //   functions.sonar("${LIBPROJECT}")
 // }
 
-// stage('Nd4j Codecheck') {
-//   functions.sonar("${PROJECT}")
-// }
+stage('Nd4j Codecheck') {
+  functions.sonar("${PROJECT}")
+}
 
 stage('Libnd4j build') {
 
@@ -23,7 +23,7 @@ stage('Libnd4j build') {
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
 
-    functions.sonar("${LIBPROJECT}")
+    // functions.sonar("${LIBPROJECT}")
 
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
       //  sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/$LIBPROJECT && ./buildnativeoperations.sh -c cpu"
@@ -40,7 +40,7 @@ stage('Nd4j Build') {
     functions.checktag("${PROJECT}")
   }
 
-  functions.sonar("${PROJECT}")
+  // functions.sonar("${PROJECT}")
 
   echo 'Build components with Maven'
   dir("${PROJECT}") {
