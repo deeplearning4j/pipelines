@@ -22,6 +22,12 @@
     name: "{{ service_name }}"
     enabled: yes
     state: started
+    
+- name: Add user to docker group
+  user:
+    name: ec2-user
+    groups: docker
+    append: yes
 
 - name: Download Nvidia-docker rpm
   get_url:
