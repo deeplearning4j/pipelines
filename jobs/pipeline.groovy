@@ -61,6 +61,7 @@ timestamps {
     }
 
     step([$class: 'WsCleanup'])
+    sh "rm -rf $HOME/.sonar"
   }
 
   // Messages for debugging

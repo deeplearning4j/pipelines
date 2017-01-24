@@ -24,12 +24,15 @@ stage('Scalnet Preparation') {
   }
 }
 
-stage('Scalnet Codecheck') {
-  functions.sonar("${SCALNET_PROJECT}")
-}
+// stage('Scalnet Codecheck') {
+//   functions.sonar("${SCALNET_PROJECT}")
+// }
 
 stage ('Scalnet Build') {
   dir("${SCALNET_PROJECT}") {
+
+    functions.sonar("${SCALNET_PROJECT}")
+
     //  configFileProvider(
       // [configFile(fileId: '$MAVENSETS', variable: 'MAVEN_SETTINGS')]) {
     // sh "'${mvnHome}/bin/mvn' -DscalaVersion=2.10 clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip"

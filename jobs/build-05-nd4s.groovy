@@ -16,12 +16,15 @@ stage('Nd4s Preparation') {
   }
 }
 
-stage('Nd4s Codecheck') {
-  functions.sonar("${ND4S_PROJECT}")
-}
+// stage('Nd4s Codecheck') {
+//   functions.sonar("${ND4S_PROJECT}")
+// }
 
 stage ('Nd4s Build') {
   dir("${ND4S_PROJECT}") {
+
+    functions.sonar("${ND4S_PROJECT}")
+
     // all of git tag or commit actions should be in pipeline.groovy after user "Release" input
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
     //sh "git tag -a -m '$ND4S_PROJECT-$RELEASE_VERSION" "$ND4S_PROJECT-$RELEASE_VERSION'"

@@ -20,12 +20,16 @@ stage('Rl4j Preparation') {
 
   }
 }
+//
+// stage('Rl4j Codecheck') {
+//   functions.sonar("${RL4J_PROJECT}")
+// }
 
-stage('Rl4j Codecheck') {
-  functions.sonar("${RL4J_PROJECT}")
-}
 stage ('Rl4j Build') {
   dir("${RL4J_PROJECT}") {
+
+    functions.sonar("${RL4J_PROJECT}")
+    
     //  configFileProvider(
       // [configFile(fileId: '$MAVENSETS', variable: 'MAVEN_SETTINGS')]) {
     // sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
