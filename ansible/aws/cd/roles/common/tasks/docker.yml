@@ -36,7 +36,7 @@
 - name: Download ant unarchive nvidia-docker
   unarchive:
     remote_src: yes
-    src: {{ source_nvidia_docker }}
+    src: "{{ source_nvidia_docker }}"
     dst: "/usr/bin"
     extra_opts: "--strip-components=1"
 
