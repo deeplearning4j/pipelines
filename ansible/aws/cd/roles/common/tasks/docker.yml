@@ -22,19 +22,18 @@
     name: "{{ service_name }}"
     enabled: yes
     state: started
-    
+
 - name: Add user to docker group
   user:
     name: ec2-user
     groups: docker
     append: yes
 
-- name: Download Nvidia-docker rpm
-  get_url:
-    url: "{{ source_rpm }}"
-    dest: /tmp/nvidia-docker.rpm
+#- name: Download Nvidia-docker rpm
+#  get_url:
+#    url: "{{ source_rpm }}"
+#    dest: /tmp/
+#- name: Untar nvidia code
 
-- name:  Install nvidia-docker
-  yum:
-    name: /tmp/nvidia-docker.rpm #nvidia-docker*.rpm
-    state: present
+
+
