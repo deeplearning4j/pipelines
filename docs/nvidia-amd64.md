@@ -20,7 +20,7 @@
 
  - And in **Init script** field define what need to do during provision EC2 slave of Jenkins:
 
- ``` 
+ ```
   sudo yum update -y
   sudo yum install git -y
   sudo pip install ansible
@@ -33,7 +33,7 @@
 ### 2. Ansible plugin:
 
 - In our case, ansible will be installed via **Init script** section. We should define the path to ansible on our future EC2 slave.
-Go to **Manage Jenkins** -> **Global Tool Configuration** and inside **Ansible** section and define following (note, that path may be different 
+Go to **Manage Jenkins** -> **Global Tool Configuration** and inside **Ansible** section and define following (note, that path may be different
 on different distributives):
 
 <p align="center">
@@ -49,5 +49,5 @@ on different distributives):
   <img src="imgs/pipeline_config.png"/>
 </p>
 
-### Our pipeline script looks as [ec2-gpu-slave.groovy](jobs/ec2-gpu-slave.groovy)
-### Our playbook with roles looks as [playbook](ansible/aws/cd)
+### Our pipeline script looks as [ec2-gpu-slave.groovy](./jobs/ec2-gpu-slave.groovy)
+### Our playbook with roles looks as [playbook](./ansible/aws/cd)
