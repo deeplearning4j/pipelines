@@ -46,9 +46,8 @@ on different distributives):
 - Fill out **Pipeline** section (define **Repositories** with nececcery **Credentials** and **Script Path**):
 
 <p align="center">
-  <img src="imgs/pipeline_config.png.png"/>
+  <img src="imgs/pipeline_config.png"/>
 </p>
 
 ### Our pipeline script looks as [ec2-gpu-slave.groovy](jobs/ec2-gpu-slave.groovy)
 ### Our playbook with roles looks as [playbook](ansible/aws/cd)
-
