@@ -1,16 +1,6 @@
 ---
 - include_vars: docker_vars.yml
 
-#- name: Add Docker repository
-#  yum_repository:
-#    name: "docker"
-#    description: "docker"
-#    baseurl: "{{ baseurl }}"
-#    enabled: yes
-#    gpgcheck: yes
-#   gpgkey: "{{ gpgkey }}"
-#    state: present
-
 - name: Install Docker
   yum:
     update_cache: yes
@@ -29,10 +19,6 @@
     groups: docker
     append: yes
 
-#- name: Download Nvidia-docker rpm
-#  get_url:
-#    url: "{{ source_nvidia_docker }}"
-#    dest: /tmp/
 - name: Download and unarchive nvidia-docker
   unarchive:
     remote_src: yes
@@ -41,8 +27,3 @@
     extra_opts: "--strip-components=1"
 - name: Run nvidia-docker-plugin
   command: sudo -b nohup nvidia-docker-plugin > /tmp/nvidia-docker.log 
-
-
-
-
-

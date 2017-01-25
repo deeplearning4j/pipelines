@@ -3,6 +3,5 @@
 
 - name: install Defined packet(s)
   yum:
-     name: "{{ packet_name }}"
+     name: "{{ package_name }}"
      state: present
-
