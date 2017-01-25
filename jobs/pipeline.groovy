@@ -14,8 +14,8 @@ timestamps {
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Not sure if this step is really required
-      checkout scm
-
+        checkout scm
+/*
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Setup variables for current run
         def RELEASE_VERSION
@@ -82,6 +82,7 @@ timestamps {
 //          ANDROID_NDK = userInput['NDK']
             GITCREDID = userInput['gitCreditValue']
         }
+ */
 
         // sh ("env")
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
