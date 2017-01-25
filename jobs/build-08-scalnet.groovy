@@ -36,9 +36,9 @@ stage ('Scalnet Build') {
 
     //  configFileProvider(
     //   [configFile(fileId: '$MAVENSETS', variable: 'MAVEN_SETTINGS')]) {
-    //     sh "./change-scala-versions.sh 2.10"
+        sh "./change-scala-versions.sh 2.10"
     //     sh "'${mvnHome}/bin/mvn' -DscalaVersion=2.10 clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip"
-    //     sh "./change-scala-versions.sh 2.11"
+        sh "./change-scala-versions.sh 2.11"
     //     sh "'${mvnHome}/bin/mvn' -DscalaVersion=2.11 clean deploy -Dgpg.executable=gpg2 -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY -Dscalastyle.skip"
 
     // sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
