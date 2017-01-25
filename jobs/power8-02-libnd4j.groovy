@@ -1,3 +1,4 @@
+//test
 timestamps {
   node ('power8') {
 	 step([$class: 'WsCleanup'])
