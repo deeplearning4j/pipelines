@@ -95,11 +95,11 @@ timestamps {
         }
 
 */
-    stage('Build Components') {
-      def builds = [:]
-        builds['DATAVEC'] = {
-          load 'jobs/build-02-datavec.groovy'
-        }
+        stage('Build Components') {
+            def builds = [:]
+            builds['DATAVEC'] = {
+                load 'jobs/build-02-datavec.groovy'
+            }
 /*
         builds['DEEPLEARNING4J'] = {
       	   load  'jobs/build-03-deeplearning4j.groovy'
@@ -173,12 +173,12 @@ timestamps {
 
     // step([$class: 'WsCleanup'])
     sh "rm -rf $HOME/.sonar"*/
+        }
+
+        // Messages for debugging
+        echo 'MARK: end of pipeline.groovy'
     }
-
-    // Messages for debugging
-    echo 'MARK: end of pipeline.groovy'
 }
-
 // def release(PROJ) {
 //   echo "Adding tag ${PROJ}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJ}"
 //   dir("${PROJ}") {
