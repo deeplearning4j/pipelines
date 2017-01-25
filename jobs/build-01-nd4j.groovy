@@ -1,9 +1,9 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-functions = load 'jobs/functions.groovy'
+// functions = load 'jobs/functions.groovy'
 
-stage('Nd4j Preparation') {
+stage('CheckoutSources') {
   functions.get_project_code("${PROJECT}")
   functions.get_project_code("${LIBPROJECT}")
 
@@ -16,6 +16,7 @@ stage('Nd4j Preparation') {
 // stage('Nd4j Codecheck') {
 //   functions.sonar("${PROJECT}")
 // }
+/*
 
 stage('Libnd4j build') {
 
@@ -95,3 +96,4 @@ stage('Nd4j Build') {
 }
 // Messages for debugging
 echo 'MARK: end of build-01-nd4j.groovy'
+*/
