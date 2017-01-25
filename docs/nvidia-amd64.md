@@ -7,6 +7,7 @@
 
 ## Configuration:
 1. Jenkins amazon EC2 plugin:
+
 - Go to **Manage Jenkins** -> **Cloud** and in **Amazon EC2** section and fill out fields according to yours:
 
 <p align="center">
