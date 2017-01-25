@@ -96,7 +96,7 @@ timestamps {
 
 */
         stage('Build Components') {
-            def builds = [:]
+            //def builds = [:]
             builds['DATAVEC'] = {
                 load 'jobs/build-02-datavec.groovy'
             }
