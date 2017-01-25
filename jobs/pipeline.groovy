@@ -70,9 +70,9 @@ timestamps {
     // }
 
     // depends on nd4j and deeplearning4j-core
-    stage('SCALNET') {
-    	load 'jobs/build-08-scalnet.groovy'
-    }
+    // stage('SCALNET') {
+    // 	load 'jobs/build-08-scalnet.groovy'
+    // }
 
     stage('RELEASE') {
       // timeout(time:1, unit:'HOURS') {
