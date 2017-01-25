@@ -15,33 +15,64 @@ timestamps {
       load 'jobs/build-01-nd4j.groovy'
     }
 
-    stage('DATAVEC') {
-      load 'jobs/build-02-datavec.groovy'
+    stage('Build Components') {
+      def builds = [:]
+        builds['DATAVEC'] = {
+          load 'jobs/build-02-datavec.groovy'
+        }
+
+        builds['DEEPLEARNING4J'] = {
+      	   load  'jobs/build-03-deeplearning4j.groovy'
+        }
+
+        builds['ARBITER'] = {
+        	load 'jobs/build-04-arbiter.groovy'
+        }
+
+        builds['ND4S'] = {
+        	load 'jobs/build-05-nd4s.groovy'
+        }
+
+        builds['GYM-JAVA-CLIENT'] = {
+        	load 'jobs/build-06-gym-java-client.groovy'
+        }
+
+        builds['RL4J'] = {
+        	load 'jobs/build-07-rl4j.groovy'
+        }
+
+      parallel builds
+
     }
 
-    stage('DEEPLEARNING4J') {
-    	load  'jobs/build-03-deeplearning4j.groovy'
-    }
+    // stage('DATAVEC') {
+    //   load 'jobs/build-02-datavec.groovy'
+    // }
+    //
+    // stage('DEEPLEARNING4J') {
+    // 	load  'jobs/build-03-deeplearning4j.groovy'
+    // }
+    //
+    // stage('ARBITER') {
+    // 	load 'jobs/build-04-arbiter.groovy'
+    // }
+    //
+    // stage('ND4S') {
+    // 	load 'jobs/build-05-nd4s.groovy'
+    // }
+    //
+    // stage('GYM-JAVA-CLIENT') {
+    // 	load 'jobs/build-06-gym-java-client.groovy'
+    // }
+    //
+    // stage('RL4J') {
+    // 	load 'jobs/build-07-rl4j.groovy'
+    // }
 
-    stage('ARBITER') {
-    	load 'jobs/build-04-arbiter.groovy'
-    }
-
-    stage('ND4S') {
-    	load 'jobs/build-05-nd4s.groovy'
-    }
-
-    stage('GYM-JAVA-CLIENT') {
-    	load 'jobs/build-06-gym-java-client.groovy'
-    }
-
-    stage('RL4J') {
-    	load 'jobs/build-07-rl4j.groovy'
-    }
-
-    stage('SCALNET') {
-    	load 'jobs/build-08-scalnet.groovy'
-    }
+    // depends on nd4j and deeplearning4j-core
+    // stage('SCALNET') {
+    // 	load 'jobs/build-08-scalnet.groovy'
+    // }
 
     stage('RELEASE') {
       // timeout(time:1, unit:'HOURS') {
@@ -60,13 +91,14 @@ timestamps {
       functions.release("${SCALNET_PROJECT}")
     }
 
-    step([$class: 'WsCleanup'])
+    // step([$class: 'WsCleanup'])
     sh "rm -rf $HOME/.sonar"
   }
 
   // Messages for debugging
   echo 'MARK: end of pipeline.groovy'
 }
+
 
 // def release(PROJ) {
 //   echo "Adding tag ${PROJ}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${PROJ}"
