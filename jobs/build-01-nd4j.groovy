@@ -1,6 +1,7 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
+sh 'env'
 echo "${PROJECT}"
 
 functions = load 'jobs/functions.groovy'

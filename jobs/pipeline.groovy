@@ -91,6 +91,7 @@ timestamps {
 
         stage('ND4J') {
             echo "${PROJECT}"
+            sh 'env'
             load 'jobs/build-01-nd4j.groovy'
         }
 
