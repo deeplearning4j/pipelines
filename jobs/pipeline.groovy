@@ -97,7 +97,7 @@ timestamps {
 */
         stage('Build Components') {
             //def builds = [:]
-            builds['DATAVEC'] = {
+  //          builds['DATAVEC'] = {
                 load 'jobs/build-02-datavec.groovy'
             }
 /*
@@ -173,7 +173,7 @@ timestamps {
 
     // step([$class: 'WsCleanup'])
     sh "rm -rf $HOME/.sonar"*/
-        }
+
 
         // Messages for debugging
         echo 'MARK: end of pipeline.groovy'
