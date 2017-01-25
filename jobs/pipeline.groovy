@@ -90,6 +90,7 @@ timestamps {
         functions = load 'jobs/functions.groovy'
 
         stage('ND4J') {
+            echo "${PROJECT}"
             load 'jobs/build-01-nd4j.groovy'
         }
 

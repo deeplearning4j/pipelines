@@ -1,6 +1,8 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
+echo "${PROJECT}"
+
 functions = load 'jobs/functions.groovy'
 
 stage('CheckoutSources') {
