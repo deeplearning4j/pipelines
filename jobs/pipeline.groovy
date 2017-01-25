@@ -87,12 +87,10 @@ timestamps {
         // sh ("env")
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Load functions from file
-        echo "Load Functions"
-        functions = load 'jobs/functions.groovy'
+//        echo "Load Functions"
+//        functions = load 'jobs/functions.groovy'
 
         stage('ND4J') {
-            echo "${PROJECT}"
-            sh 'env'
             load 'jobs/build-01-nd4j.groovy'
         }
 
