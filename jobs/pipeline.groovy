@@ -14,7 +14,7 @@ timestamps {
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Not sure if this step is really required
-    checkout scm
+    //checkout scm
 /*
     // sh ("env")
 
