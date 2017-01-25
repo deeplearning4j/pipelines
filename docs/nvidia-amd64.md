@@ -6,26 +6,42 @@
 3. NVIDIA CUDA Toolkit 7.5 on Amazon Linux with accepted agreement for use.
 
 ## Configuration:
-1. Jenkins amazon EC2 plugin:
 
-- Go to **Manage Jenkins** -> **Cloud** and in **Amazon EC2** section and fill out fields according to yours:
+### 1. Jenkins Amazon EC2 plugin:
+
+ - Go to **Manage Jenkins** -> **Cloud** and in **Amazon EC2** section and fill out fields according to yours:
+ <p align="center">
+   <img src="imgs/ec2_plugin_1.png"/>
+ </p>
+
+ <p align="center">
+   <img src="imgs/ec2_plugin_2.png"/>
+ </p>
+
+ - And in **Init script** field define what need to do during provision EC2 slave of Jenkins:
+
+ ``` 
+  sudo yum update -y
+  sudo yum install git -y
+  sudo pip install ansible
+  sudo yum install docker -y
+  sudo usermod -G docker ec2-user
+  wget -P /tmp http://us.download.nvidia.com/XFree86/Linux-x86_64/367.57/NVIDIA-Linux-x86_64-367.57.run
+  sudo bash /tmp/NVIDIA-Linux-x86_64-367.57.run -s
+ ```
+
+### 2. Ansible plugin:
+
+- In our case, ansible will be installed via **Init script** section. We should define the path to ansible on our future EC2 slave.
+Go to **Manage Jenkins** -> **Global Tool Configuration** and inside **Ansible** section and define following (note, that path may be different 
+on different distributives):
 
 <p align="center">
-  <img src="imgs/ec2_plugin_1.png"/>
+  <img src="imgs/ansible_plugin.png"/>
 </p>
 
-<p align="center">
-  <img src="imgs/ec2_plugin_2.png"/>
-</p>
+### 3. Configure pipeline job on our Jenkins master:
 
-- And in **Init script** field define what need to do during provision EC2 slave of Jenkins:
-
-``` bash
-sudo yum update -y
-sudo yum install git -y
-sudo pip install ansible
-sudo yum install docker -y
-sudo usermod -G docker ec2-user
-wget -P /tmp http://us.download.nvidia.com/XFree86/Linux-x86_64/367.57/NVIDIA-Linux-x86_64-367.57.run
-sudo bash /tmp/NVIDIA-Linux-x86_64-367.57.run -s
-```
+- Click **New Item**, define name of **Item**, choose **Pipeline** and click **OK**
+- click checkbox **Restrict where this project can be run** and in field **Label** type label, which we defined in **Amazon EC2** plugin 
+configuration (in our case, ec2cuda)
