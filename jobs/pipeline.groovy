@@ -1,11 +1,21 @@
 timestamps {
   node ('master') {
-    step([$class: 'WsCleanup'])
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Commented WsCleanup Step to minimize time for build
+    //step([$class: 'WsCleanup'])
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Discard old builds by keeping log of 5 last
+    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]]);
+
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // legacy part will take a look to it later
     // def GITCREDID = 'github-private-deeplearning4j-id-1'
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Not sure if this step is really required
     checkout scm
-
+/*
     // sh ("env")
 
     echo "Load Functions"
@@ -92,7 +102,7 @@ timestamps {
     }
 
     // step([$class: 'WsCleanup'])
-    sh "rm -rf $HOME/.sonar"
+    sh "rm -rf $HOME/.sonar"*/
   }
 
   // Messages for debugging
