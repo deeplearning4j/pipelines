@@ -11,11 +11,11 @@
 
  - Go to **Manage Jenkins** -> **Cloud** and in **Amazon EC2** section and fill out fields according to yours:
  <p align="center">
-   <img src="imgs/ec2_plugin_1.png"/>
+   <img src="/imgs/ec2_plugin_1.png"/>
  </p>
 
  <p align="center">
-   <img src="imgs/ec2_plugin_2.png"/>
+   <img src="/imgs/ec2_plugin_2.png"/>
  </p>
 
  - And in **Init script** field define what need to do during provision EC2 slave of Jenkins:
@@ -37,7 +37,7 @@ Go to **Manage Jenkins** -> **Global Tool Configuration** and inside **Ansible**
 on different distributives):
 
 <p align="center">
-  <img src="../imgs/ansible_plugin.png"/>
+  <img src="/imgs/ansible_plugin.png"/>
 </p>
 
 ### 3. Configure pipeline job on our Jenkins master:
@@ -46,8 +46,8 @@ on different distributives):
 - Fill out **Pipeline** section (define **Repositories** with nececcery **Credentials** and **Script Path**):
 
 <p align="center">
-  <img src="../imgs/pipeline_config.png"/>
+  <img src="/imgs/pipeline_config.png"/>
 </p>
 
-### Our pipeline script looks as [ec2-gpu-slave.groovy](../jobs/ec2-gpu-slave.groovy)
-### Our playbook with roles looks as [playbook](../ansible/aws/cd)
+### Our pipeline script looks as [ec2-gpu-slave.groovy](/jobs/ec2-gpu-slave.groovy)
+### Our playbook with roles looks as [playbook](/ansible/aws/cd)
