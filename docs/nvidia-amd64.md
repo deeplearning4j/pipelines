@@ -43,5 +43,12 @@ on different distributives):
 ### 3. Configure pipeline job on our Jenkins master:
 
 - Click **New Item**, define name of **Item**, choose **Pipeline** and click **OK**
-- click checkbox **Restrict where this project can be run** and in field **Label** type label, which we defined in **Amazon EC2** plugin 
-configuration (in our case, ec2cuda)
+- Fill out **Pipeline** section (define **Repositories** with nececcery **Credentials** and **Script Path**):
+
+<p align="center">
+  <img src="imgs/pipeline_config.png.png"/>
+</p>
+
+### Our pipeline script looks as [ec2-gpu-slave.groovy](jobs/ec2-gpu-slave.groovy)
+### Our playbook with roles looks as [playbook](ansible/aws/cd)
+
