@@ -18,6 +18,8 @@ stage('Rl4j Preparation') {
     sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>${RELEASE_VERSION}<\\/dl4j.version>/' pom.xml")
     // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
     functions.verset("${RELEASE_VERSION}", true)
+    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")}
 
   }
 }
@@ -25,7 +27,7 @@ stage('Rl4j Preparation') {
 // stage('Rl4j Codecheck') {
 //   functions.sonar("${RL4J_PROJECT}")
 // }
-
+/*
 stage ('Rl4j Build') {
   dir("${RL4J_PROJECT}") {
 
@@ -43,6 +45,6 @@ stage ('Rl4j Build') {
     // sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
     // echo "Successfully performed release of ${RL4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
-}
+}*/
 // Messages for debugging
 echo 'MARK: end of build-07-rl4j.groovy'
