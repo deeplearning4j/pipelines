@@ -89,11 +89,11 @@ timestamps {
         // Load functions from file
 //        echo "Load Functions"
 //        functions = load 'jobs/functions.groovy'
-
+/*
         stage('ND4J') {
             load 'jobs/build-01-nd4j.groovy'
         }
-
+*/
 
 /*
         stage('Build Components') {
@@ -102,18 +102,21 @@ timestamps {
               load 'jobs/build-02-datavec.groovy'
             }
 */
-
+/*
         stage('DEEPLEARNING4J')
 //        builds['DEEPLEARNING4J'] =
             {
       	   load  'jobs/build-03-deeplearning4j.groovy'
         }
-/*
+*/
 
-//        builds['ARBITER'] = {
+
+
+//        builds['ARBITER'] =
+            stage ("ARBITER"){
         	load 'jobs/build-04-arbiter.groovy'
         }
-
+/*
         builds['ND4S'] = {
         	load 'jobs/build-05-nd4s.groovy'
         }
