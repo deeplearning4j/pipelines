@@ -111,19 +111,28 @@ timestamps {
 */
 
 
-
+/*
 //        builds['ARBITER'] =
-            stage ("ARBITER"){
+            stage ("ARBITER")
+                    {
         	load 'jobs/build-04-arbiter.groovy'
         }
+  */
+
 /*
-        builds['ND4S'] = {
+//        builds['ND4S'] =
+        stage ("ND4S")
+        {
         	load 'jobs/build-05-nd4s.groovy'
         }
+*/
 
-        builds['GYM-JAVA-CLIENT'] = {
+        stage ("GYM-JAVA-CLIENT")
+        //builds['GYM-JAVA-CLIENT'] =
+                {
         	load 'jobs/build-06-gym-java-client.groovy'
         }
+/*
 
         builds['RL4J'] = {
         	load 'jobs/build-07-rl4j.groovy'
