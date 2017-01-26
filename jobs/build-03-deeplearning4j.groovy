@@ -3,12 +3,19 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
+stage("PrepareTest"){
+  git credentialsId: "${GITCREDID}", url: 'git@github.com:deeplearning4j/dl4j-test-resources.git'
+  dir("dl4j-test-resources"){
+    functions.verset("${RELEASE_VERSION}", true)
+    sh("'${mvnHome}/bin/mvn' clean install")
+  }
+}
+
 stage('Deeplearning4j Preparation') {
   functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
 
   echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
-
   dir("${DEEPLEARNING4J_PROJECT}") {
     functions.checktag("${DEEPLEARNING4J_PROJECT}")
 

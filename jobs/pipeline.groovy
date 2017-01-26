@@ -107,7 +107,7 @@ timestamps {
         }
 
 
-        builds['ARBITER'] = {
+//        builds['ARBITER'] = {
         	load 'jobs/build-04-arbiter.groovy'
         }
 
