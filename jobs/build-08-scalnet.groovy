@@ -23,6 +23,9 @@ stage('Scalnet Preparation') {
     // # In its normal state, repo should contain a snapshot version stanza
     sh ("sed -i 's/<version>.*-SNAPSHOT<\\/version>/<version>${RELEASE_VERSION}<\\/version>/' pom.xml")
     functions.verset("${RELEASE_VERSION}", false)
+
+    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip ")}
   }
 }
 
@@ -31,7 +34,7 @@ stage('Scalnet Preparation') {
 //   functions.sonar("${SCALNET_PROJECT}")
 // }
 
-stage ('Scalnet Build') {
+/*stage ('Scalnet Build') {
   dir("${SCALNET_PROJECT}") {
 
     //  configFileProvider(
@@ -53,7 +56,7 @@ stage ('Scalnet Build') {
     functions.verset("${SNAPSHOT_VERSION}", true)
     // sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
     // echo "Successfully performed release of ${SCALNET_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
-  }
 }
+}*/
 // Messages for debugging
 echo 'MARK: end of build-08-scalnet.groovy'

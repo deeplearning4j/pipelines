@@ -134,16 +134,19 @@ timestamps {
         }
         */
 
-
+/*
         stage ("RL4J")
         //builds['RL4J'] =
          {
         	load 'jobs/build-07-rl4j.groovy'
         }
+        */
 /*
+
       parallel builds
 
     }
+*/
 
     // stage('DATAVEC') {
     //   load 'jobs/build-02-datavec.groovy'
@@ -173,6 +176,7 @@ timestamps {
     stage('SCALNET') {
     	load 'jobs/build-08-scalnet.groovy'
     }
+/*
 
     stage('RELEASE') {
       // timeout(time:1, unit:'HOURS') {
@@ -192,8 +196,10 @@ timestamps {
     }
 
     // step([$class: 'WsCleanup'])
-    sh "rm -rf $HOME/.sonar"*/
+    sh "rm -rf $HOME/.sonar"*//*
 
+
+*/
 
         // Messages for debugging
         echo 'MARK: end of pipeline.groovy'
