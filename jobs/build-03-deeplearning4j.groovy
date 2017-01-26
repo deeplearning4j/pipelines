@@ -4,7 +4,15 @@ def mvnHome = tool 'M339'
 functions = load 'jobs/functions.groovy'
 
 stage("PrepareTest"){
-  git credentialsId: "${GITCREDID}", url: 'git@github.com:deeplearning4j/dl4j-test-resources.git'
+  
+  checkout([$class                           : 'GitSCM',
+            branches                         : [[name: '*/intropro']],
+            doGenerateSubmoduleConfigurations: false,
+            extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: "dl4j-test-resources"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+            submoduleCfg                     : [],
+            userRemoteConfigs                : [[url: "https://github.com/${ACCOUNT}/dl4j-test-resources.git"]]
+  ])
+
   dir("dl4j-test-resources"){
     functions.verset("${RELEASE_VERSION}", true)
     sh("'${mvnHome}/bin/mvn' clean install")
