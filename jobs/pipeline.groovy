@@ -126,18 +126,21 @@ timestamps {
         	load 'jobs/build-05-nd4s.groovy'
         }
 */
-
+/*
         stage ("GYM-JAVA-CLIENT")
         //builds['GYM-JAVA-CLIENT'] =
                 {
         	load 'jobs/build-06-gym-java-client.groovy'
         }
-/*
+        */
 
-        builds['RL4J'] = {
+
+        stage ("RL4J")
+        //builds['RL4J'] =
+         {
         	load 'jobs/build-07-rl4j.groovy'
         }
-
+/*
       parallel builds
 
     }
