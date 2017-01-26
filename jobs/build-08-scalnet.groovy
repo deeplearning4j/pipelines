@@ -24,13 +24,13 @@ stage('Scalnet Preparation') {
     sh ("sed -i 's/<version>.*-SNAPSHOT<\\/version>/<version>${RELEASE_VERSION}<\\/version>/' pom.xml")
 
 
-    sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION} -DscalaVersion=2.10 -DartifactId=scalnet_2.10")
+    sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION} -PscalaVersion=2.10")
 //    functions.verset("${RELEASE_VERSION}", false)
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -PscalaVersion=2.10")}
 
 
-    sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION} -DscalaVersion=2.11 -DartifactId=scalnet_2.11")
+    sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION} -PscalaVersion=2.11")
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -PscalaVersion=2.11")}
   }
