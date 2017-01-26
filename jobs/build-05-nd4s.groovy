@@ -26,7 +26,7 @@ stage('Nd4s Preparation') {
 //   functions.sonar("${ND4S_PROJECT}")
 // }
 
-stage ('Nd4s Build') {
+/*stage ('Nd4s Build') {
   dir("${ND4S_PROJECT}") {
 
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
@@ -36,6 +36,6 @@ stage ('Nd4s Build') {
     //sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
     // echo "Successfully performed release of ${ND4S_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
-}
+}*/
 // Messages for debugging
 echo 'MARK: end of build-05-nd4s.groovy'
