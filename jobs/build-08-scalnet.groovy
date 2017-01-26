@@ -24,13 +24,11 @@ stage('Scalnet Preparation') {
     sh ("sed -i 's/<version>.*-SNAPSHOT<\\/version>/<version>${RELEASE_VERSION}<\\/version>/' pom.xml")
     functions.verset("${RELEASE_VERSION}", false)
 
-    sh "./change-scala-versions.sh 2.10"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip ")}
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=2.10")}
 
-    sh "./change-scala-versions.sh 2.11"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip ")}
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=2.11")}
   }
 }
 
