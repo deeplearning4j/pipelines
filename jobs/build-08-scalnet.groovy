@@ -25,7 +25,7 @@ stage('Scalnet Preparation') {
 
     sh  ("sed -i \\'0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet<\\/artifactId>/\\' pom.xml")
     sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION} -PscalaVersion=2.10")
-    sh("sed -i \\'0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_\\$\\{scala\\.binary\\.version\\}<\\/artifactId>/\\' pom.xml")
+    sh("sed -i \\'0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_\$\\{scala\\.binary\\.version\\}<\\/artifactId>/\\' pom.xml")
 //    functions.verset("${RELEASE_VERSION}", false)
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -PscalaVersion=2.10")}
