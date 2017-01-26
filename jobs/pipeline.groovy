@@ -95,16 +95,17 @@ timestamps {
         }
 
 
- /*
+
         stage('Build Components') {
             //def builds = [:]
   //          builds['DATAVEC'] = {
-  //            load 'jobs/build-02-datavec.groovy'
-    //        }
-
+              load 'jobs/build-02-datavec.groovy'
+            }
+/*
 //        builds['DEEPLEARNING4J'] = {
       	   load  'jobs/build-03-deeplearning4j.groovy'
         }
+
 
         builds['ARBITER'] = {
         	load 'jobs/build-04-arbiter.groovy'
