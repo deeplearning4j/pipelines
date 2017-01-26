@@ -51,6 +51,16 @@ dir("$PROJECT") {
         sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
     }
 
+
+    sh "./change-scala-versions.sh 2.11"
+    sh "./change-cuda-versions.sh 8.0"
+
+    configFileProvider(
+            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            ]) {
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+    }
+
 }
 
 }
