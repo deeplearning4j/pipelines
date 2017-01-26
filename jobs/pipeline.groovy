@@ -89,11 +89,9 @@ timestamps {
         // Load functions from file
 //        echo "Load Functions"
 //        functions = load 'jobs/functions.groovy'
-/*
         stage('ND4J') {
             load 'jobs/build-01-nd4j.groovy'
         }
-*/
 
 /*
         stage('Build Components') {
@@ -171,11 +169,12 @@ timestamps {
     // stage('RL4J') {
     // 	load 'jobs/build-07-rl4j.groovy'
     // }
-
+/*
     // depends on nd4j and deeplearning4j-core
     stage('SCALNET') {
     	load 'jobs/build-08-scalnet.groovy'
     }
+     */
 /*
 
     stage('RELEASE') {
