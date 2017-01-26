@@ -15,6 +15,13 @@ stage('Nd4s Preparation') {
 
     sh ("sed -i 's/version := \".*\",/version := \"${RELEASE_VERSION}\",/' build.sbt")
     sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${RELEASE_VERSION}\",/' build.sbt")
+    configFileProvider(
+            [configFile(fileId: 'SBT_CREDENTIALS_DO-192', variable: 'SBT_CREDENTIALS')
+            ]) {
+      sh ("cp ${SBT_CREDENTIALS}  ${HOME}/.ivy2/.credentials")
+    }
+    sh ("'${sbtHome}/bin/sbt' +publish")
+    sh ("rm -f ${HOME}/.ivy2/.credentials")
     //sh ("sbt +publishSigned")
     // sh "'${sbtHome}/bin/sbt' +publishSigned"
     // sh "'${sbtHome}/bin/sbt' test -Dsbt.log.noformat=true"
