@@ -4,9 +4,9 @@ def mvnHome = tool 'M339'
 functions = load 'jobs/functions.groovy'
 
 stage("PrepareTest"){
-  
+
   checkout([$class                           : 'GitSCM',
-            branches                         : [[name: '*/intropro']],
+            branches                         : [[name: '*/master']],
             doGenerateSubmoduleConfigurations: false,
             extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: "dl4j-test-resources"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
             submoduleCfg                     : [],
