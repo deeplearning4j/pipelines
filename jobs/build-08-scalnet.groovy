@@ -22,7 +22,8 @@ stage('Scalnet Preparation') {
     sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>${RELEASE_VERSION}<\\/dl4j.version>/' pom.xml")
     // # In its normal state, repo should contain a snapshot version stanza
     sh ("sed -i 's/<version>.*-SNAPSHOT<\\/version>/<version>${RELEASE_VERSION}<\\/version>/' pom.xml")
-    functions.verset("${RELEASE_VERSION}", false)
+    sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=false -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION} -DscalaVersion=2.10"")
+//    functions.verset("${RELEASE_VERSION}", false)
 
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=2.10")}
