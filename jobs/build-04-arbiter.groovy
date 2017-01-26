@@ -17,13 +17,23 @@ stage('Arbiter Preparation') {
     sh ("sed -i 's/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$RELEASE_VERSION<\\/dl4j.version>/' pom.xml")
     // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
     functions.verset("${RELEASE_VERSION}", true)
+    sh "./change-scala-versions.sh 2.10"
+    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")}
+
+    sh "./change-scala-versions.sh 2.11"
+    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")}
+
+
+
   }
 }
 
 // stage('Arbiter Codecheck') {
 //   functions.sonar("${ARBITER_PROJECT}")
 // }
-
+/*
 stage ('Arbiter Build') {
   dir("${ARBITER_PROJECT}") {
 
@@ -49,6 +59,6 @@ stage ('Arbiter Build') {
     // sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
     // echo "Successfully performed release of ${ARBITER_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
-}
+}*/
 // Messages for debugging
 echo 'MARK: end of build-04-arbiter.groovy'
