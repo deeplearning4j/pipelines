@@ -1,3 +1,4 @@
+#!groovy
 node {
     node ('ec2cuda') {
         stage ("Provisioning") {
@@ -22,6 +23,24 @@ node {
                     def cuda = docker.image('nvidia/cuda:8.0-cudnn5-devel-centos6')
                     cuda.inside {
                         sh '( nvcc --version )'
+                    }
+                }
+            }
+        },
+        "stream 3" : {
+            node ('ec2cuda') {
+                stage("Check CUDA 7.5 with docker and tmpfs") {
+                    docker.image('nvidia/cuda:7.5-cudnn5-devel-centos6').inside {
+                        sh '( df -h && nvidia-smi )'
+                    }
+                }
+            }
+        },
+        "stream 4" : {
+            node ('ec2cuda') {
+                stage("Check CUDA 8 with docker and tmpfs") {
+                    docker.image('nvidia/cuda:8.0-cudnn5-devel-centos6').inside {
+                        sh '( df -h && nvidia-smi )'
                     }
                 }
             }
