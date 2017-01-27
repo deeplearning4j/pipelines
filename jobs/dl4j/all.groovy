@@ -100,23 +100,23 @@ timestamps {
             }
 
             builds["${DEEPLEARNING4J_PROJECT}"] = {
-          	  load  'jobs/dl4j/deeplearning4j.groovy'
+              load 'jobs/dl4j/deeplearning4j.groovy'
             }
 
             builds["${ARBITER_PROJECT}"] = {
-            	load 'jobs/dl4j/arbiter.groovy'
+              load 'jobs/dl4j/arbiter.groovy'
             }
 
             builds["${ND4S_PROJECT}"] = {
-            	load 'jobs/dl4j/nd4s.groovy'
+              load 'jobs/dl4j/nd4s.groovy'
             }
 
             builds["${GYM_JAVA_CLIENT_PROJECT}"] = {
-            	load 'jobs/dl4j/gym-java-client.groovy'
+              load 'jobs/dl4j/gym-java-client.groovy'
             }
 
             builds["${RL4J_PROJECT}"] = {
-            	load 'jobs/dl4j/rl4j.groovy'
+              load 'jobs/dl4j/rl4j.groovy'
             }
 
         parallel builds
