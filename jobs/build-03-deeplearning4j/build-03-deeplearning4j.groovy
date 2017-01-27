@@ -1,7 +1,7 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-functions = load 'jobs/build-03-deeplearning4j/functions.groovy'
+functions = load 'jobs/functions.groovy'
 
 stage("${DEEPLEARNING4J_PROJECT}-Checkout abd Build test resources"){
 
