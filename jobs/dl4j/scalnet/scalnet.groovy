@@ -13,7 +13,7 @@ stage("${SCALNET_PROJECT}-CheckoutSources") {
 //   functions.sonar("${SCALNET_PROJECT}")
 // }
 
-stage("${SCALNET_PROJECT}-build") {
+stage("${SCALNET_PROJECT}-Build") {
 
   echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION}"
 

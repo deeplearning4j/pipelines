@@ -27,7 +27,7 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
 //   functions.sonar("${DEEPLEARNING4J_PROJECT}")
 // }
 
-stage("${DEEPLEARNING4J_PROJECT}-build") {
+stage("${DEEPLEARNING4J_PROJECT}-Build") {
 
   echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
 

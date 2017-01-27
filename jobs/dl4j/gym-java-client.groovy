@@ -11,7 +11,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-CheckoutSources") {
 //   functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
 // }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-Build") {
 
   echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
 

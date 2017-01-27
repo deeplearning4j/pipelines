@@ -11,7 +11,7 @@ stage("${RL4J_PROJECT}-CheckoutSources") {
 //   functions.sonar("${RL4J_PROJECT}")
 // }
 
-stage("${RL4J_PROJECT}-build") {
+stage("${RL4J_PROJECT}-Build") {
 
   echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION}"
 

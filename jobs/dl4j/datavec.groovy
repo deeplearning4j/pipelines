@@ -11,7 +11,7 @@ stage("${DATAVEC_PROJECT}-CheckoutSources") {
 //   functions.sonar("${DATAVEC_PROJECT}")
 // }
 
-stage("${DATAVEC_PROJECT}-build") {
+stage("${DATAVEC_PROJECT}-Build") {
 
   echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
 
