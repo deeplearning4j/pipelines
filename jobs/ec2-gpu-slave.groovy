@@ -30,7 +30,7 @@ node {
         "stream 3" : {
             node ('ec2cuda') {
                 stage("Check CUDA 7.5 with docker and tmpfs") {
-                    docker.image('nvidia/cuda:7.5-cudnn5-devel-centos6').inside {
+                    docker.image('nvidia/cuda:7.5-cudnn5-devel-centos6').inside('--tmpfs /tmp') {
                         sh '( df -h && nvidia-smi )'
                     }
                 }
@@ -39,7 +39,7 @@ node {
         "stream 4" : {
             node ('ec2cuda') {
                 stage("Check CUDA 8 with docker and tmpfs") {
-                    docker.image('nvidia/cuda:8.0-cudnn5-devel-centos6').inside {
+                    docker.image('nvidia/cuda:8.0-cudnn5-devel-centos6').inside('--tmpfs /tmp') {
                         sh '( df -h && nvidia-smi )'
                     }
                 }
