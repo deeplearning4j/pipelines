@@ -1,4 +1,4 @@
-#### Jenkins pipeline for deeplearning4j components
+#### Jenkins pipelines for Skymind
 
 ### 1. [Jenkins pipeline description](docs/pipeline.md)
 
