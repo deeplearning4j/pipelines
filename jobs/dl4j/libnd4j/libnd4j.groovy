@@ -1,4 +1,4 @@
-functions = load 'jobs/functions.groovy'
+functions = load 'jobs/dl4j/functions.groovy'
 
 stage("${LIBPROJECT}-CheckoutSources") {
     functions.get_project_code("${LIBPROJECT}")

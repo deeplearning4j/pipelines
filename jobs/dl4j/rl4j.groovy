@@ -1,7 +1,7 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-functions = load 'jobs/functions.groovy'
+functions = load 'jobs/dl4j/functions.groovy'
 
 stage("${RL4J_PROJECT}-CheckoutSources") {
   functions.get_project_code("${RL4J_PROJECT}")

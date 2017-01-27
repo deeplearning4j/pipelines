@@ -1,7 +1,7 @@
 tool name: 'SBT100M4', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'
 def sbtHome = tool 'SBT100M4'
 
-functions = load 'jobs/functions.groovy'
+functions = load 'jobs/dl4j/functions.groovy'
 
 stage("${ND4S_PROJECT}-CheckoutSources") {
   functions.get_project_code("${ND4S_PROJECT}")
