@@ -10,6 +10,7 @@ stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")
     functions.get_project_code("${LIBPROJECT}")
 }
+/*
 
 stage("${PROJECT}-BuildNativeOperations") {
     dir("$LIBPROJECT") {
@@ -27,6 +28,7 @@ stage("${PROJECT}-BuildNativeOperations") {
         }
     }
 }
+*/
 
 
 stage("${PROJECT}-buildMaven") {
