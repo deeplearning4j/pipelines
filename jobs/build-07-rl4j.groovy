@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Rl4j Preparation') {
+stage("${RL4J_PROJECT}-build") {
 
   functions.get_project_code("${RL4J_PROJECT}")
 

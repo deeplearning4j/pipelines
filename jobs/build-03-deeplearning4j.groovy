@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage("PrepareTest"){
+stage("${DEEPLEARNING4J_PROJECT}-Checkout abd Build test resources"){
 
   checkout([$class                           : 'GitSCM',
             branches                         : [[name: '*/master']],
@@ -19,7 +19,7 @@ stage("PrepareTest"){
   }
 }
 
-stage('Deeplearning4j Preparation') {
+stage("${DEEPLEARNING4J_PROJECT}-build") {
   functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
 
   echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"

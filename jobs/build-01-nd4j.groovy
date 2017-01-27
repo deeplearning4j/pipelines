@@ -10,7 +10,7 @@ stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")
     functions.get_project_code("${LIBPROJECT}")
 }
-/*
+
 stage("${PROJECT}-BuildNativeOperations") {
     dir("$LIBPROJECT") {
         // sh ("git tag -l \"libnd4j-$RELEASE_VERSION\"")
@@ -27,9 +27,9 @@ stage("${PROJECT}-BuildNativeOperations") {
         }
     }
 }
-*/
 
-stage("${PROJECT}-BuildMaven") {
+
+stage("${PROJECT}-buildMaven") {
 dir("$PROJECT") {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Temporary section - please remove once it commited updates to source code
@@ -48,7 +48,8 @@ dir("$PROJECT") {
     configFileProvider(
             [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
             ]) {
-        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + )
+                //" -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
     }
 
 

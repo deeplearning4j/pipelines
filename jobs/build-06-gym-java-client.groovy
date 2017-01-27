@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Gym-Java-Client Preparation') {
+stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
 
   functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 

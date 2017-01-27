@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Arbiter Preparation') {
+stage("${ARBITER_PROJECT}-Build") {
   functions.get_project_code("${ARBITER_PROJECT}")
 
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"

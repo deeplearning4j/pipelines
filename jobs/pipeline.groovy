@@ -90,56 +90,53 @@ timestamps {
 //        echo "Load Functions"
 //        functions = load 'jobs/functions.groovy'
 
-        stage('ND4J') {
+        stage("${PROJECT}") {
             load 'jobs/build-01-nd4j.groovy'
         }
-/*
-        stage('Build Components') {
+
+        stage("${DATAVEC_PROJECT}") {
             //def builds = [:]
   //          builds['DATAVEC'] = {
               load 'jobs/build-02-datavec.groovy'
             }
-*/
-/*
-        stage('DEEPLEARNING4J')
+
+
+        stage("${DEEPLEARNING4J_PROJECT}")
 //        builds['DEEPLEARNING4J'] =
             {
       	   load  'jobs/build-03-deeplearning4j.groovy'
         }
-*/
 
 
-/*
+
 //        builds['ARBITER'] =
-            stage ("ARBITER")
+            stage ("${ARBITER_PROJECT}")
                     {
         	load 'jobs/build-04-arbiter.groovy'
         }
-  */
 
 //        builds['ND4S'] =
-/*
-        stage ("ND4S")
+
+        stage ("${ND4S_PROJECT}")
         {
         	load 'jobs/build-05-nd4s.groovy'
         }
-*/
 
-/*
-        stage ("GYM-JAVA-CLIENT")
+
+
+        stage ("${GYM_JAVA_CLIENT_PROJECT}")
         //builds['GYM-JAVA-CLIENT'] =
                 {
         	load 'jobs/build-06-gym-java-client.groovy'
         }
-        */
 
-/*
-        stage ("RL4J")
+
+        stage ("${RL4J_PROJECT}")
         //builds['RL4J'] =
          {
         	load 'jobs/build-07-rl4j.groovy'
         }
-        */
+
 /*
 
       parallel builds
@@ -170,12 +167,12 @@ timestamps {
     // stage('RL4J') {
     // 	load 'jobs/build-07-rl4j.groovy'
     // }
-/*
+
     // depends on nd4j and deeplearning4j-core
-    stage('SCALNET') {
+    stage("${SCALNET_PROJECT}") {
     	load 'jobs/build-08-scalnet.groovy'
     }
-     */
+
 /*
 
     stage('RELEASE') {

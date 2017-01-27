@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Scalnet Preparation') {
+stage("${SCALNET_PROJECT}-build") {
 
   functions.get_project_code("${SCALNET_PROJECT}")
 
@@ -34,7 +34,7 @@ stage('Scalnet Preparation') {
     sh("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_\${scala.binary.version}<\\/artifactId>/' pom.xml")
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=2.11")}
-  }
+  }:
 }
 
 // There is no scala plugin for SonarQube

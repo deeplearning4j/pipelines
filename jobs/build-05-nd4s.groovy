@@ -3,7 +3,7 @@ def sbtHome = tool 'SBT100M4'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Nd4s Preparation') {
+stage("${ND4S_PROJECT}-Build") {
 
   functions.get_project_code("${ND4S_PROJECT}")
 
@@ -14,7 +14,7 @@ stage('Nd4s Preparation') {
     functions.checktag("${ND4S_PROJECT}")
 
     sh ("sed -i 's/version := \".*\",/version := \"${RELEASE_VERSION}\",/' build.sbt")
-    sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${RELEASE_VERSION}\",/' build.sbt")
+    //sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${RELEASE_VERSION}\",/' build.sbt")
     configFileProvider(
             [configFile(fileId: 'SBT_CREDENTIALS_DO-192', variable: 'SBT_CREDENTIALS')
             ]) {

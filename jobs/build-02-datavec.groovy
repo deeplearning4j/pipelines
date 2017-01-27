@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Datavec Preparation') {
+stage("${DATAVEC_PROJECT}-build") {
   functions.get_project_code("${DATAVEC_PROJECT}")
 
 //  echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
