@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/functions.groovy'
 
-stage('Gym-Java-Client Preparation') {
+stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
 
   functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 
@@ -17,6 +17,8 @@ stage('Gym-Java-Client Preparation') {
   sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>${RELEASE_VERSION}<\\/datavec.version>/' pom.xml")
   // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
   functions.verset("${RELEASE_VERSION}", true)
+    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")}
   }
 }
 
@@ -24,6 +26,7 @@ stage('Gym-Java-Client Preparation') {
 //   functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
 // }
 
+/*
 stage ('Gym-Java-Client Build') {
   dir("${GYM_JAVA_CLIENT_PROJECT}") {
 
@@ -38,5 +41,6 @@ stage ('Gym-Java-Client Build') {
     // echo "Successfully performed release of ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   }
 }
+*/
 // Messages for debugging
 echo 'MARK: end of build-06-gym-java-client.groovy'

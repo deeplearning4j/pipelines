@@ -1,11 +1,68 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
+//sh 'env'
+//echo "${PROJECT}"
+
 functions = load 'jobs/functions.groovy'
 
-stage('Nd4j Preparation') {
-  functions.get_project_code("${PROJECT}")
-  functions.get_project_code("${LIBPROJECT}")
+stage("${PROJECT}-CheckoutSources") {
+    functions.get_project_code("${PROJECT}")
+    functions.get_project_code("${LIBPROJECT}")
+}
+
+stage("${PROJECT}-BuildNativeOperations") {
+    dir("$LIBPROJECT") {
+        // sh ("git tag -l \"libnd4j-$RELEASE_VERSION\"")
+        def check_tag = sh(returnStdout: true, script: """git tag -l \"$LIBPROJECT-$RELEASE_VERSION\"""")
+        echo check_tag
+        if (check_tag == '') {
+            //  if (check_tag == null) {
+            echo "Checkpoint #1"
+            // input 'Pipeline has paused and needs your input before proceeding'
+            sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cpu"
+            sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 7.5"
+            sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cuda -v 8.0"
+            //  sh "git tag -a -m "libnd4j-$RELEASE_VERSION""
+        }
+    }
+}
+
+
+stage("${PROJECT}-buildMaven") {
+dir("$PROJECT") {
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Temporary section - please remove once it commited updates to source code
+    // configFileProvider(
+    //         [configFile(fileId: 'MAVEN_POM_DO-192', variable: 'POM_XML')
+    //     ]) {
+    //     sh "cp ${POM_XML} pom.xml"
+    // }
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    echo 'Set Project Version'
+    sh("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION")
+
+    sh "./change-scala-versions.sh 2.10"
+    sh "./change-cuda-versions.sh 7.5"
+
+    configFileProvider(
+            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            ]) {
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + )
+                //" -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+    }
+
+
+    sh "./change-scala-versions.sh 2.11"
+    sh "./change-cuda-versions.sh 8.0"
+
+    configFileProvider(
+            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            ]) {
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+    }
+
+}
 
 }
 
@@ -16,6 +73,7 @@ stage('Nd4j Preparation') {
 // stage('Nd4j Codecheck') {
 //   functions.sonar("${PROJECT}")
 // }
+/*
 
 stage('Libnd4j build') {
 
@@ -95,3 +153,4 @@ stage('Nd4j Build') {
 }
 // Messages for debugging
 echo 'MARK: end of build-01-nd4j.groovy'
+*/
