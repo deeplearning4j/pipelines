@@ -7,7 +7,7 @@ stage("${ND4S_PROJECT}-Build") {
 
   functions.get_project_code("${ND4S_PROJECT}")
 
-  echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION}" // (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${ND4S_PROJECT}") {

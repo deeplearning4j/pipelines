@@ -7,7 +7,7 @@ stage("${RL4J_PROJECT}-build") {
 
   functions.get_project_code("${RL4J_PROJECT}")
 
-  echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION}"// (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${RL4J_PROJECT}") {

@@ -7,7 +7,7 @@ stage("${SCALNET_PROJECT}-build") {
 
   functions.get_project_code("${SCALNET_PROJECT}")
 
-  echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION}" // (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${SCALNET_PROJECT}") {
