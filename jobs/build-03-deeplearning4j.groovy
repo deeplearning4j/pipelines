@@ -22,7 +22,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Checkout abd Build test resources"){
 stage("${DEEPLEARNING4J_PROJECT}-build") {
   functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
 
-  echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"// (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
   dir("${DEEPLEARNING4J_PROJECT}") {
     functions.checktag("${DEEPLEARNING4J_PROJECT}")

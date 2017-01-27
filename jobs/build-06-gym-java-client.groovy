@@ -7,7 +7,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
 
   functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 
-  echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"// (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${GYM_JAVA_CLIENT_PROJECT}") {

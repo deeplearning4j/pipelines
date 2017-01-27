@@ -6,7 +6,7 @@ functions = load 'jobs/functions.groovy'
 stage("${ARBITER_PROJECT}-Build") {
   functions.get_project_code("${ARBITER_PROJECT}")
 
-  echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}" // (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
   echo "Check if ${RELEASE_VERSION} has been released already"
 
   dir("${ARBITER_PROJECT}") {
