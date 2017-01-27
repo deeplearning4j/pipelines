@@ -4,7 +4,7 @@ def mvnHome = tool 'M339'
 //sh 'env'
 //echo "${PROJECT}"
 
-functions = load 'jobs/build-01-nd4j/functions.groovy'
+functions = load 'jobs/functions.groovy'
 
 stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")

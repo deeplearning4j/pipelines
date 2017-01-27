@@ -1,7 +1,7 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-functions = load 'jobs/build-02-datavec/functions.groovy'
+functions = load 'jobs/functions.groovy'
 
 stage("${DATAVEC_PROJECT}-build") {
   functions.get_project_code("${DATAVEC_PROJECT}")
