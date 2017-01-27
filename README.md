@@ -1,3 +1,4 @@
+DEVEL BRANCH
 #### Jenkins pipeline for deeplearning4j components
 
 ### 1. [Jenkins pipeline description](docs/pipeline.md)
