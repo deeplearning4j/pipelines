@@ -2,7 +2,7 @@ timestamps {
     node('master') {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Commented WsCleanup Step to minimize time for build
-        step([$class: 'WsCleanup'])
+        // step([$class: 'WsCleanup'])
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Discard old builds by keeping log of 5 last
@@ -84,9 +84,9 @@ timestamps {
  */
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        stage("${LIBPROJECT}") {
-            load 'jobs/dl4j/libnd4j.groovy'
-        }
+        // stage("${LIBPROJECT}") {
+        //     load 'jobs/dl4j/libnd4j.groovy'
+        // }
 
         stage("${PROJECT}") {
             load 'jobs/dl4j/nd4j.groovy'
