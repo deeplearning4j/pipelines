@@ -2,7 +2,7 @@ timestamps {
     node('master') {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Commented WsCleanup Step to minimize time for build
-        // step([$class: 'WsCleanup'])
+        step([$class: 'WsCleanup'])
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Discard old builds by keeping log of 5 last
@@ -92,7 +92,7 @@ timestamps {
             load 'jobs/dl4j/nd4j.groovy'
         }
 
-
+/*
         def builds = [:]
 
             builds["${DATAVEC_PROJECT}"] = {
@@ -120,8 +120,8 @@ timestamps {
             }
 
         parallel builds
+*/
 
-/*
     stage("${DATAVEC_PROJECT}") {
       load 'jobs/dl4j/datavec.groovy'
     }
@@ -145,7 +145,7 @@ timestamps {
     stage("${RL4J_PROJECT}") {
     	load 'jobs/dl4j/rl4j.groovy'
     }
-*/
+
     // depends on nd4j and deeplearning4j-core
     stage("${SCALNET_PROJECT}") {
     	load 'jobs/dl4j/scalnet.groovy'
