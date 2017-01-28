@@ -86,7 +86,7 @@ timestamps {
 
         // stage("${LIBPROJECT}") {
         //   // load 'jobs/dl4j/libnd4j/libnd4j.groovy'
-        //   load 'jobs/dl4j/${LIBPROJECT}/${LIBPROJECT}.groovy'
+        //   load "jobs/dl4j/${LIBPROJECT}/${LIBPROJECT}.groovy"
         // }
 
         stage("${PROJECT}") {
