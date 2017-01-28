@@ -4,9 +4,9 @@ stage("${LIBPROJECT}-CheckoutSources") {
     functions.get_project_code("${LIBPROJECT}")
 }
 
-stage("${LIBPROJECT}-Codecheck") {
-    functions.sonar("${LIBPROJECT}")
-}
+// stage("${LIBPROJECT}-Codecheck") {
+//   functions.sonar("${LIBPROJECT}")
+// }
 
 stage("${LIBPROJECT}-Build") {
 
@@ -23,21 +23,6 @@ stage("${LIBPROJECT}-Build") {
       sh "./buildnativeoperations.sh -c cpu"
       sh "./buildnativeoperations.sh -c cuda -v 7.5"
       sh "./buildnativeoperations.sh -c cuda -v 8.0"
-
-      // Trying to reduce native operatins build time
-      // def cmakes = [:]
-      //   cmakes['cpu'] = {
-      //     sh "./buildnativeoperations.sh -c cpu"
-      //   }
-      //
-      //   cmakes['cuda-7.5'] = {
-      //     sh "./buildnativeoperations.sh -c cuda -v 7.5"
-      //   }
-      //
-      //   cmakes['cuda-8.0'] = {
-      //     sh "./buildnativeoperations.sh -c cuda -v 8.0"
-      //   }
-      // parallel cmakes
 
       // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
     }
