@@ -7,9 +7,9 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-CheckoutSources") {
   functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
-  functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-}
+// stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
+//   functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
+// }
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-Build") {
 

@@ -23,9 +23,9 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
   functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
 }
 
-stage('Deeplearning4j Codecheck') {
-  functions.sonar("${DEEPLEARNING4J_PROJECT}")
-}
+// stage('Deeplearning4j Codecheck') {
+//   functions.sonar("${DEEPLEARNING4J_PROJECT}")
+// }
 
 stage("${DEEPLEARNING4J_PROJECT}-Build") {
 
