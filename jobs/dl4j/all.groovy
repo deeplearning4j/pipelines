@@ -84,9 +84,9 @@ timestamps {
  */
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        // stage("${LIBPROJECT}") {
-        //     load 'jobs/dl4j/libnd4j.groovy'
-        // }
+        stage("${LIBPROJECT}") {
+            load 'jobs/dl4j/libnd4j.groovy'
+        }
 
         stage("${PROJECT}") {
             load 'jobs/dl4j/nd4j.groovy'

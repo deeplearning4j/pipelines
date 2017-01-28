@@ -7,9 +7,9 @@ stage("${DATAVEC_PROJECT}-CheckoutSources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
 }
 
-// stage("${DATAVEC_PROJECT}-Codecheck") {
-//   functions.sonar("${DATAVEC_PROJECT}")
-// }
+stage("${DATAVEC_PROJECT}-Codecheck") {
+  functions.sonar("${DATAVEC_PROJECT}")
+}
 
 stage("${DATAVEC_PROJECT}-Build") {
 

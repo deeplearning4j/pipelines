@@ -4,9 +4,9 @@ stage("${LIBPROJECT}-CheckoutSources") {
     functions.get_project_code("${LIBPROJECT}")
 }
 
-// stage("${LIBPROJECT}-Codecheck") {
-//   functions.sonar("${LIBPROJECT}")
-// }
+stage("${LIBPROJECT}-Codecheck") {
+    functions.sonar("${LIBPROJECT}")
+}
 
 stage("${LIBPROJECT}-Build") {
 
