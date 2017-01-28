@@ -85,16 +85,18 @@ timestamps {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
         stage("${LIBPROJECT}") {
-            load 'jobs/dl4j/libnd4j.groovy'
+          // load 'jobs/dl4j/libnd4j/libnd4j.groovy'
+          load 'jobs/dl4j/${LIBPROJECT}/${LIBPROJECT}.groovy'
         }
 
         stage("${PROJECT}") {
-            load 'jobs/dl4j/nd4j.groovy'
+          // load 'jobs/dl4j/nd4j/nd4j.groovy'
+          load "jobs/dl4j/${PROJECT}/${PROJECT}.groovy"
         }
 
 /*
         def builds = [:]
-        
+
         builds["${DATAVEC_PROJECT}"] = {
           // load 'jobs/dl4j/datavec/datavec.groovy'
           load "jobs/dl4j/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
