@@ -17,7 +17,12 @@ node {
         "stream2" : {
             node ('jenkins-slave-cuda8') {
                 stage ("Provisioning") {
-                    checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, userRemoteConfigs: [[credentialsId: 'github-private-deeplearning4j-id-1', url: 'git@github.com:deeplearning4j/pipelines.git']]])
+                    checkout([$class: 'GitSCM', 
+                        branches: [[name: '*/devel']], 
+                        doGenerateSubmoduleConfigurations: false, 
+                        userRemoteConfigs: [[credentialsId: 'github-private-deeplearning4j-id-1']],
+                        url: 'git@github.com:deeplearning4j/pipelines.git'
+                    ])
                     ansiblePlaybook installation: 'ansible_centos(AmazonLinux)', playbook: 'ansible/aws/cd/provision.yml', sudoUser: null
                 }
             }
@@ -27,20 +32,14 @@ node {
         "stream 1" : {
             node ('jenkins-slave-cuda7') {
                 stage("Check nvidia-docker with CUDA 7.5") {
-                    def cuda = docker.image('nvidia/cuda:7.5-cudnn5-devel-centos6')
-                    cuda.inside {
-                        sh '( nvcc --version )'
-                    }
+                    sh 'nvidia-docker run --tmpfs /tmp:size=2g nvidia/cuda:7.5-cudnn5-devel-centos6 nvcc --version'
                 }
             }
         },
         "stream 2" : {
             node ('jenkins-slave-cuda8') {
                 stage("Check nvidia-docker with CUDA 8") {
-                    def cuda = docker.image('nvidia/cuda:8.0-cudnn5-devel-centos6')
-                    cuda.inside {
-                        sh '( nvcc --version )'
-                    }
+                    sh 'nvidia-docker run --tmpfs /tmp:size=2g nvidia/cuda:7.5-cudnn5-devel-centos6 nvcc --version'
                 }
             }
         },
