@@ -17,6 +17,8 @@ timestamps {
     // env.PATH = "${mvnHome}/bin:${env.PATH}"
     echo "01-${env.BUILD_TAG}"
     sh([script: 'echo $BUILD_TAG'])
+    sh([script: 'env'])
+
     // Messages for debugging
     echo 'MARK: end of test_03.groovy'
     step([$class: 'WsCleanup'])
