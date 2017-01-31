@@ -27,7 +27,7 @@ stage("${LIBPROJECT}-Build") {
 
 
       // sh ("dirname '${cmakeBin}'")
-      sh ("which cmake")
+      // sh ("which cmake")
 
       // sh ("which cmake3")
 
