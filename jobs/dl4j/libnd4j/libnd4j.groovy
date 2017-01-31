@@ -25,15 +25,9 @@ stage("${LIBPROJECT}-Build") {
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh ("env")
 
-      sh ("cmake -version")
-
-      sh ("make -version")
-
-
-
-      // sh "./buildnativeoperations.sh -c cpu"
-      // sh "./buildnativeoperations.sh -c cuda -v 7.5"
-      // sh "./buildnativeoperations.sh -c cuda -v 8.0"
+      sh "./buildnativeoperations.sh -c cpu"
+      sh "./buildnativeoperations.sh -c cuda -v 7.5"
+      sh "./buildnativeoperations.sh -c cuda -v 8.0"
 
       // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
     }
