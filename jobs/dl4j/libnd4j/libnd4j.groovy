@@ -1,4 +1,5 @@
 tool name: 'CM372', type: 'hudson.plugins.cmake.CmakeTool'
+def cmHome = tool 'CM372'
 
 functions = load 'jobs/dl4j/functions.groovy'
 
