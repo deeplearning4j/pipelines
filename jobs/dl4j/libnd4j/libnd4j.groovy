@@ -34,9 +34,9 @@ stage("${LIBPROJECT}-Build") {
   }
 }
 
-stage("${LIBPROJECT}-CleanupDiskSpace") {
-  step([$class: 'WsCleanup'])
-}
+// stage("${LIBPROJECT}-CleanupDiskSpace") {
+//   step([$class: 'WsCleanup'])
+// }
 
 // Messages for debugging
 echo 'MARK: end of libnd4j.groovy'
