@@ -5,7 +5,7 @@ node {
             node ('jenkins-slave-cuda7') {
                 stage ("Provisioning") {
                     checkout([$class: 'GitSCM',
-                        branches: [[name: '*/devel']], 
+                        branches: [[name: 'devel']], 
                         doGenerateSubmoduleConfigurations: false, 
                         userRemoteConfigs: [[credentialsId: 'github-private-deeplearning4j-id-1']], 
                         url: 'git@github.com:deeplearning4j/pipelines.git'
@@ -18,7 +18,7 @@ node {
             node ('jenkins-slave-cuda8') {
                 stage ("Provisioning") {
                     checkout([$class: 'GitSCM', 
-                        branches: [[name: '*/devel']], 
+                        branches: [[name: 'devel']], 
                         doGenerateSubmoduleConfigurations: false, 
                         userRemoteConfigs: [[credentialsId: 'github-private-deeplearning4j-id-1']],
                         url: 'git@github.com:deeplearning4j/pipelines.git'
