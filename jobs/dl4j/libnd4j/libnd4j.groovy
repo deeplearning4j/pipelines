@@ -1,6 +1,6 @@
 tool name: 'CM372', type: 'hudson.plugins.cmake.CmakeTool'
 def cmBin = tool 'CM372'
-def cmHome = sh returnStdout: true, script: "dirname '${cmBin}'"
+def cmHome = sh returnStdout: true, script: "echo -n `dirname '${cmBin}'`"
 
 
 functions = load 'jobs/dl4j/functions.groovy'
