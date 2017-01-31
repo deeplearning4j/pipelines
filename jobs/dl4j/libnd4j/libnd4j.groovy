@@ -1,6 +1,6 @@
 tool name: 'CM372', type: 'hudson.plugins.cmake.CmakeTool'
 def cmakeBin = tool 'CM372'
-def cmHome = sh returnStdout: true, script: "dirname '${cmakeBin}'" 
+def cmHome = sh returnStdout: true, script: "dirname '${cmakeBin}'"
 
 
 functions = load 'jobs/dl4j/functions.groovy'
@@ -20,18 +20,18 @@ stage("${LIBPROJECT}-Build") {
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
 
-    withEnv(['TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
+    withEnv(["PATH=${cmHome}:PATH", 'TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh ("env")
 
 
-      sh ("dirname '${cmakeBin}'")
-      // sh ("which cmake")
+      // sh ("dirname '${cmakeBin}'")
+      sh ("which cmake")
 
       // sh ("which cmake3")
 
-      sh ("'${cmakeBin}' -version")
+      sh ("cmake -version")
 
       // sh "./buildnativeoperations.sh -c cpu"
       // sh "./buildnativeoperations.sh -c cuda -v 7.5"
