@@ -1,6 +1,7 @@
 tool name: 'CM372', type: 'hudson.plugins.cmake.CmakeTool'
 def cmakeBin = tool 'CM372'
-def cmHome =
+def cmHome = sh returnStdout: true, script: "dirname '${cmakeBin}'" 
+
 
 functions = load 'jobs/dl4j/functions.groovy'
 
@@ -22,10 +23,10 @@ stage("${LIBPROJECT}-Build") {
     withEnv(['TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
-      sh ("env | grep -i cmake")
+      sh ("env")
 
 
-
+      sh ("dirname '${cmakeBin}'")
       // sh ("which cmake")
 
       // sh ("which cmake3")
