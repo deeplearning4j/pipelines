@@ -22,7 +22,7 @@ stage("${LIBPROJECT}-Build") {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
       // sh "env"
-      sh ("'${sbtHome}/bin/cmake' -version")
+      sh ("'${cmHome}/bin/cmake' -version")
 
       sh "./buildnativeoperations.sh -c cpu"
       sh "./buildnativeoperations.sh -c cuda -v 7.5"
