@@ -25,11 +25,11 @@ stage("${LIBPROJECT}-Build") {
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh ("env")
 
-      sh ("which cmake")
-
-      sh ("which cmake3")
-
       sh ("cmake -version")
+
+      sh ("make -version")
+
+
 
       // sh "./buildnativeoperations.sh -c cpu"
       // sh "./buildnativeoperations.sh -c cuda -v 7.5"
