@@ -26,9 +26,9 @@ ec2_subnet: "subnet-184aa67d"
 ec2_keypair: "cd-jenkins"
 ec2_instance_type: "g2.2xlarge"
 ec2_image: "ami-b7a114d7"
-ec2_tag_Name: "jenkins-master-20170112"
+ec2_tag_Name: "jenkins-master-20170131"
 ec2_tag_Type: "CICD"
 # ec2_tag_Environment: "CICD"
-ec2_root_disk_size: 20
+ec2_root_disk_size: 60
 # ec2_swap_size: 8
-ec2_data_disk_size: 40
+# ec2_data_disk_size: 40
