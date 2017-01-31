@@ -1,3 +1,5 @@
+tool name: 'CM372', type: 'hudson.plugins.cmake.CmakeTool'
+
 functions = load 'jobs/dl4j/functions.groovy'
 
 stage("${LIBPROJECT}-CheckoutSources") {
