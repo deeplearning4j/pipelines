@@ -4,12 +4,7 @@ node {
         "stream1" : {
             node ('jenkins-slave-cuda7') {
                 stage ("Provisioning") {
-                    checkout([$class: 'GitSCM',
-                        branches: [[name: 'devel']], 
-                        doGenerateSubmoduleConfigurations: false, 
-                        userRemoteConfigs: [[credentialsId: 'github-private-deeplearning4j-id-1']], 
-                        url: 'git@github.com:deeplearning4j/pipelines.git'
-                    ])
+                    git branch: 'devel', credentialsId: 'github-private-deeplearning4j-id-1', url: 'git@github.com:deeplearning4j/pipelines.git'
                     ansiblePlaybook installation: 'ansible_centos(AmazonLinux)', playbook: 'ansible/aws/cd/provision.yml', sudoUser: null
                 }
             }
