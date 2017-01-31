@@ -20,7 +20,7 @@ stage("${LIBPROJECT}-Build") {
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
 
-    withEnv(["PATH=${cmHome}:PATH", 'TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
+    withEnv(["PATH=${cmHome}:${PATH}", 'TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh ("env")
