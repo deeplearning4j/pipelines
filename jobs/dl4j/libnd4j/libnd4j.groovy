@@ -1,5 +1,5 @@
 tool name: 'CM372', type: 'hudson.plugins.cmake.CmakeTool'
-def cmHome = tool 'CM372'
+def bincmake = tool 'CM372'
 
 functions = load 'jobs/dl4j/functions.groovy'
 
@@ -22,7 +22,7 @@ stage("${LIBPROJECT}-Build") {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
       // sh "env"
-      sh ("'${cmHome}/bin/cmake' -version")
+      sh ("'${bincmake}' -version")
 
       sh "./buildnativeoperations.sh -c cpu"
       sh "./buildnativeoperations.sh -c cuda -v 7.5"
