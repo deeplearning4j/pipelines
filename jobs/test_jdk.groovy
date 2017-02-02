@@ -26,7 +26,7 @@
     stage('Check SBT tool') {
         tool name: 'SBT100M4', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'
         def sbtHome = tool 'SBT100M4'
-        sh ("'${sbtHome}/bin/sbt' test")
+        sh ("'${sbtHome}/bin/sbt' -v test")
     }
 
     stage('Show some info') {
