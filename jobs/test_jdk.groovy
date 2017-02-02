@@ -1,7 +1,10 @@
-timestamps {
   node ('jenkins-slave-cuda') {
+    docker.image('8.0cudnn5develcentos6').inside('--device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia-uvm-tools --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro') {
+            //                 sh '''
+            //                 source /opt/rh/devtoolset-3/enable
+            //                 ./buildnativeoperations.sh -c cpu
+            //                 '''
 
-    step([$class: 'WsCleanup'])
 
     stage('Check Maven tool') {
       def mvnHome = tool 'M339'
