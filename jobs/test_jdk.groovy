@@ -24,7 +24,7 @@ timestamps {
     stage('Check SBT tool') {
         tool name: 'SBT100M4', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'
         def sbtHome = tool 'SBT100M4'
-        sh ("'${sbtHome}/bin/sbt' -version")
+        sh ("'${sbtHome}/bin/sbt' -help")
     }
 
     stage('Show some info') {
