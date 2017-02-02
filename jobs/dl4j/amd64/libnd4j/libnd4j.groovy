@@ -25,6 +25,9 @@ stage("${LIBPROJECT}-Build") {
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh ("env")
 
+      // Enable devtoolset-3 to use right gcc version
+      sh ("scl enable devtoolset-3 bash || true")
+
       sh "./buildnativeoperations.sh -c cpu"
       sh "./buildnativeoperations.sh -c cuda -v 7.5"
       sh "./buildnativeoperations.sh -c cuda -v 8.0"
