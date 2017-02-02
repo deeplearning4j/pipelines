@@ -28,7 +28,7 @@ stage("${LIBPROJECT}-Build") {
       sh ("env")
 
       // Enable devtoolset-3 to use right gcc version
-      sh ("scl enable devtoolset-3 bash || true")
+      // sh ("scl enable devtoolset-3 bash || true")
 
       sh "./buildnativeoperations.sh -c cpu"
       sh "./buildnativeoperations.sh -c cuda -v 7.5"
