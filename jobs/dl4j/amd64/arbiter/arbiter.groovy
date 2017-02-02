@@ -25,12 +25,14 @@ stage("${ARBITER_PROJECT}-Build") {
     functions.verset("${RELEASE_VERSION}", true)
     sh "./change-scala-versions.sh 2.10"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install ")
+      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip ")
     }
 
     sh "./change-scala-versions.sh 2.11"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install ")
+      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip ")
     }
   }
 }

@@ -84,17 +84,17 @@ timestamps {
  */
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        // stage("${LIBPROJECT}") {
-        //   // load 'jobs/dl4j/libnd4j/libnd4j.groovy'
-        //   load "jobs/dl4j/${LIBPROJECT}/${LIBPROJECT}.groovy"
-        // }
+        stage("${LIBPROJECT}") {
+          // load 'jobs/dl4j/libnd4j/libnd4j.groovy'
+          load "jobs/dl4j/${LIBPROJECT}/${LIBPROJECT}.groovy"
+        }
 
         stage("${PROJECT}") {
           // load 'jobs/dl4j/nd4j/nd4j.groovy'
           load "jobs/dl4j/amd64/${PROJECT}/${PROJECT}.groovy"
         }
 
-/*
+
         def builds = [:]
 
             builds["${DATAVEC_PROJECT}"] = {
@@ -122,36 +122,37 @@ timestamps {
             }
 
         parallel builds
+
+/*
+        stage("${DATAVEC_PROJECT}") {
+          load "jobs/dl4j/amd64/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
+        }
+
+        stage("${DEEPLEARNING4J_PROJECT}") {
+          load "jobs/dl4j/amd64/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
+        }
+
+        stage ("${ARBITER_PROJECT}") {
+          load "jobs/dl4j/amd64/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
+        }
+
+        stage("${ND4S_PROJECT}") {
+          load "jobs/dl4j/amd64/${ND4S_PROJECT}/${ND4S_PROJECT}.groovy"
+        }
+
+        stage("${GYM_JAVA_CLIENT_PROJECT}") {
+          load "jobs/dl4j/amd64/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
+        }
+
+        stage("${RL4J_PROJECT}") {
+          load "jobs/dl4j/amd64/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
+        }
 */
+        // depends on nd4j and deeplearning4j-core
+        stage("${SCALNET_PROJECT}") {
+        	load "jobs/dl4j/amd64/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
+        }
 
-    stage("${DATAVEC_PROJECT}") {
-      load "jobs/dl4j/amd64/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
-    }
-
-    stage("${DEEPLEARNING4J_PROJECT}") {
-      load "jobs/dl4j/amd64/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
-    }
-
-    stage ("${ARBITER_PROJECT}") {
-      load "jobs/dl4j/amd64/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
-    }
-
-    stage("${ND4S_PROJECT}") {
-      load "jobs/dl4j/amd64/${ND4S_PROJECT}/${ND4S_PROJECT}.groovy"
-    }
-
-    stage("${GYM_JAVA_CLIENT_PROJECT}") {
-      load "jobs/dl4j/amd64/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
-    }
-
-    stage("${RL4J_PROJECT}") {
-      load "jobs/dl4j/amd64/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
-    }
-
-    // depends on nd4j and deeplearning4j-core
-    stage("${SCALNET_PROJECT}") {
-    	load "jobs/dl4j/amd64/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
-    }
 
 /*
 

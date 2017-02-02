@@ -26,6 +26,7 @@ stage("${ND4S_PROJECT}-Build") {
             ]) {
       sh ("cp ${SBT_CREDENTIALS}  ${HOME}/.ivy2/.credentials")
     }
+    // sh ("'${sbtHome}/bin/sbt' +publish-local")
     sh ("'${sbtHome}/bin/sbt' +publish")
     sh ("rm -f ${HOME}/.ivy2/.credentials")
     // sh "'${sbtHome}/bin/sbt' +publishSigned"

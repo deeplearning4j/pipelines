@@ -43,7 +43,8 @@ stage("${DEEPLEARNING4J_PROJECT}-Build") {
     sh "./change-scala-versions.sh 2.10"
     sh "./change-cuda-versions.sh 7.5"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install  ")
+      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
     }
 
     sh "./change-scala-versions.sh 2.11"
@@ -54,7 +55,8 @@ stage("${DEEPLEARNING4J_PROJECT}-Build") {
     //  sh "'${mvnHome}/bin/mvn' clean deploy -Dgpg.executable=gpg2 -Dgpg.skip -DperformRelease -Psonatype-oss-release -DskipTests -DstagingRepositoryId=$STAGING_REPOSITORY"
     //  }
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install ")
+      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
     }
 
     sh "./change-scala-versions.sh 2.10"
@@ -64,7 +66,8 @@ stage("${DEEPLEARNING4J_PROJECT}-Build") {
     //sh "git tag -a -m '$DEEPLEARNING4J_PROJECT-$RELEASE_VERSION" "$DEEPLEARNING4J_PROJECT-$RELEASE_VERSION'"
     functions.verset("${RELEASE_VERSION}", true)
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install ")
+      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
     }
 
     //sh "git commit -a -m 'Update to version $RELEASE_VERSION'"
