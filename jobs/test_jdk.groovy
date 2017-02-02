@@ -6,8 +6,7 @@ timestamps {
     stage('Check Maven tool') {
       def mvnHome = tool 'M339'
       echo "${mvnHome}"
-      // env.PATH = "${mvnHome}/bin:${env.PATH}"
-
+      env.PATH = "${mvnHome}/bin:${env.PATH}"
       sh([script: 'mvn -version'])
     }
 
