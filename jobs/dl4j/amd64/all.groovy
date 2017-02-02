@@ -1,5 +1,5 @@
 timestamps {
-    node('master') {
+    node('g2&&slave') {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Commented WsCleanup Step to minimize time for build
         // step([$class: 'WsCleanup'])

@@ -1,5 +1,5 @@
 timestamps {
-    node('master') {
+    node('g2&&slave') {
 
         checkout scm
 
