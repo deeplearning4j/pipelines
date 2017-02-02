@@ -3,7 +3,7 @@ def cmBin = tool 'CM372'
 def cmHome = sh returnStdout: true, script: "printf `dirname '${cmBin}'`"
 
 
-functions = load 'jobs/dl4j/functions.groovy'
+functions = load "${PDIR}/functions.groovy"
 
 stage("${LIBPROJECT}-CheckoutSources") {
     functions.get_project_code("${LIBPROJECT}")

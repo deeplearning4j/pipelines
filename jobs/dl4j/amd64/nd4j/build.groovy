@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${PROJECT}") {
-            load "jobs/dl4j/amd64/${PROJECT}/${PROJECT}.groovy"
+            load "${PDIR}/${PROJECT}/${PROJECT}.groovy"
         }
     }
 }
