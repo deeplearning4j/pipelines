@@ -20,7 +20,9 @@ stage("${LIBPROJECT}-Build") {
   dir("${LIBPROJECT}") {
     functions.checktag("${LIBPROJECT}")
 
-    withEnv(["PATH=${PATH}:${cmHome}", 'TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
+    withEnv(["PATH=/opt/rh/devtoolset-3/root/usr/bin:${cmHome}:${PATH}",
+            "PYTHONPATH=/opt/rh/devtoolset-3/root/usr/lib64/python2.7/site-packages:/opt/rh/devtoolset-3/root/usr/lib/python2.7/site-packages",
+            'TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh ("env")
