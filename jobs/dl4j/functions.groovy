@@ -51,6 +51,7 @@ def release(proj) {
   echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
   dir("${proj}") {
     sshagent(credentials: ["${GITCREDID}"]) {
+      
       sh 'git config user.email "jenkins@skymind.io"'
       sh 'git config user.name "Jenkins"'
       sh 'git status'

@@ -7,11 +7,6 @@ stage("${ND4S_PROJECT}-CheckoutSources") {
   functions.get_project_code("${ND4S_PROJECT}")
 }
 
-// There is no scala plugin for SonarQube
-// stage("${ND4S_PROJECT}-Codecheck") {
-//   functions.sonar("${ND4S_PROJECT}")
-// }
-
 stage("${ND4S_PROJECT}-Build") {
 
   echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION}"
@@ -33,6 +28,11 @@ stage("${ND4S_PROJECT}-Build") {
     // sh "'${sbtHome}/bin/sbt' test -Dsbt.log.noformat=true"
   }
 }
+
+// There is no scala plugin for SonarQube
+// stage("${ND4S_PROJECT}-Codecheck") {
+//   functions.sonar("${ND4S_PROJECT}")
+// }
 
 // Messages for debugging
 echo 'MARK: end of nd4s.groovy'

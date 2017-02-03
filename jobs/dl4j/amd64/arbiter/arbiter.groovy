@@ -7,10 +7,6 @@ stage("${ARBITER_PROJECT}-CheckoutSources") {
     functions.get_project_code("${ARBITER_PROJECT}")
 }
 
-stage("${ARBITER_PROJECT}-Codecheck") {
-  functions.sonar("${ARBITER_PROJECT}")
-}
-
 stage("${ARBITER_PROJECT}-Build") {
 
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
@@ -35,6 +31,11 @@ stage("${ARBITER_PROJECT}-Build") {
       // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip ")
     }
   }
+}
+
+// Findbugs needs sources to be compiled. Please build project before executing sonar
+stage("${ARBITER_PROJECT}-Codecheck") {
+  functions.sonar("${ARBITER_PROJECT}")
 }
 
 // Messages for debugging

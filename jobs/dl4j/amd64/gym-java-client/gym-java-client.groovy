@@ -7,10 +7,6 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-CheckoutSources") {
   functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
-  functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-}
-
 stage("${GYM_JAVA_CLIENT_PROJECT}-Build") {
 
   echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
@@ -28,6 +24,10 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build") {
       // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
     }
   }
+}
+
+stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
+  functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
 // Messages for debugging

@@ -7,10 +7,6 @@ stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")
 }
 
-stage("${PROJECT}-Codecheck") {
-    functions.sonar("${PROJECT}")
-}
-
 stage("${PROJECT}-Build") {
   dir("${PROJECT}") {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -50,6 +46,11 @@ stage("${PROJECT}-Build") {
 
   }
 
+}
+
+// Findbugs needs sources to be compiled. Please build project before executing sonar
+stage("${PROJECT}-Codecheck") {
+    functions.sonar("${PROJECT}")
 }
 // Messages for debugging
 echo 'MARK: end of nd4j.groovy'

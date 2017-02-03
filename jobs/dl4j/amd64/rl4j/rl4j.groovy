@@ -7,10 +7,6 @@ stage("${RL4J_PROJECT}-CheckoutSources") {
   functions.get_project_code("${RL4J_PROJECT}")
 }
 
-stage("${RL4J_PROJECT}-Codecheck") {
-  functions.sonar("${RL4J_PROJECT}")
-}
-
 stage("${RL4J_PROJECT}-Build") {
 
   echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION}"
@@ -28,6 +24,10 @@ stage("${RL4J_PROJECT}-Build") {
       // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")
     }
   }
+}
+
+stage("${RL4J_PROJECT}-Codecheck") {
+  functions.sonar("${RL4J_PROJECT}")
 }
 
 // Messages for debugging

@@ -154,7 +154,6 @@ timestamps {
         	load "${AMD64DIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
         }
 
-
 /*
 
     stage('RELEASE') {
@@ -176,8 +175,8 @@ timestamps {
 
     // step([$class: 'WsCleanup'])
     sh "rm -rf $HOME/.sonar"*//*
-
 */
+
         // Messages for debugging
         echo 'MARK: end of all.groovy'
     }

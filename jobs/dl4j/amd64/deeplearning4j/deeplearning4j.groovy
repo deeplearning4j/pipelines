@@ -23,10 +23,6 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
   functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
 }
 
-stage('Deeplearning4j Codecheck') {
-  functions.sonar("${DEEPLEARNING4J_PROJECT}")
-}
-
 stage("${DEEPLEARNING4J_PROJECT}-Build") {
 
   echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
@@ -74,5 +70,11 @@ stage("${DEEPLEARNING4J_PROJECT}-Build") {
     // echo "Successfully performed release of ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
   }
 }
+
+// Findbugs needs sources to be compiled.
+stage('Deeplearning4j Codecheck') {
+  functions.sonar("${DEEPLEARNING4J_PROJECT}")
+}
+
 // Messages for debugging
 echo 'MARK: end of deeplearning4j.groovy'

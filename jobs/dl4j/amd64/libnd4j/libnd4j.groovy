@@ -5,10 +5,6 @@ def cmHome = sh returnStdout: true, script: "printf `dirname '${cmBin}'`"
 
 functions = load "${PDIR}/functions.groovy"
 
-stage("${LIBPROJECT}-CheckoutSources") {
-    functions.get_project_code("${LIBPROJECT}")
-}
-
 stage("${LIBPROJECT}-Codecheck") {
   functions.sonar("${LIBPROJECT}")
 }
@@ -37,6 +33,10 @@ stage("${LIBPROJECT}-Build") {
       // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
     }
   }
+}
+
+stage("${LIBPROJECT}-CheckoutSources") {
+    functions.get_project_code("${LIBPROJECT}")
 }
 
 // stage("${LIBPROJECT}-CleanupDiskSpace") {

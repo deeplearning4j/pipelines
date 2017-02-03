@@ -7,10 +7,6 @@ stage("${DATAVEC_PROJECT}-CheckoutSources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
 }
 
-stage("${DATAVEC_PROJECT}-Codecheck") {
-  functions.sonar("${DATAVEC_PROJECT}")
-}
-
 stage("${DATAVEC_PROJECT}-Build") {
 
   echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
@@ -44,5 +40,11 @@ stage("${DATAVEC_PROJECT}-Build") {
     //  sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
   }
 }
+
+// Findbugs needs sources to be compiled. Please build project before executing sonar
+stage("${DATAVEC_PROJECT}-Codecheck") {
+  functions.sonar("${DATAVEC_PROJECT}")
+}
+
 // Messages for debugging
 echo 'MARK: end of datavec.groovy'

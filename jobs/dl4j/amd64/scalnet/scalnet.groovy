@@ -8,11 +8,6 @@ stage("${SCALNET_PROJECT}-CheckoutSources") {
     functions.get_project_code("${SCALNET_PROJECT}")
 }
 
-// There is no scala plugin for SonarQube
-// stage("${SCALNET_PROJECT}-Codecheck") {
-//   functions.sonar("${SCALNET_PROJECT}")
-// }
-
 stage("${SCALNET_PROJECT}-Build") {
 
   echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION}"
@@ -46,6 +41,11 @@ stage("${SCALNET_PROJECT}-Build") {
     }
   }
 }
+
+// There is no scala plugin for SonarQube
+// stage("${SCALNET_PROJECT}-Codecheck") {
+//   functions.sonar("${SCALNET_PROJECT}")
+// }
 
 // Messages for debugging
 echo 'MARK: end of scalnet.groovy'
