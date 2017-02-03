@@ -7,7 +7,7 @@ timestamps {
 
         parallel (
          "build_cuda_7" : { stage("libnd4j_1") {
-          load 'jobs/dl4j/power8/power8-01-libnd4j.groovy'
+          load 'jobs/dl4j/ppc/power8-01-libnd4j.groovy'
          } },
 
          "build_cuda_8" : { stage("libnd4j_2") {
