@@ -19,7 +19,9 @@ stage("${LIBPROJECT}-Build") {
     withEnv(["PATH=${cmHome}:${PATH}", 'TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
       echo "Building ${LIBPROJECT} version ${RELEASE_VERSION}"
       // Check TRICK_NVCC and LIBND4J_HOME existence
-      sh ("env")
+      sh("env")
+
+      sh("ls -al")
 
       // Enable devtoolset-3 to use right gcc version
       // sh ("scl enable devtoolset-3 bash || true")
