@@ -1,5 +1,5 @@
 timestamps {
-    node('g2&&slave') {
+    node('amd64&&g2&&ubuntu16') {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Commented WsCleanup Step to minimize time for build
         // step([$class: 'WsCleanup'])
@@ -14,6 +14,9 @@ timestamps {
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         checkout scm
+        sh "pwd"
+        sh "ls -al"
+        echo "${WORKSPACE}"
 /*
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Setup variables for current run

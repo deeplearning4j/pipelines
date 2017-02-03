@@ -1,5 +1,5 @@
 timestamps {
-    node('g2&&slave') {
+    node('amd64&&g2&&ubuntu16') {
 
         checkout scm
 
