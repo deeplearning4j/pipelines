@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${SCALNET_PROJECT}") {
-            load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
+            load "${AMD64DIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
         }
     }
 }

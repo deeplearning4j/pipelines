@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${GYM_JAVA_CLIENT_PROJECT}") {
-            load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
+            load "${AMD64DIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
         }
     }
 }

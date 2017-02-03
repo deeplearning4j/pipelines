@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${LIBPROJECT}") {
-            load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
+            load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
         }
     }
 }

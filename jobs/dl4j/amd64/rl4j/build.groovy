@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${RL4J_PROJECT}") {
-            load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
+            load "${AMD64DIR}/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
         }
     }
 }

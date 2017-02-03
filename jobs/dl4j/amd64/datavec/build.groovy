@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${DATAVEC_PROJECT}") {
-            load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
+            load "${AMD64DIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
         }
     }
 }

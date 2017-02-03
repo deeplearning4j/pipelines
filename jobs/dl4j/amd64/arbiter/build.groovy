@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${ARBITER_PROJECT}") {
-            load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
+            load "${AMD64DIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
         }
     }
 }

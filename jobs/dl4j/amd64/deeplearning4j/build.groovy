@@ -4,7 +4,7 @@ timestamps {
         checkout scm
 
         stage("${DEEPLEARNING4J_PROJECT}") {
-            load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
+            load "${AMD64DIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
         }
     }
 }
