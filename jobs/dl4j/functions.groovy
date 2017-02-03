@@ -1,6 +1,6 @@
 def get_project_code(proj) {
   checkout([$class: 'GitSCM',
-             branches: [[name: '*/master']],
+             branches: [[name: '*/intropro072']],
              doGenerateSubmoduleConfigurations: false,
              // DO NOT FORGET TO SET noTags TO FALSE !!!
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],
@@ -51,7 +51,7 @@ def release(proj) {
   echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
   dir("${proj}") {
     sshagent(credentials: ["${GITCREDID}"]) {
-      
+
       sh 'git config user.email "jenkins@skymind.io"'
       sh 'git config user.name "Jenkins"'
       sh 'git status'
