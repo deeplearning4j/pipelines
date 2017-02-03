@@ -7,9 +7,9 @@ stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")
 }
 
-// stage("${PROJECT}-Codecheck") {
-//     functions.sonar("${PROJECT}")
-// }
+stage("${PROJECT}-Codecheck") {
+    functions.sonar("${PROJECT}")
+}
 
 stage("${PROJECT}-Build") {
   dir("${PROJECT}") {

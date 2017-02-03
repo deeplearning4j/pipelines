@@ -9,7 +9,7 @@ stage("${PROJECT}-CheckoutSources") {
 }
 
 stage("${PROJECT}-buildMaven") {
-dir("$PROJECT") {
+dir("${PROJECT}") {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Temporary section - please remove once it commited updates to source code
     // configFileProvider(

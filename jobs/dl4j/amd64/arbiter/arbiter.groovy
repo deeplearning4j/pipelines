@@ -7,9 +7,9 @@ stage("${ARBITER_PROJECT}-CheckoutSources") {
     functions.get_project_code("${ARBITER_PROJECT}")
 }
 
-// stage("${ARBITER_PROJECT}-Codecheck") {
-//   functions.sonar("${ARBITER_PROJECT}")
-// }
+stage("${ARBITER_PROJECT}-Codecheck") {
+  functions.sonar("${ARBITER_PROJECT}")
+}
 
 stage("${ARBITER_PROJECT}-Build") {
 

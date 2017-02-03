@@ -7,9 +7,9 @@ stage("${RL4J_PROJECT}-CheckoutSources") {
   functions.get_project_code("${RL4J_PROJECT}")
 }
 
-// stage("${RL4J_PROJECT}-Codecheck") {
-//   functions.sonar("${RL4J_PROJECT}")
-// }
+stage("${RL4J_PROJECT}-Codecheck") {
+  functions.sonar("${RL4J_PROJECT}")
+}
 
 stage("${RL4J_PROJECT}-Build") {
 
