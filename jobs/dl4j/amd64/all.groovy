@@ -87,9 +87,9 @@ timestamps {
  */
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        stage("${LIBPROJECT}") {
-          load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
-        }
+        // stage("${LIBPROJECT}") {
+        //   load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
+        // }
 
         stage("${PROJECT}") {
           load "${AMD64DIR}/${PROJECT}/${PROJECT}.groovy"
