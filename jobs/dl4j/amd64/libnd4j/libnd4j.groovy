@@ -35,19 +35,6 @@ stage("${LIBPROJECT}-Build") {
   }
 }
 
-stage("${LIBPROJECT}-Codecheck") {
-  def scannerHome = tool 'SS28';
-  dir("${LIBPROJECT}") {
-    // withSonarQubeEnv("${SQS}") {
-    withSonarQubeEnv('SonarQubeServer') {
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${LIBPROJECT} \
-          -Dsonar.projectName=${LIBPROJECT} -Dsonar.projectVersion=${RELEASE_VERSION} \
-          -Dsonar.sources=. -Dsonar.binaries=${WORKSPACE}/${LIBPROJECT}/cpu/blas,${WORKSPACE}/${LIBPROJECT}/cuda-7.5/blas,${WORKSPACE}/${LIBPROJECT}/cuda-8.0/blas"
-          // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
-    }
-  }
-}
-
 // stage("${LIBPROJECT}-Codecheck") {
 //   functions.sonar("${LIBPROJECT}")
 // }

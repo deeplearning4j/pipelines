@@ -13,10 +13,10 @@ timestamps {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Remove .git folder from workspace
         sh("rm -rf ${WORKSPACE}/.git")
-        sh("rm -rf ${WORKSPACE}/.gitignore")
+        sh("rm -f ${WORKSPACE}/.gitignore")
         sh("rm -rf ${WORKSPACE}/docs")
         sh("rm -rf ${WORKSPACE}/ansible")
-        sh("rm -rf ${WORKSPACE}/README.md")
+        sh("rm -f ${WORKSPACE}/README.md")
 
         // Some debugging
 
@@ -26,9 +26,9 @@ timestamps {
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        stage("${LIBPROJECT}") {
-          load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
-        }
+        // stage("${LIBPROJECT}") {
+        //   load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
+        // }
 
         stage("${PROJECT}") {
           load "${AMD64DIR}/${PROJECT}/${PROJECT}.groovy"
