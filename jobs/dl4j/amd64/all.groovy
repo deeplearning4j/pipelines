@@ -2,7 +2,7 @@ timestamps {
     node('amd64&&g2&&ubuntu16') {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Commented WsCleanup Step to minimize time for build
-        step([$class: 'WsCleanup'])
+        // step([$class: 'WsCleanup'])
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Discard old builds by keeping log of 5 last
@@ -11,12 +11,14 @@ timestamps {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         checkout scm
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+        // Remove .git folder from workspace
+        sh("rm -rf ${WORKSPACE}/.git")
+
         // Some debugging
 
         sh("pwd")
         sh("ls -al")
-        sh("rm -rf ${WORKSPACE}/.git")
-        sh("ls -al")
+
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 

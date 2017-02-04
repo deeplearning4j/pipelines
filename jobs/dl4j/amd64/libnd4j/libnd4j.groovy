@@ -26,9 +26,9 @@ stage("${LIBPROJECT}-Build") {
       // Enable devtoolset-3 to use right gcc version
       // sh ("scl enable devtoolset-3 bash || true")
 
-      sh("./buildnativeoperations.sh -c cpu")
-      sh("./buildnativeoperations.sh -c cuda -v 7.5")
-      sh("./buildnativeoperations.sh -c cuda -v 8.0")
+      // sh("./buildnativeoperations.sh -c cpu")
+      // sh("./buildnativeoperations.sh -c cuda -v 7.5")
+      // sh("./buildnativeoperations.sh -c cuda -v 8.0")
 
       // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
     }
@@ -36,8 +36,21 @@ stage("${LIBPROJECT}-Build") {
 }
 
 stage("${LIBPROJECT}-Codecheck") {
-  functions.sonar("${LIBPROJECT}")
+  def scannerHome = tool 'SS28';
+  dir("${LIBPROJECT}") {
+    // withSonarQubeEnv("${SQS}") {
+    withSonarQubeEnv('SonarQubeServer') {
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${LIBPROJECT} \
+          -Dsonar.projectName=${LIBPROJECT} -Dsonar.projectVersion=${RELEASE_VERSION} \
+          -Dsonar.sources=. -Dsonar.binaries=${WORKSPACE}/${LIBPROJECT}/cpu/blas,${WORKSPACE}/${LIBPROJECT}/cuda-7.5/blas,${WORKSPACE}/${LIBPROJECT}/cuda-8.0/blas"
+          // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
+    }
+  }
 }
+
+// stage("${LIBPROJECT}-Codecheck") {
+//   functions.sonar("${LIBPROJECT}")
+// }
 
 // stage("${LIBPROJECT}-CleanupDiskSpace") {
 //   step([$class: 'WsCleanup'])
