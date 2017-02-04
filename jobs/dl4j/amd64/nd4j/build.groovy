@@ -14,7 +14,7 @@ timestamps {
         sh("ls -al")
 
         stage("${PROJECT}") {
-            load "${AMD64DIR}/${PROJECT}/${PROJECT}.groovy"
+            load "${AMD64DIR}/${PROJECT}/${PROJECT}-test.groovy"
         }
     }
 }

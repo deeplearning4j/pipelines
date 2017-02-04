@@ -19,17 +19,14 @@ timestamps {
         sh("rm -rf ${WORKSPACE}/ansible")
         sh("rm -f ${WORKSPACE}/README.md")
 
-        // Some debugging
-
-        sh("pwd")
         sh("ls -al")
 
 
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-        // stage("${LIBPROJECT}") {
-        //   load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
-        // }
+        stage("${LIBPROJECT}") {
+          load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}.groovy"
+        }
 
         stage("${PROJECT}") {
           load "${AMD64DIR}/${PROJECT}/${PROJECT}.groovy"
