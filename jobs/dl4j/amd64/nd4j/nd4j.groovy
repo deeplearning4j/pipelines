@@ -21,8 +21,8 @@ stage("${PROJECT}-Build") {
     // sh("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
     functions.verset("${RELEASE_VERSION}", true)
 
-    sh "./change-scala-versions.sh 2.10"
-    sh "./change-cuda-versions.sh 7.5"
+    sh("./change-scala-versions.sh 2.10")
+    sh("./change-cuda-versions.sh 7.5")
 
     configFileProvider(
             [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
@@ -33,8 +33,8 @@ stage("${PROJECT}-Build") {
     }
 
 
-    sh "./change-scala-versions.sh 2.11"
-    sh "./change-cuda-versions.sh 8.0"
+    sh("./change-scala-versions.sh 2.11")
+    sh("./change-cuda-versions.sh 8.0")
 
     configFileProvider(
             [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')

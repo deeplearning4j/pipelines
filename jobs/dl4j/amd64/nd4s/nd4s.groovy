@@ -19,11 +19,11 @@ stage("${ND4S_PROJECT}-Build") {
     configFileProvider(
             [configFile(fileId: 'SBT_CREDENTIALS_DO-192', variable: 'SBT_CREDENTIALS')
             ]) {
-      sh ("cp ${SBT_CREDENTIALS}  ${HOME}/.ivy2/.credentials")
+      sh("cp ${SBT_CREDENTIALS}  ${HOME}/.ivy2/.credentials")
     }
     // sh ("'${sbtHome}/bin/sbt' +publish-local")
-    sh ("'${sbtHome}/bin/sbt' +publish")
-    sh ("rm -f ${HOME}/.ivy2/.credentials")
+    sh("'${sbtHome}/bin/sbt' +publish")
+    sh("rm -f ${HOME}/.ivy2/.credentials")
     // sh "'${sbtHome}/bin/sbt' +publishSigned"
     // sh "'${sbtHome}/bin/sbt' test -Dsbt.log.noformat=true"
   }

@@ -14,21 +14,21 @@ stage("${DATAVEC_PROJECT}-Build") {
   dir("${DATAVEC_PROJECT}") {
     functions.checktag("${DATAVEC_PROJECT}")
     functions.verset("${RELEASE_VERSION}", true)
-    sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml"
+    sh("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml")
 
-    sh "./change-scala-versions.sh 2.10"
+    sh("./change-scala-versions.sh 2.10")
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install ")
       // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")
     }
 
-    sh "./change-scala-versions.sh 2.11"
+    sh("./change-scala-versions.sh 2.11")
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh( "'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean instal ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean instal ")
       // sh( "'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")
     }
 
-    sh "./change-scala-versions.sh 2.10"
+    sh("./change-scala-versions.sh 2.10")
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install  ")
       // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
