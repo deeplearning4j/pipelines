@@ -13,6 +13,8 @@ timestamps {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Remove .git folder from workspace
         sh("rm -rf ${WORKSPACE}/.git")
+        sh("rm -rf ${WORKSPACE}/docs")
+        sh("rm -rf ${WORKSPACE}/ansible")
 
         // Some debugging
 
