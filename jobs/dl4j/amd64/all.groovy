@@ -13,10 +13,10 @@ timestamps {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         // Remove .git folder from workspace
         sh("rm -rf ${WORKSPACE}/.git")
-        sh("rm -f ${WORKSPACE}/.gitignore")
         sh("rm -rf ${WORKSPACE}/docs")
         sh("rm -rf ${WORKSPACE}/imgs")
         sh("rm -rf ${WORKSPACE}/ansible")
+        sh("rm -f ${WORKSPACE}/.gitignore")
         sh("rm -f ${WORKSPACE}/README.md")
 
         sh("ls -al")
@@ -32,7 +32,7 @@ timestamps {
           load "${AMD64DIR}/${PROJECT}/${PROJECT}.groovy"
         }
 
-
+/*
         def builds = [:]
 
             builds["${DATAVEC_PROJECT}"] = {
@@ -60,8 +60,8 @@ timestamps {
             }
 
         parallel builds
+*/
 
-/*
         stage("${DATAVEC_PROJECT}") {
           load "${AMD64DIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
         }
@@ -85,7 +85,7 @@ timestamps {
         stage("${RL4J_PROJECT}") {
           load "${AMD64DIR}/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
         }
-*/
+
         // depends on nd4j and deeplearning4j-core
         stage("${SCALNET_PROJECT}") {
         	load "${AMD64DIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
