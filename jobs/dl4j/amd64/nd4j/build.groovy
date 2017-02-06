@@ -1,6 +1,8 @@
 timestamps {
     node('amd64&&g2&&ubuntu16') {
 
+        step([$class: 'WsCleanup'])
+
         checkout scm
         // Remove .git folder from workspace
         sh("rm -rf ${WORKSPACE}/.git")
