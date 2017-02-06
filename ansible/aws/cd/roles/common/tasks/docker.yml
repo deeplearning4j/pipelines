@@ -19,14 +19,26 @@
     groups: docker
     append: yes
 
+- name: Check nvidia-docker-plugin
+  shell: "curl -I --unix-socket /run/docker/plugins/nvidia-docker.sock http:/test"
+  become: yes
+  become_method: sudo
+  ignore_errors: True
+  register: nvidia_docker_exist
+
 - name: Download and unarchive nvidia-docker
   unarchive:
     remote_src: yes
     src: "{{ source_nvidia_docker }}"
     dest: "/usr/bin"
     extra_opts: "--strip-components=1"
+  when: nvidia_docker_exist.rc != 0
+
 - name: Run nvidia-docker-plugin
-  command: sudo -b nohup nvidia-docker-plugin > /tmp/nvidia-docker.log
+  shell: "nohup nvidia-docker-plugin > /tmp/nvidia-docker.log 2>&1 &"
+  become: yes
+  become_method: sudo
+  when: nvidia_docker_exist.rc != 0
 
 #- name: Copy docker config options
 #  template:
