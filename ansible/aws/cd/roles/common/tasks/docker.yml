@@ -4,7 +4,7 @@
 - name: Install Docker
   yum:
     update_cache: yes
-    name: "{{ package_name }}" 
+    name: "{{ package_name }}"
     state: present
 
 - name: Ensure that Docker service is running
@@ -26,4 +26,12 @@
     dest: "/usr/bin"
     extra_opts: "--strip-components=1"
 - name: Run nvidia-docker-plugin
-  command: sudo -b nohup nvidia-docker-plugin > /tmp/nvidia-docker.log 
+  command: sudo -b nohup nvidia-docker-plugin > /tmp/nvidia-docker.log
+
+  - name: Copy docker config options
+    template:
+      src: docker.sysconfig.j2
+      dest: /etc/sysconfig/docker
+    notify:
+      - reload docker
+    when: ansible_os_family == "RedHat"

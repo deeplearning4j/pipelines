@@ -3,3 +3,4 @@
 package_name: docker
 service_name: "docker"
 source_nvidia_docker: "https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.0/nvidia-docker_1.0.0_amd64.tar.xz"
+docker_data_path: /home/ec2-user/workspace/docker-data
