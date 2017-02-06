@@ -28,10 +28,10 @@
 - name: Run nvidia-docker-plugin
   command: sudo -b nohup nvidia-docker-plugin > /tmp/nvidia-docker.log
 
-  - name: Copy docker config options
-    template:
-      src: docker.sysconfig.j2
-      dest: /etc/sysconfig/docker
-    notify:
-      - reload docker
-    when: ansible_os_family == "RedHat"
+- name: Copy docker config options
+  template:
+    src: docker.sysconfig.j2
+    dest: /etc/sysconfig/docker
+  notify:
+    - reload docker
+  when: ansible_os_family == "RedHat"
