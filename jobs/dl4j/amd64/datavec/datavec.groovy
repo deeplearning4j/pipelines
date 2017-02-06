@@ -24,7 +24,7 @@ stage("${DATAVEC_PROJECT}-Build") {
 
     sh("./change-scala-versions.sh 2.11")
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean instal -DskipTests ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests ")
       // sh( "'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")
     }
 
