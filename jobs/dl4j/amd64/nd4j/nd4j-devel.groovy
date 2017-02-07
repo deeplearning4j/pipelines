@@ -1,7 +1,7 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-functions = load "${PDIR}/functions.groovy"
+functions = load 'jobs/dl4j/functions.groovy'
 
 stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")
@@ -9,7 +9,7 @@ stage("${PROJECT}-CheckoutSources") {
 }
 
 stage("${PROJECT}-buildMaven") {
-dir("${PROJECT}") {
+dir("$PROJECT") {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Temporary section - please remove once it commited updates to source code
     // configFileProvider(
@@ -29,7 +29,8 @@ dir("${PROJECT}") {
             [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
             ]) {
         // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests")
-        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " +  " -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + " -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+
     }
 
 

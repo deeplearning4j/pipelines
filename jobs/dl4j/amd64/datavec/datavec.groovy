@@ -1,11 +1,16 @@
 tool name: 'M339', type: 'maven'
 def mvnHome = tool 'M339'
 
-functions = load "${PDIR}/functions.groovy"
+env.JAVA_HOME = "${tool 'jdk-8u121'}"
+env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
 stage("${DATAVEC_PROJECT}-CheckoutSources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
 }
+
+// stage("${DATAVEC_PROJECT}-Codecheck") {
+//   functions.sonar("${DATAVEC_PROJECT}")
+// }
 
 stage("${DATAVEC_PROJECT}-Build") {
 
@@ -14,25 +19,22 @@ stage("${DATAVEC_PROJECT}-Build") {
   dir("${DATAVEC_PROJECT}") {
     functions.checktag("${DATAVEC_PROJECT}")
     functions.verset("${RELEASE_VERSION}", true)
-    sh("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml")
+    //sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml"
 
-    sh("./change-scala-versions.sh 2.10")
+    sh "./change-scala-versions.sh ${SCALA_VERSION}"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests ")
-      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION}")
     }
 
-    sh("./change-scala-versions.sh 2.11")
+/*    sh "./change-scala-versions.sh 2.11"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests ")
-      // sh( "'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests ")
+      sh( "'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} ")
     }
 
-    sh("./change-scala-versions.sh 2.10")
+    sh "./change-scala-versions.sh 2.10"
     configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests ")
-      // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
-    }
+      sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} ")
+    }*/
 
 
     //  sh "${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$SNAPSHOT_VERSION"
@@ -40,11 +42,5 @@ stage("${DATAVEC_PROJECT}-Build") {
     //  sh "git commit -a -m 'Update to version $SNAPSHOT_VERSION'"
   }
 }
-
-// Findbugs needs sources to be compiled. Please build project before executing sonar
-stage("${DATAVEC_PROJECT}-Codecheck") {
-  functions.sonar("${DATAVEC_PROJECT}")
-}
-
 // Messages for debugging
 echo 'MARK: end of datavec.groovy'

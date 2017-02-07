@@ -1,10 +1,15 @@
 timestamps {
-    node('amd64&&g2&&ubuntu16') {
+    node('local-slave') {
+
+        step([$class: 'WsCleanup'])
 
         checkout scm
 
+        load 'jobs/dl4j/vars.groovy'
+        functions = load 'jobs/dl4j/functions.groovy'
+
         stage("${RL4J_PROJECT}") {
-            load "${AMD64DIR}/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
+            load 'jobs/dl4j/rl4j/rl4j.groovy'
         }
     }
 }

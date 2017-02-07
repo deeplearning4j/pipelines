@@ -1,10 +1,15 @@
 timestamps {
-    node('amd64&&g2&&ubuntu16') {
+    node('local-slave') {
+
+        step([$class: 'WsCleanup'])
 
         checkout scm
 
+        load 'jobs/dl4j/vars.groovy'
+        functions = load 'jobs/dl4j/functions.groovy'
+
         stage("${GYM_JAVA_CLIENT_PROJECT}") {
-            load "${AMD64DIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
+            load 'jobs/dl4j/gym-java-client/gym-java-client.groovy'
         }
     }
 }
