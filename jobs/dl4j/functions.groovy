@@ -1,6 +1,6 @@
 def get_project_code(proj) {
   checkout([$class: 'GitSCM',
-             branches: [[name: '*/${GIT_BRANCHNAME}']],
+             branches: [[name: "*/${GIT_BRANCHNAME}"]],
              doGenerateSubmoduleConfigurations: false,
              // DO NOT FORGET TO SET noTags TO FALSE !!!
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: true, reference: '', shallow: true]],

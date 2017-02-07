@@ -4,6 +4,17 @@ timestamps {
         step([$class: 'WsCleanup'])
 
         checkout scm
+        
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+        // Remove .git and other unneeded folders from workspace
+        sh("rm -rf ${WORKSPACE}/.git")
+        sh("rm -rf ${WORKSPACE}/docs")
+        sh("rm -rf ${WORKSPACE}/imgs")
+        sh("rm -rf ${WORKSPACE}/ansible")
+        sh("rm -f ${WORKSPACE}/.gitignore")
+        sh("rm -f ${WORKSPACE}/README.md")
+
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
         load 'jobs/dl4j/vars.groovy'
         functions = load 'jobs/dl4j/functions.groovy'
