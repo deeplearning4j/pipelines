@@ -16,7 +16,7 @@ timestamps {
                     "Stream cuda 8.0": { load 'jobs/dl4j/libnd4j/libnd4j_cuda80.groovy' }
             )
 */
-            load 'jobs/dl4j/libnd4j/libnd4j.groovy'
+            load 'jobs/dl4j/amd64/libnd4j/libnd4j.groovy'
         }
 
 
@@ -39,4 +39,3 @@ timestamps {
 
     }
 }
-

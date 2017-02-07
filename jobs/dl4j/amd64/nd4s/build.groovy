@@ -9,7 +9,7 @@ timestamps {
         functions = load 'jobs/dl4j/functions.groovy'
 
         stage("${ND4S_PROJECT}") {
-            load 'jobs/dl4j/nd4s/nd4s.groovy'
+            load 'jobs/dl4j/amd64/nd4s/nd4s.groovy'
         }
     }
 }

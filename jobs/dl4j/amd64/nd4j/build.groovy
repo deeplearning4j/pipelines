@@ -8,7 +8,7 @@ timestamps {
         functions = load 'jobs/dl4j/functions.groovy'
 
         stage("${PROJECT}") {
-            load "jobs/dl4j/${PROJECT}/${PROJECT}.groovy"
+            load "jobs/dl4j/amd64/${PROJECT}/${PROJECT}.groovy"
         }
     }
 }

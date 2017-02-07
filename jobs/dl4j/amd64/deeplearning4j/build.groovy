@@ -9,7 +9,7 @@ timestamps {
         functions = load 'jobs/dl4j/functions.groovy'
 
         stage("${DEEPLEARNING4J_PROJECT}") {
-            load 'jobs/dl4j/deeplearning4j/deeplearning4j.groovy'
+            load 'jobs/dl4j/amd64/deeplearning4j/deeplearning4j.groovy'
         }
     }
 }

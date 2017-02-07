@@ -9,7 +9,7 @@ timestamps {
         functions = load 'jobs/dl4j/functions.groovy'
 
         stage("${DATAVEC_PROJECT}") {
-            load 'jobs/dl4j/datavec/datavec.groovy'
+            load 'jobs/dl4j/amd64/datavec/datavec.groovy'
         }
     }
 }

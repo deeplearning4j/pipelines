@@ -9,7 +9,7 @@ timestamps {
         functions = load 'jobs/dl4j/functions.groovy'
 
         stage("${GYM_JAVA_CLIENT_PROJECT}") {
-            load 'jobs/dl4j/gym-java-client/gym-java-client.groovy'
+            load 'jobs/dl4j/amd64/gym-java-client/gym-java-client.groovy'
         }
     }
 }

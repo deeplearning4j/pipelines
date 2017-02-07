@@ -9,7 +9,7 @@ timestamps {
         functions = load 'jobs/dl4j/functions.groovy'
 
         stage("${ARBITER_PROJECT}") {
-            load 'jobs/dl4j/arbiter/arbiter.groovy'
+            load 'jobs/dl4j/amd64/arbiter/arbiter.groovy'
         }
     }
 }
