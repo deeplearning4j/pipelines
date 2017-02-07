@@ -11,9 +11,9 @@ timestamps {
         stage("${LIBPROJECT}-Build") {
 /*
             parallel(
-                    "Stream CPU     ": { load 'jobs/dl4j/libnd4j/libnd4j_cpu.groovy' },
-                    "Stream cuda 7.5": { load 'jobs/dl4j/libnd4j/libnd4j_cuda75.groovy' },
-                    "Stream cuda 8.0": { load 'jobs/dl4j/libnd4j/libnd4j_cuda80.groovy' }
+                    "Stream CPU     ": { load 'jobs/dl4j/amd64/libnd4j/libnd4j_cpu.groovy' },
+                    "Stream cuda 7.5": { load 'jobs/dl4j/amd64/libnd4j/libnd4j_cuda75.groovy' },
+                    "Stream cuda 8.0": { load 'jobs/dl4j/amd64/libnd4j/libnd4j_cuda80.groovy' }
             )
 */
             load 'jobs/dl4j/amd64/libnd4j/libnd4j.groovy'
