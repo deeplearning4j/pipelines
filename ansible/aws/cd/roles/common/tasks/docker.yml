@@ -35,7 +35,7 @@
   when: nvidia_docker_exist.rc != 0
 
 - name: Run nvidia-docker-plugin
-  shell: "nohup nvidia-docker-plugin > /tmp/nvidia-docker.log 2>&1 &"
+  shell: "nvidia-docker-plugin -d /usr/local/nvidia-driver > /tmp/nvidia-docker.log 2>&1 &"
   become: yes
   become_method: sudo
   when: nvidia_docker_exist.rc != 0
