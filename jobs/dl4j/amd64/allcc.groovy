@@ -16,46 +16,38 @@ timestamps {
 
 
         stage("${LIBPROJECT}") {
-          // load 'jobs/dl4j/libnd4j/libnd4j.groovy'
-          load "jobs/dl4j/${LIBPROJECT}/${LIBPROJECT}.groovy"
+          load "jobs/dl4j/amd64/${LIBPROJECT}/${LIBPROJECT}.groovy"
         }
 
         stage("${PROJECT}") {
-          // load 'jobs/dl4j/nd4j/nd4j.groovy'
-          load "jobs/dl4j/${PROJECT}/${PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${PROJECT}/${PROJECT}.groovy"
         }
 
 /*
         def builds = [:]
 
         builds["${DATAVEC_PROJECT}"] = {
-          // load 'jobs/dl4j/datavec/datavec.groovy'
-          load "jobs/dl4j/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
         }
 
         builds["${DEEPLEARNING4J_PROJECT}"] = {
-          // load  'jobs/dl4j/deeplearning4j/deeplearning4j.groovy'
-          load "jobs/dl4j/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
         }
 
         builds["${ARBITER_PROJECT}"] = {
-          // load 'jobs/dl4j/arbiter/arbiter.groovy'
-          load "jobs/dl4j/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
         }
 
         builds["${ND4S_PROJECT}"] = {
-          // load 'jobs/dl4j/nd4s/nd4s.groovy'
-          load "jobs/dl4j/${ND4S_PROJECT}/${ND4S_PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${ND4S_PROJECT}/${ND4S_PROJECT}.groovy"
         }
 
         builds["${GYM_JAVA_CLIENT_PROJECT}"] = {
-          // load 'jobs/dl4j/gym-java-client.groovy'
-          load "jobs/dl4j/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
         }
 
         builds["${RL4J_PROJECT}"] = {
-          // load 'jobs/dl4j/rl4j.groovy'
-          load "jobs/dl4j/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
+          load "jobs/dl4j/amd64/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
         }
 
         parallel builds
@@ -63,39 +55,32 @@ timestamps {
 
 
     stage("${DATAVEC_PROJECT}") {
-      // load 'jobs/dl4j/datavec/datavec.groovy'
-      load "jobs/dl4j/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
+      load "jobs/dl4j/amd64/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}.groovy"
     }
 
     stage("${DEEPLEARNING4J_PROJECT}") {
-      // load 'jobs/dl4j/deeplearning4j/deeplearning4j.groovy'
-      load "jobs/dl4j/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
+      load "jobs/dl4j/amd64/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}.groovy"
     }
 
     stage ("${ARBITER_PROJECT}") {
-      // load 'jobs/dl4j/arbiter/arbiter.groovy'
-      load "jobs/dl4j/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
+      load "jobs/dl4j/amd64/${ARBITER_PROJECT}/${ARBITER_PROJECT}.groovy"
     }
 
     stage("${ND4S_PROJECT}") {
-      // load 'jobs/dl4j/nd4s/nd4s.groovy'
-      load "jobs/dl4j/${ND4S_PROJECT}/${ND4S_PROJECT}.groovy"
+      load "jobs/dl4j/amd64/${ND4S_PROJECT}/${ND4S_PROJECT}.groovy"
     }
 
     stage("${GYM_JAVA_CLIENT_PROJECT}") {
-      // load 'jobs/dl4j/gym-java-client.groovy'
-      load "jobs/dl4j/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
+      load "jobs/dl4j/amd64/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}.groovy"
     }
 
     stage("${RL4J_PROJECT}") {
-      // load 'jobs/dl4j/rl4j.groovy'
-      load "jobs/dl4j/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
+      load "jobs/dl4j/amd64/${RL4J_PROJECT}/${RL4J_PROJECT}.groovy"
     }
 
     // depends on nd4j and deeplearning4j-core
     stage("${SCALNET_PROJECT}") {
-    	// load 'jobs/dl4j/scalnet.groovy'
-    	load "jobs/dl4j/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
+    	load "jobs/dl4j/amd64/${SCALNET_PROJECT}/${SCALNET_PROJECT}.groovy"
     }
 
 
