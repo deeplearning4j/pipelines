@@ -32,7 +32,10 @@
     src: "{{ source_nvidia_docker }}"
     dest: "/usr/bin"
     extra_opts: "--strip-components=1"
+<<<<<<< HEAD
+=======
   when: nvidia_docker_exist.rc != 0
+>>>>>>> ebde213d45b0d42cd9fbc0ab4321cc838bcdd46e
 
 - name: Run nvidia-docker-plugin
   become: yes
