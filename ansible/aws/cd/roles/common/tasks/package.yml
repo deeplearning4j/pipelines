@@ -25,9 +25,10 @@
     dest: /tmp
 
 - name: Update NVIDIA driver
+  become: true
+  become_method: sudo
   shell: NVIDIA-Linux-x86_64*.run -s > /tmp/nvidia_driver.log
   args:
     chdir: /tmp/
     executable: /bin/bash
     creates: nvidia_driver.log
-    
