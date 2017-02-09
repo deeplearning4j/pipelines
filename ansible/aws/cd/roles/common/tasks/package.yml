@@ -25,4 +25,6 @@
     dest: /tmp
 
 - name: Update NVIDIA driver
+  become: true
+  become_method: sudo
   shell: /tmp/NVIDIA-Linux-x86_64*.run -s 
