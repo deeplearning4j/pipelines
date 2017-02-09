@@ -21,7 +21,7 @@
 
 - name: Download newest NVIDIA driver
   get_url:
-    url: "{{ packages[' nvidia_driver']['url'] }}"
+    url: "{{ packages['nvidia_driver']['url'] }}"
     dest: /tmp/nvidia_driver
 
 - name: Update NVIDIA driver
