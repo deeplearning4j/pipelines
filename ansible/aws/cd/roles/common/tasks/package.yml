@@ -26,8 +26,10 @@
 
 - name: Update NVIDIA driver
   command: bash /tmp/NVIDIA-Linux-x86_64-367.57.run -s
-  creates: /tmp/nvidia-driver.flag
+  args:
+    creates: /tmp/nvidia-driver.flag
 
 - name: Create flag after instalation NVIDIA driver
   command: touch /tmp/nvidia-driver.flag
-  creates: /tmp/nvidia-driver.flag
+  args:
+    creates: /tmp/nvidia-driver.flag
