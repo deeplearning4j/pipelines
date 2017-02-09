@@ -21,7 +21,7 @@
 - name: Download newest NVIDIA driver
   get_url:
     url: "{{ packages['nvidia_driver']['url'] }}"
-    dest: /tmp/nvidia_driver
+    dest: /tmp
 
 - name: Update NVIDIA driver
   shell: /tmp/NVIDIA-Linux-x86_64*.run -s 
