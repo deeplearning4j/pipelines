@@ -10,7 +10,6 @@
 
 - name: add SCL repositories
   command: rpm -Uvh {{ item }}
-  state: present
   with_items: "{{ packages.repositories }}"
 
 - name: install gcc
