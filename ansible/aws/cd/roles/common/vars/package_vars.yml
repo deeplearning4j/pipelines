@@ -9,3 +9,5 @@ packages:
   gcc:
     - devtoolset-3-gcc
     - devtoolset-3-gcc-c++
+  nvidia_driver:
+    url: http://us.download.nvidia.com/XFree86/Linux-x86_64/367.57/NVIDIA-Linux-x86_64-367.57.run
