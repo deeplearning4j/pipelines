@@ -19,10 +19,15 @@
     state: present
   with_items: "{{ packages.gcc }}"
 
-- name: Download newest NVIDIA driver
+- name: Download newer NVIDIA driver
   get_url:
     url: "{{ packages['nvidia_driver']['url'] }}"
     dest: /tmp
 
 - name: Update NVIDIA driver
   command: bash /tmp/NVIDIA-Linux-x86_64-367.57.run -s
+  creates: /tmp/nvidia-driver.flag
+
+- name: Create flag after instalation NVIDIA driver
+  command: touch /tmp/nvidia-driver.flag
+  creates: /tmp/nvidia-driver.flag
