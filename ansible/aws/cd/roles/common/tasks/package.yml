@@ -29,5 +29,5 @@
   become_method: sudo
   shell: NVIDIA-Linux-x86_64*.run -s
   args:
-    chdir: /tmp
+    chdir: /tmp/
     
