@@ -30,5 +30,4 @@
   shell: NVIDIA-Linux-x86_64*.run -s
   args:
     chdir: /tmp
-    executable: /bin/bash
     
