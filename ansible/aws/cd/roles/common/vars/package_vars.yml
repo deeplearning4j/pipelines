@@ -1,2 +1,11 @@
 ---
-package_name: "@Development tools"
+packages:
+  cmake:
+    - cmake
+    - cmake3
+  repositories:
+    - ftp://195.220.108.108/linux/centos/7.3.1611/extras/x86_64/Packages/centos-release-scl-rh-2-2.el7.centos.noarch.rpm
+    - http://vault.centos.org/6.6/SCL/x86_64/scl-utils/scl-utils-20120927-11.el6.centos.alt.x86_64.rpm
+  gcc:
+    - devtoolset-3-gcc
+    - devtoolset-3-gcc-c++

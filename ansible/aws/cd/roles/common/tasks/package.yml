@@ -1,7 +1,20 @@
 ---
 - include_vars: package_vars.yml
 
-- name: install Defined packet(s)
+- name: install cmake and cmake3
   yum:
-     name: "{{ package_name }}"
+     name: "{{ item }}"
+     enablerepo: epel
      state: present
+  with_items: "{{ packages.cmake }}"
+
+- name: add SCL repositories
+  command: rpm -Uvh {{ item }}
+  state: present
+  with_items: "{{ packages.repositories }}"
+
+- name: install gcc
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages.gcc }}"
