@@ -1,15 +1,24 @@
 ---
 - name: Create swap file
-  command: fallocate -l {{ swapsize }} /swapfile{{ swapsize }} creates=/swapfile{{ swapsize }}
+  command: fallocate -l {{ swapsize }} {{ swap_file }}{{ swapsize }} creates={{ swap_file }}{{ swapsize }}
 
 - name: Change swap file permissions
-  file: path=/swapfile{{ swapsize }} owner=root group=root mode=0600
+  file:
+    path: {{ swap_file }}{{ swapsize }}
+    owner: root
+    group: root
+    mode: 0600
 
 - name: Format swap file
-  command: mkswap /swapfile{{ swapsize }}
+  command: mkswap {{ swap_file }}{{ swapsize }}
 
 - name: mount swap volume
-  command: swapon /swapfile{{ swapsize }}
+  command: swapon {{ swap_file }}{{ swapsize }}
 
 - name: update fstab
-  mount: name=none src=/swapfile{{ swapsize }} fstype=swap opts=defaults state=present
+  mount:
+    name: none
+    src: {{ swap_file }}{{ swapsize }}
+    fstype: swap
+    opts: defaults
+    state: present
