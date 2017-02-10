@@ -1,3 +1,3 @@
 ---
 swap_file: /var/lib/swapfile
-swapsize: 1G
+swapsize: 4G
