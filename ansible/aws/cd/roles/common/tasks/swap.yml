@@ -1,6 +1,5 @@
 ---
-<<<<<<< HEAD
-- incluse_vars: swap_vars.yml
+- include_vars: swap_vars.yml
 - name: Create swap file
   command: dd if=/dev/zero of={{ swap_file_path }} bs=1024 count={{ swap_file_size }}
   creates: "{{ swap_file_path }}"
