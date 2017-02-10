@@ -1,3 +1,6 @@
 ---
 swap_file: /var/lib/swapfile
 swapsize: 4G
+sysctl_params:
+	vm.swappiness: 10
+	vm.vfs_cache_pressure: 200
