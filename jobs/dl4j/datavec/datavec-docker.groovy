@@ -16,7 +16,7 @@ stage("${DATAVEC_PROJECT}-Build-${PLATFORM_NAME}") {
     //sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml"
 
     sh "./change-scala-versions.sh ${SCALA_VERSION}"
-    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
       if (!TESTS) {
         docker.image('ubuntu14cuda80').inside(dockerParams) {
             sh'''

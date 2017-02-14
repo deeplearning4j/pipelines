@@ -12,19 +12,37 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
       functions.checktag("${ARBITER_PROJECT}")
       functions.verset("${RELEASE_VERSION}", true)
       sh "./change-scala-versions.sh ${SCALA_VERSION}"
-      configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+      configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
         if (!TESTS) {
-          docker.image('ubuntu14cuda80').inside(dockerParams) {
+          docker.image("${DOCKER_IMAGE}").inside("${DOCKER_PARAMETERS}") {
+            if("${PLATFORM_NAME}" == 'linux-ppc64le') {
               sh'''
-              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+              sudo ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
               '''
+            }
+            else {
+              sh'''
+              ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+              '''
+            }
           }
         }
         else {
-          docker.image('ubuntu14cuda80').inside(dockerParams) {
+          docker.image("${DOCKER_IMAGE}").inside("${DOCKER_PARAMETERS}") {
+            if("${PLATFORM_NAME}" == 'linux-ppc64le') {
               sh'''
-              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+              sudo ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
               '''
+            }
+            else {
+              sh'''
+              ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+              '''
+            }
           }
         }
       }

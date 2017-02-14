@@ -3,7 +3,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-CheckoutSources") {
 }
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
-    echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
         functions.verset("${RELEASE_VERSION}", true)
@@ -11,14 +11,14 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
           if (!TESTS) {
             docker.image('ubuntu14cuda80').inside(dockerParams) {
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                ${MVNCMD} -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                 '''
             }
           }
           else {
             docker.image('ubuntu14cuda80').inside(dockerParams) {
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                ${MVNCMD} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                 '''
             }
           }

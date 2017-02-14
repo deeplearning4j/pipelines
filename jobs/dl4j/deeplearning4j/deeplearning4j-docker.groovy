@@ -14,10 +14,9 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
   ])
 }
 
-stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
-  if (!TESTS) {
-    docker.image('ubuntu14cuda80').inside(dockerParams) {
-      configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+if (!TESTS) {
+    configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
+      docker.image('ubuntu14cuda80').inside(dockerParams) {
         stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
             sh'''
             cd dl4j-test-resources
@@ -38,7 +37,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
     }
   }
   else {
-    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
       docker.image('ubuntu14cuda80').inside(dockerParams) {
         stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
             sh'''
@@ -63,12 +62,5 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
   if (SONAR) {
       functions.sonar("${DEEPLEARNING4J_PROJECT}")
   }
-}
-
-// if (SONAR) {
-//   stage("${DEEPLEARNING4J_PROJECT}-Codecheck") {
-//     functions.sonar("${DEEPLEARNING4J_PROJECT}")
-//   }
-// }
 
 echo 'MARK: end of deeplearning4j.groovy'
