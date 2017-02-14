@@ -11,14 +11,16 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
           if (!TESTS) {
             docker.image('ubuntu14cuda80').inside(dockerParams) {
                 sh'''
-                ${MVNCMD} -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                 '''
             }
           }
           else {
             docker.image('ubuntu14cuda80').inside(dockerParams) {
                 sh'''
-                ${MVNCMD} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                 '''
             }
           }

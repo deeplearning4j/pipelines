@@ -17,13 +17,13 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
           docker.image("${DOCKER_IMAGE}").inside("${DOCKER_PARAMETERS}") {
             if("${PLATFORM_NAME}" == 'linux-ppc64le') {
               sh'''
-              sudo ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
               -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
               '''
             }
             else {
               sh'''
-              ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
               -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
               '''
             }
@@ -33,13 +33,13 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
           docker.image("${DOCKER_IMAGE}").inside("${DOCKER_PARAMETERS}") {
             if("${PLATFORM_NAME}" == 'linux-ppc64le') {
               sh'''
-              sudo ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
               -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
               '''
             }
             else {
               sh'''
-              ${MVNCMD} -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
               -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
               '''
             }
