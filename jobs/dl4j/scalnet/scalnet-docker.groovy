@@ -9,7 +9,7 @@ stage("${SCALNET_PROJECT}-Build-${PLATFORM_NAME}") {
         sh  ("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet<\\/artifactId>/' pom.xml")
         functions.verset("${RELEASE_VERSION}", false)
         sh("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_\${scala.binary.version}<\\/artifactId>/' pom.xml")
-        configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+        configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
           if (!TESTS) {
             docker.image('ubuntu14cuda80').inside(dockerParams) {
                 sh'''

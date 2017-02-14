@@ -24,7 +24,7 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
         configFileProvider(
-                [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+                [configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')
                 ]) {
                       if (!TESTS) {
                         docker.image('ubuntu14cuda80').inside(dockerParams) {
@@ -52,7 +52,7 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
     sh "./change-cuda-versions.sh 8.0"
 
     configFileProvider(
-            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            [configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')
             ]) {
         sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
         // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
