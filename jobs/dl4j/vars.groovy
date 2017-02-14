@@ -16,8 +16,8 @@ env.DOCKER_CUDA_PPC = "ubuntu_cuda_ready:14.04"
 dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 dockerParams_tmpfs = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --tmpfs /tmp:size=3g --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw -v /mnt/libnd4j:/libnd4j"
+settings_xml = 'maven-settings-id-1'
 
-env.SETTINGS_XML = "maven-settings-id-1"
 env.MVNCMD = "mvn -B -s ${MAVEN_SETTINGS} clean deploy"
 env.ARTFACT_URL = "http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8081/artifactory"
 env.ARTFACT_SNAPSHOT = "libs-snapshot-local"

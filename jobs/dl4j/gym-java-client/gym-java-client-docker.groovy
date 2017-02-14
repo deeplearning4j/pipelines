@@ -7,7 +7,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
         functions.verset("${RELEASE_VERSION}", true)
-        configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
+        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
           if (!TESTS) {
             docker.image('ubuntu14cuda80').inside(dockerParams) {
                 sh'''
