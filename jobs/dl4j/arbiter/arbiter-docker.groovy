@@ -6,7 +6,7 @@ stage("${ARBITER_PROJECT}-CheckoutSources") {
 //   functions.sonar("${ARBITER_PROJECT}")
 // }
 
-stage("${ARBITER_PROJECT}-Build-withDocker") {
+stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
   dir("${ARBITER_PROJECT}") {
       functions.checktag("${ARBITER_PROJECT}")

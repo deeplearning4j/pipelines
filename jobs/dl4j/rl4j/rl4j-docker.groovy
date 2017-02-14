@@ -2,7 +2,7 @@ stage("${RL4J_PROJECT}-CheckoutSources") {
     functions.get_project_code("${RL4J_PROJECT}")
 }
 
-stage("${RL4J_PROJECT}-Build-withDocker") {
+stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
   echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION}"
   dir("${RL4J_PROJECT}") {
     functions.checktag("${RL4J_PROJECT}")

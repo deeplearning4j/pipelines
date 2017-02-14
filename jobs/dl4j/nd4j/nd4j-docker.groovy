@@ -45,7 +45,7 @@ stage("${PROJECT}-CheckoutSources") {
     functions.get_project_code("${PROJECT}")
 }
 
-stage("${PROJECT}-Build-withDocker") {
+stage("${PROJECT}-Build-${PLATFORM_NAME}") {
     dir("${LIBPROJECT}/blasbuild") {
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }

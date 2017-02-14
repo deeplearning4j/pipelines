@@ -2,7 +2,7 @@ stage("${SCALNET_PROJECT}-CheckoutSources") {
     functions.get_project_code("${SCALNET_PROJECT}")
 }
 
-stage("${SCALNET_PROJECT}-Build-withDocker") {
+stage("${SCALNET_PROJECT}-Build-${PLATFORM_NAME}") {
     echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION}"
     dir("${SCALNET_PROJECT}") {
         functions.checktag("${SCALNET_PROJECT}")

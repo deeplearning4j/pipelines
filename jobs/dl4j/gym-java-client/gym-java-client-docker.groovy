@@ -2,7 +2,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-CheckoutSources") {
     functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-Build-withDocker") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
     echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
@@ -28,11 +28,5 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-withDocker") {
         functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
     }
 }
-
-// if (SONAR) {
-//   stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
-//     functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-//   }
-// }
 
 echo 'MARK: end of gym-java-client.groovy'

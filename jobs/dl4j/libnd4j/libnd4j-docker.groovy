@@ -1,6 +1,6 @@
-stage("${LIBPROJECT}-Build-Parallel-withDocker") {
+stage("${LIBPROJECT}-Build-Parallel-${PLATFORM_NAME}") {
     parallel (
-        "Stream 0 ${LIBPROJECT}-BuildCuda-CPU" : {
+        "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {
 
                 functions.get_project_code("${LIBPROJECT}")
@@ -23,7 +23,7 @@ stage("${LIBPROJECT}-Build-Parallel-withDocker") {
                 }
             }
         },
-        "Stream 1 ${LIBPROJECT}-BuildCuda-7.5" : {
+        "Stream 1 ${LIBPROJECT}-BuildCuda-7.5-${PLATFORM_NAME}" : {
             dir("stream1") {
                 functions.get_project_code("${LIBPROJECT}")
                 dir("${LIBPROJECT}") {
@@ -44,7 +44,7 @@ stage("${LIBPROJECT}-Build-Parallel-withDocker") {
                 }
             }
         },
-        "Stream 2 ${LIBPROJECT}-BuildCuda-8.0" : {
+        "Stream 2 ${LIBPROJECT}-BuildCuda-8.0-${PLATFORM_NAME}" : {
             dir("stream2") {
                 functions.get_project_code("${LIBPROJECT}")
                 dir("${LIBPROJECT}") {

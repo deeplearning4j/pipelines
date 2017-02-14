@@ -2,7 +2,7 @@ stage("${ND4S_PROJECT}-CheckoutSources") {
     functions.get_project_code("${ND4S_PROJECT}")
 }
 
-stage("${ND4S_PROJECT}-Build-withDocker") {
+stage("${ND4S_PROJECT}-Build-${PLATFORM_NAME}") {
     echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
