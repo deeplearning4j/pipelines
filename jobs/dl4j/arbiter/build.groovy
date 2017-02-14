@@ -3,8 +3,6 @@ node("${DOCKER_NODE}") {
     println "Cleanup WS"
     step([$class: 'WsCleanup'])
 
-    // dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-
     checkout scm
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Remove .git folder from workspace
@@ -23,7 +21,7 @@ node("${DOCKER_NODE}") {
     sh ("mkdir ${WORKSPACE}/.m2 || true")
 
     stage("${ARBITER_PROJECT}") {
-      load "${AMD64DIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
+      load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
     }
 
 

@@ -20,7 +20,7 @@ node("${DOCKER_NODE}") {
 
 
     stage("${RL4J_PROJECT}") {
-      load "${AMD64DIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
+      load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
     }
 
 

@@ -23,7 +23,7 @@ node("${DOCKER_NODE}") {
     sh ("mkdir ${WORKSPACE}/.m2 || true")
 
     stage("${DEEPLEARNING4J_PROJECT}") {
-      load "${AMD64DIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
+      load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
     }
 
 

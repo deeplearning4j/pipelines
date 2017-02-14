@@ -23,7 +23,7 @@ node("${DOCKER_NODE}") {
     sh ("mkdir ${WORKSPACE}/.m2 || true")
 
     stage("${DATAVEC_PROJECT}") {
-      load "${AMD64DIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
+      load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
     }
 
 

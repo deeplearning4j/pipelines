@@ -28,41 +28,41 @@ node("${DOCKER_NODE}") {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     /*
     stage("${LIBPROJECT}") {
-        load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
+        load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
     }
     */
 
     stage("${PROJECT}") {
-        load "${AMD64DIR}/${PROJECT}/${PROJECT}-docker.groovy"
+        load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
     }
 
     stage("${DATAVEC_PROJECT}") {
-      load "${AMD64DIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
+      load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
     }
 
     stage("${DEEPLEARNING4J_PROJECT}") {
-        load "${AMD64DIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
+        load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
     }
 
     stage ("${ARBITER_PROJECT}") {
-      load "${AMD64DIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
+      load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
     }
 
     stage("${ND4S_PROJECT}") {
-        load "${AMD64DIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
+        load "${PDIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
     }
 
     stage("${GYM_JAVA_CLIENT_PROJECT}") {
-      load "${AMD64DIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
+      load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
     }
 
     stage("${RL4J_PROJECT}") {
-      load "${AMD64DIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
+      load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
     }
 
     // depends on nd4j and deeplearning4j-core
     stage("${SCALNET_PROJECT}") {
-    	load "${AMD64DIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
+    	load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
     }
 
 

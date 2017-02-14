@@ -23,7 +23,7 @@ node("${DOCKER_NODE}") {
     sh ("mkdir ${WORKSPACE}/.m2 || true")
 
     stage("${GYM_JAVA_CLIENT_PROJECT}") {
-      load "${AMD64DIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
+      load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
     }
 
 

@@ -20,7 +20,7 @@ node("${DOCKER_NODE}") {
     sh ("mkdir ${WORKSPACE}/.m2 || true")
 
     stage("${SCALNET_PROJECT}") {
-      load "${AMD64DIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
+      load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
     }
 
 

@@ -1,6 +1,4 @@
 env.PDIR = "jobs/dl4j"
-env.AMD64DIR = "${PDIR}/amd64"
-env.PPCDIR = "${PDIR}/ppc"
 env.ACCOUNT = "deeplearning4j"
 env.PROJECT = "nd4j"
 env.LIBPROJECT = "libnd4j"

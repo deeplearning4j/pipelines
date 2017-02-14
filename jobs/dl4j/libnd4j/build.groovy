@@ -20,7 +20,7 @@ node("${DOCKER_NODE}") {
     sh ("mkdir ${WORKSPACE}/.m2 || true")
 
     stage("${LIBPROJECT}") {
-        load "${AMD64DIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
+        load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
     }
 
     stage('RELEASE') {
