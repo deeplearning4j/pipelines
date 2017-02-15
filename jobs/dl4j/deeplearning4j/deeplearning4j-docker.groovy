@@ -21,7 +21,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             if (!TESTS) {
               docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                 echo("Build test resources")
-                dir('dl4j-test-resources') {
+                step('dl4j-test-resources') {
                     sh'''
                     pwd
                     ls -al
@@ -45,7 +45,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             else {
               docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                 echo("Build test resources")
-                dir('dl4j-test-resources') {
+                step('dl4j-test-resources') {
                     sh'''
                     mvn clean install
                     '''
@@ -69,7 +69,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             if (!TESTS) {
               docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 echo("Build test resources")
-                dir('dl4j-test-resources') {
+                step('dl4j-test-resources') {
                     sh'''
                     mvn clean install
                     '''
@@ -91,7 +91,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             else {
               docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 echo("Build test resources")
-                dir('dl4j-test-resources') {
+                step('dl4j-test-resources') {
                     sh'''
                     mvn clean install
                     '''
