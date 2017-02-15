@@ -14,18 +14,19 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
   ])
 }
 
-configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-  switch(PLATFORM_NAME) {
-      case "linux-x86_64":
-          if (!TESTS) {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
-                  sh'''
-                  cd dl4j-test-resources
-                  mvn clean install
-                  '''
-              }
-              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+  configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+    switch(PLATFORM_NAME) {
+        case "linux-x86_64":
+            if (!TESTS) {
+              docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                echo("Build test resources")
+                dir('dl4j-test-resources') {
+                    sh'''
+                    mvn clean install
+                    '''
+                }
+
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
 
@@ -39,16 +40,15 @@ configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 }
               }
             }
-          }
-          else {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
-                  sh'''
-                  cd dl4j-test-resources
-                  mvn -q clean install
-                  '''
-              }
-              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+            else {
+              docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                echo("Build test resources")
+                dir('dl4j-test-resources') {
+                    sh'''
+                    mvn clean install
+                    '''
+                }
+
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
 
@@ -62,18 +62,17 @@ configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 }
               }
             }
-          }
-      break
-        case "linux-ppc64le":
-          if (!TESTS) {
-            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
-              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
-                  sh'''
-                  cd dl4j-test-resources
-                  sudo mvn clean install
-                  '''
-              }
-              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+        break
+          case "linux-ppc64le":
+            if (!TESTS) {
+              docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                echo("Build test resources")
+                dir('dl4j-test-resources') {
+                    sh'''
+                    mvn clean install
+                    '''
+                }
+
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
 
@@ -87,16 +86,15 @@ configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 }
               }
             }
-          }
-          else {
-            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
-              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
-                  sh'''
-                  cd dl4j-test-resources
-                  sudo mvn -q clean install
-                  '''
-              }
-              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+            else {
+              docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                echo("Build test resources")
+                dir('dl4j-test-resources') {
+                    sh'''
+                    mvn clean install
+                    '''
+                }
+
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
 
@@ -110,16 +108,16 @@ configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 }
               }
             }
-          }
-      break
+        break
 
-      default:
-      break
+        default:
+        break
 
-  }
+    }
+  }  
 
   if (SONAR) {
       functions.sonar("${DEEPLEARNING4J_PROJECT}")
   }
-
+}
 echo 'MARK: end of deeplearning4j.groovy'
