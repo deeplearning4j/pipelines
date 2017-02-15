@@ -8,7 +8,7 @@ stage("${DATAVEC_PROJECT}-CheckoutSources") {
 
 stage("${DATAVEC_PROJECT}-Build-${PLATFORM_NAME}") {
 
-  echo "Releasing ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
+  echo "Building ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
 
   dir("${DATAVEC_PROJECT}") {
     functions.checktag("${DATAVEC_PROJECT}")
