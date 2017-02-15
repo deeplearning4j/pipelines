@@ -14,49 +14,108 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
   ])
 }
 
-if (!TESTS) {
-    configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-        stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
-            sh'''
-            cd dl4j-test-resources
-            mvn clean install
-            '''
-        }
-        stage("${DEEPLEARNING4J_PROJECT}-Build-withDocker") {
-            echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-            sh'''
-            cd deeplearning4j
-            mvn -B versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}
-            ./change-scala-versions.sh ${SCALA_VERSION}
-            ./change-cuda-versions.sh ${CUDA_VERSION}
-            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
-            '''
-        }
-      }
-    }
-  }
-  else {
-    configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
-      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-        stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
-            sh'''
-            cd dl4j-test-resources
-            mvn -q clean install
-            '''
-        }
-        stage("${DEEPLEARNING4J_PROJECT}-Build-withDocker") {
-            echo "Releasing ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-            sh'''
-            cd deeplearning4j
-            mvn -B versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}
-            ./change-scala-versions.sh ${SCALA_VERSION}
-            ./change-cuda-versions.sh ${CUDA_VERSION}
-            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
-            '''
-        }
-      }
-    }
+configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+  switch(PLATFORM_NAME) {
+      case "linux-x86_64":
+          if (!TESTS) {
+            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
+                  sh'''
+                  cd dl4j-test-resources
+                  mvn clean install
+                  '''
+              }
+              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+                dir("${DEEPLEARNING4J_PROJECT}") {
+
+                  functions.verset("${RELEASE_VERSION}", true)
+
+                  sh'''
+                  ./change-scala-versions.sh ${SCALA_VERSION}
+                  ./change-cuda-versions.sh ${CUDA_VERSION}
+                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                  '''
+                }
+              }
+            }
+          }
+          else {
+            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
+                  sh'''
+                  cd dl4j-test-resources
+                  mvn -q clean install
+                  '''
+              }
+              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+                dir("${DEEPLEARNING4J_PROJECT}") {
+
+                  functions.verset("${RELEASE_VERSION}", true)
+
+                  sh'''
+                  ./change-scala-versions.sh ${SCALA_VERSION}
+                  ./change-cuda-versions.sh ${CUDA_VERSION}
+                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                  '''
+                }
+              }
+            }
+          }
+      break
+        case "linux-ppc64le":
+          if (!TESTS) {
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
+                  sh'''
+                  cd dl4j-test-resources
+                  sudo mvn clean install
+                  '''
+              }
+              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+                dir("${DEEPLEARNING4J_PROJECT}") {
+
+                  functions.verset("${RELEASE_VERSION}", true)
+
+                  sh'''
+                  ./change-scala-versions.sh ${SCALA_VERSION}
+                  ./change-cuda-versions.sh ${CUDA_VERSION}
+                  sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                  '''
+                }
+              }
+            }
+          }
+          else {
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+              stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
+                  sh'''
+                  cd dl4j-test-resources
+                  sudo mvn -q clean install
+                  '''
+              }
+              stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+                dir("${DEEPLEARNING4J_PROJECT}") {
+
+                  functions.verset("${RELEASE_VERSION}", true)
+
+                  sh'''
+                  ./change-scala-versions.sh ${SCALA_VERSION}
+                  ./change-cuda-versions.sh ${CUDA_VERSION}
+                  sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                  '''
+                }
+              }
+            }
+          }
+      break
+
+      default:
+      break
+
   }
 
   if (SONAR) {
