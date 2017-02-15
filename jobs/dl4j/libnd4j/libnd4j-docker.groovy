@@ -9,7 +9,7 @@ stage("${LIBPROJECT}-Build-Parallel-${PLATFORM_NAME}") {
                     env.TRICK_NVCC = "YES"
                     env.LIBND4J_HOME = "${PWD}"
                     stage("Building CPU lib ubuntu14") {
-                        docker.image('ubuntu14cuda80').inside(dockerParams) {
+                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                             sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             ./buildnativeoperations.sh -c cpu
@@ -31,7 +31,7 @@ stage("${LIBPROJECT}-Build-Parallel-${PLATFORM_NAME}") {
                     env.LIBND4J_HOME = "${PWD}"
                     sh ("for i in `ls -la /tmp/ | grep jenkins | awk  -v env_var=\"${USER}\"  '\$3== env_var {print}' | awk '{print \$9}'`; do rm -rf \${i}; done")
                     stage("Building CUDA 7.5 lib ubuntu14") {
-                        docker.image('ubuntu14cuda75').inside(dockerParams) {
+                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                             sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             ./buildnativeoperations.sh -c cuda -v 7.5
@@ -52,7 +52,7 @@ stage("${LIBPROJECT}-Build-Parallel-${PLATFORM_NAME}") {
                     env.LIBND4J_HOME = "${PWD}"
                     sh ("for i in `ls -la /tmp/ | grep jenkins | awk  -v env_var=\"${USER}\"  '\$3== env_var {print}' | awk '{print \$9}'`; do rm -rf \${i}; done")
                     stage("Building CUDA 8.0 lib ubuntu14") {
-                        docker.image('ubuntu14cuda80').inside(dockerParams) {
+                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                             sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             ./buildnativeoperations.sh -c cuda -v 8.0

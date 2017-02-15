@@ -9,7 +9,7 @@ stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
     functions.verset("${RELEASE_VERSION}", true)
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       if (!TESTS) {
-        docker.image('ubuntu14cuda80').inside(dockerParams) {
+        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
             // sh'''
             // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
             // '''
@@ -19,7 +19,7 @@ stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
         }
       }
       else {
-        docker.image('ubuntu14cuda80').inside(dockerParams) {
+        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
             // sh'''
             // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
             // '''

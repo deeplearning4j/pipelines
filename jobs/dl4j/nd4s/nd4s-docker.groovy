@@ -14,7 +14,7 @@ stage("${ND4S_PROJECT}-Build-${PLATFORM_NAME}") {
               sh ("test -d ${WORKSPACE}/.ivy2 || mkdir ${WORKSPACE}/.ivy2")
               sh ("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.credentials")
         }
-        docker.image('ubuntu14cuda80').inside(dockerParams) {
+        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
             sh'''
             cp -a ${WORKSPACE}/.ivy2 ${HOME}/
             sbt +publish

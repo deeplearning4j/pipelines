@@ -16,7 +16,7 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
 
 if (!TESTS) {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-      docker.image('ubuntu14cuda80').inside(dockerParams) {
+      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
         stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
             sh'''
             cd dl4j-test-resources
@@ -38,7 +38,7 @@ if (!TESTS) {
   }
   else {
     configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
-      docker.image('ubuntu14cuda80').inside(dockerParams) {
+      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
         stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
             sh'''
             cd dl4j-test-resources
