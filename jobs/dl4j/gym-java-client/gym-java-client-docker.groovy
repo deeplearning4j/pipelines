@@ -23,6 +23,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
                       docker.image("${DOCKER_UBUNTU14_CUDA80_AMD64}").inside(dockerParams) {
                           sh'''
                           env
+                          ls -al /
                           ls -al /home
                           cat /etc/passwd
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
