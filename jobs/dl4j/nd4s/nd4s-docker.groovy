@@ -19,7 +19,6 @@ stage("${ND4S_PROJECT}-Build-${PLATFORM_NAME}") {
           case "linux-x86_64":
             docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
               sh'''
-              whoami
               env
               ls -al /home
               cat /etc/passwd
