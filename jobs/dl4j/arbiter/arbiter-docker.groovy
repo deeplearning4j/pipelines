@@ -18,7 +18,10 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                 if (TESTS) {
                   docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                       sh'''
-                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
+                      ls -al /
+                      ls -al /home
+                      cat /etc/passwd
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                       '''
                   }
@@ -30,7 +33,8 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       ls -al /
                       ls -al /home
                       cat /etc/passwd
-                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip \
+                      -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                       '''
                   }
@@ -40,6 +44,9 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                 if (TESTS) {
                   docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                       sh'''
+                      ls -al /
+                      ls -al /home
+                      cat /etc/passwd
                       sudo mvn -B -s ${MAVEN_SETTINGS} clean install
                       '''
                   }
@@ -47,6 +54,9 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                 else {
                   docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                       sh'''
+                      ls -al /
+                      ls -al /home
+                      cat /etc/passwd
                       sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                       '''
                   }
