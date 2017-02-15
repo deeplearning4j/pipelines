@@ -19,13 +19,8 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
                       }
                     }
                     else {
-                      // !!! DO NOT FORGET TO CHANGE BACK TO DOCKER_CENTOS6_CUDA80_AMD64
-                      docker.image("${DOCKER_UBUNTU14_CUDA80_AMD64}").inside(dockerParams) {
+                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                           sh'''
-                          env
-                          ls -al /
-                          ls -al /home
-                          cat /etc/passwd
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
                           -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                           '''
