@@ -3,7 +3,7 @@ stage("${RL4J_PROJECT}-CheckoutSources") {
 }
 
 stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
-  echo "Releasing ${RL4J_PROJECT} version ${RELEASE_VERSION}"
+  echo "Building ${RL4J_PROJECT} version ${RELEASE_VERSION}"
   dir("${RL4J_PROJECT}") {
     functions.checktag("${RL4J_PROJECT}")
     functions.verset("${RELEASE_VERSION}", true)
@@ -33,7 +33,7 @@ stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
 
         break
 
-        case "linux-x86_64":
+        case "linux-ppc64le":
           if (TESTS) {
             docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 // sh'''
