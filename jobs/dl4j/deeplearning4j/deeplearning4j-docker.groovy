@@ -23,6 +23,8 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
                 echo("Build test resources")
                 dir('dl4j-test-resources') {
                     sh'''
+                    pwd
+                    ls -al
                     mvn clean install
                     '''
                 }
@@ -114,7 +116,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
         break
 
     }
-  }  
+  }
 
   if (SONAR) {
       functions.sonar("${DEEPLEARNING4J_PROJECT}")
