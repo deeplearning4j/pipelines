@@ -26,6 +26,10 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                 else {
                   docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                       sh'''
+                      env
+                      ls -al /
+                      ls -al /home
+                      cat /etc/passwd
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                       '''
