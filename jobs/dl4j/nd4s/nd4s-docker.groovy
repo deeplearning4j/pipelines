@@ -14,12 +14,30 @@ stage("${ND4S_PROJECT}-Build-${PLATFORM_NAME}") {
               sh ("test -d ${WORKSPACE}/.ivy2 || mkdir ${WORKSPACE}/.ivy2")
               sh ("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.credentials")
         }
-        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-            sh'''
-            cp -a ${WORKSPACE}/.ivy2 ${HOME}/
-            sbt +publish
-            rm -f ${HOME}/.ivy2/.credentials ${WORKSPACE}/.ivy2/.credentials
-            '''
+
+        switch(PLATFORM_NAME) {
+          case "linux-x86_64":
+            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+              sh'''
+              cp -a ${WORKSPACE}/.ivy2 ${HOME}/
+              sbt +publish
+              rm -f ${HOME}/.ivy2/.credentials ${WORKSPACE}/.ivy2/.credentials
+              '''
+            }
+            break
+
+          case "linux-ppc64le":
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+              sh'''
+              cp -a ${WORKSPACE}/.ivy2 ${HOME}/
+              sbt +publish
+              rm -f ${HOME}/.ivy2/.credentials ${WORKSPACE}/.ivy2/.credentials
+              '''
+            }
+            break
+
+          default:
+            break
         }
     }
 }

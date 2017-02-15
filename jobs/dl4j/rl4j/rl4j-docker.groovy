@@ -8,26 +8,58 @@ stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
     functions.checktag("${RL4J_PROJECT}")
     functions.verset("${RELEASE_VERSION}", true)
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-      if (!TESTS) {
-        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-            // sh'''
-            // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
-            // '''
-            sh'''
-            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-            '''
-        }
+      switch(PLATFORM_NAME) {
+        case "linux-x86_64":
+          if (TESTS) {
+            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                // sh'''
+                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                // '''
+                sh'''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                '''
+            }
+          }
+          else {
+            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                // sh'''
+                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                // '''
+                sh'''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                '''
+            }
+          }
+
+        break
+
+        case "linux-x86_64":
+          if (TESTS) {
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                // sh'''
+                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                // '''
+                sh'''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                '''
+            }
+          }
+          else {
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                // sh'''
+                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                // '''
+                sh'''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                '''
+            }
+          }
+        break
+
+        default:
+        break
       }
-      else {
-        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-            // sh'''
-            // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
-            // '''
-            sh'''
-            mvn -B -s ${MAVEN_SETTINGS} clean deploy
-            '''
-        }
-      }
+
     }
   }
   if (SONAR) {

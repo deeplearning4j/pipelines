@@ -10,15 +10,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":
-                    if (!TESTS) {
-                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-                          sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
-                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
-                          '''
-                      }
-                    }
-                    else {
+                    if (TESTS) {
                       docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy \
@@ -26,21 +18,27 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
                           '''
                       }
                     }
+                    else {
+                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          '''
+                      }
+                    }
                 break
                   case "linux-ppc64le":
-                    if (!TESTS) {
+                    if (TESTS) {
                       docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                           sh'''
-                          sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
-                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean install
                           '''
                       }
                     }
                     else {
                       docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                           sh'''
-                          sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy \
-                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                           '''
                       }
                     }

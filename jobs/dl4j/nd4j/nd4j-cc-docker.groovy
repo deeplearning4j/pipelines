@@ -23,42 +23,49 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
         sh "./change-scala-versions.sh ${SCALA_VERSION}"
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
-        configFileProvider(
-                [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
-                ]) {
-                      if (!TESTS) {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-                            sh'''
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                            '''
-                        }
+        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+            switch(PLATFORM_NAME) {
+                case "linux-x86_64":
+                    if (TESTS) {
+                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                          '''
                       }
-                      else {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-                            sh'''
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                            '''
-                        }
+                    }
+                    else {
+                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                          '''
                       }
-                   }
+                    }
+                break
+                  case "linux-ppc64le":
+                    if (TESTS) {
+                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                          sh'''
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean install
+                          '''
+                      }
+                    }
+                    else {
+                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                          sh'''
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                          '''
+                      }
+                    }
+                break
+                default:
+                break
+            }
+        }
     }
 
     if (SONAR) {
            functions.sonar("${PROJECT}")
     }
-
-/*
-    sh "./change-scala-versions.sh 2.11"
-    sh "./change-cuda-versions.sh 8.0"
-
-    configFileProvider(
-            [configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')
-            ]) {
-        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
-        // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
-    }
-*/
-
 }
 
 // Messages for debugging
