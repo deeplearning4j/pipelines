@@ -15,7 +15,7 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
 }
 
 if (!TESTS) {
-    configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       docker.image('ubuntu14cuda80').inside(dockerParams) {
         stage("${DEEPLEARNING4J_PROJECT} Build test resources"){
             sh'''

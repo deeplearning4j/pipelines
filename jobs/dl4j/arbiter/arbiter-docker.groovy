@@ -12,7 +12,7 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
       functions.checktag("${ARBITER_PROJECT}")
       functions.verset("${RELEASE_VERSION}", true)
       sh "./change-scala-versions.sh ${SCALA_VERSION}"
-      configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
+      configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         if (!TESTS) {
           docker.image("${DOCKER_IMAGE}").inside("${DOCKER_PARAMETERS}") {
             if("${PLATFORM_NAME}" == 'linux-ppc64le') {

@@ -24,7 +24,7 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
         configFileProvider(
-                [configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')
+                [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 ]) {
                       if (!TESTS) {
                         docker.image('ubuntu14cuda80').inside(dockerParams) {

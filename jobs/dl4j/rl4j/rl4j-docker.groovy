@@ -7,7 +7,7 @@ stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
   dir("${RL4J_PROJECT}") {
     functions.checktag("${RL4J_PROJECT}")
     functions.verset("${RELEASE_VERSION}", true)
-    configFileProvider([configFile(fileId: "${SETTINGS_XML}", variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       if (!TESTS) {
         docker.image('ubuntu14cuda80').inside(dockerParams) {
             // sh'''
