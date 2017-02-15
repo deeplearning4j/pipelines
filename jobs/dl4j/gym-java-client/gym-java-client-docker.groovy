@@ -8,22 +8,46 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
         functions.verset("${RELEASE_VERSION}", true)
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-          if (!TESTS) {
-            docker.image('ubuntu14cuda80').inside(dockerParams) {
-                sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
-                -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
-                '''
+            switch(PLATFORM_NAME) {
+                case "linux-x86_64":
+                    if (!TESTS) {
+                      docker.image("${DOCKER_UBUNTU14_CUDA80_AMD64}").inside(dockerParams) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          '''
+                      }
+                    }
+                    else {
+                      docker.image("${DOCKER_UBUNTU14_CUDA80_AMD64}").inside(dockerParams) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          '''
+                      }
+                    }
+                break
+                  case "linux-ppc64le":
+                    if (!TESTS) {
+                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          '''
+                      }
+                    }
+                    else {
+                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                          sh'''
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          '''
+                      }
+                    }
+                break
+                default:
+                break
             }
-          }
-          else {
-            docker.image('ubuntu14cuda80').inside(dockerParams) {
-                sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy \
-                -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
-                '''
-            }
-          }
         }
     }
     if (SONAR) {

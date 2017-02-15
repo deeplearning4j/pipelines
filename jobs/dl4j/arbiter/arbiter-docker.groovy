@@ -14,8 +14,8 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
       sh "./change-scala-versions.sh ${SCALA_VERSION}"
       configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         if (!TESTS) {
+          if("${PLATFORM_NAME}" == 'linux-ppc64le') {
           docker.image("${DOCKER_IMAGE}").inside("${DOCKER_PARAMETERS}") {
-            if("${PLATFORM_NAME}" == 'linux-ppc64le') {
               sh'''
               sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip -Dnd4j.version=${ND4J_VERSION} \
               -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
