@@ -21,13 +21,11 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             if (!TESTS) {
               docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                 echo("Build test resources")
-                step('dl4j-test-resources') {
-                    sh'''
-                    pwd
-                    ls -al
-                    mvn clean install
-                    '''
-                }
+                  sh'''
+                  pwd
+                  ls -al
+                  mvn clean install
+                  '''
 
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
@@ -45,11 +43,9 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             else {
               docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                 echo("Build test resources")
-                step('dl4j-test-resources') {
-                    sh'''
-                    mvn clean install
-                    '''
-                }
+                  sh'''
+                  mvn clean install
+                  '''
 
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
@@ -69,11 +65,9 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             if (!TESTS) {
               docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 echo("Build test resources")
-                step('dl4j-test-resources') {
-                    sh'''
-                    mvn clean install
-                    '''
-                }
+                  sh'''
+                  mvn clean install
+                  '''
 
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
@@ -91,11 +85,9 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
             else {
               docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 echo("Build test resources")
-                step('dl4j-test-resources') {
-                    sh'''
-                    mvn clean install
-                    '''
-                }
+                  sh'''
+                  mvn clean install
+                  '''
 
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 dir("${DEEPLEARNING4J_PROJECT}") {
