@@ -24,6 +24,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
                   sh'''
                   pwd
                   ls -al
+                  cd dl4j-test-resources
                   mvn clean install
                   '''
 
@@ -44,6 +45,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                 echo("Build test resources")
                   sh'''
+                  cd dl4j-test-resources
                   mvn clean install
                   '''
 
@@ -66,6 +68,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 echo("Build test resources")
                   sh'''
+                  cd dl4j-test-resources
                   mvn clean install
                   '''
 
@@ -86,6 +89,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 echo("Build test resources")
                   sh'''
+                  cd dl4j-test-resources
                   mvn clean install
                   '''
 
