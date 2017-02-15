@@ -51,9 +51,10 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               dir("${DEEPLEARNING4J_PROJECT}") {
                 docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                   echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                  functions.verset("${RELEASE_VERSION}", true)
+                  // functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
+                  mvn -B versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}
                   ./change-scala-versions.sh ${SCALA_VERSION}
                   ./change-cuda-versions.sh ${CUDA_VERSION}
                   mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
@@ -65,9 +66,10 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               dir("${DEEPLEARNING4J_PROJECT}") {
                 docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                   echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                  functions.verset("${RELEASE_VERSION}", true)
+                  // functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
+                  mvn -B versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}
                   ./change-scala-versions.sh ${SCALA_VERSION}
                   ./change-cuda-versions.sh ${CUDA_VERSION}
                   mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
@@ -81,12 +83,13 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               dir("${DEEPLEARNING4J_PROJECT}") {
                 docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                   echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                  functions.verset("${RELEASE_VERSION}", true)
+                  // functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
+                  mvn -B versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}
                   ./change-scala-versions.sh ${SCALA_VERSION}
                   ./change-cuda-versions.sh ${CUDA_VERSION}
-                  mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                  sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                   '''
                 }
               }
@@ -95,9 +98,10 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               dir("${DEEPLEARNING4J_PROJECT}") {
                 docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                   echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                  functions.verset("${RELEASE_VERSION}", true)
+                  // functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
+                  mvn -B versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}
                   ./change-scala-versions.sh ${SCALA_VERSION}
                   ./change-cuda-versions.sh ${CUDA_VERSION}
                   sudo mvn -B -s ${MAVEN_SETTINGS} clean install
