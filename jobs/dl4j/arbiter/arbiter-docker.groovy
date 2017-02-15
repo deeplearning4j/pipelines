@@ -20,7 +20,7 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       sh'''
                       ls -al /
                       ls -al /home
-                      cat /etc/passwd
+
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                       '''
@@ -32,7 +32,7 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       env
                       ls -al /
                       ls -al /home
-                      cat /etc/passwd
+
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip \
                       -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
@@ -46,7 +46,7 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       sh'''
                       ls -al /
                       ls -al /home
-                      cat /etc/passwd
+
                       sudo mvn -B -s ${MAVEN_SETTINGS} clean install
                       '''
                   }
@@ -56,7 +56,7 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       sh'''
                       ls -al /
                       ls -al /home
-                      cat /etc/passwd
+
                       sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                       '''
                   }
