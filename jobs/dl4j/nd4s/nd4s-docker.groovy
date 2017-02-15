@@ -19,9 +19,10 @@ stage("${ND4S_PROJECT}-Build-${PLATFORM_NAME}") {
           case "linux-x86_64":
             docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
               sh'''
-              pwd
+              whoami
               env
-
+              ls -al /home
+              cat /etc/passwd
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish
               rm -f ${HOME}/.ivy2/.credentials ${WORKSPACE}/.ivy2/.credentials
