@@ -14,23 +14,43 @@ stage("${DEEPLEARNING4J_PROJECT}-CheckoutSources") {
   ])
 }
 
+stage("Build test resources on ${PLATFORM_NAME}") {
+  configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+    switch(PLATFORM_NAME) {
+      case "linux-x86_64":
+        dir('dl4j-test-resources') {
+          docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            sh'''
+            mvn -q clean install
+            '''
+          }
+        }
+      break
+
+      case "linux-ppc64le":
+        dir('dl4j-test-resources') {
+          docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+            sh'''
+            mvn -q clean install
+            '''
+          }
+        }
+      break
+
+      default:
+      break
+    }
+  }
+}
+
 stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
   configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
     switch(PLATFORM_NAME) {
         case "linux-x86_64":
             if (!TESTS) {
-              docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-                echo("Build test resources")
-                  sh'''
-                  pwd
-                  ls -al
-                  cd dl4j-test-resources
-                  mvn clean install
-                  '''
-
-                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                dir("${DEEPLEARNING4J_PROJECT}") {
-
+              dir("${DEEPLEARNING4J_PROJECT}") {
+                docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                  echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                   functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
@@ -42,16 +62,9 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
               }
             }
             else {
-              docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
-                echo("Build test resources")
-                  sh'''
-                  cd dl4j-test-resources
-                  mvn clean install
-                  '''
-
-                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                dir("${DEEPLEARNING4J_PROJECT}") {
-
+              dir("${DEEPLEARNING4J_PROJECT}") {
+                docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                  echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                   functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
@@ -65,43 +78,29 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
         break
           case "linux-ppc64le":
             if (!TESTS) {
-              docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
-                echo("Build test resources")
-                  sh'''
-                  cd dl4j-test-resources
-                  mvn clean install
-                  '''
-
-                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                dir("${DEEPLEARNING4J_PROJECT}") {
-
+              dir("${DEEPLEARNING4J_PROJECT}") {
+                docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                  echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                   functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
                   ./change-scala-versions.sh ${SCALA_VERSION}
                   ./change-cuda-versions.sh ${CUDA_VERSION}
-                  sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                  mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                   '''
                 }
               }
             }
             else {
-              docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
-                echo("Build test resources")
-                  sh'''
-                  cd dl4j-test-resources
-                  mvn clean install
-                  '''
-
-                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                dir("${DEEPLEARNING4J_PROJECT}") {
-
+              dir("${DEEPLEARNING4J_PROJECT}") {
+                docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                  echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                   functions.verset("${RELEASE_VERSION}", true)
 
                   sh'''
                   ./change-scala-versions.sh ${SCALA_VERSION}
                   ./change-cuda-versions.sh ${CUDA_VERSION}
-                  sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                  sudo mvn -B -s ${MAVEN_SETTINGS} clean install
                   '''
                 }
               }
