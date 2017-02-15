@@ -97,7 +97,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
 
         default:
         break
-
+      }  
     }
   }
 
