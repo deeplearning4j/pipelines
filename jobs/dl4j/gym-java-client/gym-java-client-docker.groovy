@@ -31,7 +31,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
                     if (!TESTS) {
                       docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                           sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
                           -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                           '''
                       }
@@ -39,7 +39,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
                     else {
                       docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                           sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean deploy \
                           -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
                           '''
                       }
