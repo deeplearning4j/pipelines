@@ -1,3 +1,4 @@
 ---
-- include: docker.yml
+- include: swap.yml
 - include: package.yml
+- include: docker.yml

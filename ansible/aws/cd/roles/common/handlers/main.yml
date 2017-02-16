@@ -1,2 +1,4 @@
 ---
-# handlers file for docker_install
+  - name: reload docker service
+    listen: "reload docker"
+    service: name=docker enabled=yes state=restarted

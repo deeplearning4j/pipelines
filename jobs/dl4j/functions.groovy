@@ -9,6 +9,16 @@ def get_project_code(proj) {
              userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
 }
 
+// Remove .git folder and other unneeded files from workspace
+def rm() {
+  sh("rm -rf ${WORKSPACE}/.git")
+  sh("rm -f ${WORKSPACE}/.gitignore")
+  sh("rm -rf ${WORKSPACE}/docs")
+  sh("rm -rf ${WORKSPACE}/imgs")
+  sh("rm -rf ${WORKSPACE}/ansible")
+  sh("rm -f ${WORKSPACE}/README.md")
+}
+
 def checktag(proj) {
   echo "Check if ${proj}-${RELEASE_VERSION} has been released already"
   def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${RELEASE_VERSION}")
@@ -44,21 +54,32 @@ def sonar(proj) {
 // mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$RELEASE_VERSION
 def verset(ver, allowss) {
   def mvnHome = tool 'M339'
-  sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+  sh ("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
 }
 
 def release(proj) {
-  echo "Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}"
-  dir("${proj}") {
-    sshagent(credentials: ["${GITCREDID}"]) {
-      sh 'git config user.email "jenkins@skymind.io"'
-      sh 'git config user.name "Jenkins"'
-      sh 'git status'
-      // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-      // sh 'git commit -a -m "Update to version ${RELEASE_VERSION}"'
-      // sh 'git tag -a ${proj}-${RELEASE_VERSION} -m ${proj}-${RELEASE_VERSION}'
-      // sh 'git push origin ${proj}-${RELEASE_VERSION}'
+  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  // Here you need to put stuff for atrifacts releasing
+
+  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  // Tag builded branch with new version
+  if (CREATE_TAG) {
+    echo ("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
+    echo ("Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}")
+    dir("${proj}") {
+      sshagent(credentials: ["${GITCREDID}"]) {
+        sh 'git config user.email "jenkins@skymind.io"'
+        sh 'git config user.name "Jenkins"'
+        sh 'git status'
+        // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+        sh('git commit -a -m \"Update to version ${RELEASE_VERSION}\"')
+        sh("git tag -a test-${proj}-${RELEASE_VERSION} -m test-${proj}-${RELEASE_VERSION}")
+        // sh("git push origin test-${proj}-${RELEASE_VERSION}")
+      }
     }
+  }
+  else {
+      println ("Parameter CREATE_TAG is undefined so tagging has been skipped")
   }
 }
 
