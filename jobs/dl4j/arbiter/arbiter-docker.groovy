@@ -18,9 +18,6 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                 if (TESTS) {
                   docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                       sh'''
-                      ls -al /
-                      ls -al /home
-
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                       '''
@@ -29,10 +26,6 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                 else {
                   docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                       sh'''
-                      env
-                      ls -al /
-                      ls -al /home
-
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip \
                       -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}

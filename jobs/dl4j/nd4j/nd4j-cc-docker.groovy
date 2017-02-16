@@ -29,6 +29,7 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
                     if (TESTS) {
                       docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                           sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy
                           '''
                       }
@@ -36,6 +37,7 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
                     else {
                       docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
                           sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                           '''
                       }
