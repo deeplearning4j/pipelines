@@ -25,12 +25,12 @@ def rm() {
 def checktag(proj) {
   echo "Check if ${proj}-${RELEASE_VERSION} has been released already"
   def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${RELEASE_VERSION}")
-    if (!check_tag) {
-        echo ("There is no tag with provided value: ${proj}-${RELEASE_VERSION}" )
+    if (check_tag) {
+      echo ("Version exists: " + check_tag)
+      error("Failed to proceed with current version: " + check_tag)
     }
     else {
-        echo ("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
+      echo ("There is no tag with provided value: ${proj}-${RELEASE_VERSION}" )
     }
 }
 

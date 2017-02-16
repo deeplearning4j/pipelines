@@ -69,17 +69,17 @@ stage("${PROJECT}-Build-${PLATFORM_NAME}") {
         configFileProvider(
                 [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
                 ]) {
-                      if (!TESTS) {
+                      if (TESTS) {
                         docker.image('ubuntu14cuda80').inside(dockerParams) {
                             sh'''
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy
                             '''
                         }
                       }
                       else {
                         docker.image('ubuntu14cuda80').inside(dockerParams) {
                             sh'''
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                             '''
                         }
                       }
