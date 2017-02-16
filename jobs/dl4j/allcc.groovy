@@ -60,8 +60,11 @@ node("${DOCKER_NODE}") {
 
       def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
-      if(!isSnapshot) {
-      // timeout(time:1, unit:'HOURS') {
+      if(isSnapshot) {
+        echo "End of building and publishing of the ${RELEASE_VERSION}"
+      }
+      else {
+        // timeout(time:1, unit:'HOURS') {
         timeout(20) {
             input message:"Approve release of version ${RELEASE_VERSION} ?"
         }
@@ -75,11 +78,9 @@ node("${DOCKER_NODE}") {
         functions.release("${GYM_JAVA_CLIENT_PROJECT}")
         functions.release("${RL4J_PROJECT}")
         functions.release("${SCALNET_PROJECT}")
-      }
-      else {
-        echo "End of building and publishing of the ${RELEASE_VERSION}"
-      }
 
+      }
+      
     }
 
     sh "rm -rf $HOME/.sonar"

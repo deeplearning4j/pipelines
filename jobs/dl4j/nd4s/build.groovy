@@ -19,16 +19,16 @@ node("${DOCKER_NODE}") {
     stage('RELEASE') {
       def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
-      if(!isSnapshot) {
-      // timeout(time:1, unit:'HOURS') {
+      if(isSnapshot) {
+        echo "End of building and publishing of the ${ND4S_PROJECT}-${RELEASE_VERSION}"
+      }
+      else {
+        // timeout(time:1, unit:'HOURS') {
         timeout(20) {
             input message:"Approve release of version ${ND4S_PROJECT}-${RELEASE_VERSION} ?"
         }
 
         functions.release("${ND4S_PROJECT}")
-      }
-      else {
-        echo "End of building and publishing of the ${ND4S_PROJECT}-${RELEASE_VERSION}"
       }
 
     }

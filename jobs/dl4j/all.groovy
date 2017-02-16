@@ -7,16 +7,6 @@ node("${DOCKER_NODE}") {
 
     checkout scm
 
-    // // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // // Remove .git folder from workspace
-    // sh("rm -rf ${WORKSPACE}/.git")
-    // sh("rm -rf ${WORKSPACE}/docs")
-    // sh("rm -rf ${WORKSPACE}/imgs")
-    // sh("rm -rf ${WORKSPACE}/ansible")
-    // sh("rm -f ${WORKSPACE}/.gitignore")
-    // sh("rm -f ${WORKSPACE}/README.md")
-    // // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
@@ -73,8 +63,11 @@ node("${DOCKER_NODE}") {
 
       def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
-      if(!isSnapshot) {
-      // timeout(time:1, unit:'HOURS') {
+      if(isSnapshot) {
+        echo "End of building and publishing of the ${RELEASE_VERSION}"
+      }
+      else {
+        // timeout(time:1, unit:'HOURS') {
         timeout(20) {
             input message:"Approve release of version ${RELEASE_VERSION} ?"
         }
@@ -88,11 +81,9 @@ node("${DOCKER_NODE}") {
         functions.release("${GYM_JAVA_CLIENT_PROJECT}")
         functions.release("${RL4J_PROJECT}")
         functions.release("${SCALNET_PROJECT}")
-      }
-      else {
-        echo "End of building and publishing of the ${RELEASE_VERSION}"
-      }
 
+      }
+      
     }
 
     echo "Cleanup WS"
