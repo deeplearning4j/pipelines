@@ -28,7 +28,7 @@ node("${DOCKER_NODE}") {
         functions.release("${ND4S_PROJECT}")
       }
       else {
-        println "End of building and publishing of the ${ND4S_PROJECT}-${RELEASE_VERSION}"
+        echo "End of building and publishing of the ${ND4S_PROJECT}-${RELEASE_VERSION}"
       }
 
     }

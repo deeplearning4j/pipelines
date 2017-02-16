@@ -42,8 +42,8 @@ stage("${LIBPROJECT}-package") {
         if (numberOfLines != 0) {
             sh("for i in `find  . -name *.so` ; do tar -uf ${LIBPROJECT}-${RELEASE_VERSION}.tar \$i; done")
         } else {
-            println "[WARNING] There is no files to proceed"
-            println "[INFO] Build marked as failure"
+            echo "[WARNING] There is no files to proceed"
+            echo "[INFO] Build marked as failure"
             currentBuild.result = 'FAILURE'
         }
 
@@ -75,8 +75,8 @@ stage("${LIBPROJECT}-package") {
     if (numberOfLines != 0) {
       sh("for i in `find  . -name *.so` ; do tar -uf ${LIBPROJECT}-${RELEASE_VERSION}.tar \$i; done")
     } else {
-      println "[WARNING] There is no files to proceed"
-      println "[INFO] Build marked as failure"
+      echo "[WARNING] There is no files to proceed"
+      echo "[INFO] Build marked as failure"
       currentBuild.result = 'FAILURE'
     }
 

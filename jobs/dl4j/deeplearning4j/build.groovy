@@ -1,6 +1,6 @@
 node("${DOCKER_NODE}") {
 
-    println "Cleanup WS"
+    echo "Cleanup WS"
     step([$class: 'WsCleanup'])
 
     // dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
@@ -33,7 +33,7 @@ node("${DOCKER_NODE}") {
         functions.release("${DEEPLEARNING4J_PROJECT}")
       }
       else {
-        println "End of building and publishing of the ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}"
+        echo "End of building and publishing of the ${DEEPLEARNING4J_PROJECT}-${RELEASE_VERSION}"
       }
 
     }

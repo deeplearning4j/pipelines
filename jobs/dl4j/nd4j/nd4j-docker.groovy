@@ -9,7 +9,7 @@ dir("${LIBPROJECT}"){
   sh ("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
 }
 def varResultCountFile=readFile("${WORKSPACE}/resultCountFile").toInteger()
-println varResultCountFile
+echo varResultCountFile
 if (varResultCountFile == 0) {
     functions.get_project_code("${LIBPROJECT}")
 
@@ -20,7 +20,7 @@ if (varResultCountFile == 0) {
         def valueFileName = readFile("${WORKSPACE}/outLastFileName").trim()
         def fileNamePattern = valueFileName.toString()
 
-        println "[INFO] Latest founded snapshot version is: " + fileNamePattern
+        echo "[INFO] Latest founded snapshot version is: " + fileNamePattern
 
         def server = Artifactory.newServer url: "${ARTFACT_URL}", username: "${ARTFACT_USER}", password: "${ARTFACT_PASS}"
         def downloadSpec = """{

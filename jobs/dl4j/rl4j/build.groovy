@@ -31,7 +31,7 @@ node("${DOCKER_NODE}") {
         functions.release("${RL4J_PROJECT}")
       }
       else {
-        println "End of building and publishing of the ${RL4J_PROJECT}-${RELEASE_VERSION}"
+        echo "End of building and publishing of the ${RL4J_PROJECT}-${RELEASE_VERSION}"
       }
 
     }

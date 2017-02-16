@@ -26,10 +26,10 @@ def checktag(proj) {
   echo "Check if ${proj}-${RELEASE_VERSION} has been released already"
   def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${RELEASE_VERSION}")
     if (!check_tag) {
-        println ("There is no tag with provided value: ${proj}-${RELEASE_VERSION}" )
+        echo ("There is no tag with provided value: ${proj}-${RELEASE_VERSION}" )
     }
     else {
-        println ("Version exists: " + check_tag)
+        echo ("Version exists: " + check_tag)
         error("Failed to proceed with current version: " + check_tag)
     }
 }
@@ -82,7 +82,7 @@ def release(proj) {
     }
   }
   else {
-      println ("Parameter CREATE_TAG is undefined so tagging has been skipped")
+      echo ("Parameter CREATE_TAG is undefined so tagging has been skipped")
   }
 }
 

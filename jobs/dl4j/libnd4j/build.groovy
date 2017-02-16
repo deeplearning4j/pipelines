@@ -30,7 +30,7 @@ node("${DOCKER_NODE}") {
         functions.release("${LIBPROJECT}")
       }
       else {
-        println "End of building and publishing of the ${LIBPROJECT}-${RELEASE_VERSION}"
+        echo "End of building and publishing of the ${LIBPROJECT}-${RELEASE_VERSION}"
       }
 
     }

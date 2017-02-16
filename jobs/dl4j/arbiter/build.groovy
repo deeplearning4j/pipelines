@@ -1,6 +1,6 @@
 node("${DOCKER_NODE}") {
 
-    println "Cleanup WS"
+    echo "Cleanup WS"
     step([$class: 'WsCleanup'])
 
     checkout scm
@@ -31,7 +31,7 @@ node("${DOCKER_NODE}") {
         functions.release("${ARBITER_PROJECT}")
       }
       else {
-        println "End of building and publishing of the ${ARBITER_PROJECT}-${RELEASE_VERSION}"
+        echo "End of building and publishing of the ${ARBITER_PROJECT}-${RELEASE_VERSION}"
       }
 
     }
