@@ -17,5 +17,6 @@ List of images:
  - centos6cuda7 - FROM intropro/nvidia-docker:7.5-cudnn5-devel-centos6  
  - centos6cuda80 - FROM intropro/nvidia-docker:8.0-cudnn5-devel-centos6  
 
+
 ## show-aws-ec2-instances.groovy
 Shows all non-terminated instances deployed with "tag:DeployedBy,Values=JenkinsEc2Plugin,JenkinsWithTerraform", the tags used in Jenkins.  

@@ -31,4 +31,4 @@ RUN mkdir -p /opt/cmake && \
 	curl -fsSL https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz \
 	| tar -xzC /opt/cmake --strip-components=1
 
-#RUN groupadd jenkins -g JENKINSGID && useradd -u JENKINSUID -g JENKINSGID -m jenkins
+RUN groupadd jenkins -g 500 && useradd -u 500 -g 500 -m jenkins
