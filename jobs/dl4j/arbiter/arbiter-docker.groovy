@@ -1,4 +1,4 @@
-stage("${ARBITER_PROJECT}-CheckoutSources") {
+stage("${ARBITER_PROJECT}-Checkout-Sources") {
     functions.get_project_code("${ARBITER_PROJECT}")
 }
 

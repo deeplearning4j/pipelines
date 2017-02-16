@@ -3,7 +3,7 @@ def mvnHome = tool 'M339'
 
 functions = load 'jobs/dl4j/functions.groovy'
 
-stage("${PROJECT}-CheckoutSources") {
+stage("${PROJECT}-Checkout-Sources") {
     functions.get_project_code("${PROJECT}")
     // functions.get_project_code("${LIBPROJECT}")
 }

@@ -41,7 +41,7 @@ if (varResultCountFile == 0) {
     }
 }
 
-stage("${PROJECT}-CheckoutSources") {
+stage("${PROJECT}-Checkout-Sources") {
     functions.get_project_code("${PROJECT}")
 }
 

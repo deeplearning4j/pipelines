@@ -1,4 +1,4 @@
-stage("${SCALNET_PROJECT}-CheckoutSources") {
+stage("${SCALNET_PROJECT}-Checkout-Sources") {
     functions.get_project_code("${SCALNET_PROJECT}")
 }
 

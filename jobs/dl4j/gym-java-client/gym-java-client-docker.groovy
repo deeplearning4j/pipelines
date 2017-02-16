@@ -1,4 +1,4 @@
-stage("${GYM_JAVA_CLIENT_PROJECT}-CheckoutSources") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-Checkout-Sources") {
     functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 

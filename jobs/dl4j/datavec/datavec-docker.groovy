@@ -1,4 +1,4 @@
-stage("${DATAVEC_PROJECT}-CheckoutSources") {
+stage("${DATAVEC_PROJECT}-Checkout-Sources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
 }
 

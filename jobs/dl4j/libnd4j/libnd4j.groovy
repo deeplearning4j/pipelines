@@ -1,4 +1,4 @@
-stage("${LIBPROJECT}-CheckoutSources") {
+stage("${LIBPROJECT}-Checkout-Sources") {
     functions.get_project_code("${LIBPROJECT}")
 }
 

@@ -1,4 +1,4 @@
-stage("${RL4J_PROJECT}-CheckoutSources") {
+stage("${RL4J_PROJECT}-Checkout-Sources") {
     functions.get_project_code("${RL4J_PROJECT}")
 }
 
