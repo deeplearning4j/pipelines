@@ -1,4 +1,4 @@
-node('sshslave') {
+node('sshlocal') {
 
     step([$class: 'WsCleanup'])
 
