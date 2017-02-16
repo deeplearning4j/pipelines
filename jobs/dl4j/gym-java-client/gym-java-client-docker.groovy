@@ -31,14 +31,22 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
                     if (TESTS) {
                       docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                           sh'''
+<<<<<<< HEAD
                           mvn -B -s ${MAVEN_SETTINGS} clean install
+=======
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean install
+>>>>>>> master
                           '''
                       }
                     }
                     else {
                       docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                           sh'''
+<<<<<<< HEAD
                           mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+=======
+                          sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+>>>>>>> master
                           '''
                       }
                     }

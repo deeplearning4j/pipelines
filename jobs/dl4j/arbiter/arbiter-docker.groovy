@@ -46,7 +46,12 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       sh'''
                       ls -al /
                       ls -al /home
+<<<<<<< HEAD
                       mvn -B -s ${MAVEN_SETTINGS} clean install
+=======
+
+                      sudo mvn -B -s ${MAVEN_SETTINGS} clean install
+>>>>>>> master
                       '''
                   }
                 }
@@ -55,7 +60,12 @@ stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
                       sh'''
                       ls -al /
                       ls -al /home
+<<<<<<< HEAD
                       mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+=======
+
+                      sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+>>>>>>> master
                       '''
                   }
                 }
