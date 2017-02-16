@@ -6,10 +6,10 @@ node('sshslave') {
 
     stage('Check sources with SonarQube') {
       def scannerHome = tool 'SS28';
-      dir("${proj}") {
+      dir("${WORKSPACE}") {
         withSonarQubeEnv('SonarQubeServer') {
-          sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
-              -Dsonar.projectName=${proj} -Dsonar.projectVersion=${RELEASE_VERSION} \
+          sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=deeplearning4j:pipelines \
+              -Dsonar.projectName=pipelines -Dsonar.projectVersion=1 \
               -Dsonar.sources=."
               // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
         }
