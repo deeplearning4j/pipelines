@@ -31,9 +31,9 @@ node('local-slave') {
                                 credentialsId: 'aws-ec2-ceredntials-id-1',
                                 secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     withEnv(['AWS_DEFAULT_REGION=us-west-2']) {
-                        print "Instances Name=tag:DeployedBy,Values=JenkinsEc2Plugin:"
+                        echo "Instances Name=tag:DeployedBy,Values=JenkinsEc2Plugin:"
                         sh '( aws ec2 describe-instances --filters "Name=tag:DeployedBy,Values=JenkinsEc2Plugin,JenkinsWithTerraform" "Name=instance-state-name,Values=pending,running,shutting-down,stopping,stopped" )'
-                        // print "All running instances:"
+                        // echo "All running instances:"
                         // sh 'aws ec2 describe-instances --filters "Name=instance-state-name,Values=running"'
                         // sh 'aws ec2 stop-instances --instance-ids "i-07bd4875872e0d259" "i-07af07b37fe2772b7"'
                         // sh 'aws ec2 terminate-instances --instance-ids "i-07bd4875872e0d259" "i-07af07b37fe2772b7"'
