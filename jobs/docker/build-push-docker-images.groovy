@@ -11,10 +11,7 @@ node("${DOCKER_NODE}") {
     def builders = [:]
     for (i in images) {
         def index = i
-        println index
         builders[index] = {
-            println index
-            println "Test '${index}'"
             stage ("Build ${index}") {
                 docker.build ("${dockerRegistry}/${index}","docker/${index}")
             }
