@@ -79,11 +79,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
                 // functions.verset("${RELEASE_VERSION}", true)
 
                 sh'''
-<<<<<<< HEAD
                 mvn -B -s ${MAVEN_SETTINGS} clean install
-=======
-                sudo mvn -B -s ${MAVEN_SETTINGS} clean install
->>>>>>> master
                 '''
               }
             }
@@ -93,11 +89,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
                 // functions.verset("${RELEASE_VERSION}", true)
 
                 sh'''
-<<<<<<< HEAD
                 mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-=======
-                sudo mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
->>>>>>> master
                 '''
               }
             }
@@ -105,11 +97,8 @@ stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
 
         default:
         break
-<<<<<<< HEAD
+
       }
-=======
-      }  
->>>>>>> master
     }
   }
 
