@@ -10,6 +10,9 @@ node("${DOCKER_NODE}") {
     // Remove .git folder from workspace
     functions.rm()
 
+    // Set docker image and parameters for current platform
+    functions.def_docker()
+
     stage("${ND4S_PROJECT}") {
       load "${PDIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
     }

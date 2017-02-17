@@ -17,7 +17,7 @@ stage("${ND4S_PROJECT}-build-${PLATFORM_NAME}") {
 
         switch(PLATFORM_NAME) {
           case "linux-x86_64":
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish
@@ -27,7 +27,7 @@ stage("${ND4S_PROJECT}-build-${PLATFORM_NAME}") {
             break
 
           case "linux-ppc64le":
-            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+            docker.image(dockerImage).inside(dockerParams) {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish

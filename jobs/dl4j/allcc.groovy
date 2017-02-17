@@ -4,8 +4,6 @@ node("${DOCKER_NODE}") {
 
     checkout scm
 
-    sh ("mkdir ${WORKSPACE}/.m2 || true")
-
     echo "Load variables"
     load "${PDIR}/vars.groovy"
 
@@ -14,6 +12,12 @@ node("${DOCKER_NODE}") {
 
     // Remove .git folder from workspace
     functions.rm()
+
+    // Create .m2 direcory
+    functions.dirm2()
+
+    // Set docker image and parameters for current platform
+    functions.def_docker()
 
     sh("env")
     sh("ls -al")

@@ -17,6 +17,9 @@ node("${DOCKER_NODE}") {
     // Create .m2 direcory
     functions.dirm2()
 
+    // Set docker image and parameters for current platform
+    functions.def_docker()
+
     stage("${DATAVEC_PROJECT}") {
       load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
     }

@@ -43,23 +43,21 @@ def def_docker() {
   switch("${PLATFORM_NAME}") {
     case "linux-ppc64le":
       dockerImage = "${DOCKER_MAVEN_PPC}"
-      echo dockerImage
       dockerParams = dockerParams_ppc
-      echo dockerParams
+
     break
 
     case "linux-x86_64":
       dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
-      echo dockerImage
       // def dockerParams = dockerParams
-      echo dockerParams
+
     break
 
     default:
       error("Platform name is not defined or unsupported")
+      
     break
   }
-
 }
 
 def sonar(proj) {

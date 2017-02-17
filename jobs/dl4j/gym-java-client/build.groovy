@@ -16,6 +16,9 @@ node("${DOCKER_NODE}") {
     // Create .m2 direcory
     functions.dirm2()
 
+    // Set docker image and parameters for current platform
+    functions.def_docker()
+
     stage("${GYM_JAVA_CLIENT_PROJECT}") {
       load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
     }

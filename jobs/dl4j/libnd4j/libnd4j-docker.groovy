@@ -6,8 +6,8 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                 functions.get_project_code("${LIBPROJECT}")
 
                 functions.def_docker()
-                echo dockerImage
-                echo dockerParams
+                // echo dockerImage
+                // echo dockerParams
 
                 dir("${LIBPROJECT}") {
                     env.TRICK_NVCC = "YES"
@@ -33,8 +33,6 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                 functions.get_project_code("${LIBPROJECT}")
 
                 functions.def_docker()
-                echo dockerImage
-                echo dockerParams
 
                 dir("${LIBPROJECT}") {
                     env.TRICK_NVCC = "YES"
@@ -60,8 +58,6 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                 functions.get_project_code("${LIBPROJECT}")
 
                 functions.def_docker()
-                echo dockerImage
-                echo dockerParams
 
                 dir("${LIBPROJECT}") {
                     env.TRICK_NVCC = "YES"

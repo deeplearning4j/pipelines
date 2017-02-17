@@ -17,6 +17,9 @@ node("${DOCKER_NODE}") {
     // Create .m2 direcory
     functions.dirm2()
 
+    // Set docker image and parameters for current platform
+    functions.def_docker()
+
     stage("${DEEPLEARNING4J_PROJECT}") {
       load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
     }
