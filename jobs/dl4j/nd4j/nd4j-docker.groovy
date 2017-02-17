@@ -14,7 +14,7 @@ echo varResultCountFile.toString()
 if (varResultCountFile == 0) {
     functions.get_project_code("${LIBPROJECT}")
 
-    stage("${PROJECT}-resolveDependencies ") {
+    stage("${PROJECT}-Resolve-Dependencies") {
 
 
         sh("curl  \"${ARTFACT_URL}/${ARTFACT_SNAPSHOT}/${ARTFACT_GROUP_ID}/${LIBPROJECT}/${LIBBND4J_SNAPSHOT}/\" | grep 'tar<' | sed 's/<\\/a>.*//g' | sed 's/<.*>//g' | tail -1 >  ${WORKSPACE}/outLastFileName")
