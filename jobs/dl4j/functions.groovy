@@ -34,10 +34,9 @@ def checktag(proj) {
     }
 }
 
-// def check_suff()
-// if (${SNAPSHOT_VERSION} != '*-SNAPSHOT' ) {
-//    error("Error: Version ${SNAPSHOT_VERSION} should finish with -SNAPSHOT")
-// }
+def dirm2() {
+  sh ("mkdir ${WORKSPACE}/.m2 || true")
+}
 
 def sonar(proj) {
   echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
