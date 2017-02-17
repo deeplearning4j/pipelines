@@ -1,4 +1,4 @@
-stage("${LIBPROJECT}-build-parallel") {
+stage("${LIBPROJECT}-build") {
     parallel (
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {
@@ -23,6 +23,10 @@ stage("${LIBPROJECT}-build-parallel") {
                         stash includes: 'blas/', name: 'cpu-blas'
                         stash includes: 'include/', name: 'libnd4j-include'
                     }
+                }
+
+                if(SONAR) {
+                  functions.sonar("${LIBPROJECT}")
                 }
             }
         },
@@ -85,8 +89,4 @@ stage("${LIBPROJECT}-build-parallel") {
         unstash 'cuda80-blas'
         unstash 'libnd4j-include'
     }
-
-    // if(SONAR) {
-    //   functions.sonar("${LIBPROJECT}")
-    // }
 }
