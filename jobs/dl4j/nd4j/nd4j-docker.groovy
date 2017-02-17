@@ -9,7 +9,8 @@ dir("${LIBPROJECT}"){
   sh ("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
 }
 def varResultCountFile=readFile("${WORKSPACE}/resultCountFile").toInteger()
-echo (varResultCountFile)
+echo varResultCountFile.toString()
+
 if (varResultCountFile == 0) {
     functions.get_project_code("${LIBPROJECT}")
 
