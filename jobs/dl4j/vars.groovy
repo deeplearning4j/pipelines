@@ -21,7 +21,8 @@ env.DOCKER_UBUNTU14_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/ub
 env.DOCKER_UBUNTU14_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda80:latest"
 env.DOCKER_CENTOS6_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
 env.DOCKER_CENTOS6_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest"
-env.DOCKER_MAVEN_PPC = "ppc64le/maven:ready"
+// env.DOCKER_MAVEN_PPC = "ppc64le/maven:ready"
+env.DOCKER_MAVEN_PPC = "test_mvn:latest"
 // env.DOCKER_CUDA_PPC = "ubuntu_cuda_ready:14.04"
 env.DOCKER_CUDA_PPC = "test_image:latest"
 
