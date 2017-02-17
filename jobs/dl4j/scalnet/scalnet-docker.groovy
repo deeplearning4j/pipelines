@@ -31,16 +31,16 @@ stage("${SCALNET_PROJECT}-build-${PLATFORM_NAME}") {
 
         case "linux-ppc64le":
           if (TESTS) {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy
                 '''
             }
           }
           else {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                 '''
             }
           }
