@@ -1,4 +1,4 @@
-stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
+stage("${LIBPROJECT}-build-parallel") {
     parallel (
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {

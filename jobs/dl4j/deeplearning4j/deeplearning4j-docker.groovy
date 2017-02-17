@@ -43,7 +43,7 @@ stage("build test resources on ${PLATFORM_NAME}") {
   }
 }
 
-stage("${DEEPLEARNING4J_PROJECT}-build-${PLATFORM_NAME}") {
+stage("${DEEPLEARNING4J_PROJECT}-build") {
 
   echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
 
