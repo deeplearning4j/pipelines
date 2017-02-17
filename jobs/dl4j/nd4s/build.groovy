@@ -10,8 +10,6 @@ node("${DOCKER_NODE}") {
     // Remove .git folder from workspace
     functions.rm()
 
-    // sh ("mkdir ${WORKSPACE}/.m2 || true")
-
     stage("${ND4S_PROJECT}") {
       load "${PDIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
     }

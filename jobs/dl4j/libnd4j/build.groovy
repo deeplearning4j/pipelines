@@ -12,7 +12,8 @@ node("${DOCKER_NODE}") {
     // Remove .git folder from workspace
     functions.rm()
 
-    sh ("mkdir ${WORKSPACE}/.m2 || true")
+    // Create .m2 direcory
+    functions.dirm2()
 
     stage("${LIBPROJECT}") {
         load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
