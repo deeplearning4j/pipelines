@@ -48,7 +48,7 @@ stage("${ARBITER_PROJECT}-build-${PLATFORM_NAME}") {
                       sh'''
                       ls -al /
                       ls -al /home
-                      mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                      mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dmaven.test.skip
                       '''
                   }
                 }
