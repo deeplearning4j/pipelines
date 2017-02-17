@@ -36,7 +36,6 @@ node("${DOCKER_NODE}") {
 
     }
 
-    sh "rm -rf $HOME/.sonar"
     step([$class: 'WsCleanup'])
 
 }

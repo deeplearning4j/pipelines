@@ -80,10 +80,9 @@ node("${DOCKER_NODE}") {
         functions.release("${SCALNET_PROJECT}")
 
       }
-      
+
     }
 
-    sh "rm -rf $HOME/.sonar"
     step([$class: 'WsCleanup'])
 
     echo 'MARK: end of allcc.groovy'
