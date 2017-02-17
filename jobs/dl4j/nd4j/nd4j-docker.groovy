@@ -20,7 +20,7 @@ if (varResultCountFile == 0) {
         def valueFileName = readFile("${WORKSPACE}/outLastFileName").trim()
         def fileNamePattern = valueFileName.toString()
 
-        echo "[INFO] Latest founded snapshot version is: " + fileNamePattern
+        echo ("[INFO] Latest founded snapshot version is: " + fileNamePattern)
 
         def server = Artifactory.newServer url: "${ARTFACT_URL}", username: "${ARTFACT_USER}", password: "${ARTFACT_PASS}"
         def downloadSpec = """{
