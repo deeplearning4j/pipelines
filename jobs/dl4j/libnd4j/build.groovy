@@ -2,8 +2,6 @@ node("${DOCKER_NODE}") {
 
     step([$class: 'WsCleanup'])
 
-    // dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-
     checkout scm
 
     load "${PDIR}/vars.groovy"

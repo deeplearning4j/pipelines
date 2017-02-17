@@ -1,4 +1,6 @@
 stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
+  def dockerimage = dockerimage.toString()
+  def dockerpars = dockerParameters.toString()
     parallel (
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {
@@ -8,8 +10,8 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                 dir("${LIBPROJECT}") {
                     env.TRICK_NVCC = "YES"
                     env.LIBND4J_HOME = "${PWD}"
-                    stage("building CPU lib") {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                    // stage("building CPU lib") {
+                        docker.image("${dockerimage}").inside("${dockerpars}") {
                             sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             ./buildnativeoperations.sh -c cpu
@@ -19,7 +21,7 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                             stash includes: 'blas/', name: 'cpu-blas'
                             stash includes: 'include/', name: 'libnd4j-include'
                         }
-                    }
+                    // }
                 }
             }
         },
@@ -30,8 +32,8 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                     env.TRICK_NVCC = "YES"
                     env.LIBND4J_HOME = "${PWD}"
                     sh ("for i in `ls -la /tmp/ | grep jenkins | awk  -v env_var=\"${USER}\"  '\$3== env_var {print}' | awk '{print \$9}'`; do rm -rf \${i}; done")
-                    stage("building CUDA 7.5 lib") {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                    // stage("building CUDA 7.5 lib") {
+                        docker.image("${dockerimage}").inside("${dockerpars}") {
                             sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             ./buildnativeoperations.sh -c cuda -v 7.5
@@ -40,7 +42,7 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                             stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
                             stash includes: 'blas/', name: 'cuda75-blas'
                         }
-                    }
+                    // }
                 }
             }
         },
@@ -51,8 +53,8 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                     env.TRICK_NVCC = "YES"
                     env.LIBND4J_HOME = "${PWD}"
                     sh ("for i in `ls -la /tmp/ | grep jenkins | awk  -v env_var=\"${USER}\"  '\$3== env_var {print}' | awk '{print \$9}'`; do rm -rf \${i}; done")
-                    stage("building CUDA 8.0 lib") {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                    // stage("building CUDA 8.0 lib") {
+                        docker.image("${dockerimage}").inside("${dockerpars}") {
                             sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             ./buildnativeoperations.sh -c cuda -v 8.0
@@ -61,7 +63,7 @@ stage("${LIBPROJECT}-build-parallel-${PLATFORM_NAME}") {
                             stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
                             stash includes: 'blas/', name: 'cuda80-blas'
                         }
-                    }
+                    // }
                 }
             }
         }
