@@ -1,8 +1,8 @@
-stage("${RL4J_PROJECT}-Checkout-Sources") {
+stage("${RL4J_PROJECT}-checkout-sources") {
     functions.get_project_code("${RL4J_PROJECT}")
 }
 
-stage("${RL4J_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${RL4J_PROJECT}-build-${PLATFORM_NAME}") {
   echo "Building ${RL4J_PROJECT} version ${RELEASE_VERSION}"
   dir("${RL4J_PROJECT}") {
     functions.checktag("${RL4J_PROJECT}")

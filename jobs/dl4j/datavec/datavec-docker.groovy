@@ -1,4 +1,4 @@
-stage("${DATAVEC_PROJECT}-Checkout-Sources") {
+stage("${DATAVEC_PROJECT}-checkout-sources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
 }
 
@@ -6,7 +6,7 @@ stage("${DATAVEC_PROJECT}-Checkout-Sources") {
 //   functions.sonar("${DATAVEC_PROJECT}")
 // }
 
-stage("${DATAVEC_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${DATAVEC_PROJECT}-build-${PLATFORM_NAME}") {
 
   echo "Building ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
 

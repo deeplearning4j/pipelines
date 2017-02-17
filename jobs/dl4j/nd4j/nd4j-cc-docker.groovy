@@ -1,8 +1,8 @@
-stage("${PROJECT}-Checkout-Sources") {
+stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
 
-stage("${PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${PROJECT}-build-${PLATFORM_NAME}") {
     dir("${LIBPROJECT}/blasbuild") {
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }

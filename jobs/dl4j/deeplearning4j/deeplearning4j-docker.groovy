@@ -1,4 +1,4 @@
-stage("${DEEPLEARNING4J_PROJECT}-Checkout-Sources") {
+stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 
   functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
   dir("${DEEPLEARNING4J_PROJECT}") {
@@ -14,7 +14,7 @@ stage("${DEEPLEARNING4J_PROJECT}-Checkout-Sources") {
   ])
 }
 
-stage("Build test resources on ${PLATFORM_NAME}") {
+stage("build test resources on ${PLATFORM_NAME}") {
   configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
     switch(PLATFORM_NAME) {
       case "linux-x86_64":
@@ -43,7 +43,7 @@ stage("Build test resources on ${PLATFORM_NAME}") {
   }
 }
 
-stage("${DEEPLEARNING4J_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${DEEPLEARNING4J_PROJECT}-build-${PLATFORM_NAME}") {
 
   echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
 

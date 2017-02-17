@@ -1,4 +1,4 @@
-stage("${ARBITER_PROJECT}-Checkout-Sources") {
+stage("${ARBITER_PROJECT}-checkout-sources") {
     functions.get_project_code("${ARBITER_PROJECT}")
 }
 
@@ -6,7 +6,7 @@ stage("${ARBITER_PROJECT}-Checkout-Sources") {
 //   functions.sonar("${ARBITER_PROJECT}")
 // }
 
-stage("${ARBITER_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${ARBITER_PROJECT}-build-${PLATFORM_NAME}") {
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
   dir("${ARBITER_PROJECT}") {
       functions.checktag("${ARBITER_PROJECT}")

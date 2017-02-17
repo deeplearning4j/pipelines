@@ -14,7 +14,7 @@ echo varResultCountFile.toString()
 if (varResultCountFile == 0) {
     functions.get_project_code("${LIBPROJECT}")
 
-    stage("${PROJECT}-Resolve-Dependencies") {
+    stage("${PROJECT}-resolve-dependencies") {
 
 
         sh("curl  \"${ARTFACT_URL}/${ARTFACT_SNAPSHOT}/${ARTFACT_GROUP_ID}/${LIBPROJECT}/${LIBBND4J_SNAPSHOT}/\" | grep 'tar<' | sed 's/<\\/a>.*//g' | sed 's/<.*>//g' | tail -1 >  ${WORKSPACE}/outLastFileName")
@@ -42,11 +42,11 @@ if (varResultCountFile == 0) {
     }
 }
 
-stage("${PROJECT}-Checkout-Sources") {
+stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
 
-stage("${PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${PROJECT}-build-${PLATFORM_NAME}") {
     dir("${LIBPROJECT}/blasbuild") {
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }

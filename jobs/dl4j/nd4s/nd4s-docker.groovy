@@ -1,8 +1,8 @@
-stage("${ND4S_PROJECT}-Checkout-Sources") {
+stage("${ND4S_PROJECT}-checkout-sources") {
     functions.get_project_code("${ND4S_PROJECT}")
 }
 
-stage("${ND4S_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${ND4S_PROJECT}-build-${PLATFORM_NAME}") {
     echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
