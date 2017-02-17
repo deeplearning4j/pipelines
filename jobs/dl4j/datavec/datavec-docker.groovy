@@ -38,14 +38,14 @@ stage("${DATAVEC_PROJECT}-build-${PLATFORM_NAME}") {
               if (TESTS) {
                 docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean install
+                    mvn -B -s ${MAVEN_SETTINGS} clean install -Dnd4j.version=${ND4J_VERSION}
                     '''
                 }
               }
               else {
                 docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dnd4j.version=${ND4J_VERSION}
                     '''
                 }
               }
