@@ -12,7 +12,11 @@ node("${DOCKER_NODE}") {
     // Remove .git folder from workspace
     functions.rm()
 
-    sh ("mkdir ${WORKSPACE}/.m2 || true")
+    // Create .m2 direcory
+    functions.dirm2()
+
+    // Set docker image and parameters for current platform
+    functions.def_docker()
 
     stage("${SCALNET_PROJECT}") {
       load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"

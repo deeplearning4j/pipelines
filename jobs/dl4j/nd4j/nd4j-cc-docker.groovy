@@ -2,7 +2,7 @@ stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
 
-stage("${PROJECT}-build-${PLATFORM_NAME}") {
+stage("${PROJECT}-build") {
     dir("${LIBPROJECT}/blasbuild") {
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }
@@ -27,7 +27,7 @@ stage("${PROJECT}-build-${PLATFORM_NAME}") {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":
                     if (TESTS) {
-                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy
@@ -35,7 +35,7 @@ stage("${PROJECT}-build-${PLATFORM_NAME}") {
                       }
                     }
                     else {
-                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
@@ -45,14 +45,14 @@ stage("${PROJECT}-build-${PLATFORM_NAME}") {
                 break
                   case "linux-ppc64le":
                     if (TESTS) {
-                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean install
                           '''
                       }
                     }
                     else {
-                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                           '''

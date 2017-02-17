@@ -2,7 +2,7 @@ stage("${SCALNET_PROJECT}-checkout-sources") {
     functions.get_project_code("${SCALNET_PROJECT}")
 }
 
-stage("${SCALNET_PROJECT}-build-${PLATFORM_NAME}") {
+stage("${SCALNET_PROJECT}-build") {
   echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION}"
   dir("${SCALNET_PROJECT}") {
     functions.checktag("${SCALNET_PROJECT}")
@@ -13,14 +13,14 @@ stage("${SCALNET_PROJECT}-build-${PLATFORM_NAME}") {
       switch(PLATFORM_NAME) {
         case "linux-x86_64":
           if (TESTS) {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                 '''
             }
           }
           else {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                 '''
@@ -31,16 +31,16 @@ stage("${SCALNET_PROJECT}-build-${PLATFORM_NAME}") {
 
         case "linux-ppc64le":
           if (TESTS) {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy
                 '''
             }
           }
           else {
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                 '''
             }
           }

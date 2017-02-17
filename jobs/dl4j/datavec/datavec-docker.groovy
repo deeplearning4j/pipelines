@@ -6,7 +6,7 @@ stage("${DATAVEC_PROJECT}-checkout-sources") {
 //   functions.sonar("${DATAVEC_PROJECT}")
 // }
 
-stage("${DATAVEC_PROJECT}-build-${PLATFORM_NAME}") {
+stage("${DATAVEC_PROJECT}-build") {
 
   echo "Building ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
 
@@ -20,14 +20,14 @@ stage("${DATAVEC_PROJECT}-build-${PLATFORM_NAME}") {
       switch(PLATFORM_NAME) {
           case "linux-x86_64":
               if (TESTS) {
-                docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                docker.image(dockerImage).inside(dockerParams) {
                     sh'''
                     mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION}
                     '''
                 }
               }
               else {
-                docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                docker.image(dockerImage).inside(dockerParams) {
                     sh'''
                     mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION}
                     '''
@@ -36,16 +36,16 @@ stage("${DATAVEC_PROJECT}-build-${PLATFORM_NAME}") {
           break
             case "linux-ppc64le":
               if (TESTS) {
-                docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                docker.image(dockerImage).inside(dockerParams) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean install
+                    mvn -B -s ${MAVEN_SETTINGS} clean install -Dnd4j.version=${ND4J_VERSION}
                     '''
                 }
               }
               else {
-                docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                docker.image(dockerImage).inside(dockerParams) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dnd4j.version=${ND4J_VERSION}
                     '''
                 }
               }

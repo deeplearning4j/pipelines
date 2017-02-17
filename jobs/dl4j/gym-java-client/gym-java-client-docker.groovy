@@ -2,7 +2,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
     functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-build-${PLATFORM_NAME}") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
     echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
@@ -11,7 +11,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build-${PLATFORM_NAME}") {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":
                     if (TESTS) {
-                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy \
                           -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
@@ -19,7 +19,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build-${PLATFORM_NAME}") {
                       }
                     }
                     else {
-                      docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
                           -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
@@ -29,14 +29,14 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build-${PLATFORM_NAME}") {
                 break
                   case "linux-ppc64le":
                     if (TESTS) {
-                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean install
                           '''
                       }
                     }
                     else {
-                      docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                      docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                           '''

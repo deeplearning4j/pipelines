@@ -6,17 +6,20 @@ stage("${ARBITER_PROJECT}-checkout-sources") {
 //   functions.sonar("${ARBITER_PROJECT}")
 // }
 
-stage("${ARBITER_PROJECT}-build-${PLATFORM_NAME}") {
+stage("${ARBITER_PROJECT}-build") {
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
   dir("${ARBITER_PROJECT}") {
+
       functions.checktag("${ARBITER_PROJECT}")
+
       functions.verset("${RELEASE_VERSION}", true)
       sh "./change-scala-versions.sh ${SCALA_VERSION}"
+
       configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         switch(PLATFORM_NAME) {
             case "linux-x86_64":
                 if (TESTS) {
-                  docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                  docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
                       -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
@@ -24,7 +27,7 @@ stage("${ARBITER_PROJECT}-build-${PLATFORM_NAME}") {
                   }
                 }
                 else {
-                  docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                  docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip \
                       -Dnd4j.version=${ND4J_VERSION} \
@@ -35,7 +38,7 @@ stage("${ARBITER_PROJECT}-build-${PLATFORM_NAME}") {
             break
               case "linux-ppc64le":
                 if (TESTS) {
-                  docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                  docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       ls -al /
                       ls -al /home
@@ -44,11 +47,11 @@ stage("${ARBITER_PROJECT}-build-${PLATFORM_NAME}") {
                   }
                 }
                 else {
-                  docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+                  docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       ls -al /
                       ls -al /home
-                      mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                      mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dmaven.test.skip
                       '''
                   }
                 }

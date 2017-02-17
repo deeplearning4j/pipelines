@@ -2,7 +2,7 @@ stage("${ND4S_PROJECT}-checkout-sources") {
     functions.get_project_code("${ND4S_PROJECT}")
 }
 
-stage("${ND4S_PROJECT}-build-${PLATFORM_NAME}") {
+stage("${ND4S_PROJECT}-build") {
     echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
@@ -17,7 +17,7 @@ stage("${ND4S_PROJECT}-build-${PLATFORM_NAME}") {
 
         switch(PLATFORM_NAME) {
           case "linux-x86_64":
-            docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish
@@ -27,7 +27,7 @@ stage("${ND4S_PROJECT}-build-${PLATFORM_NAME}") {
             break
 
           case "linux-ppc64le":
-            docker.image("${DOCKER_MAVEN_PPC}").inside(dockerParams_ppc) {
+            docker.image(dockerImage).inside(dockerParams) {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish

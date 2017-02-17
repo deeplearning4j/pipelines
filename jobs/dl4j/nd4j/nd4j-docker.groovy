@@ -46,7 +46,7 @@ stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
 
-stage("${PROJECT}-build-${PLATFORM_NAME}") {
+stage("${PROJECT}-build") {
     dir("${LIBPROJECT}/blasbuild") {
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }
@@ -71,7 +71,7 @@ stage("${PROJECT}-build-${PLATFORM_NAME}") {
                 [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
                 ]) {
                       if (TESTS) {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                        docker.image(dockerImage).inside(dockerParams) {
                             sh'''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             mvn -B -s ${MAVEN_SETTINGS} clean deploy
@@ -79,7 +79,7 @@ stage("${PROJECT}-build-${PLATFORM_NAME}") {
                         }
                       }
                       else {
-                        docker.image("${DOCKER_CENTOS6_CUDA80_AMD64}").inside(dockerParams) {
+                        docker.image(dockerImage).inside(dockerParams) {
                             sh'''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests

@@ -11,8 +11,11 @@ node("${DOCKER_NODE}") {
 
     functions.rm()
 
-    sh ("mkdir ${WORKSPACE}/.m2 || true")
+    // Create .m2 direcory
+    functions.dirm2()
 
+    // Set docker image and parameters for current platform
+    functions.def_docker()
 
     stage("${RL4J_PROJECT}") {
       load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
