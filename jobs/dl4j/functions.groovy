@@ -42,7 +42,7 @@ def def_docker() {
   echo "Setting docker parameters and image for ${PLATFORM_NAME}"
   switch("${PLATFORM_NAME}") {
     case "linux-ppc64le":
-      dockerImage = "${DOCKER_MAVEN_PPC}"
+      dockerImage = "${DOCKER_CUDA_PPC}"
       dockerParams = dockerParams_ppc
 
     break
@@ -55,7 +55,7 @@ def def_docker() {
 
     default:
       error("Platform name is not defined or unsupported")
-      
+
     break
   }
 }
