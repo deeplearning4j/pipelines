@@ -38,6 +38,26 @@ def dirm2() {
   sh ("mkdir ${WORKSPACE}/.m2 || true")
 }
 
+def def_docker() {
+  echo "Setting docker parameters and image for ${PLATFORM_NAME}"
+  switch("${PLATFORM_NAME}") {
+    case "linux-ppc64le":
+      def dockerImage = "${DOCKER_MAVEN_PPC}"
+      def dockerParams = dockerParams_ppc
+    break
+
+    case "linux-x86_64":
+      def dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
+      // def dockerParams = dockerParams
+    break
+
+    default:
+      error("Platform name is not defined or unsupported")
+    break
+  }
+
+}
+
 def sonar(proj) {
   echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
   // requires SonarQube Scanner 2.8+
