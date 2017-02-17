@@ -5,7 +5,7 @@ env.JAVA_HOME = "${tool 'jdk-8u121'}"
 env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-Checkout-Sources") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
   functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
@@ -13,7 +13,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-Checkout-Sources") {
 //   functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
 // }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-Build") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
 
   echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
 

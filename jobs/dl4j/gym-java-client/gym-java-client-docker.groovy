@@ -1,8 +1,8 @@
-stage("${GYM_JAVA_CLIENT_PROJECT}-Checkout-Sources") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
     functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
-stage("${GYM_JAVA_CLIENT_PROJECT}-Build-${PLATFORM_NAME}") {
+stage("${GYM_JAVA_CLIENT_PROJECT}-build-${PLATFORM_NAME}") {
     echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
