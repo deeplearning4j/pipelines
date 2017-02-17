@@ -43,12 +43,16 @@ def def_docker() {
   switch("${PLATFORM_NAME}") {
     case "linux-ppc64le":
       def dockerImage = "${DOCKER_MAVEN_PPC}"
+      echo dockerImage
       def dockerParams = dockerParams_ppc
+      echo dockerImage
     break
 
     case "linux-x86_64":
       def dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
+      echo dockerImage
       // def dockerParams = dockerParams
+      echo dockerImage
     break
 
     default:
