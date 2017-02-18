@@ -5,6 +5,10 @@ stage("${LIBPROJECT}-build") {
 
                 functions.get_project_code("${LIBPROJECT}")
 
+                if(SONAR) {
+                  functions.sonar("${LIBPROJECT}")
+                }
+
                 functions.def_docker()
                 // echo dockerImage
                 // echo dockerParams
@@ -23,10 +27,6 @@ stage("${LIBPROJECT}-build") {
                         stash includes: 'blas/', name: 'cpu-blas'
                         stash includes: 'include/', name: 'libnd4j-include'
                     }
-                }
-
-                if(SONAR) {
-                  functions.sonar("${LIBPROJECT}")
                 }
             }
         },
