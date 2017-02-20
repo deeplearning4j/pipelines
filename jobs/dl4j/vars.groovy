@@ -33,7 +33,7 @@ env.ARTFACT_RELEASES = "libs-release-local"
 env.ARTFACT_GROUP_ID = "org/nd4j"
 env.ARTFACT_USER= "admin"
 env.ARTFACT_PASS= "password"
-env.SBTCREDID = "sbt-local-artifactory-id-1"
+//env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
 env.BINTRAY_MAVEN="https://api.bintray.com/maven/deeplearning4j/maven"
