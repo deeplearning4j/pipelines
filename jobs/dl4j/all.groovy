@@ -89,7 +89,7 @@ node("${DOCKER_NODE}") {
     }
 
     echo "Cleanup WS"
-    step([$class: 'WsCleanup'])
+//    step([$class: 'WsCleanup'])
 
     echo 'MARK: end of allcc.groovy'
 }

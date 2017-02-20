@@ -87,7 +87,7 @@ node("${DOCKER_NODE}") {
 
     }
 
-    step([$class: 'WsCleanup'])
+//    step([$class: 'WsCleanup'])
 
     echo 'MARK: end of allcc.groovy'
 }
