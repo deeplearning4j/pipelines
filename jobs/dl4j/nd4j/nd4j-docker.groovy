@@ -18,7 +18,7 @@ if (varResultCountFile == 0) {
 
         dir("${LIBPROJECT}") {
             docker.image(dockerImage).inside(dockerParams) {
-                configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                     /**
                      * HI MAN - this is HARD CODE for URL
                      */
@@ -62,7 +62,7 @@ stage("${PROJECT}-build") {
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
         configFileProvider(
-                [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+                [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 ]) {
             if (TESTS) {
                 docker.image(dockerImage).inside(dockerParams) {
@@ -92,7 +92,7 @@ stage("${PROJECT}-build") {
     sh "./change-cuda-versions.sh 8.0"
 
     configFileProvider(
-            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
             ]) {
         sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
         // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")

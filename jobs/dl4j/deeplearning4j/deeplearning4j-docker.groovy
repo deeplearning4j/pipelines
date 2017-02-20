@@ -21,7 +21,7 @@ stage("build test resources on ${PLATFORM_NAME}") {
         dir('dl4j-test-resources') {
           docker.image(dockerImage).inside(dockerParams) {
             sh'''
-            mvn -q clean install
+            mvn -B clean install
             '''
           }
         }
@@ -31,7 +31,7 @@ stage("build test resources on ${PLATFORM_NAME}") {
         dir('dl4j-test-resources') {
           docker.image(dockerImage).inside(dockerParams) {
             sh'''
-            mvn -q clean install
+            mvn -B clean install
             '''
           }
         }
