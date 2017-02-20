@@ -25,7 +25,7 @@ stage("${ND4S_PROJECT}-build") {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/  
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
-           
+              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
               rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*
               '''
             }
