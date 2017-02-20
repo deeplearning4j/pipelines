@@ -19,11 +19,11 @@ if (varResultCountFile == 0) {
         dir("${LIBPROJECT}") {
             docker.image(dockerImage).inside(dockerParams) {
                 configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
-                    sh("mvn dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                    sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
                             " -Dartifact=org.nd4j:libnd4j:0.7.2-SNAPSHOT:tar \\\n" +
                             " -Dtransitive=false \\\n" +
                             " -Ddest=libnd4j-0.7.2-SNAPSHOT.tar")
-                    sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar`")
+                    sh("find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar  -exec tar -xvf {} \\;")
                     dir("blasbuild") {
                         sh("ln -s cuda-${CUDA_VERSION} cuda")
                     }
