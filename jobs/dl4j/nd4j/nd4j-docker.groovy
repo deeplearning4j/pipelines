@@ -19,10 +19,14 @@ if (varResultCountFile == 0) {
         dir("${LIBPROJECT}") {
             docker.image(dockerImage).inside(dockerParams) {
                 configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+                    /**
+                     * HI MAN - this is HARD CODE for URL
+                     */
                     sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
-                            " -Dartifact=org.nd4j:libnd4j:0.7.2-SNAPSHOT:tar \\\n" +
+                            " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                             " -Dtransitive=false \\\n" +
-                            " -Ddest=libnd4j-0.7.2-SNAPSHOT.tar")
+                            " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
+                    //
                     sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
                     sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
                 }
@@ -30,7 +34,7 @@ if (varResultCountFile == 0) {
         }
     }
 }
-/*
+
 
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
@@ -64,7 +68,7 @@ stage("${PROJECT}-build") {
                         docker.image(dockerImage).inside(dockerParams) {
                             sh'''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                         }
                       }
@@ -72,7 +76,7 @@ stage("${PROJECT}-build") {
                         docker.image(dockerImage).inside(dockerParams) {
                             sh'''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase  -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                         }
                       }
@@ -83,7 +87,7 @@ stage("${PROJECT}-build") {
         }
     }
 
-*/
+
 /*
     sh "./change-scala-versions.sh 2.11"
     sh "./change-cuda-versions.sh 8.0"
