@@ -23,11 +23,13 @@ if (varResultCountFile == 0) {
     stage("${PROJECT}-resolve-dependencies") {
 
         dir("${LIBPROJECT}") {
-            configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]){
-                sh("mvn -version")
-                sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar`")
-                dir("blasbuild") {
-                    sh("ln -s cuda-${CUDA_VERSION} cuda")
+            docker.image(dockerImage).inside(dockerParams) {
+                configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+                    sh("mvn -version")
+                    sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar`")
+                    dir("blasbuild") {
+                        sh("ln -s cuda-${CUDA_VERSION} cuda")
+                    }
                 }
             }
         }
