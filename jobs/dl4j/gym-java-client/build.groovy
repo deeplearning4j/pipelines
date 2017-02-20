@@ -41,6 +41,6 @@ node("${DOCKER_NODE}") {
 
     }
 
-    step([$class: 'WsCleanup'])
+//    step([$class: 'WsCleanup'])
 
 }
