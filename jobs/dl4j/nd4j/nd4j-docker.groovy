@@ -24,9 +24,7 @@ if (varResultCountFile == 0) {
                             " -Dtransitive=false \\\n" +
                             " -Ddest=libnd4j-0.7.2-SNAPSHOT.tar")
                     sh("find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar  -exec tar -xvf {} \\;")
-                    dir("blasbuild") {
-                        sh("ln -s cuda-${CUDA_VERSION} cuda")
-                    }
+                    sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
                 }
             }
         }
