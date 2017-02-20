@@ -1,13 +1,5 @@
 stage("${LIBPROJECT}-build") {
-  if(isSnapshot) {
-    echo "Do not fetch tags for snapshot"
-    noTags = 'true'
-  }
-  else {
-    echo "Fetch tags for current build"
-    noTags = 'false'
-  }
-
+  sh("env")
     parallel (
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {

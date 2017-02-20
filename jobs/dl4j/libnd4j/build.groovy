@@ -7,6 +7,15 @@ node("${DOCKER_NODE}") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
+    if(isSnapshot) {
+      echo "Do not fetch tags for snapshot"
+      noTags = 'true'
+    }
+    else {
+      echo "Fetch tags for current build"
+      noTags = 'false'
+    }
+
     // Remove .git folder from workspace
     functions.rm()
 
