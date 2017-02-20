@@ -42,3 +42,7 @@ env.LIBBND4J_SNAPSHOT="0.7.2-SNAPSHOT"
 
 //Usage of variable 'nexus', 'bintray', 'jfrog'
 env.PROFILE_TYPE="nexus"
+
+env.ND4J_VERSION="0.7.2"
+env.DL4J_VERSION="0.7.2"
+env.DATAVEC_VERSION="0.7.2"
