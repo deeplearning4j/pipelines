@@ -1,9 +1,18 @@
 stage("${LIBPROJECT}-build") {
+  if(isSnapshot) {
+    echo "Do not fetch tags for snapshot"
+    noTags = 'true'
+  }
+  else {
+    echo "Fetch tags for current build"
+    noTags = 'false'
+  }
+
     parallel (
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {
 
-                functions.get_project_code("${LIBPROJECT}")
+                functions.get_project_code("${LIBPROJECT}", noTags)
 
                 if(SONAR) {
                   functions.sonar("${LIBPROJECT}")
@@ -33,7 +42,7 @@ stage("${LIBPROJECT}-build") {
         "Stream 1 ${LIBPROJECT}-BuildCuda-7.5-${PLATFORM_NAME}" : {
             dir("stream1") {
 
-                functions.get_project_code("${LIBPROJECT}")
+                functions.get_project_code("${LIBPROJECT}", noTags)
 
                 functions.def_docker()
 
@@ -57,7 +66,7 @@ stage("${LIBPROJECT}-build") {
         "Stream 2 ${LIBPROJECT}-BuildCuda-8.0-${PLATFORM_NAME}" : {
             dir("stream2") {
 
-                functions.get_project_code("${LIBPROJECT}")
+                functions.get_project_code("${LIBPROJECT}", noTags)
 
                 functions.def_docker()
 
