@@ -38,3 +38,4 @@ env.SBTCREDID = "sbt-local-artifactory-id-1"
 
 env.BINTRAY_MAVEN="https://api.bintray.com/maven/deeplearning4j/maven"
 
+env.LIBBND4J_SNAPSHOT="0.7.2-SNAPSHOT"
