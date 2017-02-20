@@ -23,7 +23,7 @@ if (varResultCountFile == 0) {
                             " -Dartifact=org.nd4j:libnd4j:0.7.2-SNAPSHOT:tar \\\n" +
                             " -Dtransitive=false \\\n" +
                             " -Ddest=libnd4j-0.7.2-SNAPSHOT.tar")
-                    sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar`;")
+                    sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
                     sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
                 }
             }
