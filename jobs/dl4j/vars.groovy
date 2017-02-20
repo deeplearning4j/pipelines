@@ -37,3 +37,4 @@ env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
 env.BINTRAY_MAVEN="https://api.bintray.com/maven/deeplearning4j/maven"
+env.PDIR="jobs/dl4j"
