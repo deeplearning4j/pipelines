@@ -1,9 +1,3 @@
-tool name: 'M339', type: 'maven'
-def mvnHome = tool 'M339'
-
-env.JAVA_HOME = "${tool 'jdk-8u121'}"
-env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
-
 sh("env | grep LIBBND4J_SNAPSHOT | wc -l > ${WORKSPACE}/resultEnvFile")
 
 def varResultEnvFile = readFile("${WORKSPACE}/resultEnvFile").toInteger()
