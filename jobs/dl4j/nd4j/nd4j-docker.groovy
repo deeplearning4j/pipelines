@@ -1,3 +1,9 @@
+tool name: 'M339', type: 'maven'
+def mvnHome = tool 'M339'
+
+env.JAVA_HOME = "${tool 'jdk-8u121'}"
+env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+
 sh("env | grep LIBBND4J_SNAPSHOT | wc -l > ${WORKSPACE}/resultEnvFile")
 
 def varResultEnvFile = readFile("${WORKSPACE}/resultEnvFile").toInteger()
@@ -17,9 +23,7 @@ if (varResultCountFile == 0) {
     stage("${PROJECT}-resolve-dependencies") {
 
         dir("${LIBPROJECT}") {
-            configFileProvider(
-                    [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
-                    ]) {
+            configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]){
                 sh("mvn -version")
                 sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar`")
                 dir("blasbuild") {
