@@ -64,30 +64,29 @@ stage("${PROJECT}-build") {
         configFileProvider(
                 [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
                 ]) {
-                      if (TESTS) {
-                        docker.image(dockerImage).inside(dockerParams) {
-                            sh'''
+            if (TESTS) {
+                docker.image(dockerImage).inside(dockerParams) {
+                    sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
-                        }
-                      }
-                      else {
-                        docker.image(dockerImage).inside(dockerParams) {
-                            sh'''
+                }
+            } else {
+                docker.image(dockerImage).inside(dockerParams) {
+                    sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase  -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
-                        }
-                      }
-                   }
+                }
+            }
+        }
 
         if (SONAR) {
-               functions.sonar("${PROJECT}")
+            functions.sonar("${PROJECT}")
         }
     }
 
-
+}
 /*
     sh "./change-scala-versions.sh 2.11"
     sh "./change-cuda-versions.sh 8.0"
