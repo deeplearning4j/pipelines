@@ -2,10 +2,12 @@ def get_code(proj) {
   if(isSnapshot) {
     echo "Do not fetch tags for snapshot"
     notags = 'true'
+    echo notags
   }
   else {
     echo "Fetch tags for current build"
     notags = 'false'
+    echo notags
   }
   checkout([$class: 'GitSCM',
              branches: [[name: "*/${GIT_BRANCHNAME}"]],
