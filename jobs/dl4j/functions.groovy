@@ -1,18 +1,19 @@
 def get_code(proj) {
   if(isSnapshot) {
     echo "Do not fetch tags for snapshot"
-    notags = 'true'
-    echo notags
+    // env.NOTAGS = true
+    notags = true
   }
   else {
     echo "Fetch tags for current build"
-    notags = 'false'
-    echo notags
+    // env.NOTAGS = false
+    notags = false
   }
   checkout([$class: 'GitSCM',
              branches: [[name: "*/${GIT_BRANCHNAME}"]],
              doGenerateSubmoduleConfigurations: false,
              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: "${notags}", reference: '', shallow: true]],
+            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: "${NOTAGS}", reference: '', shallow: true]],
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
              submoduleCfg: [],
              userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
