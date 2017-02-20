@@ -4,8 +4,8 @@ stage("${LIBPROJECT}-build") {
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {
 
-                functions.get_project_code("${LIBPROJECT}")
-                // functions.get_code("${LIBPROJECT}")
+                // functions.get_project_code("${LIBPROJECT}")
+                functions.get_code("${LIBPROJECT}")
 
                 if(SONAR) {
                   functions.sonar("${LIBPROJECT}")
