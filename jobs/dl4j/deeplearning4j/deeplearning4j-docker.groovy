@@ -21,7 +21,7 @@ stage("build test resources on ${PLATFORM_NAME}") {
         dir('dl4j-test-resources') {
           docker.image(dockerImage).inside(dockerParams) {
             sh'''
-            mvn -q clean install
+            mvn -B clean install
             '''
           }
         }
@@ -31,7 +31,7 @@ stage("build test resources on ${PLATFORM_NAME}") {
         dir('dl4j-test-resources') {
           docker.image(dockerImage).inside(dockerParams) {
             sh'''
-            mvn -q clean install
+            mvn -B clean install
             '''
           }
         }
@@ -61,7 +61,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
               docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
               }
             }
@@ -69,7 +69,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
               docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
               }
             }

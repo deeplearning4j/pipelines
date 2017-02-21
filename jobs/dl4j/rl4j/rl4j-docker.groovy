@@ -16,7 +16,7 @@ stage("${RL4J_PROJECT}-build") {
                 // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                 // '''
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy   -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
             }
           }
@@ -26,7 +26,7 @@ stage("${RL4J_PROJECT}-build") {
                 // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
                 // '''
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
             }
           }

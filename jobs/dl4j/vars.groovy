@@ -1,9 +1,10 @@
 isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
-settings_xml = 'maven-settings-id-1'
-dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
+// settings_xml = 'maven-settings-id-1'
+// dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
+settings_xml = 'maven-settings-id-2'
 dockerParams_tmpfs = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --tmpfs /tmp:size=3g --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw -v /mnt/libnd4j:/libnd4j"
-
+dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /var/lib/jenkins/tools/docker_m2:/home/jenkins/.m2:rw  -v /var/lib/jenkins/tools/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 
 // gitcredid = 'github-private-deeplearning4j-id-1'
 // env.GITCREDID = "github-private-deeplearning4j-id-1"
@@ -34,7 +35,16 @@ env.ARTFACT_RELEASES = "libs-release-local"
 env.ARTFACT_GROUP_ID = "org/nd4j"
 env.ARTFACT_USER= "admin"
 env.ARTFACT_PASS= "password"
-env.SBTCREDID = "sbt-local-artifactory-id-1"
+//env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
 env.BINTRAY_MAVEN="https://api.bintray.com/maven/deeplearning4j/maven"
+
+env.LIBBND4J_SNAPSHOT="0.7.2-SNAPSHOT"
+
+//Usage of variable 'nexus', 'bintray', 'jfrog','sonatype'
+env.PROFILE_TYPE="jfrog"
+
+env.ND4J_VERSION="0.7.2"
+env.DL4J_VERSION="0.7.2"
+env.DATAVEC_VERSION="0.7.2"

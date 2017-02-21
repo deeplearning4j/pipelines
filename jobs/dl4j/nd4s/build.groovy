@@ -33,7 +33,7 @@ node("${DOCKER_NODE}") {
       }
 
     }
-
+    
     // step([$class: 'WsCleanup'])
 
 }

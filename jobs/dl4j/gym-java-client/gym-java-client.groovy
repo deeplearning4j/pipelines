@@ -27,7 +27,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
     // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
     functions.verset("${RELEASE_VERSION}", true)
 
-    configFileProvider([configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} ")
     }
   }

@@ -6,7 +6,7 @@ node("${DOCKER_NODE}") {
 
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
-    
+
     // Remove .git folder from workspace
     functions.rm()
 
@@ -36,7 +36,7 @@ node("${DOCKER_NODE}") {
       }
 
     }
-
+    
     // step([$class: 'WsCleanup'])
 
 }
