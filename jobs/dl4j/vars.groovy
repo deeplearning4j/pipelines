@@ -41,7 +41,7 @@ env.BINTRAY_MAVEN="https://api.bintray.com/maven/deeplearning4j/maven"
 env.LIBBND4J_SNAPSHOT="0.7.2-SNAPSHOT"
 
 //Usage of variable 'nexus', 'bintray', 'jfrog','sonatype'
-env.PROFILE_TYPE="nexus"
+env.PROFILE_TYPE="jfrog"
 
 env.ND4J_VERSION="0.7.2"
 env.DL4J_VERSION="0.7.2"
