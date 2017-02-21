@@ -12,12 +12,12 @@ def get_project_code(proj) {
 def rm() {
   echo "Remove .git folder from workspace - ${WORKSPACE}"
   dir("${WORKSPACE}") {
-    sh("rm -rf ${WORKSPACE}/.git")
-    sh("rm -f ${WORKSPACE}/.gitignore")
-    sh("rm -rf ${WORKSPACE}/docs")
-    sh("rm -rf ${WORKSPACE}/imgs")
-    sh("rm -rf ${WORKSPACE}/ansible")
-    sh("rm -f ${WORKSPACE}/README.md")
+    sh("rm -rf .git")
+    sh("rm -f .gitignore")
+    sh("rm -rf docs")
+    sh("rm -rf imgs")
+    sh("rm -rf ansible")
+    sh("rm -f README.md")
   }
 }
 
