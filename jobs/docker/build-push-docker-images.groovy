@@ -20,13 +20,11 @@ node("${DOCKER_NODE}") {
     echo "Load variables"
     load "jobs/docker/vars_docker.groovy"
 
-
     def images = ['centos6cuda80', 'centos6cuda75']
     def builders = [:]
     if ( DOCKER_IMAGES.size() > 0 ) {
         images = strToList(DOCKER_IMAGES)
     }
-    println images
     for (i in images) {
         def index = i
         builders[index] = {
@@ -46,7 +44,6 @@ node("${DOCKER_NODE}") {
                 }
             }
             stage ("Push ${index}") {
-                echo PUSH_TO_REGISTRY
                 if ( PUSH_TO_REGISTRY == "true" ) {
                     withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
                         docker.image("${dockerRegistry}/${index}").push 'latest'
