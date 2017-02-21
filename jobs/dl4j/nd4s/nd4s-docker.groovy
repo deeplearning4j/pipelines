@@ -25,7 +25,7 @@ stage("${ND4S_PROJECT}-build") {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
-              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
+              sbt --debug -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
               '''
             }
