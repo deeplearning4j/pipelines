@@ -25,7 +25,7 @@ stage("${ARBITER_PROJECT}-build") {
                   docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
-                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests
+                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                       '''
                   }
                 }
