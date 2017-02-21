@@ -26,7 +26,7 @@ node("${DOCKER_NODE}") {
     if ( DOCKER_IMAGES.size() > 0 ) {
         images = strToList(DOCKER_IMAGES)
     }
-    echo images
+    println images
     for (i in images) {
         def index = i
         builders[index] = {
