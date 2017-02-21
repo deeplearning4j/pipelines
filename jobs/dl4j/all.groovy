@@ -1,5 +1,28 @@
 node("${DOCKER_NODE}") {
 
+    properties([
+            [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
+            [$class: "ParametersDefinitionProperty", parameterDefinitions:
+                    [
+                            [$class: "StringParameterDefinition", name: "RELEASE_VERSION", defaultValue: "0.7.3-SNAPSHOT", description: "Deeplearning component release version"],
+                            [$class: "BooleanParameterDefinition", name: "TESTS", defaultValue: false, description: "Select to run tests during mvn execution"],
+                            [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
+                            [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
+                            [$class: "StringParameterDefinition", name: "ND4J_VERSION", defaultValue: "0.7.2", description: "Path to groovy scripts"],
+                            [$class: "StringParameterDefinition", name: "DL4J_VERSION", defaultValue: "0.7.2", description: "Path to groovy scripts"],
+                            [$class: "StringParameterDefinition", name: "DATAVEC_VERSION", defaultValue: "0.7.2", description: "Path to groovy scripts"],
+                            [$class: "ChoiceParameterDefinition", name: "SCALA_VERSION", choices: "2.10\n2.11", description: "Scala version definition"],
+                            [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
+                            [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "OpenBLAS platform-name"],
+                            [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
+                            [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
+                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\njenkins-slave-cuda\nsshlocal\npower8\nppc"],
+                            [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
+                            [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
+                    ]
+            ]
+    ])
+
     echo "Cleanup WS"
     step([$class: 'WsCleanup'])
 
@@ -32,15 +55,15 @@ node("${DOCKER_NODE}") {
     }
 
     stage("${DATAVEC_PROJECT}") {
-      load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
+        load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
     }
 
     stage("${DEEPLEARNING4J_PROJECT}") {
         load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
     }
 
-    stage ("${ARBITER_PROJECT}") {
-      load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
+    stage("${ARBITER_PROJECT}") {
+        load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
     }
 
     stage("${ND4S_PROJECT}") {
@@ -48,43 +71,42 @@ node("${DOCKER_NODE}") {
     }
 
     stage("${GYM_JAVA_CLIENT_PROJECT}") {
-      load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
+        load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
     }
 
     stage("${RL4J_PROJECT}") {
-      load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
+        load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
     }
 
     // depends on nd4j and deeplearning4j-core
     stage("${SCALNET_PROJECT}") {
-    	load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
+        load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
     }
 
 
     stage('RELEASE') {
 
-      // def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
+        // def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
-      if(isSnapshot) {
-        echo "End of building and publishing of the ${RELEASE_VERSION}"
-      }
-      else {
-        // timeout(time:1, unit:'HOURS') {
-        timeout(20) {
-            input message:"Approve release of version ${RELEASE_VERSION} ?"
+        if (isSnapshot) {
+            echo "End of building and publishing of the ${RELEASE_VERSION}"
+        } else {
+            // timeout(time:1, unit:'HOURS') {
+            timeout(20) {
+                input message: "Approve release of version ${RELEASE_VERSION} ?"
+            }
+
+            // functions.release("${LIBPROJECT}")
+            functions.release("${PROJECT}")
+            functions.release("${DATAVEC_PROJECT}")
+            functions.release("${DEEPLEARNING4J_PROJECT}")
+            functions.release("${ARBITER_PROJECT}")
+            functions.release("${ND4S_PROJECT}")
+            functions.release("${GYM_JAVA_CLIENT_PROJECT}")
+            functions.release("${RL4J_PROJECT}")
+            functions.release("${SCALNET_PROJECT}")
+
         }
-
-        // functions.release("${LIBPROJECT}")
-        functions.release("${PROJECT}")
-        functions.release("${DATAVEC_PROJECT}")
-        functions.release("${DEEPLEARNING4J_PROJECT}")
-        functions.release("${ARBITER_PROJECT}")
-        functions.release("${ND4S_PROJECT}")
-        functions.release("${GYM_JAVA_CLIENT_PROJECT}")
-        functions.release("${RL4J_PROJECT}")
-        functions.release("${SCALNET_PROJECT}")
-
-      }
 
     }
 
