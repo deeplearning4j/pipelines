@@ -1,3 +1,16 @@
+def strToList(str) {
+    if (str.getClass() == String && str.length()>0) {
+        tmpList = []
+        for ( i in str.split(",")) {
+            def item = i
+            tmpList.add(item);
+        }
+        } else {
+            error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
+        }
+        return tmpList
+    }
+
 node("${DOCKER_NODE}") {
 
     stage ('Checkout') {
@@ -7,18 +20,6 @@ node("${DOCKER_NODE}") {
     echo "Load variables"
     load "jobs/docker/vars_docker.groovy"
 
-    def strToList(str) {
-        if (str.getClass() == String && str.length()>0) {
-            tmpList = []
-            for ( i in str.split(",")) {
-                def item = i
-                tmpList.add(item);
-            }
-        } else {
-            error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
-        }
-        return tmpList
-    }
 
     def images = ['centos6cuda80', 'centos6cuda75']
     def builders = [:]
