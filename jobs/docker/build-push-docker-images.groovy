@@ -27,9 +27,14 @@ node("${DOCKER_NODE}") {
                     '''
                 }
             }
-            stage ('Push ${index}') {
-                withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
-                    docker.image("${dockerRegistry}/${index}").push 'latest'
+            stage ("Push ${index}") {
+                echo PUSH_TO_REGISTRY
+                if ( PUSH_TO_REGISTRY == "true" ) {
+                    withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
+                        docker.image("${dockerRegistry}/${index}").push 'latest'
+                    }
+                } else {
+                    echo "Skipping push to registry"
                 }
             }
         }
