@@ -40,12 +40,13 @@ env.ARTFACT_PASS= "password"
 
 env.BINTRAY_MAVEN="https://api.bintray.com/maven/deeplearning4j/maven"
 
-env.LIBBND4J_SNAPSHOT="0.7.2-SNAPSHOT"
+
+env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "0.7.2-SNAPSHOT"
 
 //Usage of variable 'nexus', 'bintray', 'jfrog','sonatype'
-env.PROFILE_TYPE="jfrog"
+env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 
-env.ND4J_VERSION="0.7.2"
-env.DL4J_VERSION="0.7.2"
-env.DATAVEC_VERSION="0.7.2"
+env.ND4J_VERSION = env.ND4J_VERSION ?: "0.7.2"
+env.DL4J_VERSION = env.DL4J_VERSION ?: "0.7.2"
+env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "0.7.2"
 
