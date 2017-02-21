@@ -63,7 +63,7 @@ node("${DOCKER_NODE}") {
 
     stage('RELEASE') {
 
-      def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
+      // def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
       if(isSnapshot) {
         echo "End of building and publishing of the ${RELEASE_VERSION}"
@@ -88,8 +88,8 @@ node("${DOCKER_NODE}") {
 
     }
 
-    echo "Cleanup WS"
-//    step([$class: 'WsCleanup'])
+    // echo "Cleanup WS"
+    // step([$class: 'WsCleanup'])
 
     echo 'MARK: end of allcc.groovy'
 }

@@ -1,9 +1,11 @@
 stage("${LIBPROJECT}-build") {
+  sh("env")
     parallel (
         "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}" : {
             dir("stream0") {
 
-                functions.get_project_code("${LIBPROJECT}")
+                // functions.get_project_code("${LIBPROJECT}")
+                functions.get_code("${LIBPROJECT}")
 
                 if(SONAR) {
                   functions.sonar("${LIBPROJECT}")
@@ -33,7 +35,8 @@ stage("${LIBPROJECT}-build") {
         "Stream 1 ${LIBPROJECT}-BuildCuda-7.5-${PLATFORM_NAME}" : {
             dir("stream1") {
 
-                functions.get_project_code("${LIBPROJECT}")
+                functions.get_code("${LIBPROJECT}")
+                // functions.get_project_code("${LIBPROJECT}")
 
                 functions.def_docker()
 
@@ -57,7 +60,8 @@ stage("${LIBPROJECT}-build") {
         "Stream 2 ${LIBPROJECT}-BuildCuda-8.0-${PLATFORM_NAME}" : {
             dir("stream2") {
 
-                functions.get_project_code("${LIBPROJECT}")
+                functions.get_code("${LIBPROJECT}")
+                // functions.get_project_code("${LIBPROJECT}")
 
                 functions.def_docker()
 

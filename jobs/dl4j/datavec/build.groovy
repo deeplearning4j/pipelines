@@ -26,7 +26,7 @@ node("${DOCKER_NODE}") {
 
 
     stage('RELEASE') {
-      def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
+      // def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
       if(isSnapshot) {
         echo "End of building and publishing of the ${DATAVEC_PROJECT}-${RELEASE_VERSION}"
@@ -41,6 +41,7 @@ node("${DOCKER_NODE}") {
       }
 
     }
-//    step([$class: 'WsCleanup'])
+
+    // step([$class: 'WsCleanup'])
 
 }

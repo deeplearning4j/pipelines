@@ -1,5 +1,5 @@
 stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
-    functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
+    functions.get_code("${GYM_JAVA_CLIENT_PROJECT}")
 }
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-build") {

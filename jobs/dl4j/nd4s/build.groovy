@@ -18,7 +18,7 @@ node("${DOCKER_NODE}") {
     }
 
     stage('RELEASE') {
-      def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
+      // def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 
       if(isSnapshot) {
         echo "End of building and publishing of the ${ND4S_PROJECT}-${RELEASE_VERSION}"
@@ -33,8 +33,7 @@ node("${DOCKER_NODE}") {
       }
 
     }
-
-    sh "rm -rf $HOME/.sonar"
-//    step([$class: 'WsCleanup'])
+    
+    // step([$class: 'WsCleanup'])
 
 }

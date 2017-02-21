@@ -1,5 +1,5 @@
 stage("${PROJECT}-checkout-sources") {
-    functions.get_project_code("${PROJECT}")
+    functions.get_code("${PROJECT}")
 }
 
 stage("${PROJECT}-build") {
