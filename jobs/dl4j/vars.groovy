@@ -45,3 +45,4 @@ env.PROFILE_TYPE="jfrog"
 env.ND4J_VERSION="0.7.2"
 env.DL4J_VERSION="0.7.2"
 env.DATAVEC_VERSION="0.7.2"
+
