@@ -1,5 +1,5 @@
 stage("${SCALNET_PROJECT}-checkout-sources") {
-    functions.get_code("${SCALNET_PROJECT}")
+    functions.get_project_code("${SCALNET_PROJECT}")
 }
 
 stage("${SCALNET_PROJECT}-build") {

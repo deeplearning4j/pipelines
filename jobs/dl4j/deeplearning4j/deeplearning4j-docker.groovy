@@ -1,6 +1,6 @@
 stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 
-  functions.get_code("${DEEPLEARNING4J_PROJECT}")
+  functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
   dir("${DEEPLEARNING4J_PROJECT}") {
       functions.checktag("${DEEPLEARNING4J_PROJECT}")
   }

@@ -1,5 +1,5 @@
 stage("${RL4J_PROJECT}-checkout-sources") {
-    functions.get_code("${RL4J_PROJECT}")
+    functions.get_project_code("${RL4J_PROJECT}")
 }
 
 stage("${RL4J_PROJECT}-build") {

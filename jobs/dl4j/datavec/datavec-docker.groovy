@@ -1,5 +1,5 @@
 stage("${DATAVEC_PROJECT}-checkout-sources") {
-    functions.get_code("${DATAVEC_PROJECT}")
+    functions.get_project_code("${DATAVEC_PROJECT}")
 }
 
 // stage("${DATAVEC_PROJECT}-Codecheck") {

@@ -1,5 +1,5 @@
 stage("${ND4S_PROJECT}-checkout-sources") {
-    functions.get_code("${ND4S_PROJECT}")
+    functions.get_project_code("${ND4S_PROJECT}")
 }
 
 stage("${ND4S_PROJECT}-build") {
@@ -23,7 +23,7 @@ stage("${ND4S_PROJECT}-build") {
           case "linux-x86_64":
             docker.image(dockerImage).inside(dockerParams) {
               sh'''
-              cp -a ${WORKSPACE}/.ivy2 ${HOME}/  
+              cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
               sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
@@ -33,7 +33,7 @@ stage("${ND4S_PROJECT}-build") {
 
           case "linux-ppc64le":
             docker.image(dockerImage).inside(dockerParams) {
-              sh'''            
+              sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish
               rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*

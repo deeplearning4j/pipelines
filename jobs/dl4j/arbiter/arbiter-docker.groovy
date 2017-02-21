@@ -1,5 +1,5 @@
 stage("${ARBITER_PROJECT}-checkout-sources") {
-    functions.get_code("${ARBITER_PROJECT}")
+    functions.get_project_code("${ARBITER_PROJECT}")
     // functions.get_project_code("${ARBITER_PROJECT}")
 }
 
