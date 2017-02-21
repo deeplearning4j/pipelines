@@ -25,8 +25,8 @@ stage("${ND4S_PROJECT}-build") {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/  
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
-              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
-              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -exec rm -f {} \\;
+  
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
               '''
             }
             break
@@ -34,10 +34,11 @@ stage("${ND4S_PROJECT}-build") {
           case "linux-ppc64le":
             docker.image(dockerImage).inside(dockerParams) {
               sh'''
+            sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish
               rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*
-              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -exec rm -f {} \\;
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
               '''
             }
             break
