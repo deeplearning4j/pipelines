@@ -16,6 +16,8 @@ stage("${ARBITER_PROJECT}-build") {
       functions.verset("${RELEASE_VERSION}", true)
       sh "./change-scala-versions.sh ${SCALA_VERSION}"
 
+      echo("${TESTS}")
+
       configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         switch(PLATFORM_NAME) {
             case "linux-x86_64":
@@ -23,7 +25,7 @@ stage("${ARBITER_PROJECT}-build") {
                   docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
-                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests
                       '''
                   }
                 }
