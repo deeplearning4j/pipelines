@@ -23,7 +23,7 @@ node("${DOCKER_NODE}") {
 
     def images = ['centos6cuda80', 'centos6cuda75']
     def builders = [:]
-    if ( DOCKER_IMAGES.size > 0 ) {
+    if ( DOCKER_IMAGES.size() > 0 ) {
         images = strToList(DOCKER_IMAGES)
     }
     echo images
