@@ -26,7 +26,7 @@ stage("${ND4S_PROJECT}-build") {
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/  
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
               sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
-              rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -exec rm -f {} \\;
               '''
             }
             break
@@ -37,6 +37,7 @@ stage("${ND4S_PROJECT}-build") {
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               sbt +publish
               rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -exec rm -f {} \\;
               '''
             }
             break
