@@ -26,6 +26,7 @@ stage("${ND4S_PROJECT}-build") {
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/  
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
   
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -delete;
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
               '''
             }
