@@ -28,7 +28,7 @@ stage("${ND4S_PROJECT}-build") {
   
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -delete;
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
-              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -exec rm -f {} \\;
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" -exec rm -f {} \;
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
               '''
             }
