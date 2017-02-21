@@ -2,10 +2,6 @@ stage("${DATAVEC_PROJECT}-checkout-sources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
 }
 
-// stage("${DATAVEC_PROJECT}-Codecheck") {
-//   functions.sonar("${DATAVEC_PROJECT}")
-// }
-
 stage("${DATAVEC_PROJECT}-build") {
 
   echo "Building ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
@@ -22,14 +18,16 @@ stage("${DATAVEC_PROJECT}-build") {
               if (TESTS) {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
+                    -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                     '''
                 }
               }
               else {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                    -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                     '''
                 }
               }
@@ -38,14 +36,16 @@ stage("${DATAVEC_PROJECT}-build") {
               if (TESTS) {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean install -Dnd4j.version=${ND4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                    mvn -B -s ${MAVEN_SETTINGS} clean install -Dnd4j.version=${ND4J_VERSION} \
+                    -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                     '''
                 }
               }
               else {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh'''
-                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dnd4j.version=${ND4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                    -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                     '''
                 }
               }

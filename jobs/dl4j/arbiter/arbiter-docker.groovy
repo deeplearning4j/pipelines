@@ -1,11 +1,6 @@
 stage("${ARBITER_PROJECT}-checkout-sources") {
     functions.get_project_code("${ARBITER_PROJECT}")
-    // functions.get_project_code("${ARBITER_PROJECT}")
 }
-
-// stage("${ARBITER_PROJECT}-Codecheck") {
-//   functions.sonar("${ARBITER_PROJECT}")
-// }
 
 stage("${ARBITER_PROJECT}-build") {
   echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
@@ -22,8 +17,9 @@ stage("${ARBITER_PROJECT}-build") {
                 if (TESTS) {
                   docker.image(dockerImage).inside(dockerParams) {
                       sh'''
-                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
-                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                      -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
+                      -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                       '''
                   }
                 }
@@ -31,8 +27,8 @@ stage("${ARBITER_PROJECT}-build") {
                   docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip \
-                      -Dnd4j.version=${ND4J_VERSION} \
-                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                      -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
+                      -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                       '''
                   }
                 }
