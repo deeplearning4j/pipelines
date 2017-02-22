@@ -3,10 +3,10 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
 }
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
-    echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${VERSION}"
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":

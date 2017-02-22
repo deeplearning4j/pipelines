@@ -19,8 +19,8 @@ dir("$PROJECT") {
     // }
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     echo 'Set Project Version'
-    // sh("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-    functions.verset("${RELEASE_VERSION}", true)
+    // sh("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+    functions.verset("${VERSION}", true)
 
     sh "./change-scala-versions.sh 2.10"
     sh "./change-cuda-versions.sh 7.5"
@@ -64,7 +64,7 @@ stage('Libnd4j build') {
     functions.checktag("${LIBPROJECT}")
 
     withEnv(['TRICK_NVCC=YES', "LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT}"]) {
-      echo "Building ${LIBPROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION})"
+      echo "Building ${LIBPROJECT} version ${VERSION} (${SNAPSHOT_VERSION})"
       // Check TRICK_NVCC and LIBND4J_HOME existence
       sh "env"
       // sh "export TRICK_NVCC=YES && export LIBND4J_HOME=${WORKSPACE}/${LIBPROJECT} && ./buildnativeoperations.sh -c cpu"
@@ -75,14 +75,14 @@ stage('Libnd4j build') {
       // sh "./buildnativeoperations.sh -c cuda -v 7.5"
       // sh "./buildnativeoperations.sh -c cuda -v 8.0"
 
-      // sh 'git tag -a ${LIBPROJECT}-${RELEASE_VERSION} -m ${LIBPROJECT}-${RELEASE_VERSION}'
+      // sh 'git tag -a ${LIBPROJECT}-${VERSION} -m ${LIBPROJECT}-${VERSION}'
     }
   }
 }
 stage('Nd4j Build') {
-  echo "Releasing ${PROJECT} version ${RELEASE_VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Releasing ${PROJECT} version ${VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
 
-  echo ("Check if ${RELEASE_VERSION} has been released already")
+  echo ("Check if ${VERSION} has been released already")
   dir("${PROJECT}") {
     functions.checktag("${PROJECT}")
   }
@@ -93,8 +93,8 @@ stage('Nd4j Build') {
   dir("${PROJECT}") {
 
     echo 'Set Project Version'
-    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-    functions.verset("${RELEASE_VERSION}", true)
+    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+    functions.verset("${VERSION}", true)
 
     echo 'Maven Build, Package and Deploy'
     def check_repo = "${STAGING_REPOSITORY}"
@@ -128,7 +128,7 @@ stage('Nd4j Build') {
 
     sh "./change-scala-versions.sh 2.10"
     sh "./change-cuda-versions.sh 8.0"
-    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
+    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
     functions.verset("${SNAPSHOT_VERSION}", true)
 
   }

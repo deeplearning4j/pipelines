@@ -4,7 +4,7 @@ node("${DOCKER_NODE}") {
             [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
             [$class: "ParametersDefinitionProperty", parameterDefinitions:
                     [
-                            [$class: "StringParameterDefinition", name: "RELEASE_VERSION", defaultValue: "0.7.3-SNAPSHOT", description: "Deeplearning component release version"],
+                            [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.7.3-SNAPSHOT", description: "Deeplearning component release version"],
                             [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "Build project on architecture"],
                             [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\njenkins-slave-cuda\nsshlocal\npower8\nppc"],
                             [$class: "BooleanParameterDefinition", name: "TESTS", defaultValue: false, description: "Select to run tests during mvn execution"],
@@ -85,15 +85,15 @@ node("${DOCKER_NODE}") {
 
     stage('RELEASE') {
 
-      // def isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
+      // def isSnapshot = VERSION.endsWith('SNAPSHOT')
 
       if(isSnapshot) {
-        echo "End of building and publishing of the ${RELEASE_VERSION}"
+        echo "End of building and publishing of the ${VERSION}"
       }
       else {
         // timeout(time:1, unit:'HOURS') {
         timeout(20) {
-            input message:"Approve release of version ${RELEASE_VERSION} ?"
+            input message:"Approve release of version ${VERSION} ?"
         }
 
         // functions.release("${LIBPROJECT}")

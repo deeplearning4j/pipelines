@@ -3,10 +3,10 @@ stage("${RL4J_PROJECT}-checkout-sources") {
 }
 
 stage("${RL4J_PROJECT}-build") {
-  echo "Building ${RL4J_PROJECT} version ${RELEASE_VERSION}"
+  echo "Building ${RL4J_PROJECT} version ${VERSION}"
   dir("${RL4J_PROJECT}") {
     functions.checktag("${RL4J_PROJECT}")
-    functions.verset("${RELEASE_VERSION}", true)
+    functions.verset("${VERSION}", true)
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       switch(PLATFORM_NAME) {
         case "linux-x86_64":
