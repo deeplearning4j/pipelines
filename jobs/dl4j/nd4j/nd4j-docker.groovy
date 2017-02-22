@@ -61,9 +61,7 @@ stage("${PROJECT}-build") {
         sh "./change-scala-versions.sh ${SCALA_VERSION}"
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
-        configFileProvider(
-                [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
-                ]) {
+        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             if (TESTS) {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh '''
