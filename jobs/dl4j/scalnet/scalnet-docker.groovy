@@ -15,7 +15,8 @@ stage("${SCALNET_PROJECT}-build") {
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            def varScalaVersion = listScalaVersion[i]
+            def SCALA_VERSION = listScalaVersion[i]
+
 //          echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
 //          def varCudaVersion = listCudaVersion[i];
 
