@@ -40,13 +40,13 @@ stage("${SCALNET_PROJECT}-build") {
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         }
