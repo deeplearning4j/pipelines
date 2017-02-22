@@ -11,16 +11,27 @@ def strToList(str) {
         return tmpList
     }
 
-properties([
-           [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "5"]],
-           [$class: "ParametersDefinitionProperty", parameterDefinitions:
-                   [
-                           [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Choose node to build x86_64 images, correct parameters:\njenkins-slave-cuda\nsshlocal"],
-                           [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"]
-                   ]
-           ]
-   ])
+// properties([
+//            [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "5"]],
+//            [$class: "ParametersDefinitionProperty", parameterDefinitions:
+//                    [
+//                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Choose node to build x86_64 images, correct parameters:\njenkins-slave-cuda\nsshlocal"],
+//                            [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"]
+//                    ]
+//            ]
+//    ])
 
+properties([
+            [$class: "ExtendedChoiceParameterDefinition",
+                name: "DOCKER_IMAGES",
+                type: "PT_CHECKBOX",
+                value: "centos6cuda80,centos6cuda75,ubuntu14cuda80,ubuntu14cuda75",
+                defaultValue: "centos6cuda80,centos6cuda75",
+                multiSelectDelimiter: ",",
+                saveJSONParameterToFile:false,
+                quoteValue:false,
+                description: "Check images to build"]
+            ])
  //   [[$class: 'ExtendedChoiceParameterDefinition',
  // name: "Test Suites",
  // type: "PT_CHECKBOX",
