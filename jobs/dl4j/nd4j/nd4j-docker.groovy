@@ -58,6 +58,9 @@ stage("${PROJECT}-build") {
         // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
         functions.verset("${RELEASE_VERSION}", true)
 
+        def listScalaVersion = ["2.10","2.11"]
+        def listCudaVersion = ["7.5","8.0"]
+
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             def varScalaVersion = listScalaVersion[i]
