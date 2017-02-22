@@ -5,6 +5,8 @@ node("${DOCKER_NODE}") {
             [$class: "ParametersDefinitionProperty", parameterDefinitions:
                     [
                             [$class: "StringParameterDefinition", name: "RELEASE_VERSION", defaultValue: "0.7.3-SNAPSHOT", description: "Deeplearning component release version"],
+                            [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "Build project on architecture"],
+                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\njenkins-slave-cuda\nsshlocal\npower8\nppc"],
 //                            [$class: "BooleanParameterDefinition", name: "TESTS", defaultValue: false, description: "Select to run tests during mvn execution"],
 //                            [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
                             [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
@@ -13,10 +15,8 @@ node("${DOCKER_NODE}") {
 //                            [$class: "StringParameterDefinition", name: "DATAVEC_VERSION", defaultValue: "0.7.2", description: "Path to groovy scripts"],
 //                            [$class: "ChoiceParameterDefinition", name: "SCALA_VERSION", choices: "2.10\n2.11", description: "Scala version definition"],
 //                            [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
-                            [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "OpenBLAS platform-name"],
                             [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
                             [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
-                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\njenkins-slave-cuda\nsshlocal\npower8\nppc"],
                             [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
                             [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
                     ]
@@ -59,7 +59,7 @@ node("${DOCKER_NODE}") {
       }
 
     }
-    
+
     // step([$class: 'WsCleanup'])
 
 }
