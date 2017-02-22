@@ -10,7 +10,7 @@ node('sshlocal') {
       dir("${WORKSPACE}") {
         withSonarQubeEnv('SonarQubeServer') {
           sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=deeplearning4j:pipelines \
-              -Dsonar.projectName=pipelines-${BRANCH} -Dsonar.projectVersion=${VERSION}-${epoch} \
+              -Dsonar.projectName=pipelines-${BRANCH} -Dsonar.projectVersion=${VERSION}.${epoch} \
               -Dsonar.sources=."
               // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
         }
