@@ -3,32 +3,5 @@
   connection: local
   gather_facts: true
   become: true
-    
-  tasks:
-
-  - name: add jenkins user
-    user:
-      name: jenkins
-      comment: "for change UID of main user"
-      state: present
-
-  - name: permit user jenkins use sudo
-    shell: echo "jenkins ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/jenkins
-    args:
-      creates: /etc/sudoers.d/jenkins
- 
-  - name: create dir for ssh
-    file:
-      path: /home/jenkins/.ssh
-      state: directory
-      owner: jenkins
-
-  - name: copy authorized key
-    copy:
-      src: /home/ec2-user/.ssh/authorized_keys
-      dest: /home/jenkins/.ssh/authorized_keys
-      owner: jenkins
-
-  - name: look for IP of slave
-    shell: curl http://169.254.169.254/latest/meta-data/public-ipv4 > IP
-      
+  roles:
+    - create_user
