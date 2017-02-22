@@ -11,14 +11,11 @@ stage("${SCALNET_PROJECT}-build") {
         sh("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_\${scala.binary.version}<\\/artifactId>/' pom.xml")
 
         def listScalaVersion = ["2.10", "2.11"]
-//      def listCudaVersion = ["7.5","8.0"]
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             env.SCALA_VERSION = listScalaVersion[i]
 
-//          echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-//          def varCudaVersion = listCudaVersion[i];
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch (PLATFORM_NAME) {
