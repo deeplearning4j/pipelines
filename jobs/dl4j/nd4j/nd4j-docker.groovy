@@ -92,11 +92,11 @@ stage("${PROJECT}-build") {
                 }
             }
         }
-
-        if (SONAR.toBoolean()) {
-            functions.sonar("${PROJECT}")
-        }
     }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${PROJECT}")
+    }
+
 }
 /*
     sh "./change-scala-versions.sh 2.11"
