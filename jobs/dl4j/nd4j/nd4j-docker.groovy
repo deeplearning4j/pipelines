@@ -1,14 +1,11 @@
-sh ("env | grep LIBBND4J_SNAPSHOT | wc -l > ${WORKSPACE}/resultEnvFile")
+env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
+env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-def varResultEnvFile=readFile("${WORKSPACE}/resultEnvFile").toInteger()
-if (varResultEnvFile == 0){
-    env.LIBBND4J_SNAPSHOT="${RELEASE_VERSION}"
-}
 
-dir("${LIBPROJECT}"){
-  sh ("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
+dir("${LIBPROJECT}") {
+    sh("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
 }
-def varResultCountFile=readFile("${WORKSPACE}/resultCountFile").toInteger()
+def varResultCountFile = readFile("${WORKSPACE}/resultCountFile").toInteger()
 echo varResultCountFile.toString()
 
 if (varResultCountFile == 0) {
@@ -16,31 +13,25 @@ if (varResultCountFile == 0) {
 
     stage("${PROJECT}-resolve-dependencies") {
 
-
-        sh("curl  \"${ARTFACT_URL}/${ARTFACT_SNAPSHOT}/${ARTFACT_GROUP_ID}/${LIBPROJECT}/${LIBBND4J_SNAPSHOT}/\" | grep 'tar<' | sed 's/<\\/a>.*//g' | sed 's/<.*>//g' | tail -1 >  ${WORKSPACE}/outLastFileName")
-        def valueFileName = readFile("${WORKSPACE}/outLastFileName").trim()
-        def fileNamePattern = valueFileName.toString()
-
-        echo ("[INFO] Latest founded snapshot version is: " + fileNamePattern)
-
-        def server = Artifactory.newServer url: "${ARTFACT_URL}", username: "${ARTFACT_USER}", password: "${ARTFACT_PASS}"
-        def downloadSpec = """{
-                            "files": [{
-                            "pattern": "${ARTFACT_SNAPSHOT}/${ARTFACT_GROUP_ID}/${LIBPROJECT}/${LIBBND4J_SNAPSHOT}/${
-            fileNamePattern
-        }",
-                            "target": "${WORKSPACE}/${LIBPROJECT}-${RELEASE_VERSION}.tar"
-                            }]}"""
-
-        server.download(downloadSpec)
         dir("${LIBPROJECT}") {
-            sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar`")
-            dir("blasbuild") {
-                sh("ln -s cuda-${CUDA_VERSION} cuda")
+            docker.image(dockerImage).inside(dockerParams) {
+                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                    /**
+                     * HI MAN - this is HARD CODE for URL
+                     */
+                    sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                            " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
+                            " -Dtransitive=false \\\n" +
+                            " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
+                    //
+                    sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
+                    sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
+                }
             }
         }
     }
 }
+
 
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
@@ -61,51 +52,61 @@ stage("${PROJECT}-build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-        functions.verset("${RELEASE_VERSION}", true)
+        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        functions.verset("${VERSION}", true)
 
-        sh "./change-scala-versions.sh ${SCALA_VERSION}"
-        sh "./change-cuda-versions.sh ${CUDA_VERSION}"
+        def listScalaVersion = ["2.10", "2.11"]
+        def listCudaVersion = ["7.5", "8.0"]
 
-        configFileProvider(
-                [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
-                ]) {
-                      if (TESTS) {
-                        docker.image(dockerImage).inside(dockerParams) {
-                            sh'''
+        for (int i = 0; i < listScalaVersion.size(); i++) {
+            echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
+            env.SCALA_VERSION = listScalaVersion[i]
+            echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
+            env.CUDA_VERSION = listCudaVersion[i];
+
+            sh("./change-scala-versions.sh ${SCALA_VERSION}")
+            sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+
+            configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                if (TESTS.toBoolean()) {
+                    docker.image(dockerImage).inside(dockerParams) {
+                        sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  \
+                            -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
-                        }
-                      }
-                      else {
-                        docker.image(dockerImage).inside(dockerParams) {
-                            sh'''
+                    }
+                } else {
+                    docker.image(dockerImage).inside(dockerParams) {
+                        sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase \
+                            -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
-                        }
-                      }
-                   }
-
-        if (SONAR) {
-               functions.sonar("${PROJECT}")
+                    }
+                }
+            }
         }
     }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${PROJECT}")
+    }
 
+}
 /*
     sh "./change-scala-versions.sh 2.11"
     sh "./change-cuda-versions.sh 8.0"
 
     configFileProvider(
-            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
             ]) {
         sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
         // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
     }
-*/
+*//*
+
 
 }
+*/
 
-// Messages for debugging
 echo 'MARK: end of nd4j.groovy'

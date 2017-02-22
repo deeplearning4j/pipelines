@@ -3,18 +3,19 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
 }
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
-    echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${VERSION}"
     dir("${GYM_JAVA_CLIENT_PROJECT}") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":
-                    if (TESTS) {
+                    if (TESTS.toBoolean()) {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy \
-                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} \
+                          -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                           '''
                       }
                     }
@@ -22,33 +23,38 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
-                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION}
+                          -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} \
+                          -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                           '''
                       }
                     }
                 break
                   case "linux-ppc64le":
-                    if (TESTS) {
-                      docker.image(dockerImage).inside(dockerParams) {
-                          sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install
-                          '''
+                      if (TESTS.toBoolean()) {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh'''
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                            -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} \
+                            -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                            '''
+                        }
                       }
-                    }
-                    else {
-                      docker.image(dockerImage).inside(dockerParams) {
-                          sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-                          '''
+                      else {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh'''
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                            -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} \
+                            -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                            '''
+                        }
                       }
-                    }
                 break
                 default:
                 break
             }
         }
     }
-    if (SONAR) {
+    if (SONAR.toBoolean()) {
         functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
     }
 }

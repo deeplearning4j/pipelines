@@ -8,7 +8,7 @@ sh ("env | grep LIBBND4J_SNAPSHOT | wc -l > ${WORKSPACE}/resultEnvFile")
 
 def varResultEnvFile=readFile("${WORKSPACE}/resultEnvFile").toInteger()
 if (varResultEnvFile == 0){
-    env.LIBBND4J_SNAPSHOT="${RELEASE_VERSION}"
+    env.LIBBND4J_SNAPSHOT="${VERSION}"
 }
 
 
@@ -36,12 +36,12 @@ if (varResultCountFile == 0) {
                             "pattern": "${ARTFACT_SNAPSHOT}/${ARTFACT_GROUP_ID}/${LIBPROJECT}/${LIBBND4J_SNAPSHOT}/${
             fileNamePattern
         }",
-                            "target": "${WORKSPACE}/${LIBPROJECT}-${RELEASE_VERSION}.tar"
+                            "target": "${WORKSPACE}/${LIBPROJECT}-${VERSION}.tar"
                             }]}"""
 
         server.download(downloadSpec)
         dir("${LIBPROJECT}") {
-            sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${RELEASE_VERSION}.tar`")
+            sh("tar -xvf `find ${WORKSPACE} -name ${LIBPROJECT}-${VERSION}.tar`")
             dir("blasbuild") {
                 sh("ln -s cuda-${CUDA_VERSION} cuda")
             }
@@ -68,14 +68,14 @@ stage("${PROJECT}-Build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-        functions.verset("${RELEASE_VERSION}", true)
+        // sh("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        functions.verset("${VERSION}", true)
 
         sh "./change-scala-versions.sh ${SCALA_VERSION}"
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
         configFileProvider(
-                [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+                [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
                 ]) {
             sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
             // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " +  " -Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
@@ -86,7 +86,7 @@ stage("${PROJECT}-Build") {
     sh "./change-cuda-versions.sh 8.0"
 
     configFileProvider(
-            [configFile(fileId: 'MAVEN_SETTINGS_DO-192', variable: 'MAVEN_SETTINGS')
+            [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
             ]) {
         sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
         // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")

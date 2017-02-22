@@ -17,8 +17,8 @@ stage("${PROJECT}-build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-        functions.verset("${RELEASE_VERSION}", true)
+        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        functions.verset("${VERSION}", true)
 
         sh "./change-scala-versions.sh ${SCALA_VERSION}"
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"
@@ -26,7 +26,7 @@ stage("${PROJECT}-build") {
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":
-                    if (TESTS) {
+                    if (TESTS.toBoolean()) {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -43,32 +43,35 @@ stage("${PROJECT}-build") {
                       }
                     }
                 break
-                  case "linux-ppc64le":
-                    if (TESTS) {
+
+                case "linux-ppc64le":
+                    if (TESTS.toBoolean()) {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy
                           '''
                       }
                     }
                     else {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                           '''
                       }
                     }
                 break
+
                 default:
                 break
             }
         }
     }
 
-    if (SONAR) {
+    if (SONAR.toBoolean()) {
            functions.sonar("${PROJECT}")
     }
 }
 
-// Messages for debugging
 echo 'MARK: end of nd4j.groovy'

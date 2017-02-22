@@ -1,3 +1,16 @@
+def strToList(str) {
+    if (str.getClass() == String && str.length()>0) {
+        tmpList = []
+        for ( i in str.split(",")) {
+            def item = i
+            tmpList.add(item);
+        }
+        } else {
+            error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
+        }
+        return tmpList
+    }
+
 node("${DOCKER_NODE}") {
 
     stage ('Checkout') {
@@ -9,6 +22,9 @@ node("${DOCKER_NODE}") {
 
     def images = ['centos6cuda80', 'centos6cuda75']
     def builders = [:]
+    if ( DOCKER_IMAGES.size() > 0 ) {
+        images = strToList(DOCKER_IMAGES)
+    }
     for (i in images) {
         def index = i
         builders[index] = {
@@ -27,9 +43,13 @@ node("${DOCKER_NODE}") {
                     '''
                 }
             }
-            stage ('Push ${index}') {
-                withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
-                    docker.image("${dockerRegistry}/${index}").push 'latest'
+            stage ("Push ${index}") {
+                if ( PUSH_TO_REGISTRY == "true" ) {
+                    withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
+                        docker.image("${dockerRegistry}/${index}").push 'latest'
+                    }
+                } else {
+                    echo "Skipping push to registry"
                 }
             }
         }
