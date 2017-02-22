@@ -7,7 +7,7 @@ stage("${LIBPROJECT}-build") {
                 // functions.get_project_code("${LIBPROJECT}")
                 functions.get_code("${LIBPROJECT}")
 
-                if(SONAR) {
+                if(SONAR.toBoolean()) {
                   functions.sonar("${LIBPROJECT}")
                 }
 

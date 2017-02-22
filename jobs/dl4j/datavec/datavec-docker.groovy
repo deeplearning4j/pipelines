@@ -19,7 +19,7 @@ stage("${DATAVEC_PROJECT}-build") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       switch(PLATFORM_NAME) {
           case "linux-x86_64":
-              if (TESTS) {
+              if (TESTS.toBoolean()) {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh'''
                     mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
@@ -35,7 +35,7 @@ stage("${DATAVEC_PROJECT}-build") {
               }
           break
             case "linux-ppc64le":
-              if (TESTS) {
+              if (TESTS.toBoolean()) {
                 docker.image(dockerImage).inside(dockerParams) {
                     sh'''
                     mvn -B -s ${MAVEN_SETTINGS} clean install -Dnd4j.version=${ND4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
@@ -55,12 +55,12 @@ stage("${DATAVEC_PROJECT}-build") {
       }
     }
   }
-  if (SONAR) {
+  if (SONAR.toBoolean()) {
       functions.sonar("${DATAVEC_PROJECT}")
   }
 }
 
-// if (SONAR) {
+// if (SONAR.toBoolean()) {
 //   stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
 //     functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
 //   }

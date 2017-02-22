@@ -105,7 +105,7 @@ def release(proj) {
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   // Tag builded branch with new version
-  if (CREATE_TAG) {
+  if (CREATE_TAG.toBoolean()) {
     echo ("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
     echo ("Adding tag ${proj}-${RELEASE_VERSION} to github.com/${ACCOUNT}/${proj}")
     dir("${proj}") {

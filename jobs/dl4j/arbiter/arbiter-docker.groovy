@@ -40,7 +40,7 @@ stage("${ARBITER_PROJECT}-build") {
                 }
             break
               case "linux-ppc64le":
-                if (TESTS) {
+                if (TESTS.toBoolean()) {
                   docker.image(dockerImage).inside(dockerParams) {
                       sh'''
                       ls -al /
@@ -64,12 +64,12 @@ stage("${ARBITER_PROJECT}-build") {
         }
       }
     }
-  if (SONAR) {
+  if (SONAR.toBoolean()) {
       functions.sonar("${ARBITER_PROJECT}")
   }
 }
 
-// if (SONAR) {
+// if (SONAR.toBoolean()) {
 //   stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
 //     functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
 //   }

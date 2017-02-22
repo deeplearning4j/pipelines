@@ -57,7 +57,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       switch(PLATFORM_NAME) {
         case "linux-x86_64":
-            if (TESTS) {
+            if (TESTS.toBoolean()) {
               docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -75,7 +75,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             }
         break
           case "linux-ppc64le":
-            if (TESTS) {
+            if (TESTS.toBoolean()) {
               docker.image(dockerImage).inside(dockerParams) {
                 echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
                 // functions.verset("${RELEASE_VERSION}", true)
@@ -104,7 +104,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
     }
   }
 
-  if (SONAR) {
+  if (SONAR.toBoolean()) {
       functions.sonar("${DEEPLEARNING4J_PROJECT}")
   }
 }
