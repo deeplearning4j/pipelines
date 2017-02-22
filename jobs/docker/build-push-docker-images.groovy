@@ -11,25 +11,6 @@ def strToList(str) {
         return tmpList
     }
 
-// properties([
-//            [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "5"]],
-//            [$class: "ParametersDefinitionProperty", parameterDefinitions:
-//                    [
-//                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Choose node to build x86_64 images, correct parameters:\njenkins-slave-cuda\nsshlocal"],
-//                            [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"]
-//                    ]
-//            ],
-//             [$class: "ExtendedChoiceParameterDefinition",
-//                 name: "DOCKER_IMAGES",
-//                 type: "PT_CHECKBOX",
-//                 value: "centos6cuda80,centos6cuda75,ubuntu14cuda80,ubuntu14cuda75",
-//                 defaultValue: "centos6cuda80,centos6cuda75",
-//                 multiSelectDelimiter: ",",
-//                 saveJSONParameterToFile:false,
-//                 quoteValue:false,
-//                 description: "Check images to build"]
-// ])
-
 node("${DOCKER_NODE}") {
 
     stage ('Checkout') {
@@ -74,4 +55,31 @@ node("${DOCKER_NODE}") {
         }
     }
     parallel builders
+}
+
+node("ppc") {
+    stage ("Build ubuntu14ppc") {
+        docker.build ("${dockerRegistry}/ubuntu14ppc","docker/ubuntu14ppc")
+    }
+    stage ("Test ubuntu14ppc") {
+        docker.image("${dockerRegistry}/ubuntu14ppc").inside {
+            sh '''
+            java -version
+            mvn -version
+            /opt/sbt/bin/sbt sbt-version
+            if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+            cmake --version
+            gcc -v
+            '''
+        }
+    }
+    stage ("Push ubuntu14ppc") {
+        if ( PUSH_TO_REGISTRY.toBoolean() ) {
+            withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
+                docker.image("${dockerRegistry}/ubuntu14ppc").push 'latest'
+            }
+        } else {
+            echo "Skipping push to registry"
+        }
+    }
 }
