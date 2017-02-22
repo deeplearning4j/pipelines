@@ -1,9 +1,6 @@
-sh("env | grep LIBBND4J_SNAPSHOT | wc -l > ${WORKSPACE}/resultEnvFile")
+env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${RELEASE_VERSION}"
+env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-def varResultEnvFile = readFile("${WORKSPACE}/resultEnvFile").toInteger()
-if (varResultEnvFile == 0) {
-    env.LIBBND4J_SNAPSHOT = "${RELEASE_VERSION}"
-}
 
 dir("${LIBPROJECT}") {
     sh("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
@@ -41,12 +38,10 @@ stage("${PROJECT}-checkout-sources") {
 }
 
 stage("${PROJECT}-build") {
-/*
     dir("${LIBPROJECT}/blasbuild") {
         env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }
-*/
 
     dir("${PROJECT}") {
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
