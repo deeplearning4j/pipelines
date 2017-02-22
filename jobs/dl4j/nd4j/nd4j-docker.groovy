@@ -109,5 +109,4 @@ stage("${PROJECT}-build") {
 }
 */
 
-// Messages for debugging
 echo 'MARK: end of nd4j.groovy'

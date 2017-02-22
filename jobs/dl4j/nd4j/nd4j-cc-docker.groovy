@@ -43,7 +43,7 @@ stage("${PROJECT}-build") {
                       }
                     }
                 break
-                
+
                 case "linux-ppc64le":
                     if (TESTS.toBoolean()) {
                       docker.image(dockerImage).inside(dockerParams) {
@@ -74,5 +74,4 @@ stage("${PROJECT}-build") {
     }
 }
 
-// Messages for debugging
 echo 'MARK: end of nd4j.groovy'

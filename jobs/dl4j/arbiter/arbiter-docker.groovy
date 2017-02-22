@@ -74,9 +74,4 @@ stage("${ARBITER_PROJECT}-build") {
     }
 }
 
-// if (SONAR.toBoolean()) {
-//   stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
-//     functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-//   }
-// }
 echo 'MARK: end of arbiter.groovy'

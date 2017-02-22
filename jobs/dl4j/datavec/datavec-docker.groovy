@@ -65,10 +65,4 @@ stage("${DATAVEC_PROJECT}-build") {
     }
 }
 
-// if (SONAR.toBoolean()) {
-//   stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
-//     functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-//   }
-// }
-// Messages for debugging
 echo 'MARK: end of datavec.groovy'
