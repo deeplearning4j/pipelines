@@ -12,16 +12,26 @@ def strToList(str) {
     }
 
 properties([
-           [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
+           [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "5"]],
            [$class: "ParametersDefinitionProperty", parameterDefinitions:
                    [
                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Choose node to build x86_64 images, correct parameters:\njenkins-slave-cuda\nsshlocal"],
-                           [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"],
-                           [$class: "extended__choice__parameter.ExtendedChoiceParameterDefinition", name: "DOCKER_IMAGES", type: "PT_CHECKBOX", value: "centos6cuda80,centos6cuda75,ubuntu14cuda80,ubuntu14cuda75", multiSelectDelimiter: ",", defaultValue: "centos6cuda80,centos6cuda75", description: "Check images to build"]
-
+                           [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"]
                    ]
+           [$class: "ExtendedChoiceParameterDefinition", name: "DOCKER_IMAGES", type: "PT_CHECKBOX", value: "centos6cuda80,centos6cuda75,ubuntu14cuda80,ubuntu14cuda75", multiSelectDelimiter: ",", defaultValue: "centos6cuda80,centos6cuda75", description: "Check images to build"]
            ]
    ])
+
+ //   [[$class: 'ExtendedChoiceParameterDefinition',
+ // name: "Test Suites",
+ // type: "PT_CHECKBOX",
+ // value: "a,b,c,d",
+ // saveJSONParameterToFile:false,
+ // quoteValue:false,
+ // visibleItemCount:20,
+ // description:"test",
+ // multiSelectDelimiter:","]]
+
 //
 //    <parameterDefinitions>
 //            <org.jvnet.jenkins.plugins.nodelabelparameter.LabelParameterDefinition plugin="nodelabelparameter@1.7.2">
