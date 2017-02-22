@@ -80,7 +80,7 @@ stage('Libnd4j build') {
   }
 }
 stage('Nd4j Build') {
-  echo "Releasing ${PROJECT} version ${VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
+  echo "Building ${PROJECT} version ${VERSION} (${SNAPSHOT_VERSION}) to repository ${STAGING_REPOSITORY}"
 
   echo ("Check if ${VERSION} has been released already")
   dir("${PROJECT}") {

@@ -3,7 +3,7 @@ stage("${ND4S_PROJECT}-checkout-sources") {
 }
 
 stage("${ND4S_PROJECT}-build") {
-    echo "Releasing ${ND4S_PROJECT} version ${VERSION}"
+    echo "Building ${ND4S_PROJECT} version ${VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
 //        sh ("sed -i 's/version := \".*\",/version := \"${VERSION}\",/' build.sbt")
