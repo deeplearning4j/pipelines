@@ -17,7 +17,7 @@ properties([
                    [
                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Choose node to build x86_64 images, correct parameters:\njenkins-slave-cuda\nsshlocal"],
                            [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"],
-                           [$class: "ExtendedChoiceParameterDefinition", name: "DOCKER_IMAGES", type: "PT_CHECKBOX", defaultValue: "centos6cuda80,centos6cuda75", description: "Check images to build"]
+                           [$class: "extended__choice__parameter.ExtendedChoiceParameterDefinition", name: "DOCKER_IMAGES", type: "PT_CHECKBOX", defaultValue: "centos6cuda80,centos6cuda75", description: "Check images to build"]
 
                    ]
            ]
