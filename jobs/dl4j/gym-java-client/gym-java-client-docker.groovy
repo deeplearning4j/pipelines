@@ -30,20 +30,24 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
                     }
                 break
                   case "linux-ppc64le":
-                    if (TESTS.toBoolean()) {
-                      docker.image(dockerImage).inside(dockerParams) {
-                          sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install
-                          '''
+                      if (TESTS.toBoolean()) {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh'''
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy \
+                            -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} \
+                            -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                            '''
+                        }
                       }
-                    }
-                    else {
-                      docker.image(dockerImage).inside(dockerParams) {
-                          sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-                          '''
+                      else {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh'''
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests \
+                            -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} \
+                            -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                            '''
+                        }
                       }
-                    }
                 break
                 default:
                 break

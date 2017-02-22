@@ -3,7 +3,7 @@ isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
 // dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 settings_xml = 'maven-settings-id-2'
 dockerParams_tmpfs = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --tmpfs /tmp:size=3g --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw -v /mnt/libnd4j:/libnd4j"
+dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw -v /var/lib/jenkins/tools/docker_ivy2:/home/jenkins/.ivy2:rw -v /mnt/libnd4j:/libnd4j"
 dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /var/lib/jenkins/tools/docker_m2:/home/jenkins/.m2:rw  -v /var/lib/jenkins/tools/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 // gitcredid = 'github-private-deeplearning4j-id-1'
 // env.GITCREDID = "github-private-deeplearning4j-id-1"
@@ -33,4 +33,3 @@ env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 env.ND4J_VERSION = env.ND4J_VERSION ?: "0.7.2"
 env.DL4J_VERSION = env.DL4J_VERSION ?: "0.7.2"
 env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "0.7.2"
-

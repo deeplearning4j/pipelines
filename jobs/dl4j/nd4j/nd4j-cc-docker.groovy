@@ -43,22 +43,26 @@ stage("${PROJECT}-build") {
                       }
                     }
                 break
-                  case "linux-ppc64le":
+                
+                case "linux-ppc64le":
                     if (TESTS.toBoolean()) {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy
                           '''
                       }
                     }
                     else {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
-                          mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                           '''
                       }
                     }
                 break
+
                 default:
                 break
             }

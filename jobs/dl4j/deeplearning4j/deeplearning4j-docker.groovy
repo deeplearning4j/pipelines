@@ -90,20 +90,20 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                     case "linux-ppc64le":
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
-                                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                                // functions.verset("${RELEASE_VERSION}", true)
-
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean install
+                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
-                                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                                // functions.verset("${RELEASE_VERSION}", true)
-
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         }

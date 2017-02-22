@@ -12,9 +12,6 @@ stage("${RL4J_PROJECT}-build") {
         case "linux-x86_64":
           if (TESTS.toBoolean()) {
             docker.image(dockerImage).inside(dockerParams) {
-                // sh'''
-                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
-                // '''
                 sh'''
                 mvn -B -s ${MAVEN_SETTINGS} clean deploy   -Dnd4j.version=${ND4J_VERSION} \
                 -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
@@ -24,9 +21,6 @@ stage("${RL4J_PROJECT}-build") {
           }
           else {
             docker.image(dockerImage).inside(dockerParams) {
-                // sh'''
-                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
-                // '''
                 sh'''
                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
                 -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
@@ -40,22 +34,20 @@ stage("${RL4J_PROJECT}-build") {
         case "linux-ppc64le":
           if (TESTS.toBoolean()) {
             docker.image(dockerImage).inside(dockerParams) {
-                // sh'''
-                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
-                // '''
                 sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy   -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
+                -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
             }
           }
           else {
             docker.image(dockerImage).inside(dockerParams) {
-                // sh'''
-                // mvn -X -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION}
-                // '''
-                sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                '''
+              sh'''
+              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+              -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
+              -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+              '''
             }
           }
         break

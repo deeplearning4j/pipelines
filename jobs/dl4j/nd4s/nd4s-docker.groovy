@@ -35,9 +35,9 @@ stage("${ND4S_PROJECT}-build") {
             docker.image(dockerImage).inside(dockerParams) {
               sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
-              sbt +publish
-              rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*
-              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
+              cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
+              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
               '''
             }
             break
