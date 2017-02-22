@@ -39,7 +39,6 @@ stage("${PROJECT}-checkout-sources") {
 
 stage("${PROJECT}-build") {
     dir("${LIBPROJECT}/blasbuild") {
-        env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
         sh("ln -s cuda-${CUDA_VERSION} cuda")
     }
 
