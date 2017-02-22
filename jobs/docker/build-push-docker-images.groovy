@@ -15,8 +15,10 @@ properties([
            [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
            [$class: "ParametersDefinitionProperty", parameterDefinitions:
                    [
-                           [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\njenkins-slave-cuda\nsshlocal\npower8\nppc"],
-                           [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Correct parameters:\npower8\nppc"],
+                           [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Choose node to build x86_64 images, correct parameters:\njenkins-slave-cuda\nsshlocal"],
+                           [$class: "LabelParameterDefinition", name: "DOCKER_PPC_NODE", defaultValue: "ppc", description: "Choose node to build power images, correct parameters:\npower8\nppc"],
+                           [$class: "ExtendedChoiceParameterDefinition", name: "DOCKER_IMAGES", type: "PT_CHECKBOX", defaultValue: "centos6cuda80,centos6cuda75", description: "Check images to build"]
+
                    ]
            ]
    ])
