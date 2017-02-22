@@ -58,36 +58,45 @@ stage("${PROJECT}-build") {
         // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
         functions.verset("${RELEASE_VERSION}", true)
 
-        sh "./change-scala-versions.sh ${SCALA_VERSION}"
-        sh "./change-cuda-versions.sh ${CUDA_VERSION}"
+        def listScalaVersion = ["2.10","2.11"]
+        def listCudaVersion = ["7.5","8.0"]
 
-        configFileProvider(
-                [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
-                ]) {
-            if (TESTS) {
-                docker.image(dockerImage).inside(dockerParams) {
-                    sh '''
+        for (int i = 0; i < listScalaVersion.size(); i++) {
+            echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
+            def varScalaVersion = listScalaVersion[i]
+            echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
+            def varCudaVersion = listCudaVersion[i];
+
+//    sh("./change-scala-versions.sh ${SCALA_VERSION}")
+//    sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+            sh("./change-scala-versions.sh ${varScalaVersion}")
+            sh("./change-cuda-versions.sh ${varCudaVersion}")
+
+            configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                if (TESTS.toBoolean()) {
+                    docker.image(dockerImage).inside(dockerParams) {
+                        sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  \
                             -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
-                }
-            } else {
-                docker.image(dockerImage).inside(dockerParams) {
-                    sh '''
+                    }
+                } else {
+                    docker.image(dockerImage).inside(dockerParams) {
+                        sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                             mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase \
                             -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
+                    }
                 }
             }
         }
 
-        if (SONAR) {
+        if (SONAR.toBoolean()) {
             functions.sonar("${PROJECT}")
         }
     }
-
 }
 /*
     sh "./change-scala-versions.sh 2.11"
