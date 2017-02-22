@@ -21,7 +21,7 @@ def strToList(str) {
 //            ]
 //    ])
 
-properties[[
+properties[
             [$class: "ExtendedChoiceParameterDefinition",
                 name: "DOCKER_IMAGES",
                 type: "PT_CHECKBOX",
@@ -31,7 +31,7 @@ properties[[
                 saveJSONParameterToFile:false,
                 quoteValue:false,
                 description: "Check images to build"]
-            ]]
+            ]
  //   [[$class: 'ExtendedChoiceParameterDefinition',
  // name: "Test Suites",
  // type: "PT_CHECKBOX",
