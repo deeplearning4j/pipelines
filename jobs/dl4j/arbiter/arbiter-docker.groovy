@@ -69,9 +69,9 @@ stage("${ARBITER_PROJECT}-build") {
                 }
             }
         }
-        if (SONAR.toBoolean()) {
-            functions.sonar("${ARBITER_PROJECT}")
-        }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${ARBITER_PROJECT}")
     }
 }
 

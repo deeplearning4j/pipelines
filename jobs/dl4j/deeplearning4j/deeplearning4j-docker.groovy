@@ -116,10 +116,9 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                 }
             }
         }
-
-        if (SONAR.toBoolean()) {
-            functions.sonar("${DEEPLEARNING4J_PROJECT}")
-        }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${DEEPLEARNING4J_PROJECT}")
     }
 }
 echo 'MARK: end of deeplearning4j.groovy'

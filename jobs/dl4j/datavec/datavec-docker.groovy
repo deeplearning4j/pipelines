@@ -61,9 +61,9 @@ stage("${DATAVEC_PROJECT}-build") {
                 }
             }
         }
-        if (SONAR.toBoolean()) {
-            functions.sonar("${DATAVEC_PROJECT}")
-        }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${DATAVEC_PROJECT}")
     }
 }
 
