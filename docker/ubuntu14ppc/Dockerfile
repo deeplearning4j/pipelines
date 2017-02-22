@@ -13,7 +13,7 @@ RUN apt-get update &&\
     rm -f /tmp/cuda-repo-ubuntu1404_7.5-18_ppc64el.deb &&\
     add-apt-repository ppa:ubuntu-toolchain-r/test &&\
     apt-get update &&\
-    apt-get install gcc-4.9 g++-4.9 cuda openjdk-8-jdk -y --force-yes &&\
+    apt-get install gcc-4.9 g++-4.9 cuda openjdk-8-jdk maven sbt -y --force-yes &&\
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 1 &&\
     rm /etc/alternatives/java &&\
     ln -s /usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java /etc/alternatives/java &&\
