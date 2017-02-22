@@ -1,9 +1,6 @@
-sh("env | grep LIBBND4J_SNAPSHOT | wc -l > ${WORKSPACE}/resultEnvFile")
+env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${RELEASE_VERSION}"
+env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-def varResultEnvFile = readFile("${WORKSPACE}/resultEnvFile").toInteger()
-if (varResultEnvFile == 0) {
-    env.LIBBND4J_SNAPSHOT = "${RELEASE_VERSION}"
-}
 
 dir("${LIBPROJECT}") {
     sh("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
@@ -58,19 +55,17 @@ stage("${PROJECT}-build") {
         // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
         functions.verset("${RELEASE_VERSION}", true)
 
-        def listScalaVersion = ["2.10","2.11"]
-        def listCudaVersion = ["7.5","8.0"]
+        def listScalaVersion = ["2.10", "2.11"]
+        def listCudaVersion = ["7.5", "8.0"]
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            def varScalaVersion = listScalaVersion[i]
+            env.SCALA_VERSION = listScalaVersion[i]
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            def varCudaVersion = listCudaVersion[i];
+            env.CUDA_VERSION = listCudaVersion[i];
 
-//    sh("./change-scala-versions.sh ${SCALA_VERSION}")
-//    sh("./change-cuda-versions.sh ${CUDA_VERSION}")
-            sh("./change-scala-versions.sh ${varScalaVersion}")
-            sh("./change-cuda-versions.sh ${varCudaVersion}")
+            sh("./change-scala-versions.sh ${SCALA_VERSION}")
+            sh("./change-cuda-versions.sh ${CUDA_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 if (TESTS.toBoolean()) {

@@ -16,13 +16,13 @@ stage("${ARBITER_PROJECT}-build") {
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            def varScalaVersion = listScalaVersion[i]
+            env.SCALA_VERSION = listScalaVersion[i]
 //            echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-//            def varCudaVersion = listCudaVersion[i] ;
+//            env.CUDA_VERSION = listCudaVersion[i] ;
 //        }
 
-//      sh "./change-scala-versions.sh ${SCALA_VERSION}"
-            sh "./change-scala-versions.sh ${varScalaVersion}"
+            sh "./change-scala-versions.sh ${SCALA_VERSION}"
+
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
