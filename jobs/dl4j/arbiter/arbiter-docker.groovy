@@ -16,8 +16,6 @@ stage("${ARBITER_PROJECT}-build") {
       functions.verset("${RELEASE_VERSION}", true)
       sh "./change-scala-versions.sh ${SCALA_VERSION}"
 
-      echo("${TESTS}")
-
       configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         switch(PLATFORM_NAME) {
             case "linux-x86_64":
