@@ -58,6 +58,14 @@ node("${DOCKER_NODE}") {
 }
 
 node("ppc") {
+
+    stage ('Checkout') {
+        checkout scm
+    }
+
+    echo "Load variables"
+    load "jobs/docker/vars_docker.groovy"
+
     stage ("Build ubuntu14ppc") {
         docker.build ("${dockerRegistry}/ubuntu14ppc","docker/ubuntu14ppc")
     }
