@@ -8,7 +8,7 @@
 - name: permit user "{{ user }}" use sudo
   shell: echo '{{ user }} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/{{ user }}
   args:
-    creates: /etc/sudoers.d/"{{ user }}""
+    creates: /etc/sudoers.d/{{ user }}
  
 - name: create dir for ssh
   file:
