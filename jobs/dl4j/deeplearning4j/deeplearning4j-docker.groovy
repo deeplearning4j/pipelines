@@ -1,6 +1,6 @@
 stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 
-    functions.get_code("${DEEPLEARNING4J_PROJECT}")
+    functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DEEPLEARNING4J_PROJECT}")
     }
@@ -45,11 +45,11 @@ stage("build test resources on ${PLATFORM_NAME}") {
 
 stage("${DEEPLEARNING4J_PROJECT}-build") {
 
-    echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${DEEPLEARNING4J_PROJECT} version ${VERSION}"
 
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
 
         def listScalaVersion = ["2.10", "2.11"]
         def listCudaVersion = ["7.5", "8.0"]
@@ -71,14 +71,18 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  -Dlocal.software.repository=${PROFILE_TYPE}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         }
@@ -86,20 +90,20 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                     case "linux-ppc64le":
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
-                                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                                // functions.verset("${RELEASE_VERSION}", true)
-
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean install
+                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
-                                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                                // functions.verset("${RELEASE_VERSION}", true)
-
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         }
@@ -111,10 +115,9 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                 }
             }
         }
-
-        if (SONAR.toBoolean()) {
-            functions.sonar("${DEEPLEARNING4J_PROJECT}")
-        }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${DEEPLEARNING4J_PROJECT}")
     }
 }
 echo 'MARK: end of deeplearning4j.groovy'

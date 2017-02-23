@@ -1,4 +1,4 @@
-env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${RELEASE_VERSION}"
+env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 
@@ -52,8 +52,8 @@ stage("${PROJECT}-build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-        functions.verset("${RELEASE_VERSION}", true)
+        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        functions.verset("${VERSION}", true)
 
         def listScalaVersion = ["2.10", "2.11"]
         def listCudaVersion = ["7.5", "8.0"]
@@ -72,24 +72,26 @@ stage("${PROJECT}-build") {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  -Dlocal.software.repository=${PROFILE_TYPE}
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  \
+                            -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                     }
                 } else {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase  -Dlocal.software.repository=${PROFILE_TYPE}
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase \
+                            -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                     }
                 }
             }
         }
-
-        if (SONAR.toBoolean()) {
-            functions.sonar("${PROJECT}")
-        }
     }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${PROJECT}")
+    }
+
 }
 /*
     sh "./change-scala-versions.sh 2.11"
@@ -107,5 +109,4 @@ stage("${PROJECT}-build") {
 }
 */
 
-// Messages for debugging
 echo 'MARK: end of nd4j.groovy'

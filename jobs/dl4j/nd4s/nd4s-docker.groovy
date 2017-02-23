@@ -1,12 +1,12 @@
 stage("${ND4S_PROJECT}-checkout-sources") {
-    functions.get_code("${ND4S_PROJECT}")
+    functions.get_project_code("${ND4S_PROJECT}")
 }
 
 stage("${ND4S_PROJECT}-build") {
-    echo "Releasing ${ND4S_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${ND4S_PROJECT} version ${VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
-//        sh ("sed -i 's/version := \".*\",/version := \"${RELEASE_VERSION}\",/' build.sbt")
+//        sh ("sed -i 's/version := \".*\",/version := \"${VERSION}\",/' build.sbt")
 //        sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${ND4J_VERSION}\",/' build.sbt")
         sh ("test -d ${WORKSPACE}/.ivy2 || mkdir ${WORKSPACE}/.ivy2")
         configFileProvider([configFile(fileId: "sbt-local-nexus-id-1", variable: 'SBT_CREDENTIALS')]) {
@@ -23,9 +23,9 @@ stage("${ND4S_PROJECT}-build") {
           case "linux-x86_64":
             docker.image(dockerImage).inside(dockerParams) {
               sh'''
-              cp -a ${WORKSPACE}/.ivy2 ${HOME}/  
+              cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
-              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${RELEASE_VERSION}  publish
+              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${VERSION}  publish
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
               '''
             }
@@ -33,11 +33,11 @@ stage("${ND4S_PROJECT}-build") {
 
           case "linux-ppc64le":
             docker.image(dockerImage).inside(dockerParams) {
-              sh'''            
+              sh'''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
-              sbt +publish
-              rm -f ${HOME}/.ivy2/*.* ${WORKSPACE}/.ivy2/*.*
-              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials" -o -name ".nexus" -o -name ".jfrog" -o -name ".sonatype" -o -name ".bintray" ;
+              cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
+              sbt -DrepoType=${PROFILE_TYPE} -DcurrentVersion=${VERSION}  publish
+              find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
               '''
             }
             break
@@ -47,4 +47,5 @@ stage("${ND4S_PROJECT}-build") {
         }
     }
 }
+
 echo 'MARK: end of nd4s.groovy'
