@@ -44,7 +44,7 @@ node {
         }
     }
     println builders22
-    parallel builders22
+    // parallel builders22
 }
 
 node {
