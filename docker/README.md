@@ -1,22 +1,14 @@
-## build-docker-images.groovy
-Builds local images based on https://hub.docker.com/r/nvidia/cuda/ with tools gcc, cmake, maven, sbt. Add user jenkins to avoid "I have no name!" in running with docker-workflow-plugin containers.  
-List of images:  
- - ubuntu14cuda75 - FROM nvidia/cuda:7.6-cudnn5-devel-ubuntu14.04  
- - ubuntu14cuda80 - FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu14.04  
- - centos6cuda7 - FROM nvidia/cuda:7.5-cudnn5-devel-centos6  
- - centos6cuda80 - FROM nvidia/cuda:8.0-cudnn5-devel-centos6  
+# Dockerfile's
+Set of Dockerfile's required for deeplearning jenkins builds with docker.  
+Linux images based on official Nvidia CUDA images https://hub.docker.com/r/nvidia/cuda/, power image based on https://hub.docker.com/r/ppc64le/ubuntu/  
+Images include necessary build tools: gcc, cmake, maven, java, sbt.  
+User jenkins added to avoid "I have no name!" with docker-workflow-plugin for jenkins https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Pipeline+Plugin  
 
-In future it could be updated with automatic push to skymind docker registry.  
+## Build images manually
+```bash
+docker build docker/centos6cuda75
+```
 
-## prepare-docker-images.groovy
-Builds local images based on https://hub.docker.com/r/intropro/nvidia-docker/. Add user jenkins to avoid "I have no name!" in running with docker-workflow-plugin containers.  
-It builds the same images as above.  
-List of images:  
- - ubuntu14cuda75 - FROM intropro/nvidia-docker:7.6-cudnn5-devel-ubuntu14.04  
- - ubuntu14cuda80 - FROM intropro/nvidia-docker:8.0-cudnn5-devel-ubuntu14.04  
- - centos6cuda7 - FROM intropro/nvidia-docker:7.5-cudnn5-devel-centos6  
- - centos6cuda80 - FROM intropro/nvidia-docker:8.0-cudnn5-devel-centos6  
-
-
-## show-aws-ec2-instances.groovy
-Shows all non-terminated instances deployed with "tag:DeployedBy,Values=JenkinsEc2Plugin,JenkinsWithTerraform", the tags used in Jenkins.  
+## Jenkins Builds
+Dockerfile's used in jenkins job [BuildDockerImages](jobs/docker/build-push-docker-images.groovy)
+Job can optionally push images to docker registry (deeplearning4j-docker-registry.bintray.io)
