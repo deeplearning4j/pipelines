@@ -17,8 +17,8 @@ stage("${PROJECT}-build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-        functions.verset("${RELEASE_VERSION}", true)
+        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        functions.verset("${VERSION}", true)
 
         sh "./change-scala-versions.sh ${SCALA_VERSION}"
         sh "./change-cuda-versions.sh ${CUDA_VERSION}"

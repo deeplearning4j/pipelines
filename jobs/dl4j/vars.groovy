@@ -1,4 +1,4 @@
-isSnapshot = RELEASE_VERSION.endsWith('SNAPSHOT')
+isSnapshot = VERSION.endsWith('SNAPSHOT')
 // settings_xml = 'maven-settings-id-1'
 // dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 settings_xml = 'maven-settings-id-2'
@@ -30,6 +30,6 @@ env.DOCKER_CUDA_PPC = "ubuntu14ppc:latest"
  */
 env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "0.7.2-SNAPSHOT"
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
-env.ND4J_VERSION = env.ND4J_VERSION ?: "${RELEASE_VERSION}"
-env.DL4J_VERSION = env.DL4J_VERSION ?: "${RELEASE_VERSION}"
-env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "${RELEASE_VERSION}"
+env.ND4J_VERSION = env.ND4J_VERSION ?: "${VERSION}"
+env.DL4J_VERSION = env.DL4J_VERSION ?: "${VERSION}"
+env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "${VERSION}"

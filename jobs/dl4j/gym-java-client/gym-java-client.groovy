@@ -15,17 +15,17 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
 
-  echo "Releasing ${GYM_JAVA_CLIENT_PROJECT} version ${RELEASE_VERSION}"
+  echo "Building ${GYM_JAVA_CLIENT_PROJECT} version ${VERSION}"
 
   dir("${GYM_JAVA_CLIENT_PROJECT}") {
     functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
 
 /*
-    sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml")
-    sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>${RELEASE_VERSION}<\\/datavec.version>/' pom.xml")
+    sh ("sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${VERSION}<\\/nd4j.version>/' pom.xml")
+    sh ("sed -i 's/<datavec.version>.*<\\/datavec.version>/<datavec.version>${VERSION}<\\/datavec.version>/' pom.xml")
 */
-    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${RELEASE_VERSION}")
-    functions.verset("${RELEASE_VERSION}", true)
+    // sh ("'${mvnHome}/bin/mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+    functions.verset("${VERSION}", true)
 
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} ")

@@ -4,12 +4,12 @@ stage("${DATAVEC_PROJECT}-checkout-sources") {
 
 stage("${DATAVEC_PROJECT}-build") {
 
-    echo "Building ${DATAVEC_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${DATAVEC_PROJECT} version ${VERSION}"
 
     dir("${DATAVEC_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
-        functions.verset("${RELEASE_VERSION}", true)
-        //sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${RELEASE_VERSION}<\\/nd4j.version>/' pom.xml"
+        functions.verset("${VERSION}", true)
+        //sh "sed -i 's/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${VERSION}<\\/nd4j.version>/' pom.xml"
 
         // Below FOR loop is required per needs to consloidate Cuda and Scala Version and contain hard coded values
         def listScalaVersion = ["2.10", "2.11"]

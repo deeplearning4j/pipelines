@@ -45,11 +45,11 @@ stage("build test resources on ${PLATFORM_NAME}") {
 
 stage("${DEEPLEARNING4J_PROJECT}-build") {
 
-    echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${DEEPLEARNING4J_PROJECT} version ${VERSION}"
 
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
 
         def listScalaVersion = ["2.10", "2.11"]
         def listCudaVersion = ["7.5", "8.0"]

@@ -2,20 +2,5 @@
 - hosts: all
   become: yes
   gather_facts: true
-  tasks:
-  - name: change UID for main user
-    user:
-      name: ec2-user
-      uid: 1111
-      home: /home/ec2-user
-  - name: change GID for main user
-    group:
-      name: ec2-user
-      gid: 1111
-  - name: change permission
-    shell: chown -R --from=500 ec2-user {/var,/tmp}
-
-  - name: delete old jar
-    file:
-      path: /tmp/slave.jar
-      state: absent
+  roles:
+    - change_uid

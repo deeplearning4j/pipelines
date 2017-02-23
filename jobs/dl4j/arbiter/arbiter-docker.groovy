@@ -3,12 +3,12 @@ stage("${ARBITER_PROJECT}-checkout-sources") {
 }
 
 stage("${ARBITER_PROJECT}-build") {
-    echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${ARBITER_PROJECT} version ${VERSION}"
     dir("${ARBITER_PROJECT}") {
 
         functions.checktag("${ARBITER_PROJECT}")
 
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
 
         // Below FOR loop is required per needs to consloidate Cuda and Scala Version and contain hard coded values
         def listScalaVersion = ["2.10", "2.11"]

@@ -3,11 +3,11 @@ stage("${SCALNET_PROJECT}-checkout-sources") {
 }
 
 stage("${SCALNET_PROJECT}-build") {
-    echo "Releasing ${SCALNET_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${SCALNET_PROJECT} version ${VERSION}"
     dir("${SCALNET_PROJECT}") {
         functions.checktag("${SCALNET_PROJECT}")
         sh("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet<\\/artifactId>/' pom.xml")
-        functions.verset("${RELEASE_VERSION}", false)
+        functions.verset("${VERSION}", false)
         sh("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_\${scala.binary.version}<\\/artifactId>/' pom.xml")
 
         def listScalaVersion = ["2.10", "2.11"]
