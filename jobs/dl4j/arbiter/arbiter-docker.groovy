@@ -3,12 +3,12 @@ stage("${ARBITER_PROJECT}-checkout-sources") {
 }
 
 stage("${ARBITER_PROJECT}-build") {
-    echo "Releasing ${ARBITER_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${ARBITER_PROJECT} version ${VERSION}"
     dir("${ARBITER_PROJECT}") {
 
         functions.checktag("${ARBITER_PROJECT}")
 
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
 
         // Below FOR loop is required per needs to consloidate Cuda and Scala Version and contain hard coded values
         def listScalaVersion = ["2.10", "2.11"]
@@ -16,13 +16,13 @@ stage("${ARBITER_PROJECT}-build") {
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            def varScalaVersion = listScalaVersion[i]
+            env.SCALA_VERSION = listScalaVersion[i]
 //            echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-//            def varCudaVersion = listCudaVersion[i] ;
+//            env.CUDA_VERSION = listCudaVersion[i] ;
 //        }
 
-//      sh "./change-scala-versions.sh ${SCALA_VERSION}"
-            sh "./change-scala-versions.sh ${varScalaVersion}"
+            sh "./change-scala-versions.sh ${SCALA_VERSION}"
+
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
@@ -49,17 +49,16 @@ stage("${ARBITER_PROJECT}-build") {
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                      ls -al /
-                      ls -al /home
-                      mvn -B -s ${MAVEN_SETTINGS} clean install
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
+                      -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                       '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                      ls -al /
-                      ls -al /home
-                      mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests -Dmaven.test.skip
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.test.skip \
+                      -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Ddl4j.version=${DL4J_VERSION} \
+                      -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
                       '''
                             }
                         }
@@ -69,15 +68,10 @@ stage("${ARBITER_PROJECT}-build") {
                 }
             }
         }
-        if (SONAR.toBoolean()) {
-            functions.sonar("${ARBITER_PROJECT}")
-        }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${ARBITER_PROJECT}")
     }
 }
 
-// if (SONAR.toBoolean()) {
-//   stage("${GYM_JAVA_CLIENT_PROJECT}-Codecheck") {
-//     functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
-//   }
-// }
 echo 'MARK: end of arbiter.groovy'

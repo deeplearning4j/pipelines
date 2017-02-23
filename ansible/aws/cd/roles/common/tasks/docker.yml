@@ -40,10 +40,3 @@
   shell: "nvidia-docker-plugin -d /usr/local/nvidia-driver > /tmp/nvidia-docker.log 2>&1 &"
   when: nvidia_docker_exist.rc != 0
 
-#- name: Copy docker config options
-#  template:
-#    src: docker-storage.j2
-#   dest: /etc/sysconfig/docker-storage
-#  notify:
-#    - reload docker
-# when: ansible_os_family == "RedHat"

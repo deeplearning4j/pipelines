@@ -1,0 +1,20 @@
+---
+
+- name: change UID for main user
+  user:
+    name: "{{ main_user}}"
+    uid: "{{ uid }}"
+    home: /home/{{ main_user }}
+
+- name: change GID for main user
+  group:
+    name: "{{ main_user }}"
+    gid: "{{ gid }}"
+
+- name: change permission
+  shell: chown -R --from={{ old_uid }} {{ main_user }} {/var,/tmp}
+
+- name: delete old jar
+  file:
+    path: /tmp/slave.jar
+    state: absent
