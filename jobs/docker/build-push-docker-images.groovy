@@ -36,65 +36,66 @@ node {
                 builders22[image] = {
                     node("${node}") {
                         stage ("Build ${image}") {
-                            // docker.build ("${dockerRegistry}/${image}","docker/${image}")
-                            println test
+                            docker.build ("${dockerRegistry}/${image}","docker/${image}")
                         }
                     }
                 }
             }
         }
     }
-    parallel builders22
+    println builders22
+    // parallel builders22
 }
 
-// node {
-//     stage ('Checkout') {
-//         checkout scm
-//     }
-//
-//     stage ("ResolvePlatformDependencies") {
-//         echo "Load variables"
-//         load "jobs/docker/vars_docker.groovy"
-//
-//         // def images = ['centos6cuda80', 'centos6cuda75']
-//         def builders = [:]
-//         if ( DOCKER_IMAGES.size() > 0 ) {
-//             images = strToList(DOCKER_IMAGES)
-//         }
-//         println DOCKER_IMAGES
-//     }
-//
-// }
-// node("${DOCKER_NODE}") {
-//
-//     for (i in images) {
-//         def index = i
-//         builders[index] = {
-//             stage ("Build ${index}") {
-//                 docker.build ("${dockerRegistry}/${index}","docker/${index}")
-//             }
-//             stage ("Test ${index}") {
-//                 docker.image("${dockerRegistry}/${index}").inside(dockerParamsTest) {
-//                     sh '''
-//                     java -version
-//                     mvn -version
-//                     /opt/sbt/bin/sbt sbt-version
-//                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-//                     cmake --version
-//                     gcc -v
-//                     '''
-//                 }
-//             }
-//             stage ("Push ${index}") {
-//                 if ( PUSH_TO_REGISTRY.toBoolean() ) {
-//                     withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
-//                         docker.image("${dockerRegistry}/${index}").push 'latest'
-//                     }
-//                 } else {
-//                     echo "Skipping push to registry"
-//                 }
-//             }
-//         }
-//     }
-//     parallel builders
-// }
+node {
+    stage ('Checkout') {
+        checkout scm
+    }
+
+    stage ("ResolvePlatformDependencies") {
+        echo "Load variables"
+        load "jobs/docker/vars_docker.groovy"
+
+        // def images = ['centos6cuda80', 'centos6cuda75']
+        def builders = [:]
+        if ( DOCKER_IMAGES.size() > 0 ) {
+            images = strToList(DOCKER_IMAGES)
+        }
+        println DOCKER_IMAGES
+    }
+
+}
+node("${DOCKER_NODE}") {
+
+    for (i in images) {
+        def index = i
+        builders[index] = {
+            stage ("Build ${index}") {
+                docker.build ("${dockerRegistry}/${index}","docker/${index}")
+            }
+            stage ("Test ${index}") {
+                docker.image("${dockerRegistry}/${index}").inside(dockerParamsTest) {
+                    sh '''
+                    java -version
+                    mvn -version
+                    /opt/sbt/bin/sbt sbt-version
+                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                    cmake --version
+                    gcc -v
+                    '''
+                }
+            }
+            stage ("Push ${index}") {
+                if ( PUSH_TO_REGISTRY.toBoolean() ) {
+                    withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: 'https://${dockerRegistry}']) {
+                        docker.image("${dockerRegistry}/${index}").push 'latest'
+                    }
+                } else {
+                    echo "Skipping push to registry"
+                }
+            }
+        }
+    }
+    println builders
+    // parallel builders
+}
