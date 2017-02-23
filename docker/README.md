@@ -10,5 +10,5 @@ docker build docker/centos6cuda75
 ```
 
 ## Jenkins Builds
-Dockerfile's used in jenkins job [BuildDockerImages](jobs/docker/build-push-docker-images.groovy)
+Dockerfile's used in jenkins job [BuildDockerImages](jobs/docker/build-push-docker-images.groovy)  
 Job can optionally push images to docker registry (deeplearning4j-docker-registry.bintray.io)
