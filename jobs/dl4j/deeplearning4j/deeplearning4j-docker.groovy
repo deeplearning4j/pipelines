@@ -45,25 +45,24 @@ stage("build test resources on ${PLATFORM_NAME}") {
 
 stage("${DEEPLEARNING4J_PROJECT}-build") {
 
-    echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
+    echo "Building ${DEEPLEARNING4J_PROJECT} version ${VERSION}"
 
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
-        functions.verset("${RELEASE_VERSION}", true)
+        functions.verset("${VERSION}", true)
 
-        def listScalaVersion = ["2.10","2.11"]
-        def listCudaVersion = ["7.5","8.0"]
+        def listScalaVersion = ["2.10", "2.11"]
+        def listCudaVersion = ["7.5", "8.0"]
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            def varScalaVersion = listScalaVersion[i]
+            env.SCALA_VERSION = listScalaVersion[i]
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            def varCudaVersion = listCudaVersion[i];
+            env.CUDA_VERSION = listCudaVersion[i];
 
-//    sh("./change-scala-versions.sh ${SCALA_VERSION}")
-//    sh("./change-cuda-versions.sh ${CUDA_VERSION}")
-            sh("./change-scala-versions.sh ${varScalaVersion}")
-            sh("./change-cuda-versions.sh ${varCudaVersion}")
+            sh("./change-scala-versions.sh ${SCALA_VERSION}")
+            sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch (PLATFORM_NAME) {
@@ -91,20 +90,20 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                     case "linux-ppc64le":
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
-                                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                                // functions.verset("${RELEASE_VERSION}", true)
-
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean install
+                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
-                                echo "Building ${DEEPLEARNING4J_PROJECT} version ${RELEASE_VERSION}"
-                                // functions.verset("${RELEASE_VERSION}", true)
-
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
+                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false \
+                -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         }
@@ -116,10 +115,9 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                 }
             }
         }
-
-        if (SONAR.toBoolean()) {
-            functions.sonar("${DEEPLEARNING4J_PROJECT}")
-        }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${DEEPLEARNING4J_PROJECT}")
     }
 }
 echo 'MARK: end of deeplearning4j.groovy'

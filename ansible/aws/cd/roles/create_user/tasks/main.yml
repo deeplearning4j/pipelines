@@ -1,0 +1,27 @@
+---
+- name: add "{{ user }}" user
+  user:
+    name: "{{ user }}"
+    comment: "for change UID of main user"
+    state: present
+
+- name: permit user "{{ user }}" use sudo
+  shell: echo '{{ user }} ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/{{ user }}
+  args:
+    creates: /etc/sudoers.d/{{ user }}
+ 
+- name: create dir for ssh
+  file:
+    path: /home/{{ user }}/.ssh
+    state: directory
+    owner: "{{ user }}"
+
+- name: copy authorized key
+  copy:
+    src: /home/{{ main_user }}/.ssh/authorized_keys
+    dest: /home/{{ user }}/.ssh/authorized_keys
+    owner: "{{ user }}"
+
+- name: look for IP of slave
+  shell: curl http://169.254.169.254/latest/meta-data/public-ipv4 > IP
+      
