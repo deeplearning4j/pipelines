@@ -4,7 +4,7 @@
   user:
     name: "{{ main_user}}"
     uid: "{{ uid }}"
-    home: /home/{{ main_user }}
+    home: /home/"{{ main_user }}"
 
 - name: change GID for main user
   group:
@@ -12,7 +12,7 @@
     gid: "{{ gid }}"
 
 - name: change permission
-  shell: chown -R --from="{{ old_uid }}" "{{ main_user }}" {/var,/tmp}
+  shell: chown -R --from={{ old_uid }} {{ main_user }} {/var,/tmp}
 
 - name: delete old jar
   file:
