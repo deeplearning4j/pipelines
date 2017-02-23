@@ -57,7 +57,6 @@ node {
         load "jobs/docker/vars_docker.groovy"
 
         // def images = ['centos6cuda80', 'centos6cuda75']
-        def builders = [:]
         if ( DOCKER_IMAGES.size() > 0 ) {
             images = strToList(DOCKER_IMAGES)
         }
@@ -66,7 +65,8 @@ node {
 
 }
 node("${DOCKER_NODE}") {
-
+    
+    def builders = [:]
     for (i in images) {
         def index = i
         builders[index] = {
