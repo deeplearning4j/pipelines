@@ -36,7 +36,8 @@ node {
                 builders22[image] = {
                     node("${node}") {
                         stage ("Build ${image}") {
-                            docker.build ("${dockerRegistry}/${image}","docker/${image}")
+                            // docker.build ("${dockerRegistry}/${image}","docker/${image}")
+                            println test
                         }
                     }
                 }
