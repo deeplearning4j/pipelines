@@ -4,7 +4,7 @@
   user:
     name: "{{ main_user}}"
     uid: "{{ uid }}"
-    home: /home/"{{ main_user }}"
+    home: /home/{{ main_user }}
 
 - name: change GID for main user
   group:
