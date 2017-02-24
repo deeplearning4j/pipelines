@@ -14,8 +14,8 @@ node {
                 label = image.dockerNode
                 builders[image.name] = {
                     node(label) {
-                        stage ("Build ${image}") {
-                            docker.build ("${dockerRegistry}/${image}","docker/${image}")
+                        stage ("Build " + image.name) {
+                            docker.build (image.registry + "/" + image.name,"docker/" + image.name)
                         }
                     }
                 }
