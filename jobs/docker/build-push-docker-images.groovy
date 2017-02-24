@@ -17,8 +17,8 @@ node {
                     node(label) {
                         stage ("Build " + image.name) {
                             unstash 'docker'
-                            sh("ls -1")
-                            docker.build (image.registry + "/" + image.name,"docker/" + image.name)
+                            println image.name + " " + image.registry + " " + image.dockerNode
+                            // docker.build (image.registry + "/" + image.name,"docker/" + image.name)
                         }
                     }
                 }
