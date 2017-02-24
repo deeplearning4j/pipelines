@@ -12,16 +12,16 @@ node {
         println image
             if ( image.dockerNode ) {
                 println image.dockerNode
-            //     builders[image] = {
-            //         node("${dockerNode}") {
-            //             stage ("Build ${image}") {
-            //                 docker.build ("${dockerRegistry}/${image}","docker/${image}")
-            //             }
-            //         }
-            //     }
+                builders[image] = {
+                    node(dockerNode) {
+                        stage ("Build ${image}") {
+                            docker.build ("${dockerRegistry}/${image}","docker/${image}")
+                        }
+                    }
+                }
             }
         }
-        // println builders
+        println builders
         // parallel builders
 }
 
