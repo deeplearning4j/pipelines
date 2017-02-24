@@ -5,12 +5,12 @@ env.dockerImages = ["centos6cuda75","centos6cuda80"]
 final images = [
     [
         name: "centos6cuda75",
-        dockerNode: "linux-x86_64"
+        dockerNode: "linux-x86_64",
         registry: dockerRegistry
     ],
     [
         name: "centos6cuda80",
-        dockerNode: "linux-x86_64"
+        dockerNode: "linux-x86_64",
         registry: dockerRegistry
     ],
     [
