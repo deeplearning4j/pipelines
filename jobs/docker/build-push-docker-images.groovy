@@ -20,7 +20,7 @@ node {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
-                    println label + image.name
+                    // println label + image.name
                     println label + xname
                     // docker.build (image.registry + "/" + image.name,"docker/" + image.name)
                 }
