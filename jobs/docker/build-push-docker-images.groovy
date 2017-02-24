@@ -10,8 +10,8 @@ node {
     def builders = [:]
     for (image in images) {
         println image
-        println image.dockerNode
-            // if ( image.dockerNode ) {
+            if ( image.dockerNode ) {
+                println image.dockerNode
             //     builders[image] = {
             //         node("${dockerNode}") {
             //             stage ("Build ${image}") {
@@ -19,7 +19,7 @@ node {
             //             }
             //         }
             //     }
-            // }
+            }
         }
         // println builders
         // parallel builders
