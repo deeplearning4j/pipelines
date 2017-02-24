@@ -19,10 +19,10 @@ node {
                 }
             }
         }
+        println builders
+        parallel builders
     }
 
-    println builders
-    parallel builders
 
     // def builders = [:]
     // for (i in images) {
@@ -54,4 +54,3 @@ node {
     //         }
     //     }
     // }
-}
