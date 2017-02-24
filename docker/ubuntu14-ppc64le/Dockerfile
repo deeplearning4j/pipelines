@@ -15,7 +15,7 @@ RUN apt-get update && \
     cd /tmp && tar xf cmake-3.7.2.tar.gz && cd cmake-3.7.2 && ./configure && make && make install &&\    
     apt-get install gcc-4.9 g++-4.9 cuda openjdk-8-jdk maven -y --force-yes &&\
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 1 &&\
-    rm /etc/alternatives/java &&\
+    rm -f /etc/alternatives/java &&\
     ln -s /usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java /etc/alternatives/java &&\
     rm -f /usr/bin/gcc &&\
     rm -f /usr/bin/g++ &&\
