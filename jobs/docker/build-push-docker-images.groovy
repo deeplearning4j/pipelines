@@ -24,7 +24,7 @@ node {
                     docker.build (xregistry + "/" + xname,"docker/" + xname)
                 }
                 stage ("Test " + xname) {
-                    docker.image(xregistry + "/" + xname,"docker/" + xname).inside(dockerParamsTest) {
+                    docker.image(xregistry + "/" + xname).inside(dockerParamsTest) {
                         sh '''
                         java -version
                         mvn -version
