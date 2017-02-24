@@ -9,7 +9,7 @@ node {
     load "jobs/docker/vars_docker.groovy"
 
     def builders = [:]
-    // for (image in images) {
+    def builders1 = [:]
     for (int i = 0; i < images.size(); i++) {
         println images.get(i)
         label = images.get(i).dockerNode
@@ -21,16 +21,31 @@ node {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
-                    // println label + image.name
-                    println images.get(i).dockerNode + " " + images.get(i).name
                     println label + xname
-                    // docker.build (image.registry + "/" + image.name,"docker/" + image.name)
+                }
+            }
+        }
+    }
+    for (image in images) {
+        println image
+        label = image.dockerNode
+        xname = image.name
+        xregistry = image.registry
+        println image.dockerNode + " " + image.name
+        println label + " " + xname
+        builders1[image.name] = {
+            node(label) {
+                stage ("Build " + xname) {
+                    unstash 'docker'
+                    println label + xname
                 }
             }
         }
     }
     println builders
+    println builders1
     parallel builders
+    parallel builders1
 }
 
 
