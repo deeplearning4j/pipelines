@@ -9,13 +9,14 @@ node {
     load "jobs/docker/vars_docker.groovy"
 
     def builders = [:]
-    for (image in images) {
-        println image
-        label = image.dockerNode
-        xname = image.name
-        xregistry = image.registry
+    // for (image in images) {
+    for (int i = 0; i < images.size(); i++)
+        println images.get(i)
+        label = images.get(i).dockerNode
+        xname = images.get(i).name
+        xregistry = images.get(i).registry
         println label + xname
-        builders[image.name] = {
+        builders[images.get(i).name] = {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
