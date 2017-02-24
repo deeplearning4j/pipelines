@@ -29,8 +29,8 @@ node {
     for (image in images) {
         println image
         def label = image.dockerNode
-        xname = image.name
-        xregistry = image.registry
+        def xname = image.name
+        def xregistry = image.registry
         println image.dockerNode + " " + image.name
         println label + " " + xname
         builders1[image.name] = {
