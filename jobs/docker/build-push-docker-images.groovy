@@ -12,7 +12,7 @@ node {
         println image
             if ( image.dockerNode ) {
                 label = image.dockerNode
-                builders[image] = {
+                builders[image.name] = {
                     node(label) {
                         stage ("Build ${image}") {
                             docker.build ("${dockerRegistry}/${image}","docker/${image}")
