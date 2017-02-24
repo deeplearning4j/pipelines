@@ -1,4 +1,4 @@
-node("${DOCKER_NODE}") {
+node {
 
     step([$class: 'WsCleanup'])
 
@@ -26,6 +26,6 @@ node("${DOCKER_NODE}") {
                 unstash 'jobs'
                 sh("ls -1")
             }
-    }
-
+        }
+    )
 }
