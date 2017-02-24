@@ -21,7 +21,6 @@ node {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
-                    println label + xname
                     docker.build (xregistry + "/" + xname,"docker/" + xname)
                 }
                 stage ("Test " + xname) {

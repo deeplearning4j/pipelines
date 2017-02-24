@@ -8,10 +8,10 @@ RUN apt-get update &&\
     add-apt-repository ppa:openjdk-r/ppa &&\
     add-apt-repository ppa:ubuntu-toolchain-r/test &&\
     apt-get update &&\
-    cd /tmp && tar xf cmake-3.2.2.tar.gz && cd cmake-3.2.2 && ./configure && make && make install &&\
+    cd /tmp && tar xf cmake-3.7.2.tar.gz && cd cmake-3.7.2 && ./configure && make && make install &&\
     dpkg -i /tmp/cuda-repo-ubuntu1404_7.5-18_ppc64el.deb &&\
-    rm -f /tmp/cuda-repo-ubuntu1404_7.5-18_ppc64el.deb &&\        
-    apt-get install gcc-4.9 g++-4.9 cuda openjdk-8-jdk maven -y --force-yes &&\        
+    rm -f /tmp/cuda-repo-ubuntu1404_7.5-18_ppc64el.deb &&\
+    apt-get install gcc-4.9 g++-4.9 cuda openjdk-8-jdk maven -y --force-yes &&\
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 1 &&\
     rm /etc/alternatives/java &&\
     ln -s /usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java /etc/alternatives/java &&\
