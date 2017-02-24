@@ -17,7 +17,7 @@ node {
         println label + xname
         builders[image.name] = {
             node(label) {
-                stage ("Build " + image.name) {
+                stage ("Build " + xname) {
                     unstash 'docker'
                     println label + image.name
                     println label + xname
