@@ -9,18 +9,20 @@ node {
 
     def builders = [:]
     for (image in images) {
-            if ( image.dockerNode ) {
-                builders[image] = {
-                    node("${dockerNode}") {
-                        stage ("Build ${image}") {
-                            docker.build ("${dockerRegistry}/${image}","docker/${image}")
-                        }
-                    }
-                }
-            }
+        println image
+        println image.dockerNode
+            // if ( image.dockerNode ) {
+            //     builders[image] = {
+            //         node("${dockerNode}") {
+            //             stage ("Build ${image}") {
+            //                 docker.build ("${dockerRegistry}/${image}","docker/${image}")
+            //             }
+            //         }
+            //     }
+            // }
         }
-        println builders
-        parallel builders
+        // println builders
+        // parallel builders
 }
 
 
