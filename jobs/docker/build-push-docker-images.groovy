@@ -15,12 +15,14 @@ node {
         label = images.get(i).dockerNode
         xname = images.get(i).name
         xregistry = images.get(i).registry
-        println label + xname
+        println images.get(i).dockerNode + " " + images.get(i).name
+        println label + " " + xname
         builders[images.get(i).name] = {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
                     // println label + image.name
+                    println images.get(i).dockerNode + " " + images.get(i).name
                     println label + xname
                     // docker.build (image.registry + "/" + image.name,"docker/" + image.name)
                 }
