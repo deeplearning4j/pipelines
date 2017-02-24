@@ -4,7 +4,9 @@ ADD http://www.cmake.org/files/v3.7/cmake-3.7.2.tar.gz /tmp
 ADD http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/ppc64el/cuda-repo-ubuntu1404_7.5-18_ppc64el.deb /tmp
 
 RUN apt-get update &&\
-    apt-get install git build-essential python-software-properties software-properties-common -y --force-yes &&\
+    apt-get install git build-essential python-software-properties software-properties-common -y --force-yes
+
+RUN apt-get update && \
     add-apt-repository ppa:openjdk-r/ppa &&\
     add-apt-repository ppa:ubuntu-toolchain-r/test &&\
     apt-get update &&\
