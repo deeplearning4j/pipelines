@@ -1,4 +1,4 @@
-node("${DOCKER_NODE}") {
+// node("${DOCKER_NODE}") {
 
     properties([
             [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
@@ -113,4 +113,4 @@ node("${DOCKER_NODE}") {
     // step([$class: 'WsCleanup'])
 
     echo 'MARK: end of allcc.groovy'
-}
+// }

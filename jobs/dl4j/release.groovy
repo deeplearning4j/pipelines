@@ -17,7 +17,7 @@ node {
                 echo "Build on linux-x86_64"
                 unstash 'jobs'
                 def PLATFORM_NAME = "linux-x86_64"
-                sh("ls -1 && env|grep PLATFORM_NAME")
+                sh("ls -1 && env")
                 load "${PDIR}/allcc.groovy"
             }
         },
@@ -26,7 +26,7 @@ node {
                 echo "Build on linux-ppc64le"
                 unstash 'jobs'
                 def PLATFORM_NAME = "linux-ppc64le"
-                sh("ls -1 && env|grep PLATFORM_NAME")
+                sh("ls -1 && env")
                 load "${PDIR}/allcc.groovy"
             }
         }
