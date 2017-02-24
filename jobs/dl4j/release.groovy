@@ -3,6 +3,7 @@ node("${DOCKER_NODE}") {
     step([$class: 'WsCleanup'])
 
     checkout scm
+    stash includes: 'jobs/', name: 'jobs'
 
     echo "Load variables"
     load "${PDIR}/vars.groovy"
@@ -10,5 +11,21 @@ node("${DOCKER_NODE}") {
     echo "load functions"
     functions = load "${PDIR}/functions.groovy"
 
-    load "${PDIR}/allcc.groovy"
+    parallel (
+        "Stream 0" : {
+            node("linux-x86_64") {
+                echo "Build on linux-x86_64"
+                unstash 'jobs'
+                sh("ls -1")
+                // load "${PDIR}/allcc.groovy"
+            }
+        },
+        "Stream 1" : {
+            node("linux-ppc64le"){
+                echo "Build on linux-ppc64le"
+                unstash 'jobs'
+                sh("ls -1")
+            }
+    }
+
 }
