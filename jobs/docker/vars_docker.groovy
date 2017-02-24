@@ -6,12 +6,12 @@ final images = [
     [
         name: "centos6cuda75",
         dockerNode: "linux-x86_64"
-        registry: dockerRegistry,
+        registry: dockerRegistry
     ],
     [
         name: "centos6cuda80",
         dockerNode: "linux-x86_64"
-        registry: dockerRegistry,
+        registry: dockerRegistry
     ],
     [
         name: "ubuntu14-ppc64le",
