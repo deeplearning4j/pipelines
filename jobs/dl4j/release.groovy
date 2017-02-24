@@ -10,5 +10,5 @@ node("${DOCKER_NODE}") {
     echo "load functions"
     functions = load "${PDIR}/functions.groovy"
 
-    load "${PDIR}/allcc.groovy
+    load "${PDIR}/allcc.groovy"
 }
