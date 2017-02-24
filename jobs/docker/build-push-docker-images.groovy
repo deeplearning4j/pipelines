@@ -2,6 +2,7 @@ node {
 
     stage ('Checkout') {
         checkout scm
+        stash includes: 'docker/', name: 'docker'
     }
 
     echo "Load variables"
@@ -15,6 +16,8 @@ node {
                 builders[image.name] = {
                     node(label) {
                         stage ("Build " + image.name) {
+                            unstash 'docker'
+                            sh("ls -1")
                             docker.build (image.registry + "/" + image.name,"docker/" + image.name)
                         }
                     }
