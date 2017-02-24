@@ -10,7 +10,7 @@ node {
 
     def builders = [:]
     // for (image in images) {
-    for (int i = 0; i < images.size(); i++)
+    for (int i = 0; i < images.size(); i++) {
         println images.get(i)
         label = images.get(i).dockerNode
         xname = images.get(i).name
