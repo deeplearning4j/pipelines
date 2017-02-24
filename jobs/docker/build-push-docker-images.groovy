@@ -8,6 +8,7 @@ node {
     load "jobs/docker/vars_docker.groovy"
 
     def builders = [:]
+    println dockerRegistry
     println images
     // for (image in images) {
     //         if ( image.dockerNode ) {
