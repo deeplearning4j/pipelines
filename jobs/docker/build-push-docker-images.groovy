@@ -13,11 +13,14 @@ node {
         println image
             if ( image.dockerNode ) {
                 label = image.dockerNode
+                xname = image.name
+                xregistry = image.registry
                 builders[image.name] = {
                     node(label) {
                         stage ("Build " + image.name) {
                             unstash 'docker'
-                            println image.name + " " + image.registry + " " + image.dockerNode
+                            println label + image.name + " " + image.registry + " " + image.dockerNode
+                            println label + xname + " " + xregistry
                             // docker.build (image.registry + "/" + image.name,"docker/" + image.name)
                         }
                     }
