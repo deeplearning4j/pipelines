@@ -1,4 +1,7 @@
 node("${DOCKER_NODE}") {
+
+step([$class: 'WsCleanup'])
+   
 def nd4j = docker.image('maven:ready')
      nd4j.inside('') {     
          sh ''' 
