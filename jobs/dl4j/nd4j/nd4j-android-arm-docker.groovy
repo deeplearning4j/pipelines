@@ -1,10 +1,10 @@
 node("${DOCKER_NODE}") {
 def nd4j = docker.image('maven:ready')
-     nd4j.inside {     
+     nd4j.inside('') {     
          sh ''' 
-         export ANDROID_NDK=/android-ndk-r13b
-         wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip -P /
-         unzip /android-ndk-r13b-linux-x86_64.zip -d /
+         export ANDROID_NDK=./android-ndk-r13b
+         wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
+         unzip android-ndk-r13b-linux-x86_64.zip
          git clone https://github.com/deeplearning4j/libnd4j
          git clone https://github.com/deeplearning4j/nd4j
          cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-arm
