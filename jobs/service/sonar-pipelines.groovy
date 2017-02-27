@@ -9,8 +9,8 @@ node('sshlocal') {
       long epoch = System.currentTimeMillis()/1000;
       dir("${WORKSPACE}") {
         withSonarQubeEnv('SonarQubeServer') {
-          sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=deeplearning4j:pipelines \
-              -Dsonar.projectName=pipelines-${BRANCH} -Dsonar.projectVersion=${VERSION}.${epoch} \
+          sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=deeplearning4j:pipelines-${BRANCH}\
+              -Dsonar.projectName=pipelines-${BRANCH} -Dsonar.projectVersion=${VERSION}-${epoch} \
               -Dsonar.sources=."
               // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
         }
