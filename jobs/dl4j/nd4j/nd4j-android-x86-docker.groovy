@@ -11,6 +11,6 @@ def nd4j = docker.image('maven:ready')
          git clone https://github.com/deeplearning4j/nd4j
          export ANDROID_NDK=$(pwd)/android-ndk-r13b
          cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-x86
-         cd nd4j && git pull && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+         cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
         '''
      }}
