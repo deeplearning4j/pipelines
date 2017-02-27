@@ -68,7 +68,7 @@ stage("${PROJECT}-build") {
             sh("./change-cuda-versions.sh ${CUDA_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                if (TESTS.toBoolean()) {
+                if (TESTS) {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -88,7 +88,7 @@ stage("${PROJECT}-build") {
             }
         }
     }
-    if (SONAR.toBoolean()) {
+    if (SONAR) {
         functions.sonar("${PROJECT}")
     }
 

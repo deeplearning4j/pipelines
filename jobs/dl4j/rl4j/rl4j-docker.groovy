@@ -10,7 +10,7 @@ stage("${RL4J_PROJECT}-build") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
       switch(PLATFORM_NAME) {
         case "linux-x86_64":
-          if (TESTS.toBoolean()) {
+          if (TESTS) {
             docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 mvn -B -s ${MAVEN_SETTINGS} clean deploy   -Dnd4j.version=${ND4J_VERSION} \
@@ -32,7 +32,7 @@ stage("${RL4J_PROJECT}-build") {
         break
 
         case "linux-ppc64le":
-          if (TESTS.toBoolean()) {
+          if (TESTS) {
             docker.image(dockerImage).inside(dockerParams) {
                 sh'''
                 mvn -B -s ${MAVEN_SETTINGS} clean deploy   -Dnd4j.version=${ND4J_VERSION} \
@@ -58,7 +58,7 @@ stage("${RL4J_PROJECT}-build") {
 
     }
   }
-  if (SONAR.toBoolean()) {
+  if (SONAR) {
     functions.sonar("${RL4J_PROJECT}")
   }
 }
