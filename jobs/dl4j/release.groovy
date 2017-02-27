@@ -11,7 +11,7 @@ node("master") {
             "Stream 1 ppc64le" : {
                 build job: 'devel/dl4j/ppc/libnd4j', parameters:
                     [[$class: 'StringParameterValue', name: 'param1', value: 'test_param'],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "ppc64le"],
+                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"],
                     [$class: 'StringParameterValue', name:'DOCKER_NODE', value: "ppc64le"]]
             }
         )
