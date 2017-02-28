@@ -69,7 +69,7 @@ stage("${PROJECT}-build") {
         }
     }
 
-    if (SONAR) {
+    if (SONAR.toBoolean()) {
            functions.sonar("${PROJECT}")
     }
 }
