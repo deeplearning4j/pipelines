@@ -22,7 +22,8 @@ node {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
-                    docker.image(parent).pull
+                    def xname = docker.image(parent)
+                    xname.pull
                     docker.build (xregistry + "/" + xname,"docker/" + xname)
                 }
                 stage ("Test " + xname) {
