@@ -15,12 +15,14 @@ node {
         def label = image.dockerNode
         def xname = image.name
         def xregistry = image.registry
+        def parent = image.parentImage
         println image.dockerNode + " " + image.name
         println label + " " + xname
         builders[xname] = {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
+                    docker.image(parent).pull
                     docker.build (xregistry + "/" + xname,"docker/" + xname)
                 }
                 stage ("Test " + xname) {
