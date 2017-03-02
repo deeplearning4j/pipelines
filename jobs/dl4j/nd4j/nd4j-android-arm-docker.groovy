@@ -2,11 +2,11 @@ node("${DOCKER_NODE}") {
 
 step([$class: 'WsCleanup'])
 
-def nd4j = docker.image('maven:ready')
+def nd4j = docker.image('deeplearning4j-docker-registry.bintray.io/android:latest')
      nd4j.inside('') {
          sh '''
-         wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
-         unzip android-ndk-r13b-linux-x86_64.zip
+         #wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
+         #unzip android-ndk-r13b-linux-x86_64.zip
          git clone https://github.com/deeplearning4j/libnd4j
          git clone https://github.com/deeplearning4j/nd4j
          export ANDROID_NDK=$(pwd)/android-ndk-r13b

@@ -22,7 +22,8 @@ env.DOCKER_UBUNTU14_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/ub
 env.DOCKER_UBUNTU14_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda80:latest"
 env.DOCKER_CENTOS6_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
 env.DOCKER_CENTOS6_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest"
-env.DOCKER_CUDA_PPC = "ubuntu14ppc64le:latest"
+// env.DOCKER_CUDA_PPC = "ubuntu14ppc64le:latest"
+env.DOCKER_CUDA_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le"
 // env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
