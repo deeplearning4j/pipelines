@@ -39,6 +39,12 @@ node("master") {
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
                     [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"],
                     [$class: 'StringParameterValue', name:'DOCKER_NODE', value: "linux-x86_64"]]
+            },
+            "Stream 3 android-arm" : {
+                build job: 'devel/dl4j/arm/ARM-build', parameters:
+                    [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
+                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"],
+                    [$class: 'StringParameterValue', name:'DOCKER_NODE', value: "linux-x86_64"]]
             }
         )
     }
