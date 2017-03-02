@@ -30,7 +30,7 @@ node {
                         sh '''
                         java -version
                         mvn -version
-                        /opt/sbt/bin/sbt sbt-version
+                        #/opt/sbt/bin/sbt sbt-version
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                         cmake --version
                         gcc -v
