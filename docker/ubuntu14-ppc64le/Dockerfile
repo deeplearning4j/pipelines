@@ -11,7 +11,7 @@ RUN add-apt-repository ppa:openjdk-r/ppa &&\
     dpkg -i /tmp/cuda-repo-ubuntu1404-7-5-local_7.5-18_ppc64el.deb &&\
     rm -f /tmp/cuda-repo-ubuntu1404-7-5-local_7.5-18_ppc64el.deb &&\
     apt-get update &&\
-    cd /tmp && tar xf cmake-3.7.2.tar.gz && cd cmake-3.7.2 && ./configure && make && make install &&\    
+    cd /tmp && tar xf cmake-3.7.2.tar.gz && cd cmake-3.7.2 && ./configure && make && make install &&\
     apt-get install gcc-4.9 g++-4.9 cuda openjdk-8-jdk maven -y --force-yes &&\
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 1 &&\
     rm -f /etc/alternatives/java &&\
@@ -23,7 +23,6 @@ RUN add-apt-repository ppa:openjdk-r/ppa &&\
 
 # Set user jenkins to the image
 RUN useradd -m -d /home/jenkins -s /bin/sh jenkins
-
 
 # Default command
 CMD ["cat"]

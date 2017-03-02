@@ -5,16 +5,19 @@ images = [
     [
         name: "centos6cuda75",
         dockerNode: "linux-x86_64",
-        registry: dockerRegistry
+        registry: dockerRegistry,
+        parentImage: "nvidia/cuda:7.5-cudnn5-devel-centos6"
     ],
     [
         name: "centos6cuda80",
         dockerNode: "linux-x86_64",
-        registry: dockerRegistry
+        registry: dockerRegistry,
+        parentImage: "nvidia/cuda:8.0-cudnn5-devel-centos6"
     ],
     [
         name: "ubuntu14-ppc64le",
         dockerNode: "linux-ppc64le",
-        registry: dockerRegistry
+        registry: dockerRegistry,
+        parentImage: "ppc64le/ubuntu:14.04"
     ]
 ]

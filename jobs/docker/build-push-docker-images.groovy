@@ -15,20 +15,22 @@ node {
         def label = image.dockerNode
         def xname = image.name
         def xregistry = image.registry
+        def parent = image.parentImage
         println image.dockerNode + " " + image.name
         println label + " " + xname
         builders[xname] = {
             node(label) {
                 stage ("Build " + xname) {
                     unstash 'docker'
+                    docker.image(parent).pull()
                     docker.build (xregistry + "/" + xname,"docker/" + xname)
                 }
                 stage ("Test " + xname) {
-                    docker.image(xregistry + "/" + xname).inside(dockerParamsTest) {
+                    docker.image(xregistry + "/" + xname).inside {
                         sh '''
                         java -version
                         mvn -version
-                        /opt/sbt/bin/sbt sbt-version
+                        #/opt/sbt/bin/sbt sbt-version
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                         cmake --version
                         gcc -v
