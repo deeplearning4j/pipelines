@@ -14,7 +14,7 @@ ENV ANDROID_NDK_URL=http://dl.google.com/android/repository/android-ndk-$ANDROID
     ANDROID_NDK=/opt/android-ndk-r13b
 
 RUN curl -fsSL "$ANDROID_NDK_URL" -o android-ndk-$ANDROID_NDK_VERSION-linux-x86_64.zip && \
-    unzip android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d /opt && \
+    unzip -q android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d /opt && \
     rm -f android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
 
 ENV PATH /opt/cmake/bin:$ANDROID_NDK_HOME:$PATH
