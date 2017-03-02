@@ -19,5 +19,11 @@ images = [
         dockerNode: "linux-ppc64le",
         registry: dockerRegistry,
         parentImage: "ppc64le/ubuntu:14.04"
+    ],
+    [
+        name: "android",
+        dockerNode: "linux-x86_64",
+        registry: dockerRegistry,
+        parentImage: "maven:latest"
     ]
 ]
