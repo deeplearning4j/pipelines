@@ -17,11 +17,11 @@ stage("${PROJECT}-build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
-        functions.verset("${VERSION}", true)
+        //// sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        // functions.verset("${VERSION}", true)
 
-        sh "./change-scala-versions.sh ${SCALA_VERSION}"
-        sh "./change-cuda-versions.sh ${CUDA_VERSION}"
+        // sh "./change-scala-versions.sh ${SCALA_VERSION}"
+        // sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {

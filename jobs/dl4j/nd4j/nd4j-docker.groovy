@@ -51,42 +51,42 @@ stage("${PROJECT}-build") {
         //     sh "cp ${POM_XML} pom.xml"
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
-        functions.verset("${VERSION}", true)
+        // echo 'Set Project Version'
+        //// sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        // functions.verset("${VERSION}", true)
+        //
+        // def listScalaVersion = ["2.10", "2.11"]
+        // def listCudaVersion = ["7.5", "8.0"]
 
-        def listScalaVersion = ["2.10", "2.11"]
-        def listCudaVersion = ["7.5", "8.0"]
-
-        for (int i = 0; i < listScalaVersion.size(); i++) {
-            echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            env.SCALA_VERSION = listScalaVersion[i]
-            echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            env.CUDA_VERSION = listCudaVersion[i];
-
-            sh("./change-scala-versions.sh ${SCALA_VERSION}")
-            sh("./change-cuda-versions.sh ${CUDA_VERSION}")
-
+        // for (int i = 0; i < listScalaVersion.size(); i++) {
+            // echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
+            // env.SCALA_VERSION = listScalaVersion[i]
+            // echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
+            // env.CUDA_VERSION = listCudaVersion[i];
+            //
+            // sh("./change-scala-versions.sh ${SCALA_VERSION}")
+            // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+            export LIBND4J_HOME=${WORKSPACE}/libnd4j
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 if (TESTS.toBoolean()) {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  \
-                            -Dlocal.software.repository=${PROFILE_TYPE}
+                            #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase -Dlocal.software.repository=${PROFILE_TYPE}
+                            mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                     }
                 } else {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase \
-                            -Dlocal.software.repository=${PROFILE_TYPE}
+                            #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase -Dlocal.software.repository=${PROFILE_TYPE}
+                            mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                     }
                 }
             }
-        }
+        // }
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")
