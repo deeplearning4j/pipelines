@@ -49,9 +49,8 @@ stage("${LIBPROJECT}-build") {
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 #./buildnativeoperations.sh -c cuda -v 7.5
                                 '''
-                                // stash includes: 'blasbuild/cuda-7.5/blas/libnd4jcuda.so', name: 'cuda75'
-                                stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
-                                stash includes: 'blas/', name: 'cuda75-blas'
+                                // stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
+                                // stash includes: 'blas/', name: 'cuda75-blas'
                             }
                         }
                     }
