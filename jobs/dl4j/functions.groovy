@@ -29,7 +29,7 @@ def checktag(proj) {
 }
 
 def dirm2() {
-  sh ("mkdir -p ${WORKSPACE}/.m2 /var/lib/jenkins/tools/docker_m2 /var/lib/jenkins/tools/docker_ivy2")
+  sh ("mkdir -p ${WORKSPACE}/.m2 #/var/lib/jenkins/tools/docker_m2 /var/lib/jenkins/tools/docker_ivy2")
 }
 
 def def_docker() {
