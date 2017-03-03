@@ -42,7 +42,7 @@ stage("${PROJECT}-build") {
                           '''
                       }
                     }
-                break
+                    break
 
                 case "linux-ppc64le":
                     if (TESTS.toBoolean()) {
@@ -61,10 +61,10 @@ stage("${PROJECT}-build") {
                           '''
                       }
                     }
-                break
+                    break
 
                 default:
-                break
+                    break
             }
         }
     }
