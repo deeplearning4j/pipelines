@@ -35,12 +35,12 @@ node("master") {
                     [$class: 'StringParameterValue', name:'DOCKER_NODE', value: "ppc64le"]]
             },
             "Stream 2 android-x86" : {
-                build job: 'devel/dl4j/x86android/base-libs', parameters:
+                build job: 'devel/dl4j/x86android/x86-build', parameters:
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
                     [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
             },
             "Stream 3 android-arm" : {
-                build job: 'devel/dl4j/arm/base-libs', parameters:
+                build job: 'devel/dl4j/arm/ARM-build', parameters:
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
                     [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
             }

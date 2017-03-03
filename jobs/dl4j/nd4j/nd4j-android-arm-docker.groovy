@@ -1,7 +1,8 @@
 node("${DOCKER_NODE}") {
 
     step([$class: 'WsCleanup'])
-
+    checkout scm
+    
     echo "Load variables"
     load "${PDIR}/vars.groovy"
 
