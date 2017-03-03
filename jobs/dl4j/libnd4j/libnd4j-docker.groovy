@@ -23,7 +23,7 @@ stage("${LIBPROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                ./buildnativeoperations.sh -c cpu
+                                #./buildnativeoperations.sh -c cpu
                                 '''
                                 // stash includes: 'blasbuild/cpu/blas/libnd4jcpu.so', name: 'cpu'
                                 stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
@@ -48,7 +48,7 @@ stage("${LIBPROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                ./buildnativeoperations.sh -c cuda -v 7.5
+                                #./buildnativeoperations.sh -c cuda -v 7.5
                                 '''
                                 // stash includes: 'blasbuild/cuda-7.5/blas/libnd4jcuda.so', name: 'cuda75'
                                 stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
@@ -72,25 +72,24 @@ stage("${LIBPROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                ./buildnativeoperations.sh -c cuda -v 8.0
+                                #./buildnativeoperations.sh -c cuda -v 8.0
                                 '''
-                                // stash includes: 'blasbuild/cuda-8.0/blas/libnd4jcuda.so', name: 'cuda80'
-                                stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
-                                stash includes: 'blas/', name: 'cuda80-blas'
+                                // stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
+                                // stash includes: 'blas/', name: 'cuda80-blas'
                             }
                         }
                     }
                 }
             )
-            dir("libnd4j") {
-                unstash 'cpu-blasbuild'
-                unstash 'cpu-blas'
-                unstash 'cuda75-blasbuild'
-                unstash 'cuda75-blas'
-                unstash 'cuda80-blasbuild'
-                unstash 'cuda80-blas'
-                unstash 'libnd4j-include'
-            }
+            // dir("libnd4j") {
+            //     unstash 'cpu-blasbuild'
+            //     unstash 'cpu-blas'
+            //     unstash 'cuda75-blasbuild'
+            //     unstash 'cuda75-blas'
+            //     unstash 'cuda80-blasbuild'
+            //     unstash 'cuda80-blas'
+            //     unstash 'libnd4j-include'
+            // }
             break
 
         case ["android-arm", "android-x86"]:
