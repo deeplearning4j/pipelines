@@ -34,6 +34,7 @@ def dirm2() {
 
 def def_docker() {
   echo "Setting docker parameters and image for ${PLATFORM_NAME}"
+  println PLATFORM_NAME.length()
   switch("${PLATFORM_NAME}") {
     case "linux-ppc64le":
       dockerImage = "${DOCKER_CUDA_PPC}"
@@ -45,7 +46,7 @@ def def_docker() {
       dockerParams = dockerParams_nvidia
       break
 
-    case ["android-arm", "android-x86"]:
+    case ['android-arm', 'android-x86']:
         dockerImage = "${DOCKER_ANDROID_IMAGE}"
         break
 
