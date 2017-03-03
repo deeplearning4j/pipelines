@@ -27,7 +27,6 @@ stage("${LIBPROJECT}-build") {
                                 '''
                                 stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
                                 stash includes: 'blas/', name: 'cpu-blas'
-                                stash includes: 'include/', name: 'libnd4j-include'
                             }
                         }
                     }
