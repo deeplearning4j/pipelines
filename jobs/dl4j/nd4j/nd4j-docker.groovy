@@ -66,7 +66,7 @@ stage("${PROJECT}-build") {
             //
             // sh("./change-scala-versions.sh ${SCALA_VERSION}")
             // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
-            export LIBND4J_HOME=${WORKSPACE}/libnd4j
+            env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 if (TESTS.toBoolean()) {
                     docker.image(dockerImage).inside(dockerParams) {
