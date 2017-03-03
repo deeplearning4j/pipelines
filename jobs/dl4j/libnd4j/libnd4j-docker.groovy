@@ -23,7 +23,7 @@ stage("${LIBPROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                #./buildnativeoperations.sh -c cpu
+                                ./buildnativeoperations.sh -c cpu
                                 '''
                                 stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
                                 stash includes: 'blas/', name: 'cpu-blas'
@@ -46,7 +46,7 @@ stage("${LIBPROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                #./buildnativeoperations.sh -c cuda -v 7.5
+                                ./buildnativeoperations.sh -c cuda -v 7.5
                                 '''
                                 stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
                                 stash includes: 'blas/', name: 'cuda75-blas'
@@ -69,7 +69,7 @@ stage("${LIBPROJECT}-build") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                #./buildnativeoperations.sh -c cuda -v 8.0
+                                ./buildnativeoperations.sh -c cuda -v 8.0
                                 '''
                                 stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
                                 stash includes: 'blas/', name: 'cuda80-blas'
