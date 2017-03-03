@@ -27,14 +27,12 @@ node("master") {
             "Stream 0 x86_64" : {
                 build job: 'devel/dl4j/amd64/base-libs', parameters:
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"],
-                    [$class: 'StringParameterValue', name:'DOCKER_NODE', value: "linux-x86_64"]]
+                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
             },
             "Stream 1 ppc64le" : {
                 build job: 'devel/dl4j/ppc/base-libs', parameters:
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"],
-                    [$class: 'StringParameterValue', name:'DOCKER_NODE', value: "ppc64le"]]
+                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
             },
             "Stream 2 android-x86" : {
                 build job: 'devel/dl4j/x86android/x86-build', parameters:
