@@ -63,6 +63,25 @@ stage("${PROJECT}-build") {
                     }
                     break
 
+                case ["android-arm", "android-x86"]:
+                    if (TESTS.toBoolean()) {
+                      docker.image(dockerImage).inside(dockerParams) {
+                          sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          '''
+                      }
+                    }
+                    else {
+                      docker.image(dockerImage).inside(dockerParams) {
+                          sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          '''
+                      }
+                    }
+                    break
+
                 default:
                     break
             }
