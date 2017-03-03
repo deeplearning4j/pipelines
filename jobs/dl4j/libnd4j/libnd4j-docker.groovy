@@ -25,10 +25,9 @@ stage("${LIBPROJECT}-build") {
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 #./buildnativeoperations.sh -c cpu
                                 '''
-                                // stash includes: 'blasbuild/cpu/blas/libnd4jcpu.so', name: 'cpu'
-                                stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
-                                stash includes: 'blas/', name: 'cpu-blas'
-                                stash includes: 'include/', name: 'libnd4j-include'
+                                // stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
+                                // stash includes: 'blas/', name: 'cpu-blas'
+                                // stash includes: 'include/', name: 'libnd4j-include'
                             }
                         }
                     }
