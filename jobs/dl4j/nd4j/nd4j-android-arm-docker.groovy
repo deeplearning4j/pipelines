@@ -4,6 +4,7 @@ node("${DOCKER_NODE}") {
     checkout scm
 
     echo "Load variables"
+    env.VERSION = "0.7.3-SNAPSHOT"
     load "${PDIR}/vars.groovy"
 
     echo "load functions"
