@@ -37,12 +37,14 @@ node("master") {
             "Stream 2 android-x86" : {
                 build job: 'devel/dl4j/x86android/x86-build', parameters:
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
+                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"],
+                    [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.7.3-SNAPSHOT"]]
             },
             "Stream 3 android-arm" : {
                 build job: 'devel/dl4j/arm/ARM-build', parameters:
                     [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
+                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]
+                    [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.7.3-SNAPSHOT"]]
             }
         )
     }
