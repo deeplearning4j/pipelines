@@ -86,7 +86,6 @@ stage("${LIBPROJECT}-build") {
                 unstash 'cuda75-blas'
                 unstash 'cuda80-blasbuild'
                 unstash 'cuda80-blas'
-                unstash 'libnd4j-include'
             }
             break
 
