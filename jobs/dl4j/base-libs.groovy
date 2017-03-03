@@ -12,7 +12,7 @@ properties([
                         [$class: "StringParameterDefinition", name: "DATAVEC_VERSION", defaultValue: "", description: "Set preferred datavec version, leave it empty to use VERSION"],
                         [$class: "ChoiceParameterDefinition", name: "SCALA_VERSION", choices: "2.10\n2.11", description: "Scala version definition"],
                         [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
-                        [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-02", description: "Default Git branch value"],
+                        [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
                         [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
                         [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
                         [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "local-jfrog\nnexus\njfrog\nbintray\nsonatype", description: "Profile type"]
@@ -45,8 +45,8 @@ node(PLATFORM_NAME) {
     }
 
     stage("${PROJECT}") {
-        // load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
-        load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
+        load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
+        // load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
     }
 
     echo 'MARK: end of base-libs.groovy'
