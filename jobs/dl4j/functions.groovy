@@ -29,7 +29,7 @@ def checktag(proj) {
 }
 
 def dirm2() {
-  sh ("mkdir ${WORKSPACE}/.m2 || true")
+  sh ("mkdir -p ${WORKSPACE}/.m2 /var/lib/jenkins/tools/docker_m2 /var/lib/jenkins/tools/docker_ivy2")
 }
 
 def def_docker() {
@@ -38,19 +38,20 @@ def def_docker() {
     case "linux-ppc64le":
       dockerImage = "${DOCKER_CUDA_PPC}"
       dockerParams = dockerParams_ppc
-
-    break
+      break
 
     case "linux-x86_64":
       dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
-      // def dockerParams = dockerParams
+      dockerParams = dockerParams_nvidia
+      break
 
-    break
+    case ["android-arm", "android-x86"]:
+        dockerImage = "${DOCKER_ANDROID_IMAGE}"
+        break
 
     default:
       error("Platform name is not defined or unsupported")
-
-    break
+      break
   }
 }
 

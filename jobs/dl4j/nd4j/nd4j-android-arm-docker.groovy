@@ -1,9 +1,8 @@
 node("${DOCKER_NODE}") {
 
-step([$class: 'WsCleanup'])
+    step([$class: 'WsCleanup'])
 
-def nd4j = docker.image('deeplearning4j-docker-registry.bintray.io/android:latest')
-     nd4j.inside('') {
+    docker.image(dockerImage).inside(dockerParams) {
          sh '''
          #wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
          #unzip android-ndk-r13b-linux-x86_64.zip
