@@ -46,7 +46,11 @@ def def_docker() {
       dockerParams = dockerParams_nvidia
       break
 
-    case ['android-arm', 'android-x86']:
+    case "android-arm":
+        dockerImage = "${DOCKER_ANDROID_IMAGE}"
+        break
+
+    case "android-x86":
         dockerImage = "${DOCKER_ANDROID_IMAGE}"
         break
 
