@@ -33,6 +33,7 @@ node(PLATFORM_NAME) {
     // Set docker image and parameters for current platform
     functions.def_docker()
 
+    sh ("mkdir -p /var/lib/jenkins/local-storage")
     docker.image(dockerImage).inside(dockerParams) {
         sh '''
         #wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip
@@ -43,5 +44,14 @@ node(PLATFORM_NAME) {
         cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-arm
         cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
         '''
+        stash includes: '/home/jenkins/.m2/repository/org/nd4j/nd4j-native/0.7.3-SNAPSHOT', name: 'nd4j-arm'
      }
+}
+
+node(PLATFORM_NAME) {
+    stage("unstash android artifacts") {
+        dir("/var/lib/jenkins/local-storage") {
+            unstash 'nd4j-arm';
+        }
+    }
 }
