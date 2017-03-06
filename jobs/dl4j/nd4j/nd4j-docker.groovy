@@ -14,14 +14,14 @@ if (varResultCountFile == 0) {
     stage("${PROJECT}-resolve-dependencies") {
 
         dir("${LIBPROJECT}") {
-            docker.image(dockerImage).inside(dockerParams) {
-                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+            if ( PLATFORM_NAME == "linux-ppc64le" ) {
+                sh ("cp -a /srv/jenkins/libnd4j ${WORKSPACE}")
+            } else {
+                    docker.image(dockerImage).inside(dockerParams) {
+                        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                     /**
                      * HI MAN - this is HARD CODE for URL
                      */
-                    if ( PLATFORM_NAME == "linux-ppc64le" ) {
-                        sh ("cp -a /srv/jenkins/libnd4j ${WORKSPACE}")
-                    } else {
                         sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
                                 " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                                 " -Dtransitive=false \\\n" +
