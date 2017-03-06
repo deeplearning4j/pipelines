@@ -3,7 +3,7 @@ node ('windows-slave') {
         "Stream 1 Build CPU" : {
             dir("stream1") {
                 git 'https://github.com/deeplearning4j/libnd4j.git'
-                bat 'bash $WORKSPACE/buildnativeoperations.sh'
+                bat 'bash buildnativeoperations.sh'
                 stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
                 stash includes: 'blas/', name: 'cpu-blas'
                 stash includes: 'include/', name: 'libnd4j-include'
@@ -13,7 +13,7 @@ node ('windows-slave') {
             dir("stream2") {
                 git 'https://github.com/deeplearning4j/libnd4j.git'
                 bat '''
-                "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin\\amd64\\vcvars64.bat" && bash ../buildnativeoperations.sh -c cuda -v 7.5
+                "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin\\amd64\\vcvars64.bat" && bash buildnativeoperations.sh -c cuda -v 7.5
                 '''    
                 stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
                 stash includes: 'blas/', name: 'cuda75-blas'
@@ -23,7 +23,7 @@ node ('windows-slave') {
             dir("stream3") {
                 git 'https://github.com/deeplearning4j/libnd4j.git'
                 bat '''
-                "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin\\amd64\\vcvars64.bat" && bash ../buildnativeoperations.sh -c cuda -v 8.0
+                "C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin\\amd64\\vcvars64.bat" && bash buildnativeoperations.sh -c cuda -v 8.0
                 '''
                 stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
                 stash includes: 'blas/', name: 'cuda80-blas'
