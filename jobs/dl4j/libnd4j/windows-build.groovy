@@ -1,4 +1,4 @@
-node {
+node ('windows-slave') {
     git 'https://github.com/deeplearning4j/libnd4j.git'
     dir("libnd4j") {
         parallel (
