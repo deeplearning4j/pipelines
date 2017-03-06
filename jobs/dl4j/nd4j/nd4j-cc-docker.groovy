@@ -31,7 +31,7 @@ stage("${PROJECT}-build") {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                           #mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                          mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
+                          mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
                           '''
                       }
                     }
@@ -40,7 +40,7 @@ stage("${PROJECT}-build") {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                           #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                          mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                          mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                           '''
                       }
                     }
