@@ -42,8 +42,12 @@ node(PLATFORM_NAME) {
         git clone https://github.com/deeplearning4j/nd4j
         cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-x86
         cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+        cd ../libnd4j
+        ls -al
         '''
-        stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild-x86'
-        stash includes: 'blas/', name: 'cpu-blas-x86'
+        dir('libnd4j') {
+          stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild-x86'
+          stash includes: 'blas/', name: 'cpu-blas-x86'
+        }
      }
 }
