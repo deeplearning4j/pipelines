@@ -41,7 +41,7 @@ node(PLATFORM_NAME) {
         git clone https://github.com/deeplearning4j/libnd4j
         git clone https://github.com/deeplearning4j/nd4j
         cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-arm
-        cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+        cd ../nd4j && ls -al
         cd ../libnd4j
         ls -al
         '''
