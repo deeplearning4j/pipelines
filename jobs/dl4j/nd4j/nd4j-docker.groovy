@@ -19,13 +19,17 @@ if (varResultCountFile == 0) {
                     /**
                      * HI MAN - this is HARD CODE for URL
                      */
-                    sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
-                            " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
-                            " -Dtransitive=false \\\n" +
-                            " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
-                    //
-                    sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
-                    sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
+                    if ( PLATFORM_NAME == "linux-ppc64le" ) {
+                        sh ("cp -a /srv/jenkins/libnd4j ${WORKSPACE}")
+                    } else {
+                        sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                                " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
+                                " -Dtransitive=false \\\n" +
+                                " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
+                        //
+                        sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
+                        sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
+                    }
                 }
             }
         }
@@ -68,25 +72,72 @@ stage("${PROJECT}-build") {
             // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
             env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                if (TESTS.toBoolean()) {
-                    docker.image(dockerImage).inside(dockerParams) {
-                        sh '''
-                            if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase -Dlocal.software.repository=${PROFILE_TYPE}
-                            mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
-                            '''
-                    }
-                } else {
-                    docker.image(dockerImage).inside(dockerParams) {
-                        sh '''
-                            if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase -Dlocal.software.repository=${PROFILE_TYPE}
-                            mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
-                            '''
-                    }
+                switch(PLATFORM_NAME) {
+                    case "linux-x86_64":
+                        if (TESTS.toBoolean()) {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
+                              '''
+                          }
+                        }
+                        else {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                              '''
+                          }
+                        }
+                        break
+
+                    case "linux-ppc64le":
+                        if (TESTS.toBoolean()) {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
+                              '''
+                          }
+                        }
+                        else {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                              '''
+                          }
+                        }
+                        break
+
+                    case ["android-arm", "android-x86"]:
+                        if (TESTS.toBoolean()) {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              '''
+                          }
+                        }
+                        else {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              '''
+                          }
+                        }
+                        break
+
+                    default:
+                        break
                 }
             }
-        // }
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")
