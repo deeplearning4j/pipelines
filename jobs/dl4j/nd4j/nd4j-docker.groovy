@@ -78,7 +78,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                              mvn -B -s ${MAVEN_SETTINGS} clean install
                               #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
                               '''
                           }
@@ -87,7 +87,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                              mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                               #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                               '''
                           }
@@ -99,7 +99,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                              mvn -B -s ${MAVEN_SETTINGS} clean install
                               #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
                               '''
                           }
@@ -108,7 +108,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                              mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                               #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                               '''
                           }
@@ -151,8 +151,8 @@ stage("${PROJECT}-build") {
     configFileProvider(
             [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
             ]) {
-        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
-        // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests  ")
+        // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
     }
 *//*
 
