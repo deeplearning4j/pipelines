@@ -45,8 +45,8 @@ node(PLATFORM_NAME) {
     }
 
     stage("${PROJECT}") {
-        load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
-        // load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
+        // load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
+        load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
     }
 
     echo 'MARK: end of base-libs.groovy'
