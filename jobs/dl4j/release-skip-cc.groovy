@@ -46,7 +46,8 @@ node("master") {
 }
 
 node("linux-x86_64") {
-
+    sh ("ls -laht /var/lib/jenkins/local-storage")
+    
     step([$class: 'WsCleanup'])
     checkout scm
 
