@@ -62,11 +62,11 @@ node("linux-x86_64") {
 
     // Create .m2 direcory
     // functions.dirm2()
-    echo 1
+    echo "1"
     PLATFORM_NAME = "linux-x86_64"
     // Set docker image and parameters for current platform
     functions.def_docker()
-    echo 2
+    echo "2"
     stage("${DATAVEC_PROJECT}") {
       load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
     }
