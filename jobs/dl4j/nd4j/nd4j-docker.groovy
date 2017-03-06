@@ -86,7 +86,8 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                              #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                              mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
                               '''
                           }
                         }
