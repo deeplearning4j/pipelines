@@ -29,10 +29,10 @@ node("master") {
                 build job: 'devel/dl4j/amd64/base-libs-skip-cc', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
             },
-            "Stream 1 ppc64le" : {
-                build job: 'devel/dl4j/ppc/base-libs-skip-cc', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
-            },
+            // "Stream 1 ppc64le" : {
+            //     build job: 'devel/dl4j/ppc/base-libs-skip-cc', parameters:
+            //         [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
+            // },
             "Stream 2 android-x86" : {
                 build job: 'devel/dl4j/x86android/x86-build', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
@@ -47,7 +47,7 @@ node("master") {
 
 node("linux-x86_64") {
     sh ("ls -laht /var/lib/jenkins/local-storage")
-    
+
     step([$class: 'WsCleanup'])
     checkout scm
 
