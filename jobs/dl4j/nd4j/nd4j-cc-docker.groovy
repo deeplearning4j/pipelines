@@ -30,8 +30,7 @@ stage("${PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                          #mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                          mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy
                           '''
                       }
                     }
@@ -39,8 +38,7 @@ stage("${PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                          #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                          mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                           '''
                       }
                     }
@@ -51,8 +49,7 @@ stage("${PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                          #mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                          mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy
                           '''
                       }
                     }
@@ -60,8 +57,7 @@ stage("${PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                          #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                          mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                           '''
                       }
                     }
@@ -72,7 +68,8 @@ stage("${PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                          mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                           '''
                       }
                     }
@@ -80,7 +77,8 @@ stage("${PROJECT}-build") {
                       docker.image(dockerImage).inside(dockerParams) {
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                          mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                           '''
                       }
                     }

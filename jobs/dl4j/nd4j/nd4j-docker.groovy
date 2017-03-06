@@ -78,8 +78,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean install
-                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
                               '''
                           }
                         }
@@ -87,8 +86,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                               '''
                           }
                         }
@@ -99,8 +97,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean install
-                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE}
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
                               '''
                           }
                         }
@@ -108,8 +105,7 @@ stage("${PROJECT}-build") {
                           docker.image(dockerImage).inside(dockerParams) {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-                              #mvn clean install -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                               '''
                           }
                         }
