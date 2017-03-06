@@ -1,6 +1,6 @@
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 // settings_xml = 'maven-settings-id-1'
-settings_xml = 'maven-settings-id-2'
+settings_xml = 'maven-settings-id-3'
 // gitcredid = 'github-private-deeplearning4j-id-1'
 // env.GITCREDID = "github-private-deeplearning4j-id-1"
 env.PDIR = "jobs/dl4j"
