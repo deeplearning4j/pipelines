@@ -22,9 +22,8 @@ properties([
 
 env.PDIR = "jobs/dl4j"
 
-node("master") {
-
-  stage("BuildBaseLibs") {
+stage("BuildBaseLibs") {
+  node("master") {
         parallel (
             // "Stream 0 x86_64" : {
             //     build job: 'devel/dl4j/amd64/base-libs', parameters:
@@ -48,38 +47,37 @@ node("master") {
     }
 }
 
-node("linux-x86_64") {
+stage("CHECK UNSTASH") {
+    node("linux-x86_64") {
 
-    step([$class: 'WsCleanup'])
-    checkout scm
+        step([$class: 'WsCleanup'])
+        checkout scm
 
-    echo "Load variables"
-    load "${PDIR}/vars.groovy"
+        echo "Load variables"
+        load "${PDIR}/vars.groovy"
 
-    echo "load functions"
-    functions = load "${PDIR}/functions.groovy"
+        echo "load functions"
+        functions = load "${PDIR}/functions.groovy"
 
-    // Remove .git folder from workspace
-    functions.rm()
+        // Remove .git folder from workspace
+        functions.rm()
 
-    // Create .m2 direcory
-    // functions.dirm2()
+        // Create .m2 direcory
+        // functions.dirm2()
 
-    // Set docker image and parameters for current platform
-    def PLATFORM_NAME = "linux-x86_64"
-    functions.def_docker()
+        // Set docker image and parameters for current platform
+        def PLATFORM_NAME = "linux-x86_64"
+        functions.def_docker()
 
-    stage("CHECK UNSTASH") {
-          unstash 'cpu-blasbuild-arm'
-          unstash 'cpu-blasbuild-x86'
-          unstash 'cpu-blas-arm'
-          unstash 'cpu-blas-x86'
 
-          sh("ls -al")
+        unstash 'cpu-blasbuild-arm'
+        unstash 'cpu-blasbuild-x86'
+        unstash 'cpu-blas-arm'
+        unstash 'cpu-blas-x86'
 
-      }
+        sh("ls -al")
 
     }
-
-    echo 'MARK: end of perform-release.groovy'
 }
+
+echo 'MARK: end of perform-release.groovy'
