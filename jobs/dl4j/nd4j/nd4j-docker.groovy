@@ -15,7 +15,7 @@ if (varResultCountFile == 0) {
 
         dir("${LIBPROJECT}") {
             if ( PLATFORM_NAME == "linux-ppc64le" ) {
-                sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}")
+                sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
             } else {
                     docker.image(dockerImage).inside(dockerParams) {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
