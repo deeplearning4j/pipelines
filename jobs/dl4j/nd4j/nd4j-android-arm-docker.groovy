@@ -44,8 +44,12 @@ node(PLATFORM_NAME) {
         #git clone https://github.com/deeplearning4j/nd4j
         cd libnd4j && ./buildnativeoperations.sh -platform android-arm
         cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+        ls -laht /home/jenkins/.m2/repository/org/nd4j
+        pwd
+        cd /home/jenkins/.m2
         '''
-        stash includes: '/home/jenkins/.m2/repository/org/nd4j/', name: 'nd4j-arm'
+        sh ("pwd")
+        stash includes: 'repository/org/nd4j/', name: 'nd4j-arm'
      }
 }
 
