@@ -68,6 +68,7 @@ node("linux-x86_64") {
     // functions.dirm2()
 
     // Set docker image and parameters for current platform
+    def PLATFORM_NAME = "linux-x86_64"
     functions.def_docker()
 
     stage("${DATAVEC_PROJECT}") {
