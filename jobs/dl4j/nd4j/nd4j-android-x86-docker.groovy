@@ -33,12 +33,13 @@ node(PLATFORM_NAME) {
     // Set docker image and parameters for current platform
     functions.def_docker()
 
+    functions.get_project_code("${LIBPROJECT}")
+    functions.get_project_code("${PROJECT}")
+
     docker.image(dockerImage).inside(dockerParams) {
         sh '''
-        git clone https://github.com/deeplearning4j/libnd4j
-        git clone https://github.com/deeplearning4j/nd4j
-        cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-x86
-        cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+        cd libnd4j && ./buildnativeoperations.sh -platform android-x86
+        cd ../nd4j && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
         '''
      }
 }
