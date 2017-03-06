@@ -1,10 +1,6 @@
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 // settings_xml = 'maven-settings-id-1'
 settings_xml = 'maven-settings-id-2'
-dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2:/home/jenkins/.m2:rw"
-dockerParams_tmpfs = "-v ${WORKSPACE}:${WORKSPACE}:rw ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2:/home/jenkins/.m2:rw --tmpfs /tmp:size=3g --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_ROOT_DIR_PPC64LE}/tools/docker_m2:/home/jenkins/.m2:rw"
-dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2:/home/jenkins/.m2:rw  -v ${JENKINS_ROOT_DIR_AMD64}/tools/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 // gitcredid = 'github-private-deeplearning4j-id-1'
 // env.GITCREDID = "github-private-deeplearning4j-id-1"
 env.PDIR = "jobs/dl4j"
@@ -18,6 +14,7 @@ env.ND4S_PROJECT = "nd4s"
 env.RL4J_PROJECT = "rl4j"
 env.SCALNET_PROJECT = "scalnet"
 env.DATAVEC_PROJECT = "datavec"
+
 env.DOCKER_UBUNTU14_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda75:latest"
 env.DOCKER_UBUNTU14_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda80:latest"
 env.DOCKER_CENTOS6_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
@@ -27,6 +24,12 @@ env.DOCKER_CUDA_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64l
 env.DOCKER_ANDROID_IMAGE = "deeplearning4j-docker-registry.bintray.io/android:latest"
 env.JENKINS_ROOT_DIR_AMD64 = "/var/lib/jenkins"
 env.JENKINS_ROOT_DIR_PPC64LE = "/srv/jenkins"
+
+dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2:/home/jenkins/.m2:rw"
+dockerParams_tmpfs = "-v ${WORKSPACE}:${WORKSPACE}:rw ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2:/home/jenkins/.m2:rw --tmpfs /tmp:size=3g --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
+dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_ROOT_DIR_PPC64LE}/tools/docker_m2:/home/jenkins/.m2:rw"
+dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2:/home/jenkins/.m2:rw  -v ${JENKINS_ROOT_DIR_AMD64}/tools/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
+
 // env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
