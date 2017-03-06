@@ -63,6 +63,7 @@ node("linux-x86_64") {
     // Create .m2 direcory
     // functions.dirm2()
 
+    def PLATFORM_NAME = "linux-x86_64"
     // Set docker image and parameters for current platform
     functions.def_docker()
 
