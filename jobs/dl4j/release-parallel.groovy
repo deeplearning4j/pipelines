@@ -40,13 +40,14 @@ node("master") {
     // functions.dirm2()
 
     // Set docker image and parameters for current platform
-    functions.def_docker()
+    // functions.def_docker()
 
     parallel (
         "Stream 0 x86_64" : {
             node("linux-x86_64") {
                 stage"${LIBPROJECT}-linux-x86_64"
                 def PLATFORM_NAME = "linux-x86_64"
+                functions.def_docker()
                 load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
                 load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
             }
@@ -55,6 +56,7 @@ node("master") {
             node("linux-ppc64le") {
                 stage"${LIBPROJECT}-linux-ppc64le"
                 def PLATFORM_NAME = "linux-ppc64le"
+                functions.def_docker()
                 load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
                 load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
             }
@@ -63,6 +65,7 @@ node("master") {
             node("linux-x86_64") {
                 stage"${LIBPROJECT}-android-x86"
                 def PLATFORM_NAME = "android-x86"
+                functions.def_docker()
                 load "${PDIR}/${PROJECT}/${PROJECT}-android-x86-docker.groovy"
             }
         },
@@ -70,6 +73,7 @@ node("master") {
             node("linux-x86_64") {
                 stage"${LIBPROJECT}-android-arm"
                 def PLATFORM_NAME = "android-arm"
+                functions.def_docker()
                 load "${PDIR}/${PROJECT}/${PROJECT}-android-arm-docker.groovy"
             }
         }
@@ -94,7 +98,8 @@ node("linux-x86_64") {
     // // functions.dirm2()
     //
     // // Set docker image and parameters for current platform
-    // functions.def_docker()
+    def PLATFORM_NAME = "linux-x86_64"
+    functions.def_docker()
 
     stage("${DATAVEC_PROJECT}") {
       load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
