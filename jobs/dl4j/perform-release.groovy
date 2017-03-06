@@ -38,13 +38,11 @@ node("master") {
             // },
             "Stream 2 android-x86" : {
                 build job: 'devel/dl4j/x86android/x86-build-stash', parameters:
-                    [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
             },
             "Stream 3 android-arm" : {
                 build job: 'devel/dl4j/arm/ARM-build-stash', parameters:
-                    [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: "master"],
-                    [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
             }
         )
     }
@@ -72,7 +70,15 @@ node("linux-x86_64") {
     functions.def_docker()
 
     stage("CHECK UNSTASH") {
-      load "${PDIR}/check-unstash.groovy"
+          unstash 'cpu-blasbuild-arm'
+          unstash 'cpu-blasbuild-x86'
+          unstash 'cpu-blas-arm'
+          unstash 'cpu-blas-x86'
+
+          sh("ls -al")
+
+      }
+
     }
 
     echo 'MARK: end of perform-release.groovy'

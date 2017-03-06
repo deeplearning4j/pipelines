@@ -43,5 +43,7 @@ node(PLATFORM_NAME) {
         cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-arm
         cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
         '''
+        stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild-arm'
+        stash includes: 'blas/', name: 'cpu-blas-arm'
      }
 }
