@@ -73,7 +73,7 @@ stage("${PROJECT}-build") {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  \
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=true  \
                             -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                     }
@@ -81,7 +81,7 @@ stage("${PROJECT}-build") {
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                             if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase \
+                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=false \
                             -Dlocal.software.repository=${PROFILE_TYPE}
                             '''
                     }
