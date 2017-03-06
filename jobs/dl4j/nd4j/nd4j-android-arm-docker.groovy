@@ -40,16 +40,15 @@ node(PLATFORM_NAME) {
         sh '''
         cd libnd4j && ./buildnativeoperations.sh -platform android-arm
         cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-        find . -type f -name *.jar
         '''
-        stash includes: 'nd4j/', name: 'nd4j-arm'
+        // stash includes: 'nd4j/', name: 'nd4j-arm'
      }
 }
 
-node("linux-x86_64") {
-    stage("unstash android artifacts") {
-        dir("/var/lib/jenkins/local-storage") {
-            unstash 'nd4j-arm';
-        }
-    }
-}
+// node("linux-x86_64") {
+//     stage("unstash android artifacts") {
+//         dir("/var/lib/jenkins/local-storage") {
+//             unstash 'nd4j-arm';
+//         }
+//     }
+// }
