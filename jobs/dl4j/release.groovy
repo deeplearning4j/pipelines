@@ -20,9 +20,10 @@ properties([
         ]
 ])
 
+env.PDIR = "jobs/dl4j"
+
 node("master") {
 
-    env.PDIR = "jobs/dl4j"
 
     stage("BuildBaseLibs") {
         parallel (
