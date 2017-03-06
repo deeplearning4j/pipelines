@@ -44,7 +44,7 @@ node(PLATFORM_NAME) {
         cd libnd4j && git pull && bash buildnativeoperations.sh -platform android-arm
         cd ../nd4j && git pull && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
         '''
-        stash includes: '/home/jenkins/.m2/repository/org/nd4j/nd4j-native/0.7.3-SNAPSHOT', name: 'nd4j-arm'
+        stash includes: '/home/jenkins/.m2/repository/org/nd4j/', name: 'nd4j-arm'
      }
 }
 
