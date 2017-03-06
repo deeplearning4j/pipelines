@@ -15,7 +15,7 @@ properties([
                         [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
                         [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
                         // [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
-                        [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "local-jfrog\nnexus\njfrog\nbintray\nsonatype", description: "Profile type"]
+                        [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\nlocal-jfrog\njfrog\nbintray\nsonatype", description: "Profile type"]
                 ]
         ]
 ])
