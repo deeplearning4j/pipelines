@@ -4,7 +4,7 @@ node ('windows-slave') {
         parallel (
             "Stream 1 Build CPU" : {
                 dir("stream1") {
-                    bat 'bash $WORKSPACE\buildnativeoperations.sh'
+                    bat 'bash $WORKSPACE/buildnativeoperations.sh'
                     stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
                     stash includes: 'blas/', name: 'cpu-blas'
                     stash includes: 'include/', name: 'libnd4j-include'
