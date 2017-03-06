@@ -38,18 +38,18 @@ def def_docker() {
     case "linux-ppc64le":
       dockerImage = "${DOCKER_CUDA_PPC}"
       dockerParams = dockerParams_ppc
-      sh ("mkdir -p ${JENKINS_ROOT_DIR_PPC64LE}/tools/docker_m2 ${JENKINS_ROOT_DIR_PPC64LE}/tools/docker_ivy2")
+      sh ("mkdir -p ${JENKINS_M2DIR_PPC64LE} ${JENKINS_SBTDIR_PPC64LE}")
       break
 
     case "linux-x86_64":
       dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
       dockerParams = dockerParams_nvidia
-      sh ("mkdir -p ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2 ${JENKINS_ROOT_DIR_AMD64}/tools/docker_ivy2")
+      sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
       break
 
     case ["android-arm", "android-x86"]:
         dockerImage = "${DOCKER_ANDROID_IMAGE}"
-        sh ("mkdir -p ${JENKINS_ROOT_DIR_AMD64}/tools/docker_m2 ${JENKINS_ROOT_DIR_AMD64}/tools/docker_ivy2")
+        sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
         break
 
     default:
