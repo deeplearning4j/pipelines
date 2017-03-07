@@ -111,15 +111,20 @@ def getGpg() {
             file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
             file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
             usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-            sh("rm -rf ${HOME}/.gnupg/*.gpg")
-            sh'''
-            gpg --list-keys
-            cp ${GPG_PUBRING} ${HOME}/.gnupg/
-            cp ${GPG_SECRING} ${HOME}/.gnupg/
-            chmod 700 $HOME/.gnupg
-            chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
-            gpg --list-keys
-            '''
+                if (isUnix()) {
+                    sh("rm -rf ${HOME}/.gnupg/*.gpg")
+                    sh'''
+                    gpg --list-keys
+                    cp ${GPG_PUBRING} ${HOME}/.gnupg/
+                    cp ${GPG_SECRING} ${HOME}/.gnupg/
+                    chmod 700 $HOME/.gnupg
+                    chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
+                    gpg --list-keys
+                    '''
+            } else {
+                sh("env")
+                echo System.properties['os.name'].toLowerCase()
+            }
     }
 }
 

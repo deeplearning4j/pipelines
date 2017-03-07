@@ -129,6 +129,7 @@ stage("${PROJECT}-build") {
                     case ["android-arm", "android-x86"]:
                         if (TESTS.toBoolean()) {
                           docker.image(dockerImage).inside(dockerParams) {
+                              functions.getGpg()
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
@@ -137,6 +138,7 @@ stage("${PROJECT}-build") {
                         }
                         else {
                           docker.image(dockerImage).inside(dockerParams) {
+                              functions.getGpg()
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'

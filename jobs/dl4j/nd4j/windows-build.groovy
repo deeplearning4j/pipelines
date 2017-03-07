@@ -34,6 +34,7 @@ stage("${PROJECT}-build") {
             '''
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                functions.getGpg()
                 if (TESTS) {
 
                         bat
