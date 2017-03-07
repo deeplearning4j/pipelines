@@ -38,7 +38,7 @@ if (varResultCountFile == 0) {
 
 
 stage("${PROJECT}-checkout-sources") {
-    functions.get_project_code("${PROJECT}")
+    // functions.get_project_code("${PROJECT}")
 }
 
 stage("${PROJECT}-build") {
@@ -106,16 +106,22 @@ stage("${PROJECT}-build") {
                         break
 
                     case "linux-ppc64le":
+                        withCredentials([
+                            file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
+                            file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
+                            usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
+                                sh'''
+                                mkdir -p $WORKSPACE/.gnupg
+                                cp {$GPG_PUBRING,$GPG_SECRING} $WORKSPACE/.gnupg/
+                                chmod 700 $WORKSPACE/.gnupg
+                                chmod 600 $WORKSPACE/{secring.gpg,pubring.gpg}
+                                '''
+                            }
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
-                                withCredentials([
-                                file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
-                                file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
-                                usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
                                     sh'''
                                     gpg --list-keys
-                                    ls -la {$GPG_PUBRING,$GPG_SECRING} || true
-                                    cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/ || true
+                                    cp $WORKSPACE/.gnupg/{secring.gpg,pubring.gpg} $WORKSPACE/.gnupg/
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     #mvn -B -s ${MAVEN_SETTINGS} clean deploy
@@ -132,8 +138,7 @@ stage("${PROJECT}-build") {
                                 usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
                                     sh'''
                                     gpg --list-keys
-                                    ls -la {$GPG_PUBRING,$GPG_SECRING} || true
-                                    cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/ || true
+                                    cp $WORKSPACE/.gnupg/{secring.gpg,pubring.gpg} $WORKSPACE/.gnupg/
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
