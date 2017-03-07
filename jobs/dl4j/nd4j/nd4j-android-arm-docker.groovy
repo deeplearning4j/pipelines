@@ -24,25 +24,25 @@ node(PLATFORM_NAME) {
     echo "load functions"
     functions = load "${PDIR}/functions.groovy"
 
-    // Remove .git folder from workspace
     functions.rm()
-
-    // Create .m2 direcory
-    // functions.dirm2()
 
     // Set docker image and parameters for current platform
     functions.def_docker()
 
-    functions.get_project_code("${LIBPROJECT}")
-    functions.get_project_code("${PROJECT}")
+    stage("${PROJECT}-checkout-sources") {
+        functions.get_project_code("${LIBPROJECT}")
+        functions.get_project_code("${PROJECT}")
+    }
 
-    docker.image(dockerImage).inside(dockerParams) {
-        sh '''
-        cd libnd4j && ./buildnativeoperations.sh -platform android-arm
-        cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-        '''
-        // stash includes: 'nd4j/', name: 'nd4j-arm'
-     }
+    stage("${PROJECT}-build") {
+        docker.image(dockerImage).inside(dockerParams) {
+            sh '''
+            cd libnd4j && ./buildnativeoperations.sh -platform android-arm
+            cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+            '''
+            // stash includes: 'nd4j/', name: 'nd4j-arm'
+         }
+    }
 }
 
 // node("linux-x86_64") {
