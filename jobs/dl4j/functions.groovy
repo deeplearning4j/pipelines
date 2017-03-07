@@ -136,7 +136,6 @@ def getGpg() {
                 '''
             }
         }
-    }
 }
 
 return this;
