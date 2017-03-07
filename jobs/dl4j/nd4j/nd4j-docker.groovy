@@ -72,31 +72,21 @@ stage("${PROJECT}-build") {
                     case "linux-x86_64":
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
-                                withCredentials([
-                                file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
-                                file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
-                                usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-                                    functions.getGpg()
-                                    sh'''
-                                    gpg --list-keys
-                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
-                                    '''
-                                }
+                                functions.getGpg()
+                                sh'''
+                                gpg --list-keys
+                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
+                                '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
-                                withCredentials([
-                                file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
-                                file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
-                                usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-                                    functions.getGpg()
-                                    sh'''
-                                    gpg --list-keys
-                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true 
-                                    '''
-                                }
+                                functions.getGpg()
+                                sh'''
+                                gpg --list-keys
+                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
+                                '''
                             }
                         }
                         break
@@ -117,7 +107,7 @@ stage("${PROJECT}-build") {
                                 functions.getGpg()
                                 sh'''
                                 gpg --list-keys
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi                                
+                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=${GpgVAR} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
                                 '''
                             }

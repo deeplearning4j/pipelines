@@ -134,7 +134,8 @@ def getGpg() {
                 ls -la %USERPROFILE%/.gnupg
                 gpg.exe --list-keys
                 '''
-            }            }
+            }
+        }
     }
 }
 
