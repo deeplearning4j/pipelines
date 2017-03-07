@@ -75,7 +75,7 @@ stage("${PROJECT}-build") {
                               docker.image(dockerImage).inside(dockerParams) {
                                   sh'''
                                   if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
                                   '''
                               }
                             }
@@ -88,7 +88,7 @@ stage("${PROJECT}-build") {
                                         sh'''
                                         gpg --list-keys
                                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                        mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                                        mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
                                         '''
                                     }
                                 }
@@ -100,7 +100,7 @@ stage("${PROJECT}-build") {
                               docker.image(dockerImage).inside(dockerParams) {
                                   sh'''
                                   if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
                                   '''
                               }
                             }
@@ -108,7 +108,7 @@ stage("${PROJECT}-build") {
                               docker.image(dockerImage).inside(dockerParams) {
                                   sh'''
                                   if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
                                   '''
                               }
                             }
