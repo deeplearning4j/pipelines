@@ -79,7 +79,8 @@ stage("${PROJECT}-build") {
                                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
                                 '''
                             }
-                        } else {
+                        }
+                        else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 functions.getGpg()
                                 sh'''
@@ -137,7 +138,7 @@ stage("${PROJECT}-build") {
 
                     default:
                         break
-                }
+                // }
             }
         }
 
