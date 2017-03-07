@@ -3,56 +3,58 @@ stage("${RL4J_PROJECT}-checkout-sources") {
 }
 
 stage("${RL4J_PROJECT}-build") {
-  echo "Building ${RL4J_PROJECT} version ${VERSION}"
-  dir("${RL4J_PROJECT}") {
-    functions.checktag("${RL4J_PROJECT}")
-    functions.verset("${VERSION}", true)
-    configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-      switch(PLATFORM_NAME) {
-        case "linux-x86_64":
-          if (TESTS.toBoolean()) {
-            docker.image(dockerImage).inside(dockerParams) {
-                sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
+    echo "Building ${RL4J_PROJECT} version ${VERSION}"
+    dir("${RL4J_PROJECT}") {
+        functions.checktag("${RL4J_PROJECT}")
+        functions.verset("${VERSION}", true)
+        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+            switch (PLATFORM_NAME) {
+                case "linux-x86_64":
+                    if (TESTS.toBoolean()) {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            functions.getGpg()
+                            sh '''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}  -DperformRelease=${GpgVAR}
                 '''
-            }
-          }
-          else {
-            docker.image(dockerImage).inside(dockerParams) {
-                sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                        }
+                    } else {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            functions.getGpg()
+                            sh '''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}  -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
                 '''
-            }
-          }
+                        }
+                    }
 
-        break
+                    break
 
-        case "linux-ppc64le":
-          if (TESTS.toBoolean()) {
-            docker.image(dockerImage).inside(dockerParams) {
-                sh'''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
+                case "linux-ppc64le":
+                    if (TESTS.toBoolean()) {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            functions.getGpg()
+                            sh '''
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
                 '''
-            }
-          }
-          else {
-            docker.image(dockerImage).inside(dockerParams) {
-              sh'''
-              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                        }
+                    } else {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            functions.getGpg()
+                            sh '''
+              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
               '''
+                        }
+                    }
+                    break
+
+                default:
+                    break
             }
-          }
-        break
 
-        default:
-        break
-      }
-
+        }
     }
-  }
-  if (SONAR.toBoolean()) {
-    functions.sonar("${RL4J_PROJECT}")
-  }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${RL4J_PROJECT}")
+    }
 }
 
 echo 'MARK: end of rl4j.groovy'

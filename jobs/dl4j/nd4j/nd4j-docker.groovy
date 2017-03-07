@@ -80,7 +80,7 @@ stage("${PROJECT}-build") {
                                     sh'''
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
+                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
                                     '''
                                 }
                             }
@@ -94,7 +94,7 @@ stage("${PROJECT}-build") {
                                     sh'''
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true -DperformRelease=true
+                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true 
                                     '''
                                 }
                             }
@@ -108,8 +108,7 @@ stage("${PROJECT}-build") {
                                 sh'''
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                #mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=true
+                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
                                 '''
                             }
                         }
@@ -118,9 +117,8 @@ stage("${PROJECT}-build") {
                                 functions.getGpg()
                                 sh'''
                                 gpg --list-keys
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DperformRelease=true
+                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi                                
+                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=${GpgVAR} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
                                 '''
                             }
                         }

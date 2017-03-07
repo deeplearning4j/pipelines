@@ -30,14 +30,16 @@ stage("${ARBITER_PROJECT}-build") {
                     case "linux-x86_64":
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
                                 sh '''
-                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} 
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}  -DperformRelease=${GpgVAR} 
                       '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
                                 sh '''
-                      mvn -B -s ${MAVEN_SETTINGS} clean  deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                      mvn -B -s ${MAVEN_SETTINGS} clean  deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}  -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
                       '''
                             }
                         }
@@ -45,14 +47,16 @@ stage("${ARBITER_PROJECT}-build") {
                     case "linux-ppc64le":
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
                                 sh '''
-                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} 
+                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}  -DperformRelease=${GpgVAR}
                       '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
                                 sh '''
-                      mvn -B -s ${MAVEN_SETTINGS} clean  deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                      mvn -B -s ${MAVEN_SETTINGS} clean  deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
                       '''
                             }
                         }
