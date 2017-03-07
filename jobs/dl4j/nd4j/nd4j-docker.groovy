@@ -70,69 +70,89 @@ stage("${PROJECT}-build") {
             //
             // sh("./change-scala-versions.sh ${SCALA_VERSION}")
             // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+
             env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
-            configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                switch(PLATFORM_NAME) {
-                    case "linux-x86_64":
-                        if (TESTS.toBoolean()) {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                              '''
-                          }
-                        }
-                        else {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                              mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-                              '''
-                          }
-                        }
-                        break
 
-                    case "linux-ppc64le":
-                        if (TESTS.toBoolean()) {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                              '''
-                          }
-                        }
-                        else {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                              '''
-                          }
-                        }
-                        break
+            final nd4jlibs = [
+                [
+                    name: "nd4j1",
+                    cudaVersion: "7.5",
+                    scalaVersion: "2.10"
+                ],
+                    [
+                    name: "nd4j2",
+                    cudaVersion: "8.0",
+                    scalaVersion: "2.11"
+                ]
+            ]
 
-                    case ["android-arm", "android-x86"]:
-                        if (TESTS.toBoolean()) {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              '''
-                          }
-                        }
-                        else {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              '''
-                          }
-                        }
-                        break
+            for (lib in nd4jlibs) {
+                println "Building with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
+                sh("./change-scala-versions.sh ${lib.scalaVersion}")
+                sh("./change-cuda-versions.sh ${lib.cudaVersion}")
+                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                    switch(PLATFORM_NAME) {
+                        case "linux-x86_64":
+                            if (TESTS.toBoolean()) {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                                  '''
+                              }
+                            }
+                            else {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                                  mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                                  '''
+                              }
+                            }
+                            break
 
-                    default:
-                        break
+                        case "linux-ppc64le":
+                            if (TESTS.toBoolean()) {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                                  '''
+                              }
+                            }
+                            else {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                                  '''
+                              }
+                            }
+                            break
+
+                        case ["android-arm", "android-x86"]:
+                            if (TESTS.toBoolean()) {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                                  '''
+                              }
+                            }
+                            else {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                                  '''
+                              }
+                            }
+                            break
+
+                        default:
+                            break
+                    }
                 }
             }
     }
