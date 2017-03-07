@@ -22,106 +22,62 @@ properties([
 
 env.PDIR = "jobs/dl4j"
 
-node("master") {
-    stage("BuildBaseLibs") {
+stage("BuildBaseLibs") {
+  node("master") {
         parallel (
-            "Stream 0 x86_64" : {
-                build job: 'devel/dl4j/amd64/base-libs', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
-            },
-            "Stream 1 ppc64le" : {
-                build job: 'devel/dl4j/ppc/base-libs', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
-            },
+            // "Stream 0 x86_64" : {
+            //     build job: 'devel/dl4j/amd64/base-libs', parameters:
+            //         [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+            //         [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
+            // },
+            // "Stream 1 ppc64le" : {
+            //     build job: 'devel/dl4j/ppc/base-libs', parameters:
+            //         [[$class: 'StringParameterValue', name:'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+            //         [$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
+            // },
             "Stream 2 android-x86" : {
-                build job: 'devel/dl4j/x86android/x86-build', parameters:
+                build job: 'devel/dl4j/x86android/x86-build-stash', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
             },
             "Stream 3 android-arm" : {
-                build job: 'devel/dl4j/arm/ARM-build', parameters:
+                build job: 'devel/dl4j/arm/ARM-build-stash', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
             }
         )
     }
 }
 
-node("linux-x86_64") {
+stage("CHECK UNSTASH") {
+    node("linux-x86_64") {
 
-    step([$class: 'WsCleanup'])
-    checkout scm
+        step([$class: 'WsCleanup'])
+        checkout scm
 
-    echo "Load variables"
-    load "${PDIR}/vars.groovy"
+        echo "Load variables"
+        load "${PDIR}/vars.groovy"
 
-    echo "load functions"
-    functions = load "${PDIR}/functions.groovy"
+        echo "load functions"
+        functions = load "${PDIR}/functions.groovy"
 
-    // Remove .git folder from workspace
-    functions.rm()
+        // Remove .git folder from workspace
+        functions.rm()
 
-    // Create .m2 direcory
-    // functions.dirm2()
+        // Create .m2 direcory
+        // functions.dirm2()
 
-    // Set docker image and parameters for current platform
-    def PLATFORM_NAME = "linux-x86_64"
-    functions.def_docker()
-
-    stage("${DATAVEC_PROJECT}") {
-      load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
-    }
-
-    stage("${DEEPLEARNING4J_PROJECT}") {
-        load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
-    }
-
-    stage ("${ARBITER_PROJECT}") {
-      load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
-    }
-
-    stage("${ND4S_PROJECT}") {
-        load "${PDIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
-    }
-
-    stage("${GYM_JAVA_CLIENT_PROJECT}") {
-      load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
-    }
-
-    stage("${RL4J_PROJECT}") {
-      load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
-    }
-
-    // depends on nd4j and deeplearning4j-core
-    stage("${SCALNET_PROJECT}") {
-    	load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
-    }
+        // Set docker image and parameters for current platform
+        // def PLATFORM_NAME = "linux-x86_64"
+        // functions.def_docker()
 
 
-    stage('RELEASE') {
+        unstash 'cpu-blasbuild-arm'
+        unstash 'cpu-blasbuild-x86'
+        unstash 'cpu-blas-arm'
+        unstash 'cpu-blas-x86'
 
-      // def isSnapshot = VERSION.endsWith('SNAPSHOT')
-
-      if(isSnapshot) {
-        echo "End of building and publishing of the ${VERSION}"
-      }
-      else {
-        // timeout(time:1, unit:'HOURS') {
-        timeout(20) {
-            input message:"Approve release of version ${VERSION} ?"
-        }
-
-        // functions.release("${LIBPROJECT}")
-        functions.release("${PROJECT}")
-        functions.release("${DATAVEC_PROJECT}")
-        functions.release("${DEEPLEARNING4J_PROJECT}")
-        functions.release("${ARBITER_PROJECT}")
-        functions.release("${ND4S_PROJECT}")
-        functions.release("${GYM_JAVA_CLIENT_PROJECT}")
-        functions.release("${RL4J_PROJECT}")
-        functions.release("${SCALNET_PROJECT}")
-
-      }
+        sh("ls -al")
 
     }
-
-    echo 'MARK: end of release.groovy'
 }
+
+echo 'MARK: end of perform-release.groovy'

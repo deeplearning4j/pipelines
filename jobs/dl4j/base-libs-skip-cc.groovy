@@ -6,9 +6,16 @@ properties([
                         [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "Build project on architecture"],
                         [$class: "BooleanParameterDefinition", name: "TESTS", defaultValue: false, description: "Select to run tests during mvn execution"],
                         [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
+                        [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
+                        [$class: "StringParameterDefinition", name: "ND4J_VERSION", defaultValue: "", description: "Set preferred nd4j version, leave it empty to use VERSION"],
+                        [$class: "StringParameterDefinition", name: "DL4J_VERSION", defaultValue: "", description: "Set preferred dl4j version, leave it empty to use VERSION"],
+                        [$class: "StringParameterDefinition", name: "DATAVEC_VERSION", defaultValue: "", description: "Set preferred datavec version, leave it empty to use VERSION"],
+                        [$class: "ChoiceParameterDefinition", name: "SCALA_VERSION", choices: "2.10\n2.11", description: "Scala version definition"],
+                        [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
                         [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
                         [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
                         [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
+                        [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "local-jfrog\nnexus\njfrog\nbintray\nsonatype", description: "Profile type"]
                 ]
         ]
 ])
@@ -24,31 +31,23 @@ node(PLATFORM_NAME) {
     echo "load functions"
     functions = load "${PDIR}/functions.groovy"
 
+    // Remove .git folder from workspace
     functions.rm()
+
+    // Create .m2 direcory
+    // functions.dirm2()
 
     // Set docker image and parameters for current platform
     functions.def_docker()
 
-    stage("${PROJECT}-checkout-sources") {
-        functions.get_project_code("${LIBPROJECT}")
-        functions.get_project_code("${PROJECT}")
+    stage("${LIBPROJECT}") {
+        // load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
     }
 
-    stage("${PROJECT}-build") {
-        docker.image(dockerImage).inside(dockerParams) {
-            sh '''
-            cd libnd4j && ./buildnativeoperations.sh -platform android-arm
-            cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-            '''
-            // stash includes: 'nd4j/', name: 'nd4j-arm'
-         }
+    stage("${PROJECT}") {
+        // load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
+        load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
     }
+
+    echo 'MARK: end of base-libs.groovy'
 }
-
-// node("linux-x86_64") {
-//     stage("unstash android artifacts") {
-//         dir("/var/lib/jenkins/local-storage") {
-//             unstash 'nd4j-arm';
-//         }
-//     }
-// }

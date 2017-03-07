@@ -26,11 +26,11 @@ node("master") {
     stage("BuildBaseLibs") {
         parallel (
             "Stream 0 x86_64" : {
-                build job: 'devel/dl4j/amd64/base-libs', parameters:
+                build job: 'devel/dl4j/amd64/base-libs-skip-cc', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
             },
             "Stream 1 ppc64le" : {
-                build job: 'devel/dl4j/ppc/base-libs', parameters:
+                build job: 'devel/dl4j/ppc/base-libs-skip-cc', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
             },
             "Stream 2 android-x86" : {
@@ -40,12 +40,19 @@ node("master") {
             "Stream 3 android-arm" : {
                 build job: 'devel/dl4j/arm/ARM-build', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
+            },
+            "Stream 4 windows" : {
+                // build job: 'devel/dl4j/', parameters:
+                //     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows"]]
+                echo "Windows build will be here"
             }
         )
     }
 }
 
 node("linux-x86_64") {
+    sh ("mkdir -p /var/lib/jenkins/local-storage")
+    sh ("ls -laht /var/lib/jenkins/local-storage")
 
     step([$class: 'WsCleanup'])
     checkout scm
@@ -62,8 +69,8 @@ node("linux-x86_64") {
     // Create .m2 direcory
     // functions.dirm2()
 
+    PLATFORM_NAME = "linux-x86_64"
     // Set docker image and parameters for current platform
-    def PLATFORM_NAME = "linux-x86_64"
     functions.def_docker()
 
     stage("${DATAVEC_PROJECT}") {

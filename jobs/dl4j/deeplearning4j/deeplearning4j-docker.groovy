@@ -67,28 +67,26 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch (PLATFORM_NAME) {
                     case "linux-x86_64":
-                        if (TESTS) {
+                        if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} \
-                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false  \
-                -Dlocal.software.repository=${PROFILE_TYPE}
+                #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} \
-                -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false \
-                -Dlocal.software.repository=${PROFILE_TYPE}
+                #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dnd4j.version=${ND4J_VERSION} -Ddatavec.version=${DATAVEC_VERSION} -Dmaven.deploy.skip=false -Dlocal.software.repository=${PROFILE_TYPE}
+                mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                 '''
                             }
                         }
                         break
                     case "linux-ppc64le":
-                        if (TESTS) {
+                        if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -116,7 +114,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             }
         }
     }
-    if (SONAR) {
+    if (SONAR.toBoolean()) {
         functions.sonar("${DEEPLEARNING4J_PROJECT}")
     }
 }
