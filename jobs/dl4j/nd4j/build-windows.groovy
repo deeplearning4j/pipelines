@@ -37,7 +37,7 @@ node("windows-slave") {
     // functions.dirm2()
 
     // Set docker image and parameters for current platform
-    functions.def_docker()
+    // functions.def_docker()
 
     stage("${PROJECT}") {
       load "${PDIR}/${PROJECT}/${PROJECT}-windows.groovy"
