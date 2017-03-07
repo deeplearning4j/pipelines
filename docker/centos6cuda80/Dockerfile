@@ -7,7 +7,7 @@ ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u121-b13
 
 RUN yum -y clean all && \
 	yum -y install centos-release-scl-rh epel-release && \
-	yum -y install devtoolset-3-toolchain tar curl openssl ca-certificates && \
+	yum -y install devtoolset-3-toolchain tar curl openssl ca-certificates git && \
 	yum clean all
 
 RUN mkdir -p /opt && \
