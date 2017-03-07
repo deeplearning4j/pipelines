@@ -2,7 +2,8 @@ def get_project_code(proj) {
   checkout([$class: 'GitSCM',
             branches: [[name: "*/${GIT_BRANCHNAME}"]],
             doGenerateSubmoduleConfigurations: false,
-            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true]],
+            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
+                        [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 15]],
             //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
             submoduleCfg: [],
             userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
