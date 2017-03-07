@@ -124,7 +124,8 @@ stage("${PROJECT}-build") {
                                     #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
                                     mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                                     '''
-                          }
+                                }
+                            }
                         }
                         break
 
