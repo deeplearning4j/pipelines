@@ -76,10 +76,8 @@ stage("${PROJECT}-build") {
                                 file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
                                 file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
                                 usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
+                                    functions.getGpg()
                                     sh'''
-                                    gpg --list-keys
-                                    ls -la {$GPG_PUBRING,$GPG_SECRING} || true
-                                    cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/ || true
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
@@ -92,10 +90,8 @@ stage("${PROJECT}-build") {
                                 file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
                                 file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
                                 usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
+                                    functions.getGpg()
                                     sh'''
-                                    gpg --list-keys
-                                    ls -la {$GPG_PUBRING,$GPG_SECRING} || true
-                                    cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/ || true
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true -DperformRelease=true
@@ -119,9 +115,8 @@ stage("${PROJECT}-build") {
                             }
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
                                 sh'''
-                                gpg --list-keys
-                                cp $WORKSPACE/.gnupg/{secring.gpg,pubring.gpg} $HOME/.gnupg/
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 #mvn -B -s ${MAVEN_SETTINGS} clean deploy
@@ -131,9 +126,8 @@ stage("${PROJECT}-build") {
                         }
                         else {
                             docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
                                 sh'''
-                                gpg --list-keys
-                                cp $WORKSPACE/.gnupg/{secring.gpg,pubring.gpg} $HOME/.gnupg/
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}

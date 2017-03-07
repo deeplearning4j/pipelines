@@ -23,18 +23,6 @@ node(PLATFORM_NAME) {
             ]
     ])
 
-    withCredentials([
-        file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
-        file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
-        usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-            sh'''
-            mkdir -p $WORKSPACE/.gnupg
-            cp {$GPG_PUBRING,$GPG_SECRING} $WORKSPACE/.gnupg/
-            chmod 700 $WORKSPACE/.gnupg
-            chmod 600 $WORKSPACE/{secring.gpg,pubring.gpg}
-            '''
-        }
-
     step([$class: 'WsCleanup'])
 
     checkout scm
