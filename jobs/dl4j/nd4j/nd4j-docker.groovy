@@ -71,6 +71,8 @@ stage("${PROJECT}-build") {
             // sh("./change-scala-versions.sh ${SCALA_VERSION}")
             // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
 
+            functions.verset("${VERSION}", true)
+            
             env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
 
             final nd4jlibs = [
