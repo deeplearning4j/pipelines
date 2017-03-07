@@ -38,7 +38,7 @@ if (varResultCountFile == 0) {
 
 
 stage("${PROJECT}-checkout-sources") {
-    // functions.get_project_code("${PROJECT}")
+    functions.get_project_code("${PROJECT}")
 }
 
 stage("${PROJECT}-build") {
@@ -47,7 +47,7 @@ stage("${PROJECT}-build") {
     }
 
     dir("${PROJECT}") {
-        // functions.verset("${VERSION}", true)
+        functions.verset("${VERSION}", true)
         env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
 
         final nd4jlibs = [
