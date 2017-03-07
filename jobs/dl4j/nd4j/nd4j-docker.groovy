@@ -47,30 +47,6 @@ stage("${PROJECT}-build") {
     }
 
     dir("${PROJECT}") {
-        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        // Temporary section - please remove once it commited updates to source code
-        // configFileProvider(
-        //         [configFile(fileId: 'MAVEN_POM_DO-192', variable: 'POM_XML')
-        //     ]) {
-        //     sh "cp ${POM_XML} pom.xml"
-        // }
-        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        // echo 'Set Project Version'
-        //// sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
-        // functions.verset("${VERSION}", true)
-        //
-        // def listScalaVersion = ["2.10", "2.11"]
-        // def listCudaVersion = ["7.5", "8.0"]
-
-        // for (int i = 0; i < listScalaVersion.size(); i++) {
-            // echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            // env.SCALA_VERSION = listScalaVersion[i]
-            // echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            // env.CUDA_VERSION = listCudaVersion[i];
-            //
-            // sh("./change-scala-versions.sh ${SCALA_VERSION}")
-            // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
-
             functions.verset("${VERSION}", true)
             
             env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
@@ -99,7 +75,7 @@ stage("${PROJECT}-build") {
                               docker.image(dockerImage).inside(dockerParams) {
                                   sh'''
                                   if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
                                   '''
                               }
                             }
@@ -112,7 +88,7 @@ stage("${PROJECT}-build") {
                                         sh'''
                                         gpg --list-keys
                                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                        mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                                        mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                                         '''
                                     }
                                 }
