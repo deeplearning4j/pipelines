@@ -94,7 +94,8 @@ stage("${PROJECT}-build") {
                                     cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                                    #mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                                    mvn clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                                     '''
                                 }
                             }
