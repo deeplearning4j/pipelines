@@ -87,7 +87,7 @@ stage("${PROJECT}-build") {
             ]
 
             for (lib in nd4jlibs) {
-                println "Building with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
+                echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
                 sh("./change-scala-versions.sh ${lib.scalaVersion}")
                 sh("./change-cuda-versions.sh ${lib.cudaVersion}")
                 configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
