@@ -102,13 +102,18 @@ stage("${PROJECT}-build") {
                               }
                             }
                             else {
-                              docker.image(dockerImage).inside(dockerParams) {
-                                  sh'''
-                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  #mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
-                                  mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
-                                  '''
-                              }
+                                docker.image(dockerImage).inside(dockerParams) {
+                                    withCredentials([
+                                    file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
+                                    file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
+                                    usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
+                                        sh'''
+                                        gpg --list-keys
+                                        if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                        mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                                        '''
+                                    }
+                                }
                             }
                             break
 
