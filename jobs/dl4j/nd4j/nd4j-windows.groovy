@@ -1,6 +1,6 @@
  
  node ('windows-slave') {
-    load jobs/dl4j/vars.groovy"
+    load jobs/dl4j/vars.groovy
     functions = load "${PDIR}/functions.groovy"
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         bat '''
