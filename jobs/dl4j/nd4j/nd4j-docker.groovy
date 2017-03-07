@@ -72,7 +72,7 @@ stage("${PROJECT}-build") {
             // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
 
             functions.verset("${VERSION}", true)
-            
+
             env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
 
             final nd4jlibs = [
@@ -110,6 +110,8 @@ stage("${PROJECT}-build") {
                                     file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
                                     usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
                                         sh'''
+                                        gpg --list-keys
+                                        cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/
                                         gpg --list-keys
                                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                         mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
