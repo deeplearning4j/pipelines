@@ -111,11 +111,11 @@ stage("${PROJECT}-build") {
                           }
                         }
                         else {
-                            docker.image(dockerImage).inside(dockerParams) {
-                                withCredentials([
+                            withCredentials([
                                 file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
                                 file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
                                 usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
+                                docker.image(dockerImage).inside(dockerParams) {
                                     sh'''
                                     gpg --list-keys
                                     cp {$GPG_PUBRING,$GPG_SECRING} $HOME/.gnupg/
