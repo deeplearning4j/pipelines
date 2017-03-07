@@ -1,4 +1,5 @@
 isSnapshot = VERSION.endsWith('SNAPSHOT')
+env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
 // settings_xml = 'maven-settings-id-1'
 settings_xml = 'maven-settings-id-3'
 // gitcredid = 'github-private-deeplearning4j-id-1'
@@ -42,3 +43,5 @@ env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 env.ND4J_VERSION = env.ND4J_VERSION ?: "${VERSION}"
 env.DL4J_VERSION = env.DL4J_VERSION ?: "${VERSION}"
 env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "${VERSION}"
+
+
