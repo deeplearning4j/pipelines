@@ -27,19 +27,20 @@ node(PLATFORM_NAME) {
     // Remove .git folder from workspace
     functions.rm()
 
-    // Create .m2 direcory
-    // functions.dirm2()
-
     // Set docker image and parameters for current platform
     functions.def_docker()
 
-    functions.get_project_code("${LIBPROJECT}")
-    functions.get_project_code("${PROJECT}")
+    stage("${PROJECT}-checkout-sources") {
+        functions.get_project_code("${LIBPROJECT}")
+        functions.get_project_code("${PROJECT}")
+    }
 
-    docker.image(dockerImage).inside(dockerParams) {
-        sh '''
-        cd libnd4j && ./buildnativeoperations.sh -platform android-x86
-        cd ../nd4j && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-        '''
-     }
+    stage("${PROJECT}-build") {
+        docker.image(dockerImage).inside(dockerParams) {
+            sh '''
+            cd libnd4j && ./buildnativeoperations.sh -platform android-x86
+            cd ../nd4j && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+            '''
+         }
+    }
 }
