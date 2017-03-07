@@ -23,13 +23,13 @@ stage("${SCALNET_PROJECT}-build") {
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} 
+                mvn -B -s ${MAVEN_SETTINGS} clean  deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} 
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
                 '''
                             }
                         }
@@ -40,13 +40,13 @@ stage("${SCALNET_PROJECT}-build") {
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} 
                 '''
                             }
                         } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
                 '''
                             }
                         }
