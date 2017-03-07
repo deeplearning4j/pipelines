@@ -17,11 +17,11 @@ stage("${PROJECT}-build") {
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
-        functions.verset("${VERSION}", true)
+        //// sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        // functions.verset("${VERSION}", true)
 
-        sh "./change-scala-versions.sh ${SCALA_VERSION}"
-        sh "./change-cuda-versions.sh ${CUDA_VERSION}"
+        // sh "./change-scala-versions.sh ${SCALA_VERSION}"
+        // sh "./change-cuda-versions.sh ${CUDA_VERSION}"
 
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {
@@ -42,7 +42,7 @@ stage("${PROJECT}-build") {
                           '''
                       }
                     }
-                break
+                    break
 
                 case "linux-ppc64le":
                     if (TESTS.toBoolean()) {
@@ -61,10 +61,31 @@ stage("${PROJECT}-build") {
                           '''
                       }
                     }
-                break
+                    break
+
+                case ["android-arm", "android-x86"]:
+                    if (TESTS.toBoolean()) {
+                      docker.image(dockerImage).inside(dockerParams) {
+                          sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          '''
+                      }
+                    }
+                    else {
+                      docker.image(dockerImage).inside(dockerParams) {
+                          sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          '''
+                      }
+                    }
+                    break
 
                 default:
-                break
+                    break
             }
         }
     }

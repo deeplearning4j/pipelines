@@ -12,7 +12,7 @@
     gid: "{{ gid }}"
 
 - name: change permission
-  shell: chown -R --from="{{ old_uid }}" "{{ main_user }}" {/var,/tmp}
+  shell: chown -R --from={{ old_uid }} {{ main_user }} {/var,/tmp}
 
 - name: delete old jar
   file:

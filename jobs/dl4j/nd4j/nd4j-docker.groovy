@@ -14,18 +14,22 @@ if (varResultCountFile == 0) {
     stage("${PROJECT}-resolve-dependencies") {
 
         dir("${LIBPROJECT}") {
-            docker.image(dockerImage).inside(dockerParams) {
-                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+            if ( PLATFORM_NAME == "linux-ppc64le" ) {
+                sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
+            } else {
+                    docker.image(dockerImage).inside(dockerParams) {
+                        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                     /**
                      * HI MAN - this is HARD CODE for URL
                      */
-                    sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
-                            " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
-                            " -Dtransitive=false \\\n" +
-                            " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
-                    //
-                    sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
-                    sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
+                        sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                                " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
+                                " -Dtransitive=false \\\n" +
+                                " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
+                        //
+                        sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
+                        sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
+                    }
                 }
             }
         }
@@ -51,42 +55,113 @@ stage("${PROJECT}-build") {
         //     sh "cp ${POM_XML} pom.xml"
         // }
         // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        echo 'Set Project Version'
-        // sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
-        functions.verset("${VERSION}", true)
+        // echo 'Set Project Version'
+        //// sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
+        // functions.verset("${VERSION}", true)
+        //
+        // def listScalaVersion = ["2.10", "2.11"]
+        // def listCudaVersion = ["7.5", "8.0"]
 
-        def listScalaVersion = ["2.10", "2.11"]
-        def listCudaVersion = ["7.5", "8.0"]
+        // for (int i = 0; i < listScalaVersion.size(); i++) {
+            // echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
+            // env.SCALA_VERSION = listScalaVersion[i]
+            // echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
+            // env.CUDA_VERSION = listCudaVersion[i];
+            //
+            // sh("./change-scala-versions.sh ${SCALA_VERSION}")
+            // sh("./change-cuda-versions.sh ${CUDA_VERSION}")
 
-        for (int i = 0; i < listScalaVersion.size(); i++) {
-            echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            env.SCALA_VERSION = listScalaVersion[i]
-            echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            env.CUDA_VERSION = listCudaVersion[i];
+            functions.verset("${VERSION}", true)
+            
+            env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
 
-            sh("./change-scala-versions.sh ${SCALA_VERSION}")
-            sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+            final nd4jlibs = [
+                [
+                    name: "nd4j1",
+                    cudaVersion: "7.5",
+                    scalaVersion: "2.10"
+                ],
+                    [
+                    name: "nd4j2",
+                    cudaVersion: "8.0",
+                    scalaVersion: "2.11"
+                ]
+            ]
 
-            configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                if (TESTS.toBoolean()) {
-                    docker.image(dockerImage).inside(dockerParams) {
-                        sh '''
-                            if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.deploy.skip=flase  \
-                            -Dlocal.software.repository=${PROFILE_TYPE}
-                            '''
-                    }
-                } else {
-                    docker.image(dockerImage).inside(dockerParams) {
-                        sh '''
-                            if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                            mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests -Dmaven.deploy.skip=flase \
-                            -Dlocal.software.repository=${PROFILE_TYPE}
-                            '''
+            for (lib in nd4jlibs) {
+                echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
+                sh("./change-scala-versions.sh ${lib.scalaVersion}")
+                sh("./change-cuda-versions.sh ${lib.cudaVersion}")
+                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                    switch(PLATFORM_NAME) {
+                        case "linux-x86_64":
+                            if (TESTS.toBoolean()) {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                                  '''
+                              }
+                            }
+                            else {
+                                docker.image(dockerImage).inside(dockerParams) {
+                                    withCredentials([
+                                    file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
+                                    file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
+                                    usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
+                                        sh'''
+                                        gpg --list-keys
+                                        if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                        mvn -B -s ${MAVEN_SETTINGS} clean install -DskipTests
+                                        '''
+                                    }
+                                }
+                            }
+                            break
+
+                        case "linux-ppc64le":
+                            if (TESTS.toBoolean()) {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                                  '''
+                              }
+                            }
+                            else {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -DskipTests
+                                  '''
+                              }
+                            }
+                            break
+
+                        case ["android-arm", "android-x86"]:
+                            if (TESTS.toBoolean()) {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                                  '''
+                              }
+                            }
+                            else {
+                              docker.image(dockerImage).inside(dockerParams) {
+                                  sh'''
+                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                  mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                                  '''
+                              }
+                            }
+                            break
+
+                        default:
+                            break
                     }
                 }
             }
-        }
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")
@@ -100,8 +175,8 @@ stage("${PROJECT}-build") {
     configFileProvider(
             [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
             ]) {
-        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  ")
-        // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean deploy -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
+        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests  ")
+        // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
     }
 *//*
 
