@@ -24,12 +24,12 @@ node {
     env.PDIR = "jobs/dl4j"
 
     build job: 'all-deeplearning4j', parameters: [[$class: "StringParameterDefinition", name: "VERSION", value: "0.7.3-SNAPSHOT"],
-            [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", value: "linux-x86_64"],
-            [$class: "BooleanParameterDefinition", name: "TESTS", value: false ],
-            [$class: "BooleanParameterDefinition", name: "SONAR", value: false ],
+            [$class: "StringParameterDefinition", name: "PLATFORM_NAME", value: "linux-x86_64"],
+            [$class: "StringParameterDefinition", name: "TESTS", value: false ],
+            [$class: "StringParameterDefinition", name: "SONAR", value: false ],
             [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", value: "intropro072-01"],
-            [$class: "CredentialsParameterDefinition", name: "GITCREDID", value: "github-private-deeplearning4j-id-1"],
-            [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", value: "nexus"],
+            [$class: "StringParameterDefinition", name: "GITCREDID", value: "github-private-deeplearning4j-id-1"],
+            [$class: "StringParameterDefinition", name: "PROFILE_TYPE", value: "nexus"],
             [$class: "StringParameterDefinition", name: "STAGE_STAGE_REPO_ID", value: "orgnd4j-1150"]]
 
 
