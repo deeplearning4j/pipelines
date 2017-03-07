@@ -47,123 +47,106 @@ stage("${PROJECT}-build") {
     }
 
     dir("${PROJECT}") {
-            functions.verset("${VERSION}", true)
+        functions.verset("${VERSION}", true)
+        env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
 
-            env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
-
-            final nd4jlibs = [
+        final nd4jlibs = [
+            [
+                name: "nd4j1",
+                cudaVersion: "7.5",
+                scalaVersion: "2.10"
+            ],
                 [
-                    name: "nd4j1",
-                    cudaVersion: "7.5",
-                    scalaVersion: "2.10"
-                ],
-                    [
-                    name: "nd4j2",
-                    cudaVersion: "8.0",
-                    scalaVersion: "2.11"
-                ]
+                name: "nd4j2",
+                cudaVersion: "8.0",
+                scalaVersion: "2.11"
             ]
+        ]
 
-            for (lib in nd4jlibs) {
-                echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
-                sh("./change-scala-versions.sh ${lib.scalaVersion}")
-                sh("./change-cuda-versions.sh ${lib.cudaVersion}")
-                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                    switch(PLATFORM_NAME) {
-                        case "linux-x86_64":
-                            if (TESTS.toBoolean()) {
-                              docker.image(dockerImage).inside(dockerParams) {
-                                  sh'''
-                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
-                                  '''
-                              }
+        for (lib in nd4jlibs) {
+            echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
+            sh("./change-scala-versions.sh ${lib.scalaVersion}")
+            sh("./change-cuda-versions.sh ${lib.cudaVersion}")
+            configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                switch(PLATFORM_NAME) {
+                    case "linux-x86_64":
+                        if (TESTS.toBoolean()) {
+                            docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
+                              '''
+                            }
+                        } else {
+                            docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
+                              '''
                             }
                         }
                         break
 
-                    case "linux-ppc64le":
-                        if (TESTS.toBoolean()) {
+                case "linux-ppc64le":
+                    if (TESTS.toBoolean()) {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh'''
+                            if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                            #mvn -B -s ${MAVEN_SETTINGS} clean deploy
+                            mvn -B -s clean deploy ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE}
+                            '''
+                      }
+                    }
+                    else {
+                        withCredentials([
+                            file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
+                            file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
+                            usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
                             docker.image(dockerImage).inside(dockerParams) {
-                                sh'''
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                #mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                                mvn -B -s clean deploy ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE}
-                                '''
-                          }
-                        }
-                        else {
-                            withCredentials([
+                                withCredentials([
                                 file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
                                 file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
                                 usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-                                docker.image(dockerImage).inside(dockerParams) {
-                                    withCredentials([
-                                    file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
-                                    file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
-                                    usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-                                        sh'''
-                                        gpg --list-keys
-                                        if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                        #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
-                                        mvn -B -s clean deploy ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
-                                        '''
-                                    }
+                                    sh'''
+                                    gpg --list-keys
+                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                    #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
+                                    mvn -B -s clean deploy ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                                    '''
                                 }
                             }
-                            break
+                        }
+                        break
 
-                        case "linux-ppc64le":
-                            if (TESTS.toBoolean()) {
-                              docker.image(dockerImage).inside(dockerParams) {
-                                  sh'''
-                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID}
-                                  mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
-                                  '''
-                              }
-                            }
-                            else {
-                              docker.image(dockerImage).inside(dockerParams) {
-                                  sh'''
-                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
-                                  mvn -B -s ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
-                                  '''
-                              }
-                            }
-                            break
+                    case ["android-arm", "android-x86"]:
+                        if (TESTS.toBoolean()) {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              '''
+                          }
+                        }
+                        else {
+                          docker.image(dockerImage).inside(dockerParams) {
+                              sh'''
+                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              '''
+                          }
+                        }
+                        break
 
-                        case ["android-arm", "android-x86"]:
-                            if (TESTS.toBoolean()) {
-                              docker.image(dockerImage).inside(dockerParams) {
-                                  sh'''
-                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                                  '''
-                              }
-                            }
-                            else {
-                              docker.image(dockerImage).inside(dockerParams) {
-                                  sh'''
-                                  if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                  mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                                  '''
-                              }
-                            }
-                            break
-
-                        default:
-                            break
-                    }
+                    default:
+                        break
                 }
             }
         }
     }
-    if (SONAR.toBoolean()) {
-        functions.sonar("${PROJECT}")
+        if (SONAR.toBoolean()) {
+            functions.sonar("${PROJECT}")
+        }
     }
-
 }
 /*
     sh "./change-scala-versions.sh 2.11"
