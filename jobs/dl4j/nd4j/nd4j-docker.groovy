@@ -119,7 +119,7 @@ stage("${PROJECT}-build") {
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     #mvn -B -s ${MAVEN_SETTINGS} clean deploy
-                                    mvn -B -s clean deploy ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE}
+                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE}
                                     '''
                                 }
                             }
@@ -137,7 +137,7 @@ stage("${PROJECT}-build") {
                                     gpg --list-keys
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true -DstagingRepositoryId=${STAGE_REPO_ID}
-                                    mvn -B -s clean deploy ${MAVEN_SETTINGS} -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
+                                    mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -Dmaven.test.skip=true
                                     '''
                                 }
                             }
