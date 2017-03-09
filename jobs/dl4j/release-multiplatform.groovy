@@ -50,9 +50,11 @@ properties([
     ]
 ])
 
-env.PDIR = "jobs/dl4j"
 
 node("master") {
+
+    env.PDIR = "jobs/dl4j"
+    
     stage("BuildBaseLibs") {
         parallel (
             "Stream 0 x86_64" : {
@@ -79,32 +81,32 @@ node("master") {
     }
 }
 
-    // stage('RELEASE') {
-    //
-    //   // def isSnapshot = VERSION.endsWith('SNAPSHOT')
-    //
-    //   if(isSnapshot) {
-    //     echo "End of building and publishing of the ${VERSION}"
-    //   }
-    //   else {
-    //     // timeout(time:1, unit:'HOURS') {
-    //     timeout(20) {
-    //         input message:"Approve release of version ${VERSION} ?"
-    //     }
-    //
-    //     // functions.release("${LIBPROJECT}")
-    //     functions.release("${PROJECT}")
-    //     functions.release("${DATAVEC_PROJECT}")
-    //     functions.release("${DEEPLEARNING4J_PROJECT}")
-    //     functions.release("${ARBITER_PROJECT}")
-    //     functions.release("${ND4S_PROJECT}")
-    //     functions.release("${GYM_JAVA_CLIENT_PROJECT}")
-    //     functions.release("${RL4J_PROJECT}")
-    //     functions.release("${SCALNET_PROJECT}")
-    //
-    //   }
-    //
-    // }
-
-    echo 'MARK: end of release-multiplatform.groovy'
-}
+// node("linux-x86_64") {
+//
+//     stage('RELEASE') {
+//
+//       if(isSnapshot) {
+//         echo "End of building and publishing of the ${VERSION}"
+//       }
+//       else {
+//         // timeout(time:1, unit:'HOURS') {
+//         timeout(20) {
+//             input message:"Approve release of version ${VERSION} ?"
+//         }
+//
+//         // functions.release("${LIBPROJECT}")
+//         functions.release("${PROJECT}")
+//         functions.release("${DATAVEC_PROJECT}")
+//         functions.release("${DEEPLEARNING4J_PROJECT}")
+//         functions.release("${ARBITER_PROJECT}")
+//         functions.release("${ND4S_PROJECT}")
+//         functions.release("${GYM_JAVA_CLIENT_PROJECT}")
+//         functions.release("${RL4J_PROJECT}")
+//         functions.release("${SCALNET_PROJECT}")
+//
+//       }
+//
+//     }
+//
+//     echo 'MARK: end of release.groovy'
+// }
