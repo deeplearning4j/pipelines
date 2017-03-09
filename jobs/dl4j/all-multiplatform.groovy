@@ -1,5 +1,3 @@
-env.PDIR = "jobs/dl4j"
-
 properties([
     [$class: "BuildDiscarderProperty",
         strategy: [
@@ -62,13 +60,17 @@ properties([
     ]
 ])
 
-load "${PDIR}/functions.groovy"
 
 node(PLATFORM_NAME) {
+
     echo "Cleanup WS"
     step([$class: 'WsCleanup'])
+
     checkout scm
 
+    env.PDIR = "jobs/dl4j"
+    load "${PDIR}/functions.groovy"
+    
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
@@ -77,11 +79,6 @@ node(PLATFORM_NAME) {
 
     // Set docker image and parameters for current platform
     functions.def_docker()
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // LIBPROJECT building is circumvented in nd4j-docker.groovy
-    // in the resolveDependencies stage
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     stage("${LIBPROJECT}") {
         if ( CBUILD.toBoolean() ) {
@@ -140,7 +137,10 @@ node(PLATFORM_NAME) {
                 input message: "Approve release of version ${VERSION} ?"
             }
 
-            // functions.release("${LIBPROJECT}")
+            if ( CBUILD.toBoolean() ) {
+                functions.release("${LIBPROJECT}")
+            }
+
             functions.release("${PROJECT}")
             functions.release("${DATAVEC_PROJECT}")
             functions.release("${DEEPLEARNING4J_PROJECT}")
@@ -153,9 +153,6 @@ node(PLATFORM_NAME) {
         }
 
     }
-
-    // echo "Cleanup WS"
-    // step([$class: 'WsCleanup'])
 
     echo 'MARK: end of allcc.groovy'
 }
