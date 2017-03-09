@@ -81,6 +81,9 @@ node(PLATFORM_NAME) {
     functions.def_docker()
 
     load "${PDIR}/libs.groovy"
+    def props = readProperties file: "${PDIR}/libs.groovy"
+    println props.getClass
+    echo props
     // println appsList.getClass()
     // def appsList = [
     //     [
