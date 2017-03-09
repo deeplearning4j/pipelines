@@ -3,9 +3,9 @@ stage("${PROJECT}-checkout-sources") {
 }
 
 stage("${PROJECT}-build") {
-    dir("${LIBPROJECT}/blasbuild") {
-        sh("ln -s cuda-${CUDA_VERSION} cuda")
-    }
+    // dir("${LIBPROJECT}/blasbuild") {
+    //     sh("ln -s cuda-${CUDA_VERSION} cuda")
+    // }
 
     dir("${PROJECT}") {
         echo 'Set Project Version'
