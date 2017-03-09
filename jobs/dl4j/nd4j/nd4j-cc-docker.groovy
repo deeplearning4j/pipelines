@@ -1,3 +1,6 @@
+env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
+env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
+
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
