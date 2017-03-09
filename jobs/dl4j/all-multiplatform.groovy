@@ -96,7 +96,7 @@ node(PLATFORM_NAME) {
                 [
                     name: "nd4j",
                     type: "java",
-                    loadFile: "${PDIR}/nd4j/nd4j-docker.groovy"
+                    loadFile: "${PDIR}/nd4j/nd4j-cc-docker.groovy"
                 ],
                 [
                     name: "datavec",
@@ -148,7 +148,7 @@ node(PLATFORM_NAME) {
                 [
                     name: "nd4j",
                     type: "java",
-                    loadFile: "${PDIR}/nd4j/nd4j-docker.groovy"
+                    loadFile: "${PDIR}/nd4j/nd4j-cc-docker.groovy"
                 ]
             ]
         ],
