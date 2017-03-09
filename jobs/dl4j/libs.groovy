@@ -114,4 +114,4 @@ def appsList = [
     ]
 ]
 
-echo appsList.getClass()
+println appsList.getClass()
