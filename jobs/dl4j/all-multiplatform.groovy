@@ -69,7 +69,6 @@ node(PLATFORM_NAME) {
     checkout scm
 
     env.PDIR = "jobs/dl4j"
-    load "${PDIR}/functions.groovy"
 
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
@@ -78,7 +77,7 @@ node(PLATFORM_NAME) {
     functions.rm()
 
     load "${PDIR}/libs.groovy"
-    
+
     // Set docker image and parameters for current platform
     functions.def_docker()
 
