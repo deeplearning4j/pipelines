@@ -52,12 +52,10 @@ stage("${PROJECT}-build") {
 
         final nd4jlibs = [
             [
-                name: "nd4j1",
                 cudaVersion: "7.5",
                 scalaVersion: "2.10"
             ],
                 [
-                name: "nd4j2",
                 cudaVersion: "8.0",
                 scalaVersion: "2.11"
             ]
@@ -69,7 +67,7 @@ stage("${PROJECT}-build") {
             sh("./change-cuda-versions.sh ${lib.cudaVersion}")
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch(PLATFORM_NAME) {
-                    case "linux-x86_64":
+                    case ["linux-x86_64", "linux-ppc64le"]:
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 functions.getGpg()
@@ -87,29 +85,6 @@ stage("${PROJECT}-build") {
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
-                                '''
-                            }
-                        }
-                        break
-
-                    case "linux-ppc64le":
-                        if (TESTS.toBoolean()) {
-                            docker.image(dockerImage).inside(dockerParams) {
-                                functions.getGpg()
-                                sh'''
-                                gpg --list-keys
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
-                                '''
-                            }
-                        }
-                        else {
-                            docker.image(dockerImage).inside(dockerParams) {
-                                functions.getGpg()
-                                sh'''
-                                gpg --list-keys
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=${GpgVAR} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true
                                 '''
                             }
                         }
@@ -147,20 +122,5 @@ stage("${PROJECT}-build") {
         }
     }
 }
-/*
-    sh "./change-scala-versions.sh 2.11"
-    sh "./change-cuda-versions.sh 8.0"
-
-    configFileProvider(
-            [configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')
-            ]) {
-        sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests  ")
-        // sh("'${mvnHome}/bin/mvn' -s ${MAVEN_SETTINGS} clean install -DskipTests  " + "-Denv.LIBND4J_HOME=/var/lib/jenkins/workspace/Pipelines/build_nd4j/libnd4j ")
-    }
-*//*
-
-
-}
-*/
 
 echo 'MARK: end of nd4j.groovy'
