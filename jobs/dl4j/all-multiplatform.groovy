@@ -81,7 +81,7 @@ node(PLATFORM_NAME) {
     functions.def_docker()
 
     load "${PDIR}/libs.groovy"
-    println appsList.getClass()
+    // println appsList.getClass()
     // def appsList = [
     //     [
     //         platfrom: "linux-x86_64",
