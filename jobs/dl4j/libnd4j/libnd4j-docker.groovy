@@ -9,13 +9,7 @@ stage("${LIBPROJECT}-build") {
 
                         sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                        if(SONAR.toBoolean()) {
-                          functions.sonar("${LIBPROJECT}")
-                        }
-
                         functions.def_docker()
-                        // echo dockerImage
-                        // echo dockerParams
 
                         dir("${LIBPROJECT}") {
                             env.TRICK_NVCC = "YES"
@@ -90,15 +84,7 @@ stage("${LIBPROJECT}-build") {
             break
 
         case ["android-arm", "android-x86"]:
-            functions.get_project_code("${LIBPROJECT}")
-
-            if(SONAR.toBoolean()) {
-              functions.sonar("${LIBPROJECT}")
-            }
-
             functions.def_docker()
-            echo dockerImage
-            echo dockerParams
 
             dir("${LIBPROJECT}") {
                 env.TRICK_NVCC = "YES"
@@ -115,5 +101,9 @@ stage("${LIBPROJECT}-build") {
 
         default:
             break
+    }
+
+    if(SONAR.toBoolean()) {
+      functions.sonar("${LIBPROJECT}")
     }
 }

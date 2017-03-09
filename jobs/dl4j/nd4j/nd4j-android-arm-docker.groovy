@@ -30,14 +30,13 @@ node(PLATFORM_NAME) {
     functions.def_docker()
 
     stage("${PROJECT}-checkout-sources") {
-        functions.get_project_code("${LIBPROJECT}")
         functions.get_project_code("${PROJECT}")
     }
 
     stage("${PROJECT}-build") {
         docker.image(dockerImage).inside(dockerParams) {
             sh '''
-            cd libnd4j && ./buildnativeoperations.sh -platform android-arm
+            #cd libnd4j && ./buildnativeoperations.sh -platform android-arm
             cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
             '''
             // stash includes: 'nd4j/', name: 'nd4j-arm'
