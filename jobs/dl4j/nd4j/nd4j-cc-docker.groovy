@@ -8,14 +8,6 @@ stage("${PROJECT}-build") {
     }
 
     dir("${PROJECT}") {
-        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        // Temporary section - please remove once it commited updates to source code
-        // configFileProvider(
-        //         [configFile(fileId: 'MAVEN_POM_DO-192', variable: 'POM_XML')
-        //     ]) {
-        //     sh "cp ${POM_XML} pom.xml"
-        // }
-        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         echo 'Set Project Version'
         //// sh("'mvn' versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=${VERSION}")
         // functions.verset("${VERSION}", true)

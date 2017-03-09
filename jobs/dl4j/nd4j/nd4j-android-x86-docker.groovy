@@ -31,16 +31,16 @@ node(PLATFORM_NAME) {
     functions.def_docker()
 
     stage("${PROJECT}-checkout-sources") {
-        functions.get_project_code("${LIBPROJECT}")
         functions.get_project_code("${PROJECT}")
     }
 
     stage("${PROJECT}-build") {
-        docker.image(dockerImage).inside(dockerParams) {
-            sh '''
-            cd libnd4j && ./buildnativeoperations.sh -platform android-x86
-            cd ../nd4j && mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-            '''
-         }
+        dir("${PROJECT}") {
+            docker.image(dockerImage).inside(dockerParams) {
+                sh '''
+                mvn clean install -Djavacpp.platform=android-x86 -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                '''
+             }
+        }
     }
 }

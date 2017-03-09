@@ -34,13 +34,14 @@ node(PLATFORM_NAME) {
     }
 
     stage("${PROJECT}-build") {
-        docker.image(dockerImage).inside(dockerParams) {
-            sh '''
-            #cd libnd4j && ./buildnativeoperations.sh -platform android-arm
-            cd ../nd4j && mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-            '''
-            // stash includes: 'nd4j/', name: 'nd4j-arm'
-         }
+            dir("${PROJECT}") {
+            docker.image(dockerImage).inside(dockerParams) {
+                sh '''
+                mvn clean install -Djavacpp.platform=android-arm -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                '''
+                // stash includes: 'nd4j/', name: 'nd4j-arm'
+             }
+        }
     }
 }
 
