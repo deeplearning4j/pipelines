@@ -1,6 +1,11 @@
 
  node (PLATFORM_NAME) {
-     echo "Windows nd4j will be here"
+     stage("${PROJECT}-checkout-sources") {
+     }
+
+     stage("${PROJECT}-build") {
+         echo "Windows nd4j will be here"
+    }
     // checkout scm
 
     //load "jobs/dl4j/vars.groovy"

@@ -33,5 +33,7 @@ node (PLATFORM_NAME) {
     // unstash 'cuda75-blasbuild'
     // unstash 'cuda80-blasbuild'
     // unstash 'libnd4j-include'
-    echo "Windows nd4j will be here"
+    stage("${LIBPROJECT}-build") {
+        echo "Windows nd4j will be here"
+    }
 }
