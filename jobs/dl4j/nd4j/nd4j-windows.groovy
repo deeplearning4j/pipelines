@@ -1,5 +1,3 @@
-node ('windows-slave') {
-
     checkout scm
 
     //load "jobs/dl4j/vars.groovy"
@@ -15,4 +13,3 @@ node ('windows-slave') {
         'mvn -s %MAVEN_SETTINGS% clean install -Dmaven.test.skip=true'
         )
     }
-}
