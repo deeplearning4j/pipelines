@@ -6,9 +6,6 @@ stage("${PROJECT}-checkout-sources") {
 }
 
 stage("${PROJECT}-build") {
-    dir("${LIBPROJECT}/blasbuild") {
-        sh("ln -s cuda-${CUDA_VERSION} cuda")
-    }
 
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
@@ -32,6 +29,9 @@ stage("${PROJECT}-build") {
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch(PLATFORM_NAME) {
                     case ["linux-x86_64", "linux-ppc64le"]:
+                        dir("${LIBPROJECT}/blasbuild") {
+                            sh("ln -s cuda-${CUDA_VERSION} cuda")
+                        }
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 functions.getGpg()
