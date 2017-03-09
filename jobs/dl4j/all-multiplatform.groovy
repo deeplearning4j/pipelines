@@ -77,6 +77,8 @@ node(PLATFORM_NAME) {
     // Remove .git folder from workspace
     functions.rm()
 
+    load "${PDIR}/libs.groovy"
+    
     // Set docker image and parameters for current platform
     functions.def_docker()
 
