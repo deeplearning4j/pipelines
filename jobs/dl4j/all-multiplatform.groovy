@@ -86,7 +86,9 @@ node(PLATFORM_NAME) {
     def Var1 = props['appsList']
     echo "Var1=${Var1}"
     println props.getClass()
-    props.each{ k, v -> println "${k}:${v}" }
+    for ( e in props ) {
+        print "key = ${e.key}, value = ${e.value}"
+    }
     // def my_var = evaluate(new File("myEnv.groovy"));
 
     // def appsList = [
