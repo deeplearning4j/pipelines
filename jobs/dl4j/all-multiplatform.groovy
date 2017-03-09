@@ -17,7 +17,7 @@ properties([
             ],
             [$class: "ChoiceParameterDefinition",
                 name: "PLATFORM_NAME",
-                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86",
+                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nwindows",
                 description: "Build project on architecture"
             ],
             [$class: "BooleanParameterDefinition",
@@ -70,7 +70,7 @@ node(PLATFORM_NAME) {
 
     env.PDIR = "jobs/dl4j"
     load "${PDIR}/functions.groovy"
-    
+
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
@@ -80,79 +80,90 @@ node(PLATFORM_NAME) {
     // Set docker image and parameters for current platform
     functions.def_docker()
 
-    stage("${LIBPROJECT}") {
-        if ( CBUILD.toBoolean() ) {
-            load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
-        }
-    }
-
-    stage("${PROJECT}") {
-        if ( CBUILD.toBoolean() ) {
-            load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
-        }
-        else {
-            load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
-        }
-    }
-
-    stage("${DATAVEC_PROJECT}") {
-        load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
-    }
-
-    stage("${DEEPLEARNING4J_PROJECT}") {
-        load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
-    }
-
-    stage("${ARBITER_PROJECT}") {
-        load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
-    }
-
-    stage("${ND4S_PROJECT}") {
-        load "${PDIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
-    }
-
-    stage("${GYM_JAVA_CLIENT_PROJECT}") {
-        load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
-    }
-
-    stage("${RL4J_PROJECT}") {
-        load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
-    }
-
-    // depends on nd4j and deeplearning4j-core
-    stage("${SCALNET_PROJECT}") {
-        load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
-    }
-
-
-    stage('RELEASE') {
-
-        // def isSnapshot = VERSION.endsWith('SNAPSHOT')
-
-        if (isSnapshot) {
-            echo "End of building and publishing of the ${VERSION}"
-        } else {
-            // timeout(time:1, unit:'HOURS') {
-            timeout(20) {
-                input message: "Approve release of version ${VERSION} ?"
+    for (i in appsList) {
+        if ( PLATFORM_NAME == i.platfrom ) {
+            for (app in i.apps) {
+                echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + app.dockerParams
             }
-
-            if ( CBUILD.toBoolean() ) {
-                functions.release("${LIBPROJECT}")
-            }
-
-            functions.release("${PROJECT}")
-            functions.release("${DATAVEC_PROJECT}")
-            functions.release("${DEEPLEARNING4J_PROJECT}")
-            functions.release("${ARBITER_PROJECT}")
-            functions.release("${ND4S_PROJECT}")
-            functions.release("${GYM_JAVA_CLIENT_PROJECT}")
-            functions.release("${RL4J_PROJECT}")
-            functions.release("${SCALNET_PROJECT}")
-
         }
-
     }
 
-    echo 'MARK: end of allcc.groovy'
+
+
+
+    // stage("${LIBPROJECT}") {
+    //     if ( CBUILD.toBoolean() ) {
+    //         load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
+    //     }
+    // }
+    //
+    // stage("${PROJECT}") {
+    //     if ( CBUILD.toBoolean() ) {
+    //         load "${PDIR}/${PROJECT}/${PROJECT}-cc-docker.groovy"
+    //     }
+    //     else {
+    //         load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
+    //     }
+    // }
+    //
+    // stage("${DATAVEC_PROJECT}") {
+    //     load "${PDIR}/${DATAVEC_PROJECT}/${DATAVEC_PROJECT}-docker.groovy"
+    // }
+    //
+    // stage("${DEEPLEARNING4J_PROJECT}") {
+    //     load "${PDIR}/${DEEPLEARNING4J_PROJECT}/${DEEPLEARNING4J_PROJECT}-docker.groovy"
+    // }
+    //
+    // stage("${ARBITER_PROJECT}") {
+    //     load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
+    // }
+    //
+    // stage("${ND4S_PROJECT}") {
+    //     load "${PDIR}/${ND4S_PROJECT}/${ND4S_PROJECT}-docker.groovy"
+    // }
+    //
+    // stage("${GYM_JAVA_CLIENT_PROJECT}") {
+    //     load "${PDIR}/${GYM_JAVA_CLIENT_PROJECT}/${GYM_JAVA_CLIENT_PROJECT}-docker.groovy"
+    // }
+    //
+    // stage("${RL4J_PROJECT}") {
+    //     load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
+    // }
+    //
+    // // depends on nd4j and deeplearning4j-core
+    // stage("${SCALNET_PROJECT}") {
+    //     load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
+    // }
+    //
+    //
+    // stage('RELEASE') {
+    //
+    //     // def isSnapshot = VERSION.endsWith('SNAPSHOT')
+    //
+    //     if (isSnapshot) {
+    //         echo "End of building and publishing of the ${VERSION}"
+    //     } else {
+    //         // timeout(time:1, unit:'HOURS') {
+    //         timeout(20) {
+    //             input message: "Approve release of version ${VERSION} ?"
+    //         }
+    //
+    //         if ( CBUILD.toBoolean() ) {
+    //             functions.release("${LIBPROJECT}")
+    //         }
+    //
+    //         functions.release("${PROJECT}")
+    //         functions.release("${DATAVEC_PROJECT}")
+    //         functions.release("${DEEPLEARNING4J_PROJECT}")
+    //         functions.release("${ARBITER_PROJECT}")
+    //         functions.release("${ND4S_PROJECT}")
+    //         functions.release("${GYM_JAVA_CLIENT_PROJECT}")
+    //         functions.release("${RL4J_PROJECT}")
+    //         functions.release("${SCALNET_PROJECT}")
+    //
+    //     }
+    //
+    // }
+
+    echo 'MARK: end of all-multiplatfrom.groovy'
 }
