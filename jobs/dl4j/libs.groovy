@@ -113,3 +113,5 @@ def appsList = [
         ]
     ]
 ]
+
+echo appsList.getClass()
