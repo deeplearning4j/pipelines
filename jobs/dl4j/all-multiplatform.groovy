@@ -175,6 +175,11 @@ node(PLATFORM_NAME) {
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw",
             apps: [
                 [
+                    name: "libnd4j",
+                    type: "c",
+                    loadFile: "${PDIR}/libnd4j/libnd4j-docker.groovy"
+                ],
+                [
                     name: "nd4j",
                     type: "java",
                     loadFile: "${PDIR}/nd4j/nd4j-android-x86-docker.groovy"
