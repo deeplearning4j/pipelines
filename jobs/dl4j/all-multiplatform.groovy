@@ -200,7 +200,7 @@ node(PLATFORM_NAME) {
     for (i in appsList) {
         if ( PLATFORM_NAME == i.platfrom ) {
             for (app in i.apps) {
-                echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + app.dockerParams
+                echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
             }
         }
     }

@@ -53,6 +53,10 @@ def def_docker() {
         sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
         break
 
+    case ["windows"]:
+        echo "Running on windows, skipping docker part"
+        break
+
     default:
       error("Platform name is not defined or unsupported")
       break
