@@ -40,23 +40,23 @@ node(PLATFORM_NAME) {
     //functions.def_docker()
 
     stage("${PROJECT}") {
-        load "${PDIR}/${PROJECT}/nd4j-windows.groovy"
+      load "${PDIR}/${PROJECT}/${PROJECT}-windows.groovy"
     }
 
     stage('RELEASE') {
-        // def isSnapshot = VERSION.endsWith('SNAPSHOT')
+      // def isSnapshot = VERSION.endsWith('SNAPSHOT')
 
-        if(isSnapshot) {
-            echo "End of building and publishing of the ${PROJECT}-${VERSION}"
+      if(isSnapshot) {
+        echo "End of building and publishing of the ${PROJECT}-${VERSION}"
+      }
+      else {
+        // timeout(time:1, unit:'HOURS') {
+        timeout(20) {
+            input message:"Approve release of version ${PROJECT}-${VERSION} ?"
         }
-        else {
-            // timeout(time:1, unit:'HOURS') {
-            timeout(20) {
-                input message:"Approve release of version ${PROJECT}-${VERSION} ?"
-            }
 
-            functions.release("${PROJECT}")
-        }
+        functions.release("${PROJECT}")
+      }
 
     }
 
