@@ -54,7 +54,7 @@ properties([
 node("master") {
 
     env.PDIR = "jobs/dl4j"
-    
+
     stage("BuildBaseLibs") {
         parallel (
             "Stream 0 x86_64" : {
@@ -73,7 +73,7 @@ node("master") {
                 build job: 'devel/dl4j/dl4j-release-multiplatform', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
             },
-            "Stream 4 android-arm" : {
+            "Stream 4 windows" : {
                 build job: 'devel/dl4j/dl4j-release-multiplatform', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows"]]
             }
