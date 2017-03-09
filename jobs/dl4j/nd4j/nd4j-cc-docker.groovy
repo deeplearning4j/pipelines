@@ -60,7 +60,8 @@ stage("${PROJECT}-build") {
                               functions.getGpg()
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=${GpgVAR} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                               '''
                           }
                         }
@@ -69,7 +70,8 @@ stage("${PROJECT}-build") {
                               functions.getGpg()
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                               '''
                           }
                         }
