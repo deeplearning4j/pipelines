@@ -85,6 +85,7 @@ node(PLATFORM_NAME) {
     def props = readProperties file: "${PDIR}/libs.groovy"
     def Var1 = props['appsList']
     echo "Var1=${Var1}"
+    println props.getClass()
     // def my_var = evaluate(new File("myEnv.groovy"));
 
     // def appsList = [
