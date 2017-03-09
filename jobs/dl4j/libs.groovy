@@ -1,4 +1,4 @@
-def appsList = [
+// def appsList = [
     [
         platfrom: "linux-x86_64",
         dockerImage: "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
@@ -112,6 +112,6 @@ def appsList = [
             ]
         ]
     ]
-]
+// ]
 
-println appsList.getClass()
+// println appsList.getClass()

@@ -80,10 +80,10 @@ node(PLATFORM_NAME) {
     // Set docker image and parameters for current platform
     functions.def_docker()
 
-    load "${PDIR}/libs.groovy"
-    def props = readProperties file: "${PDIR}/libs.groovy"
-    println props.getClass
-    echo props
+    // load "${PDIR}/libs.groovy"
+    def appsList = readProperties file: "${PDIR}/libs.groovy"
+    println appsList.getClass
+    echo appsList
     // println appsList.getClass()
     // def appsList = [
     //     [
