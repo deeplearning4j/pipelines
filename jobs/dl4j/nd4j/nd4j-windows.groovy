@@ -1,4 +1,4 @@
-node ('windows-slave') {
+node ('azure-win') {
 
     checkout scm
 
