@@ -205,10 +205,10 @@ node(PLATFORM_NAME) {
 
     for (i in appsList) {
         if ( PLATFORM_NAME == i.platfrom ) {
-            sh ("mkdir -p ${i.jenkinsStorage}/docker_m2 ${i.jenkinsStorage}/docker_ivy2")
             for (app in i.apps) {
                 echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                 stage(app.name) {
+                    functions.def_docker(i, app)
                     load app.loadFile
                 }
             }
