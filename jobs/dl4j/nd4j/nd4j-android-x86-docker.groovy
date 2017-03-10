@@ -15,7 +15,7 @@ properties([
 
 node(PLATFORM_NAME) {
 
-    step([$class: 'WsCleanup'])
+    // step([$class: 'WsCleanup'])
     checkout scm
 
     echo "Load variables"
