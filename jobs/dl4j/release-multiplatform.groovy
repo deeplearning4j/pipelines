@@ -52,11 +52,11 @@ node("master") {
 
     stage("Build-multiplatform-parallel") {
         parallel (
-            "Stream 0 x86_64" : {
+            "Stream 0 linux-x86_64" : {
                 build job: 'devel/dl4j/all-deeplearning4j-linux-x86_64', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
             },
-            "Stream 1 ppc64le" : {
+            "Stream 1 linux-ppc64le" : {
                 build job: 'devel/dl4j/all-deeplearning4j-linux-ppc64le', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
             },
