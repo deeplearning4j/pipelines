@@ -17,7 +17,7 @@ properties([
             ],
             [$class: "ChoiceParameterDefinition",
                 name: "PLATFORM_NAME",
-                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nwindows-x86_64",
+                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nmacosx\nwindows-x86_64",
                 description: "Build project on architecture"
             ],
             [$class: "BooleanParameterDefinition",
@@ -170,6 +170,21 @@ node(PLATFORM_NAME) {
                     name: "nd4j",
                     type: "java",
                     loadFile: "${PDIR}/nd4j/nd4j-cc-docker.groovy"
+                ]
+            ]
+        ],
+        [
+            platfrom: "macosx",
+            apps: [
+                [
+                    name: "libnd4j",
+                    type: "c",
+                    loadFile: "${PDIR}/libnd4j/libnd4j-macosx.groovy"
+                ],
+                [
+                    name: "nd4j",
+                    type: "java",
+                    loadFile: "${PDIR}/nd4j/nd4j-macosx.groovy"
                 ]
             ]
         ],
