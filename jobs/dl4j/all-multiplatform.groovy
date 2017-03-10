@@ -69,7 +69,7 @@ node(PLATFORM_NAME) {
 
     env.PDIR = "jobs/dl4j"
     load "${PDIR}/vars.groovy"
-    functions = load "${PDIR}/functions.groovy"
+
 
     def appsList = [
         [
@@ -229,7 +229,7 @@ node(PLATFORM_NAME) {
         }
     }
 
-
+    functions = load "${PDIR}/functions.groovy"
 
 
     // stage("${LIBPROJECT}") {
