@@ -29,7 +29,7 @@ stage("${PROJECT}-build") {
                         echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
                         sh("./change-scala-versions.sh ${lib.scalaVersion}")
                         sh("./change-cuda-versions.sh ${lib.cudaVersion}")
-                        dir("${LIBPROJECT}/blasbuild") {
+                        dir("${WORKSPACE}/${LIBPROJECT}/blasbuild") {
                             sh("ln -s cuda-${CUDA_VERSION} cuda")
                         }
                         if (TESTS.toBoolean()) {
