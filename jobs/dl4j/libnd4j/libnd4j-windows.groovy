@@ -25,7 +25,7 @@ parallel (
             stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
         }    
     }
-    )
+)
 
 unstash 'cpu-blasbuild'
 unstash 'cuda75-blasbuild'
