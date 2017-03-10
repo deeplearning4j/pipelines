@@ -60,27 +60,7 @@ properties([
     ]
 ])
 
-
 node(PLATFORM_NAME) {
-
-    echo "Cleanup WS"
-    step([$class: 'WsCleanup'])
-
-    checkout scm
-
-    env.PDIR = "jobs/dl4j"
-
-    load "${PDIR}/vars.groovy"
-    functions = load "${PDIR}/functions.groovy"
-
-    // Remove .git folder from workspace
-    functions.rm()
-
-
-    // Set docker image and parameters for current platform
-    functions.def_docker()
-
-    // load "${PDIR}/libs.groovy"
 
     def appsList = [
         [
@@ -202,6 +182,22 @@ node(PLATFORM_NAME) {
             ]
         ]
     ]
+
+    echo "Cleanup WS"
+    step([$class: 'WsCleanup'])
+
+    checkout scm
+
+    env.PDIR = "jobs/dl4j"
+
+    load "${PDIR}/vars.groovy"
+    functions = load "${PDIR}/functions.groovy"
+
+    // Remove .git folder from workspace
+    functions.rm()
+
+    // Set docker image and parameters for current platform
+    // functions.def_docker()
 
     for (i in appsList) {
         if ( PLATFORM_NAME == i.platfrom ) {

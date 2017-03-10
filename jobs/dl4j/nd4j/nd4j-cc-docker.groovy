@@ -57,7 +57,7 @@ stage("${PROJECT}-build") {
 
                 case ["android-arm", "android-x86"]:
                     if (TESTS.toBoolean()) {
-                      docker.image(dockerImage).inside(dockerParams) {
+                      docker.image(app.dockerImage).inside(app.dockerParams) {
                           functions.getGpg()
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -66,7 +66,7 @@ stage("${PROJECT}-build") {
                       }
                     }
                     else {
-                      docker.image(dockerImage).inside(dockerParams) {
+                      docker.image(app.dockerImage).inside(app.dockerParams) {
                           functions.getGpg()
                           sh'''
                           if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
