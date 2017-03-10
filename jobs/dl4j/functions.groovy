@@ -33,35 +33,35 @@ def dirm2() {
   sh ("mkdir -p ${WORKSPACE}/.m2 #/var/lib/jenkins/tools/docker_m2 /var/lib/jenkins/tools/docker_ivy2")
 }
 
-def def_docker() {
-  echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-  switch(PLATFORM_NAME) {
-    case "linux-ppc64le":
-      dockerImage = "${DOCKER_CUDA_PPC}"
-      dockerParams = dockerParams_ppc
-      sh ("mkdir -p ${JENKINS_M2DIR_PPC64LE} ${JENKINS_SBTDIR_PPC64LE}")
-      break
-
-    case "linux-x86_64":
-      dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
-      dockerParams = dockerParams_nvidia
-      sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
-      break
-
-    case ["android-arm", "android-x86"]:
-        dockerImage = "${DOCKER_ANDROID_IMAGE}"
-        sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
-        break
-
-    case ["windows-x86_64"]:
-        echo "Running on windows, skipping docker part"
-        break
-
-    default:
-      error("Platform name is not defined or unsupported")
-      break
-  }
-}
+// def def_docker() {
+//   echo "Setting docker parameters and image for ${PLATFORM_NAME}"
+//   switch(PLATFORM_NAME) {
+//     case "linux-ppc64le":
+//       dockerImage = "${DOCKER_CUDA_PPC}"
+//       dockerParams = dockerParams_ppc
+//       sh ("mkdir -p ${JENKINS_M2DIR_PPC64LE} ${JENKINS_SBTDIR_PPC64LE}")
+//       break
+//
+//     case "linux-x86_64":
+//       dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
+//       dockerParams = dockerParams_nvidia
+//       sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
+//       break
+//
+//     case ["android-arm", "android-x86"]:
+//         dockerImage = "${DOCKER_ANDROID_IMAGE}"
+//         sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
+//         break
+//
+//     case ["windows-x86_64"]:
+//         echo "Running on windows, skipping docker part"
+//         break
+//
+//     default:
+//       error("Platform name is not defined or unsupported")
+//       break
+//   }
+// }
 
 def sonar(proj) {
   echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
