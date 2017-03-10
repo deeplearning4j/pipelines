@@ -71,7 +71,7 @@ stage("${PROJECT}-build") {
                               sh'''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                               '''
                           }
                         }
