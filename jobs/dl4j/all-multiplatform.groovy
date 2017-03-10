@@ -165,7 +165,7 @@ node(PLATFORM_NAME) {
                 [
                     name: "nd4j",
                     type: "java",
-                    loadFile: "${PDIR}/nd4j/nd4j-cc-docker.groovy"
+                    loadFile: "${PDIR}/nd4j/nd4j-android-arm-docker.groovy"
                 ]
             ]
         ],
@@ -182,7 +182,7 @@ node(PLATFORM_NAME) {
                 [
                     name: "nd4j",
                     type: "java",
-                    loadFile: "${PDIR}/nd4j/nd4j-cc-docker.groovy"
+                    loadFile: "${PDIR}/nd4j/nd4j-android-x86-docker.groovy"
                 ]
             ]
         ],
