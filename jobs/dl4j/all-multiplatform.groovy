@@ -51,11 +51,11 @@ properties([
                 choices: "nexus\njfrog\nbintray\nsonatype",
                 description: "Profile type"
             ],
-            // [$class: "BooleanParameterDefinition",
-            //     name: "CBUILD",
-            //     defaultValue: false,
-            //     description: "Select to build libnd4j"
-            // ]
+            [$class: "BooleanParameterDefinition",
+                name: "CBUILD",
+                defaultValue: true,
+                description: "Select to build libnd4j"
+            ]
         ]
     ]
 ])
