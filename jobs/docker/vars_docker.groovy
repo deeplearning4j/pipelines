@@ -15,7 +15,7 @@ images = [
         parentImage: "nvidia/cuda:8.0-cudnn5-devel-centos6"
     ],
     [
-        name: "ubuntu14-ppc64le",
+        name: "ubuntu14sppc64le",
         dockerNode: "linux-ppc64le",
         registry: dockerRegistry,
         parentImage: "ppc64le/ubuntu:14.04"
