@@ -83,6 +83,7 @@ stage("${LIBPROJECT}-build") {
                         ./buildnativeoperations.sh -platform ${PLATFORM_NAME}
                         tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar blasbuild
                         mvn deploy:deploy-file \
+                        -Durl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots \
                         -DgroupId=org.nd4j \
                         -DartifactId=${LIBPROJECT} \
                         -Dversion=${VERSION} \
@@ -98,16 +99,6 @@ stage("${LIBPROJECT}-build") {
             default:
                 break
         }
-                        // -Durl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots \
-        mvn deploy:deploy-file \
-            -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots \
-            -DgroupId=org.nd4j \
-            -DartifactId=${LIBPROJECT} \
-            -Dversion=${VERSION}  \
-            -Dpackaging=tar \
-            -DrepositoryId=local-nexus \
-            -Dclassifier=${PLATFORM_NAME}\
-            -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
 
         if(SONAR.toBoolean()) {
           functions.sonar("${LIBPROJECT}")
