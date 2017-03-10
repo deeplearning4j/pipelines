@@ -211,6 +211,8 @@ node(PLATFORM_NAME) {
         ]
     ]
 
+    functions = load "${PDIR}/functions.groovy"
+
     // Remove .git folder from workspace
     functions.rm()
 
@@ -228,8 +230,6 @@ node(PLATFORM_NAME) {
             }
         }
     }
-
-    functions = load "${PDIR}/functions.groovy"
 
 
     // stage("${LIBPROJECT}") {
