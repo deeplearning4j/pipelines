@@ -33,9 +33,9 @@ def dirm2() {
   sh ("mkdir -p ${WORKSPACE}/.m2 #/var/lib/jenkins/tools/docker_m2 /var/lib/jenkins/tools/docker_ivy2")
 }
 
-def def_docker(i, app) {
+def def_docker(xi, xapp) {
   echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-  sh ("mkdir -p ${i.jenkinsStorage}/docker_m2 ${i.jenkinsStorage}/docker_ivy2")
+  sh ("mkdir -p ${xi.jenkinsStorage}/docker_m2 ${xi.jenkinsStorage}/docker_ivy2")
   switch(PLATFORM_NAME) {
     case "linux-ppc64le":
       dockerImage = "${DOCKER_CUDA_PPC}"
@@ -50,8 +50,8 @@ def def_docker(i, app) {
       break
 
     case ["android-arm", "android-x86"]:
-        dockerImage = app.dockerImage
-        dockerParams = app.dockerParams
+        dockerImage = xapp.dockerImage
+        dockerParams = xapp.dockerParams
         // dockerImage = "${DOCKER_ANDROID_IMAGE}"
         // sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
         break
