@@ -208,7 +208,7 @@ node(PLATFORM_NAME) {
             for (app in i.apps) {
                 echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                 stage(app.name) {
-                    functions.def_docker("${i}")
+                    functions.def_docker()
                     load app.loadFile
                 }
             }
