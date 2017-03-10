@@ -38,6 +38,10 @@ node (PLATFORM_NAME) {
 
     // Set docker image and parameters for current platform
     //functions.def_docker()
+    
+    stage("${LIBPROJECT}" {
+      load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-windows.groovy"
+    }
 
     stage("${PROJECT}") {
       load "${PDIR}/${PROJECT}/${PROJECT}-windows.groovy"
