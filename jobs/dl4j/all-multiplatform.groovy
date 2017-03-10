@@ -292,4 +292,4 @@ node(PLATFORM_NAME) {
     // }
 
     echo 'MARK: end of all-multiplatfrom.groovy'
-}()
+}

@@ -1,4 +1,4 @@
-{ ->
+// { ->
     stage("${LIBPROJECT}-build") {
         sh("env")
         functions.get_project_code("${LIBPROJECT}")
@@ -108,4 +108,4 @@
           functions.sonar("${LIBPROJECT}")
         }
     }
-}
+// }
