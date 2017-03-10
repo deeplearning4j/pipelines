@@ -67,7 +67,7 @@ node(PLATFORM_NAME) {
 
     def appsList = [
         [
-            platfrom: "linux-x86_64",
+            platform: "linux-x86_64",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw  -v ${JENKINS_SBTDIR_AMD64}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro",
             jenkinsStorage: "/var/lib/jenkins/storage",
@@ -120,7 +120,7 @@ node(PLATFORM_NAME) {
             ]
         ],
         [
-            platfrom: "linux-ppc64le",
+            platform: "linux-ppc64le",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_PPC64LE}:/home/jenkins/.m2:rw",
             jenkinsStorage: "/srv/jenkins/storage",
@@ -138,7 +138,7 @@ node(PLATFORM_NAME) {
             ]
         ],
         [
-            platfrom: "android-arm",
+            platform: "android-arm",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/android:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw",
             jenkinsStorage: "/var/lib/jenkins/storage",
@@ -156,7 +156,7 @@ node(PLATFORM_NAME) {
             ]
         ],
         [
-            platfrom: "android-x86",
+            platform: "android-x86",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/android:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw",
             jenkinsStorage: "/var/lib/jenkins/storage",
@@ -174,32 +174,32 @@ node(PLATFORM_NAME) {
             ]
         ],
         [
-            platfrom: "macosx",
+            platform: "macosx",
             apps: [
                 [
                     name: "libnd4j",
                     type: "c",
-                    loadFile: "${PDIR}/libnd4j/libnd4j-macosx.groovy"
+                    loadFile: "${PDIR}/libnd4j/libnd4j.groovy"
                 ],
                 [
                     name: "nd4j",
                     type: "java",
-                    loadFile: "${PDIR}/nd4j/nd4j-macosx.groovy"
+                    loadFile: "${PDIR}/nd4j/nd4j.groovy"
                 ]
             ]
         ],
         [
-            platfrom: "windows-x86_64",
+            platform: "windows-x86_64",
             apps: [
                 [
                     name: "libnd4j",
                     type: "c",
-                    loadFile: "${PDIR}/libnd4j/libnd4j-windows.groovy"
+                    loadFile: "${PDIR}/libnd4j/libnd4j.groovy"
                 ],
                 [
                     name: "nd4j",
                     type: "java",
-                    loadFile: "${PDIR}/nd4j/nd4j-windows.groovy"
+                    loadFile: "${PDIR}/nd4j/nd4j.groovy"
                 ]
             ]
         ]
@@ -219,7 +219,7 @@ node(PLATFORM_NAME) {
     // functions.def_docker()
 
     for (i in appsList) {
-        if ( PLATFORM_NAME == i.platfrom ) {
+        if ( PLATFORM_NAME == i.platform ) {
             for (app in i.apps) {
                 echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                 stage(app.name) {
@@ -307,5 +307,5 @@ node(PLATFORM_NAME) {
     //
     // }
 
-    echo 'MARK: end of all-multiplatfrom.groovy'
+    echo 'MARK: end of all-multiplatform.groovy'
 }
