@@ -14,20 +14,20 @@
             ]
     ])
 
-        // step([$class: 'WsCleanup'])
-        checkout scm
-
-        echo "Load variables"
-        load "${PDIR}/vars.groovy"
-
-        echo "load functions"
-        functions = load "${PDIR}/functions.groovy"
-
-        // Remove .git folder from workspace
-        functions.rm()
-
-        // Set docker image and parameters for current platform
-        functions.def_docker()
+        // // step([$class: 'WsCleanup'])
+        // checkout scm
+        //
+        // echo "Load variables"
+        // load "${PDIR}/vars.groovy"
+        //
+        // echo "load functions"
+        // functions = load "${PDIR}/functions.groovy"
+        //
+        // // Remove .git folder from workspace
+        // functions.rm()
+        //
+        // // Set docker image and parameters for current platform
+        // functions.def_docker()
 
         stage("${PROJECT}-checkout-sources") {
             functions.get_project_code("${PROJECT}")
