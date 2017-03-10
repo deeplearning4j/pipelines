@@ -209,7 +209,7 @@ node(PLATFORM_NAME) {
                 echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                 stage(app.name) {
                     load app.loadFile
-                }()
+                }
             }
         }
     }
@@ -292,4 +292,4 @@ node(PLATFORM_NAME) {
     // }
 
     echo 'MARK: end of all-multiplatfrom.groovy'
-}
+}()
