@@ -1,4 +1,4 @@
-node("windows-slave") {
+node("windows-x86_64") {
 
     properties([
             [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],

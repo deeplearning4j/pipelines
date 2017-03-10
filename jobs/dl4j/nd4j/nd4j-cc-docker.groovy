@@ -11,24 +11,24 @@ stage("${PROJECT}-build") {
         functions.verset("${VERSION}", true)
         env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
 
-        final nd4jlibs = [
-            [
-                cudaVersion: "7.5",
-                scalaVersion: "2.10"
-            ],
-                [
-                cudaVersion: "8.0",
-                scalaVersion: "2.11"
-            ]
-        ]
+        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+            switch(PLATFORM_NAME) {
+                case ["linux-x86_64", "linux-ppc64le"]:
+                    final nd4jlibs = [
+                        [
+                        cudaVersion: "7.5",
+                        scalaVersion: "2.10"
+                        ],
+                        [
+                        cudaVersion: "8.0",
+                        scalaVersion: "2.11"
+                        ]
+                    ]
 
-        for (lib in nd4jlibs) {
-            echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
-            sh("./change-scala-versions.sh ${lib.scalaVersion}")
-            sh("./change-cuda-versions.sh ${lib.cudaVersion}")
-            configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                switch(PLATFORM_NAME) {
-                    case ["linux-x86_64", "linux-ppc64le"]:
+                    for (lib in nd4jlibs) {
+                        echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
+                        sh("./change-scala-versions.sh ${lib.scalaVersion}")
+                        sh("./change-cuda-versions.sh ${lib.cudaVersion}")
                         dir("${LIBPROJECT}/blasbuild") {
                             sh("ln -s cuda-${CUDA_VERSION} cuda")
                         }
@@ -52,34 +52,34 @@ stage("${PROJECT}-build") {
                                 '''
                             }
                         }
-                        break
+                    }
+                    break
 
-                    case ["android-arm", "android-x86"]:
-                        if (TESTS.toBoolean()) {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              functions.getGpg()
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=${GpgVAR} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              '''
-                          }
-                        }
-                        else {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              functions.getGpg()
-                              sh'''
-                              if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
-                              '''
-                          }
-                        }
-                        break
+                case ["android-arm", "android-x86"]:
+                    if (TESTS.toBoolean()) {
+                      docker.image(dockerImage).inside(dockerParams) {
+                          functions.getGpg()
+                          sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          #mvn -B -s ${MAVEN_SETTINGS} clean deploy -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DperformRelease=${GpgVAR} -DstagingRepositoryId=${STAGE_REPO_ID} -Dmaven.test.skip=true -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          '''
+                      }
+                    }
+                    else {
+                      docker.image(dockerImage).inside(dockerParams) {
+                          functions.getGpg()
+                          sh'''
+                          if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                          #mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          mvn clean install -B -Djavacpp.platform=${PLATFORM_NAME} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                          '''
+                      }
+                    }
+                    break
 
-                    default:
-                        break
-                }
+                default:
+                    break
             }
         }
 

@@ -53,7 +53,7 @@ def def_docker() {
         sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
         break
 
-    case ["windows"]:
+    case ["windows-x86_64"]:
         echo "Running on windows, skipping docker part"
         break
 

@@ -98,7 +98,7 @@ appsList = [
         ]
     ],
     [
-        platfrom: "windows",
+        platfrom: "windows-x86_64",
         apps: [
             [
                 name: "libnd4j",
