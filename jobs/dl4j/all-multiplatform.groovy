@@ -62,8 +62,14 @@ properties([
 
 node(PLATFORM_NAME) {
 
+    echo "Cleanup WS"
+    step([$class: 'WsCleanup'])
+
+    checkout scm
+
     env.PDIR = "jobs/dl4j"
     load "${PDIR}/vars.groovy"
+    functions = load "${PDIR}/functions.groovy"
 
     def appsList = [
         [
@@ -204,13 +210,6 @@ node(PLATFORM_NAME) {
             ]
         ]
     ]
-
-    echo "Cleanup WS"
-    step([$class: 'WsCleanup'])
-
-    checkout scm
-
-    functions = load "${PDIR}/functions.groovy"
 
     // Remove .git folder from workspace
     functions.rm()
