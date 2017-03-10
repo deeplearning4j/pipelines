@@ -62,8 +62,9 @@ properties([
 
 node(PLATFORM_NAME) {
 
+    env.PDIR = "jobs/dl4j"
     load "${PDIR}/vars.groovy"
-    
+
     def appsList = [
         [
             platfrom: "linux-x86_64",
