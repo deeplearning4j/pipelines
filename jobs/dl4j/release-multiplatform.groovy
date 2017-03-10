@@ -68,9 +68,9 @@ node("master") {
                 build job: 'devel/dl4j/all-deeplearning4j-android-arm', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
             },
-            "Stream 4 windows" : {
-                build job: 'devel/dl4j/all-deeplearning4j-windows', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows"]]
+            "Stream 4 windows-x86_64" : {
+                build job: 'devel/dl4j/all-deeplearning4j-windows-x86_64', parameters:
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows-x86_64"]]
             }
         )
     }

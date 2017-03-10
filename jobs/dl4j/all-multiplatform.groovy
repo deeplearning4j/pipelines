@@ -17,7 +17,7 @@ properties([
             ],
             [$class: "ChoiceParameterDefinition",
                 name: "PLATFORM_NAME",
-                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nwindows",
+                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nwindows-x86_64",
                 description: "Build project on architecture"
             ],
             [$class: "BooleanParameterDefinition",
@@ -187,7 +187,7 @@ node(PLATFORM_NAME) {
             ]
         ],
         [
-            platfrom: "windows",
+            platfrom: "windows-x86_64",
             apps: [
                 [
                     name: "libnd4j",
