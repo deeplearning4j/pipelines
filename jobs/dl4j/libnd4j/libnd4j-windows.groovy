@@ -1,4 +1,4 @@
-dir("${LIBPROJECT") {
+dir("${LIBPROJECT}") {
     parallel (
         "Stream 1 Build CPU" : {
             dir("stream1") {
