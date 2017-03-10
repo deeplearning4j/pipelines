@@ -16,8 +16,8 @@ node {
         def xname = image.name
         def xregistry = image.registry
         def parent = image.parentImage
-        println image.dockerNode + " " + image.name
-        println label + " " + xname
+        echo image.dockerNode + " " + image.name
+        echo label + " " + xname
         builders[xname] = {
             node(label) {
                 stage ("Build " + xname) {
