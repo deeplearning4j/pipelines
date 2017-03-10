@@ -82,7 +82,7 @@ stage("${LIBPROJECT}-build") {
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                         ./buildnativeoperations.sh -platform ${PLATFORM_NAME}
                         tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar blasbuild
-                        mvn deploy:deploy-file -Durl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots -DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar -DrepositoryId=local-nexus -Dclassifier=${PLATFORM_NAME} -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
+                        mvn deploy:deploy-file -Durl=http\://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots -DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar -DrepositoryId=local-nexus -Dclassifier=${PLATFORM_NAME} -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
                         '''
                     }
                 }
