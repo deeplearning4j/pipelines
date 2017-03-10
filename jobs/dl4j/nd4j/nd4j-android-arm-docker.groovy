@@ -14,8 +14,6 @@
             ]
     ])
 
-    node(PLATFORM_NAME) {
-
         // step([$class: 'WsCleanup'])
         checkout scm
 
@@ -44,7 +42,6 @@
                  }
             }
         }
-    }
 
     // node("linux-x86_64") {
     //     stage("unstash android artifacts") {
