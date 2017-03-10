@@ -1,6 +1,6 @@
 stage("${LIBPROJECT}-build") {
     sh("env")
-    if(SONAR.toBoolean()) {
+    if(CBUILD.toBoolean()) {
         functions.get_project_code("${LIBPROJECT}")
         switch(PLATFORM_NAME) {
             case ["linux-x86_64", "linux-ppc64le"]:
@@ -95,6 +95,41 @@ stage("${LIBPROJECT}-build") {
         }
     }
     else {
-        echo "Get libnd4j"
+        env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
+        env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
+
+        dir("${LIBPROJECT}") {
+            sh("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
+        }
+        def varResultCountFile = readFile("${WORKSPACE}/resultCountFile").toInteger()
+        echo varResultCountFile.toString()
+
+        if (varResultCountFile == 0) {
+            functions.get_project_code("${LIBPROJECT}")
+
+            stage("${PROJECT}-resolve-dependencies") {
+
+                dir("${LIBPROJECT}") {
+                    if ( PLATFORM_NAME == "linux-ppc64le" ) {
+                        sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
+                    } else {
+                            docker.image(dockerImage).inside(dockerParams) {
+                                configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                            /**
+                             * HI MAN - this is HARD CODE for URL
+                             */
+                                sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                                        " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
+                                        " -Dtransitive=false \\\n" +
+                                        " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
+                                //
+                                sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
+                                sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
