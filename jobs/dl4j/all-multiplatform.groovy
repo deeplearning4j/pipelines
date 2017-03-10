@@ -62,6 +62,8 @@ properties([
 
 node(PLATFORM_NAME) {
 
+    load "${PDIR}/vars.groovy"
+    
     def appsList = [
         [
             platfrom: "linux-x86_64",
@@ -188,9 +190,6 @@ node(PLATFORM_NAME) {
 
     checkout scm
 
-    env.PDIR = "jobs/dl4j"
-
-    load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
     // Remove .git folder from workspace
