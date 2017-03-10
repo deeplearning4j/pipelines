@@ -10,7 +10,7 @@
 
                             sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                            functions.def_docker()
+                            // functions.def_docker()
 
                             dir("${LIBPROJECT}") {
                                 env.TRICK_NVCC = "YES"
@@ -32,7 +32,7 @@
 
                             sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                            functions.def_docker()
+                            // functions.def_docker()
 
                             dir("${LIBPROJECT}") {
                                 env.TRICK_NVCC = "YES"
@@ -55,7 +55,7 @@
 
                             sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                            functions.def_docker()
+                            // functions.def_docker()
 
                             dir("${LIBPROJECT}") {
                                 env.TRICK_NVCC = "YES"
@@ -85,7 +85,7 @@
                 break
 
             case ["android-arm", "android-x86"]:
-                functions.def_docker()
+                // functions.def_docker()
 
                 dir("${LIBPROJECT}") {
                     env.TRICK_NVCC = "YES"
