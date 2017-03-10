@@ -21,7 +21,7 @@ images = [
     //     parentImage: "maven:latest"
     // ],
     [
-        name: "ubuntu14ppc64le",
+        name: "ubuntu14-ppc64le",
         dockerNode: "linux-ppc64le",
         registry: dockerRegistry,
         parentImage: "ppc64le/ubuntu:14.04"
