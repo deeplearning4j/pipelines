@@ -55,27 +55,27 @@ node("master") {
             "Stream 0 linux-x86_64" : {
                 build job: 'devel/dl4j/all-deeplearning4j-linux-x86_64', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"],
-                    [$class: 'StringParameterValue', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
+                    [$class: 'BooleanParameterDefinition', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
             },
             "Stream 1 linux-ppc64le" : {
                 build job: 'devel/dl4j/all-deeplearning4j-linux-ppc64le', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"],
-                    [$class: 'StringParameterValue', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
+                    [$class: 'BooleanParameterDefinition', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
             },
             "Stream 2 android-x86" : {
                 build job: 'devel/dl4j/all-deeplearning4j-android-x86', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"],
-                    [$class: 'StringParameterValue', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
+                    [$class: 'BooleanParameterDefinition', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
              },
             "Stream 3 android-arm" : {
                 build job: 'devel/dl4j/all-deeplearning4j-android-arm', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"],
-                    [$class: 'StringParameterValue', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
+                    [$class: 'BooleanParameterDefinition', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
             },
             "Stream 4 windows-x86_64" : {
                 build job: 'devel/dl4j/all-deeplearning4j-windows-x86_64', parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows-x86_64"],
-                    [$class: 'StringParameterValue', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
+                    [$class: 'BooleanParameterDefinition', name:'CBUILD', value: Boolean.valueOf(CBUILD)]]
             }
         )
     }
