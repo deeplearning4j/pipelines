@@ -50,7 +50,7 @@ node("master") {
 
     env.PDIR = "jobs/dl4j"
 
-    stage("BuildBaseLibs") {
+    stage("Build-multiplatform-parallel") {
         parallel (
             "Stream 0 x86_64" : {
                 build job: 'devel/dl4j/all-deeplearning4j-linux-x86_64', parameters:
