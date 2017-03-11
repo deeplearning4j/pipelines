@@ -41,8 +41,8 @@ stage("build javacpp") {
 
           break
     }
+  }
 }
-
 
 
 stage("${LIBPROJECT}-build") {
