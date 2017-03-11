@@ -15,34 +15,34 @@ stage("${LIBPROJECT}-checkout-sources") {
 }
 
 stage("build javacpp") {
-    // configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-        switch (PLATFORM_NAME) {
-            case "macosx":
-                dir('javacpp') {
-                  sh '''
-                  mvn -B clean install -DskipTests -Dmaven.javadoc.skip=true
-                  '''
-                }
+  configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+    switch (PLATFORM_NAME) {
+        case "macosx":
+            dir('javacpp') {
+              sh '''
+              mvn -B clean install -DskipTests -Dmaven.javadoc.skip=true
+              '''
+            }
 
-              break
-            case "windows-x86_64":
-                dir('javacpp') {
-                  bat (
-                      'vcvars64.bat' +
-                      '&&' +
-                      'mvn -s clean install -DskipTests -Dmaven.javadoc.skip=true'
-                  )
-                }
+          break
+        case "windows-x86_64":
+            dir('javacpp') {
+              bat (
+                  'vcvars64.bat' +
+                  '&&' +
+                  'mvn -s clean install -DskipTests -Dmaven.javadoc.skip=true'
+              )
+            }
 
-              break
+          break
 
-            default:
-              error("Platform name - ${PLATFORM_NAME} is not defined or unsupported")
+        default:
+          error("Platform name - ${PLATFORM_NAME} is not defined or unsupported")
 
-              break
-        }
+          break
     }
 }
+
 
 
 stage("${LIBPROJECT}-build") {

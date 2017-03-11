@@ -13,7 +13,13 @@ def get_project_code(proj) {
 def rm() {
   echo "Remove .git folder from workspace - ${WORKSPACE}"
   dir("${WORKSPACE}") {
-    sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
+    if (isUnix()) {
+        sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
+    } else {
+        echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+        echo "Skipping .git deletion because it is windows"
+    }
+
   }
 }
 
@@ -119,16 +125,16 @@ def getGpg() {
             file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
             file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
             usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-                if (isUnix()) {
-                    sh("rm -rf ${HOME}/.gnupg/*.gpg")
-                    sh'''
-                    gpg --list-keys
-                    cp ${GPG_PUBRING} ${HOME}/.gnupg/
-                    cp ${GPG_SECRING} ${HOME}/.gnupg/
-                    chmod 700 $HOME/.gnupg
-                    chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
-                    gpg --list-keys
-                    '''
+            if (isUnix()) {
+                sh("rm -rf ${HOME}/.gnupg/*.gpg")
+                sh'''
+                gpg --list-keys
+                cp ${GPG_PUBRING} ${HOME}/.gnupg/
+                cp ${GPG_SECRING} ${HOME}/.gnupg/
+                chmod 700 $HOME/.gnupg
+                chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
+                gpg --list-keys
+                '''
             } else {
                 sh("env")
                 echo "Running on Windows" + System.properties['os.name'].toLowerCase()
