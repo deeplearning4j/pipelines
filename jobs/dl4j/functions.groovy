@@ -9,7 +9,9 @@ def get_project_code(proj) {
               submoduleCfg: [],
               userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
   } else {
-      echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+      // it says - Running on Windowslinux
+      // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+      echo "Running on Windows"
       // git 'https://github.com/deeplearning4j/libnd4j.git'
       checkout([$class: 'GitSCM',
                 branches: [[name: "*/${GIT_BRANCHNAME}"]],
@@ -29,7 +31,6 @@ def rm() {
     if (isUnix()) {
         sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
     } else {
-        echo "Running on Windows" + System.properties['os.name'].toLowerCase()
         echo "Skipping .git deletion because it is windows"
     }
 
@@ -150,7 +151,9 @@ def getGpg() {
                 '''
             } else {
                 sh("env")
-                echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+                // It says - Running on Windowslinux
+                // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+                echo "Running on Windows"
                 bat'''
                 rm -rf %USERPROFILE%/.gnupg/*.gpg
                 ls -la %USERPROFILE%/.gnupg
