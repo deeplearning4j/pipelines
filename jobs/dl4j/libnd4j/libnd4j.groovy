@@ -167,9 +167,8 @@ stage("${LIBPROJECT}-build") {
 
       break
     }
-    else {
-      echo "Skipping ${LIBPROJECT} building"
-    }
+  } else {
+    echo "Skipping ${LIBPROJECT} building"
   }
 }
 
