@@ -1,12 +1,25 @@
 def get_project_code(proj) {
-  checkout([$class: 'GitSCM',
-            branches: [[name: "*/${GIT_BRANCHNAME}"]],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
-                        [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
-            //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-            submoduleCfg: [],
-            userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+  if (isUnix()) {
+    checkout([$class: 'GitSCM',
+              branches: [[name: "*/${GIT_BRANCHNAME}"]],
+              doGenerateSubmoduleConfigurations: false,
+              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
+                          [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
+              //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+              submoduleCfg: [],
+              userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+  } else {
+      echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+      // git 'https://github.com/deeplearning4j/libnd4j.git'
+      checkout([$class: 'GitSCM',
+                branches: [[name: "*/${GIT_BRANCHNAME}"]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
+                            [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
+                //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+                submoduleCfg: [],
+                userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+  }
 }
 
 // Remove .git folder and other unneeded files from workspace
