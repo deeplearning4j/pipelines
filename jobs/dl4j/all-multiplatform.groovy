@@ -76,7 +76,7 @@ node(PLATFORM_NAME) {
             platform: "linux-x86_64",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw  -v ${JENKINS_SBTDIR_AMD64}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro",
-            jenkinsStorage: "/var/lib/jenkins/storage",
+            jenkinsStorage: "/srv/jenkins/storage",
             apps: [
                 [
                     name: "libnd4j",
@@ -147,7 +147,7 @@ node(PLATFORM_NAME) {
             platform: "android-arm",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/android:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw",
-            jenkinsStorage: "/var/lib/jenkins/storage",
+            jenkinsStorage: "/srv/jenkins/storage",
             apps: [
                 [
                     name: "libnd4j",
@@ -165,7 +165,7 @@ node(PLATFORM_NAME) {
             platform: "android-x86",
             dockerImage: "deeplearning4j-docker-registry.bintray.io/android:latest",
             dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw",
-            jenkinsStorage: "/var/lib/jenkins/storage",
+            jenkinsStorage: "/srv/jenkins/storage",
             apps: [
                 [
                     name: "libnd4j",

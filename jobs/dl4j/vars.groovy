@@ -22,8 +22,8 @@ env.DOCKER_CENTOS6_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/cen
 env.DOCKER_CENTOS6_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest"
 env.DOCKER_CUDA_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le:latest"
 env.DOCKER_ANDROID_IMAGE = "deeplearning4j-docker-registry.bintray.io/android:latest"
-env.JENKINS_M2DIR_AMD64 = "/var/lib/jenkins/storage/docker_m2"
-env.JENKINS_SBTDIR_AMD64 = "/var/lib/jenkins/storage/docker_ivy2"
+env.JENKINS_M2DIR_AMD64 = "/srv/jenkins/storage/docker_m2"
+env.JENKINS_SBTDIR_AMD64 = "/srv/jenkins/storage/docker_ivy2"
 env.JENKINS_M2DIR_PPC64LE = "/srv/jenkins/storage/docker_m2"
 env.JENKINS_SBTDIR_PPC64LE = "/srv/jenkins/storage/docker_ivy2"
 
@@ -43,5 +43,3 @@ env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 env.ND4J_VERSION = env.ND4J_VERSION ?: "${VERSION}"
 env.DL4J_VERSION = env.DL4J_VERSION ?: "${VERSION}"
 env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "${VERSION}"
-
-
