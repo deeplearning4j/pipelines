@@ -20,7 +20,7 @@ stage("build javacpp") {
         case "macosx":
             dir('javacpp') {
               sh '''
-              mvn -B clean install -DskipTests -Dmaven.javadoc.skip=true
+              env && mvn -B clean install -DskipTests -Dmaven.javadoc.skip=true
               '''
             }
 
@@ -28,6 +28,8 @@ stage("build javacpp") {
         case "windows-x86_64":
             dir('javacpp') {
               bat (
+                  'set' +
+                  '&&' +
                   'vcvars64.bat' +
                   '&&' +
                   'mvn -s clean install -DskipTests -Dmaven.javadoc.skip=true'
