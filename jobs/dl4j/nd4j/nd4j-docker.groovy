@@ -6,10 +6,20 @@ dir("${LIBPROJECT}") {
         env.varResultCount = sh(
                 script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' ",
                 returnStatus : true
-        ).toBoolean()
+        )
     } else {
-        env.varResultCount = bat(script: "dir /s/b *.dll",
-                returnStatus : true)
+
+
+        try {
+            env.varResultCount = bat(script: "dir /s/b *.dll",
+                    returnStatus : true)
+        } catch (e) {
+            // if any exception occurs, mark the build as failed
+            currentBuild.result = 'FAILURE'
+            throw e
+        } finally {
+            ptintln("exo")
+        }
     }
 }
 
