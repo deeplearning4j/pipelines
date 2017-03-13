@@ -15,10 +15,10 @@ properties([
                 defaultValue: "0.7.3-SNAPSHOT",
                 description: "Deeplearning component release version"
             ],
-            [$class: "ChoiceParameterDefinition",
+            [$class: "StringParameterDefinition",
                 name: "PLATFORM_NAME",
-                choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nmacosx\nwindows-x86_64",
-                description: "Build project on architecture"
+                defaultValue: "",
+                description: "Possible values: linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nmacosx\nwindows-x86_64"
             ],
             [$class: "BooleanParameterDefinition",
                 name: "TESTS",

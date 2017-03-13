@@ -69,33 +69,30 @@ stage("${LIBPROJECT}-build") {
                     unstash 'cuda75-blas'
                     unstash 'cuda80-blasbuild'
                     unstash 'cuda80-blas'
-                    env.TRICK_NVCC = "YES"
-                    env.LIBND4J_HOME = "${PWD}"
-                    docker.image(dockerImage).inside(dockerParams){
-                        functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
-                    }
                 }
                 break
 
             case ["android-arm", "android-x86"]:
                 dir("${LIBPROJECT}") {
-                    env.TRICK_NVCC = "YES"
-                    env.LIBND4J_HOME = "${PWD}"
-
                     docker.image(dockerImage).inside(dockerParams) {
                         sh '''
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                         ./buildnativeoperations.sh -platform ${PLATFORM_NAME}
                         '''
                     }
-                    docker.image(dockerImage).inside(dockerParams){
-                        functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
-                    }
                 }
                 break
 
             default:
                 break
+        }
+
+        dir("${LIBPROJECT}") {
+            env.TRICK_NVCC = "YES"
+            env.LIBND4J_HOME = "${PWD}"
+            docker.image(dockerImage).inside(dockerParams){
+                functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
+            }
         }
 
         if(SONAR.toBoolean()) {
@@ -116,22 +113,17 @@ stage("${LIBPROJECT}-build") {
             functions.get_project_code("${LIBPROJECT}")
 
             dir("${LIBPROJECT}") {
-                // if ( PLATFORM_NAME == "linux-ppc64le" ) {
-                //     sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
-                // }
-                // else {
-                    docker.image(dockerImage).inside(dockerParams) {
-                        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                            sh("mvn -B -s ${MAVEN_SETTINGS} dependency:get \\\n" +
-                                    " -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \\\n" +
-                                    " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
-                                    " -Dtransitive=false \\\n" +
-                                    " -Ddest=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar \\\n" +
-                                    " -Dclassifier=${PLATFORM_NAME}")
-                            sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}-${PLATFORM_NAME}.tar;")
-                        }
+                docker.image(dockerImage).inside(dockerParams) {
+                    configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                        sh("mvn -B -s ${MAVEN_SETTINGS} dependency:get \\\n" +
+                                " -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \\\n" +
+                                " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
+                                " -Dtransitive=false \\\n" +
+                                " -Ddest=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar \\\n" +
+                                " -Dclassifier=${PLATFORM_NAME}")
+                        sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}-${PLATFORM_NAME}.tar;")
                     }
-                // }
+                }
             }
         }
     }
