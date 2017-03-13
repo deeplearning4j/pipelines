@@ -132,7 +132,7 @@ stage("${LIBPROJECT}-build") {
                             sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
                                     " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                                     " -Dtransitive=false \\\n" +
-                                    " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
+                                    " -Ddest=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
                             sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
                         }
                     }
