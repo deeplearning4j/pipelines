@@ -84,20 +84,21 @@ stage("${LIBPROJECT}-build") {
                         '''
                     }
                     docker.image(dockerImage).inside(dockerParams){
-                        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                            sh'''
-                            find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
-                            mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file \
-                            -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
-                            -DgroupId=org.nd4j \
-                            -DartifactId=${LIBPROJECT} \
-                            -Dversion=${VERSION} \
-                            -Dpackaging=tar \
-                            -DrepositoryId=local-nexus \
-                            -Dclassifier=${PLATFORM_NAME} \
-                            -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
-                            '''
-                        }
+                        // configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                        //     sh'''
+                        //     find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
+                        //     mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file \
+                        //     -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
+                        //     -DgroupId=org.nd4j \
+                        //     -DartifactId=${LIBPROJECT} \
+                        //     -Dversion=${VERSION} \
+                        //     -Dpackaging=tar \
+                        //     -DrepositoryId=local-nexus \
+                        //     -Dclassifier=${PLATFORM_NAME} \
+                        //     -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
+                        //     '''
+                        // }
+                        functions.putLibnd4j()
                     }
                 }
                 break
