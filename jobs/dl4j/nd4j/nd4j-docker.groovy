@@ -3,9 +3,13 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 dir("${LIBPROJECT}") {
     if (isUnix()) {
-        sh("ls -la")
+        sh("ls")
+        def files = findFiles(glob: '**/TEST-*.xml')
+        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
     } else {
         bat("dir")
+        def files = findFiles(glob: '**/TEST-*.xml')
+        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
     }
 }
 
