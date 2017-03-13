@@ -72,7 +72,7 @@ stage("${LIBPROJECT}-build") {
                     env.TRICK_NVCC = "YES"
                     env.LIBND4J_HOME = "${PWD}"
                     docker.image(dockerImage).inside(dockerParams){
-                        functions.putLibnd4j()
+                        functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
                     }
                 }
                 break
