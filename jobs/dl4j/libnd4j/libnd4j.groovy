@@ -121,6 +121,8 @@ stage("${LIBPROJECT}-build") {
           echo "Skipping ${LIBPROJECT} checking with SonarQube"
       }
 */
+      break
+
       case ["windows-x86_64"]:
 
       dir("${LIBPROJECT}") {
