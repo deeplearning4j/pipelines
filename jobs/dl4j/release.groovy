@@ -59,27 +59,51 @@ node("master") {
         parallel (
             "Stream 0 linux-x86_64" : {
                 build job: 'devel/dl4j/all-linux-x86_64', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]]
             },
             "Stream 1 linux-ppc64le" : {
                 build job: 'devel/dl4j/all-linux-ppc64le', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]]
             },
             "Stream 2 android-x86" : {
                 build job: 'devel/dl4j/all-android-x86', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]]
              },
             "Stream 3 android-arm" : {
                 build job: 'devel/dl4j/all-android-arm', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]]
             },
             "Stream 4 windows-x86_64" : {
                 build job: 'devel/dl4j/all-windows', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows-x86_64"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows-x86_64"],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]]
             },
             "Stream 5 macosx-x86_64" : {
                 build job: 'devel/dl4j/all-macosx', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "macosx"]]
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "macosx"],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]]
             }
         )
     }
