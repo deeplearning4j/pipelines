@@ -59,59 +59,56 @@ def strToList(str) {
     return tmpList
 }
 
-node {
+node("master") {
+    env.PDIR = "jobs/dl4j"
     def platformsList = strToList(PLATFORMS)
     println platformsList
     def builders = [:]
     for (platform in platformsList) {
         println platform
-        // for (image in iList){
-        //     if ( image.contains(node)) {
-        //         println "${node} ${image}"
-        //         builders22[image] = {
-        //             node("${node}") {
-        //                 stage ("Build ${image}") {
-        //                     docker.build ("${dockerRegistry}/${image}","docker/${image}")
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        builders[platform] = {
+
+            node("${node}") {
+                build job: "devel/dl4j/all-${platform}", parameters:
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "${platform}"]]
+                }
+            }
+        }
     }
     println builders
-    parallel builders
+    // parallel builders
 }
 
-node("master") {
-
-    env.PDIR = "jobs/dl4j"
-
-    stage("Build-multiplatform-parallel") {
-        parallel (
-            "Stream 0 linux-x86_64" : {
-                build job: 'devel/dl4j/all-linux-x86_64', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
-            },
-            "Stream 1 linux-ppc64le" : {
-                build job: 'devel/dl4j/all-linux-ppc64le', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
-            },
-            "Stream 2 android-x86" : {
-                build job: 'devel/dl4j/all-android-x86', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
-             },
-            "Stream 3 android-arm" : {
-                build job: 'devel/dl4j/all-android-arm', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
-            },
-            "Stream 4 windows-x86_64" : {
-                build job: 'devel/dl4j/all-windows', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows-x86_64"]]
-            },
-            "Stream 5 macosx-x86_64" : {
-                build job: 'devel/dl4j/all-macosx', parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "macosx"]]
-            }
-        )
-    }
-}
+// node("master") {
+//
+//     env.PDIR = "jobs/dl4j"
+//
+//     stage("Build-multiplatform-parallel") {
+//         parallel (
+//             "Stream 0 linux-x86_64" : {
+//                 build job: 'devel/dl4j/all-linux-x86_64', parameters:
+//                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-x86_64"]]
+//             },
+//             "Stream 1 linux-ppc64le" : {
+//                 build job: 'devel/dl4j/all-linux-ppc64le', parameters:
+//                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "linux-ppc64le"]]
+//             },
+//             "Stream 2 android-x86" : {
+//                 build job: 'devel/dl4j/all-android-x86', parameters:
+//                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-x86"]]
+//              },
+//             "Stream 3 android-arm" : {
+//                 build job: 'devel/dl4j/all-android-arm', parameters:
+//                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "android-arm"]]
+//             },
+//             "Stream 4 windows-x86_64" : {
+//                 build job: 'devel/dl4j/all-windows', parameters:
+//                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "windows-x86_64"]]
+//             },
+//             "Stream 5 macosx-x86_64" : {
+//                 build job: 'devel/dl4j/all-macosx', parameters:
+//                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "macosx"]]
+//             }
+//         )
+//     }
+// }
