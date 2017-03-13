@@ -45,6 +45,42 @@ properties([
     ]
 ])
 
+def strToList(str) {
+    if (str.getClass() == String && str.length()>0) {
+        tmpList = []
+        for ( i in str.split(",")) {
+            def item = i
+            tmpList.add(item);
+        }
+    }
+    else {
+        error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
+    }
+    return tmpList
+}
+
+node {
+    def platformsList = strToList(PLATFORMS)
+    println platformsList
+    def builders = [:]
+    for (platform in platformsList) {
+        println platform
+        // for (image in iList){
+        //     if ( image.contains(node)) {
+        //         println "${node} ${image}"
+        //         builders22[image] = {
+        //             node("${node}") {
+        //                 stage ("Build ${image}") {
+        //                     docker.build ("${dockerRegistry}/${image}","docker/${image}")
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+    }
+    println builders
+    parallel builders
+}
 
 node("master") {
 
