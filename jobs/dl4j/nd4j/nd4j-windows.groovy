@@ -1,4 +1,4 @@
-node ('windows-x86_64') {
+//node ('windows-x86_64') {
     checkout scm
     //load "jobs/dl4j/vars.groovy"
     //functions = load "jobs/dl4j/functions.groovy"
@@ -13,4 +13,4 @@ node ('windows-x86_64') {
             'mvn -s %MAVEN_SETTINGS% clean install -Dmaven.test.skip=true'
         )
     }
-}
+//}
