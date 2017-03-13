@@ -3,7 +3,7 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 dir("${LIBPROJECT}") {
     if (isUnix()) {
-
+        sh("ls -la")
     } else {
         bat("dir")
     }
