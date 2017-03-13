@@ -18,7 +18,7 @@ dir(LIBPROJECT) {
 echo "${varResultCount}"
 
 if (varResultCount == 0) {
-    println("HA-HA-HA" + println(varResultCount.getClass()))
+    println("HA-HA-HA" + varResultCount.getClass())
 }else{
     println(varResultCount.getClass())
 }
