@@ -5,6 +5,7 @@ dir("${LIBPROJECT}") {
                 git 'https://github.com/deeplearning4j/libnd4j.git'
                 bat 'bash buildnativeoperations.sh'
                 stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
+                stash includes: 'blas/', name: 'cpu-blas'
                 stash includes: 'include/', name: 'libnd4j-include'
             }
         },
