@@ -128,29 +128,35 @@ stage("${LIBPROJECT}-build") {
               "Stream 1 Build CPU" : {
                   dir("stream1") {
                       bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
-                      bat '''
-                      vcvars64.bat && bash buildnativeoperations.sh
-                      '''
-                      stash includes: 'blasbuild/cpu/blas/', name: 'win-cpu-blasbuild'
-                      stash includes: 'include/', name: 'win-libnd4j-include'
+                      dir("${LIBPROJECT}") {
+                          bat '''
+                          vcvars64.bat && bash buildnativeoperations.sh
+                          '''
+                          stash includes: 'blasbuild/cpu/blas/', name: 'win-cpu-blasbuild'
+                          stash includes: 'include/', name: 'win-libnd4j-include'
+                      }
                   }
               },
               "Stream 2 Build CUDA 7.5" : {
                   dir("stream2") {
                       bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
-                      bat '''
-                      vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
-                      '''
-                      stash includes: 'blasbuild/cuda-7.5/blas/', name: 'win-cuda75-blasbuild'
+                      dir("${LIBPROJECT}") {
+                          bat '''
+                          vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
+                          '''
+                          stash includes: 'blasbuild/cuda-7.5/blas/', name: 'win-cuda75-blasbuild'
+                      }
                   }
               },
               "Stream 3 Build CUDA 8.0" : {
                   dir("stream3") {
                       bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
-                      bat '''
-                      vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
-                      '''
-                      stash includes: 'blasbuild/cuda-8.0/blas/', name: 'win-cuda80-blasbuild'
+                      dir("${LIBPROJECT}") {
+                          bat '''
+                          vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
+                          '''
+                          stash includes: 'blasbuild/cuda-8.0/blas/', name: 'win-cuda80-blasbuild'
+                      }
                   }
               }
           )
