@@ -18,14 +18,19 @@ stage("build javacpp") {
   configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
     switch (PLATFORM_NAME) {
         case "macosx":
+            echo "Skipping javacpp build on ${PLATFORM_NAME} for checking - do we need it?"
+
+/*
             dir('javacpp') {
               sh '''
               env && mvn -B clean install -DskipTests -Dmaven.javadoc.skip=true
               '''
             }
-
+*/
           break
         case "windows-x86_64":
+            echo "Skipping javacpp build on ${PLATFORM_NAME} for checking - do we need it?"
+/*
             dir('javacpp') {
               bat (
                   'set' +
@@ -35,7 +40,7 @@ stage("build javacpp") {
                   'mvn -B -s %MAVEN_SETTINGS% clean install -DskipTests -Dmaven.javadoc.skip=true'
               )
             }
-
+*/
           break
 
         default:
