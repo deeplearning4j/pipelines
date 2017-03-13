@@ -262,4 +262,192 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
     }
 }
 
+def download_nd4j_native_from_maven_central(some_version) {
+    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
+    for (int i = 0; i < listPlatformVersion.size(); i++) {
+        sh("wget --no-verbose http://repo1.maven.org/maven2/org/nd4j/nd4j-native/0.7.2/nd4j-native-0.7.2-${listPlatformVersion[i]}.jar ")
+    }
+}
+
+def get_libnd4j_artifacts_snapshot_tar_ball(some_version, some_platform, profile_type) {
+    switch (profile_type) {
+        case "nexus":
+            if (isUnix()) {
+                sh("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            } else {
+                bat("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            }
+            break
+        case "sonatype":
+
+            if (isUnix()) {
+                sh("mvn dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            } else {
+                bat("mvn dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            }
+            break
+        case "bintray":
+            if (isUnix()) {
+                sh("mvn dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            } else {
+                bat("mvn dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            }
+            break
+        case "jfrog":
+            if (isUnix()) {
+                sh("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            } else {
+                bat("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                        "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
+                        "-Dclassifier=${some_platform} " +
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+            }
+            break
+    }
+}
+
+def download_nd4j_native_from_jenkins_user_content(some_version) {
+//    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
+    def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
+    for (int i = 0; i < listPlatformVersion.size(); i++) {
+        println("[ INFO ] Try download nd4j-native version : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar")
+        sh("wget --no-verbose ${JENKINS_URL}/userContent/nd4j-native-${some_version}-${listPlatformVersion[i]}.jar")
+    }
+}
+
+def install_nd4j_native_to_local_maven_repository(some_version) {
+//    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
+    def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
+    for (int i = 0; i < listPlatformVersion.size(); i++) {
+        println("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
+        sh("mvn install:install-file -Dfile=nd4j-native-${some_version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${some_version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
+    }
+}
+
+def open_staging_repository(profile_type) {
+    switch (profile_type) {
+        case "nexus":
+            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'local-nexus-admin-user-1',
+                              usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
+                env.STAGE_REPO_ID = sh(
+                        script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
+                                "-X POST \"http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/profiles/11d78539739bc/start\" " +
+                                "-d \"<promoteRequest><data><description>Jenkins(Skymind) :: version:${VERSION} :: job:${JOB_NAME} :: build:${BUILD_NUMBER}</description></data></promoteRequest>\" | grep stagedRepositoryId | sed -e 's,.*<stagedRepositoryId>\\([^<]*\\)</stagedRepositoryId>.*,\\1,g'",
+                        returnStdout: true
+                ).trim()
+                if (env.STAGE_REPO_ID != null && env.STAGE_REPO_ID.length() > 0) {
+                    println("[ LOCAL-NEXUS ]")
+                    println("[ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID}")
+                } else {
+                    error "[ ERROR ] Error appear in local-nexus REST API call during to OPEN request..."
+                }
+            }
+            break
+        case "sonatype":
+            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'sonatype-nexus-intropro-user-1',
+                              usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
+                env.STAGE_REPO_ID = sh(
+                        script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
+                                "-X POST \"https://oss.sonatype.org:443/service/local/staging/profiles/747720f52eb29e/start\" " +
+                                "-d \"<promoteRequest><data><description>Jenkins(Skymind) :: version:${VERSION} :: job:${JOB_NAME} :: build:${BUILD_NUMBER}</description></data></promoteRequest>\" | grep stagedRepositoryId | sed -e 's,.*<stagedRepositoryId>\\([^<]*\\)</stagedRepositoryId>.*,\\1,g'",
+                        returnStdout: true
+                ).trim()
+                if (env.STAGE_REPO_ID != null && env.STAGE_REPO_ID.length() > 0) {
+                    println("[ LOCAL-NEXUS ]")
+                    println("[ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID}")
+                } else {
+                    error "[ ERROR ] Error appear in local-nexus REST API call..."
+                }
+            }
+            break
+        case "jfrog":
+            break
+        case "bintray":
+            break
+        default:
+            println("Unknown repository")
+            break
+    }
+}
+
+def close_staging_repository(profile_type) {
+    switch (profile_type) {
+        case "local-nexus":
+            println("[ LOCAL-NEXUS ]")
+            println("[ INFO ] Try to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
+            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'local-nexus-admin-user-1',
+                              usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
+                // do something that fails
+                env.CLOSE_RESULT = sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
+                        "-X POST \"http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
+                        " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\" | wc -l",
+                        returnStdout: true
+                ).trim()
+                echo "CLOSE_RESULT:" + " ${CLOSE_RESULT}"
+                if (env.CLOSE_RESULT != null && env.CLOSE_RESULT.toInteger() > 0) {
+                    sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
+                            "-X POST \"http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
+                            " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
+                    )
+                    error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
+                } else {
+                    println("[ LOCAL-NEXUS ]")
+                    println("[ INFO ] local-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                }
+            }
+            break
+        case "sonatype-nexus":
+            println("[ SONATYPE ]")
+            println("[ INFO ] sonatype-nexusTry to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
+            withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'local-nexus-admin-user-1',
+                              usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
+                // do something that fails
+                CLOSE_RESULT = sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
+                        "-X POST \"https://oss.sonatype.org:443/service/local/staging/bulk/close\"" +
+                        " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\" | wc -l",
+                        returnStdout: true
+                ).trim()
+                if (env.CLOSE_RESULT != null && env.CLOSE_RESULT.toInteger() > 0) {
+                    sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
+                            "-X POST \"https://oss.sonatype.org:443/service/local/staging/bulk/close\"" +
+                            " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
+                    )
+                    error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
+                } else {
+                    println("[ SONATYPE-NEXUS ]")
+                    println("[ INFO ] sonatype-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                }
+            }
+            break
+        case "local-jfrog":
+            break
+        case "bintray-jfrog":
+            break
+        default:
+            println("Unknown repository")
+            break
+    }
+}
+
 return this;
