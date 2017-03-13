@@ -1,11 +1,8 @@
 env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-dir("${LIBPROJECT}"){
-    functions.resolve_dependencies_for_nd4j()
-}
 
-
+functions.resolve_dependencies_for_nd4j()
 
 /*
 dir("${LIBPROJECT}") {
