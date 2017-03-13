@@ -3,12 +3,12 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 dir(LIBPROJECT) {
     if (isUnix()) {
-        env.varResultCount = sh(
+        def varResultCount = sh(
                 script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
                 returnStdout: true
         ).trim()
     } else {
-        env.varResultCount = bat(
+        def varResultCount = bat(
                 script: "",
                 returnStdout: true
         ).trim()
