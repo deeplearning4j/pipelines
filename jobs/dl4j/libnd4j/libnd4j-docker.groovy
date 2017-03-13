@@ -84,20 +84,6 @@ stage("${LIBPROJECT}-build") {
                         '''
                     }
                     docker.image(dockerImage).inside(dockerParams){
-                        // configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                        //     sh'''
-                        //     find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
-                        //     mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file \
-                        //     -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
-                        //     -DgroupId=org.nd4j \
-                        //     -DartifactId=${LIBPROJECT} \
-                        //     -Dversion=${VERSION} \
-                        //     -Dpackaging=tar \
-                        //     -DrepositoryId=local-nexus \
-                        //     -Dclassifier=${PLATFORM_NAME} \
-                        //     -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
-                        //     '''
-                        // }
                         functions.putLibnd4j()
                     }
                 }
@@ -137,10 +123,10 @@ stage("${LIBPROJECT}-build") {
             functions.get_project_code("${LIBPROJECT}")
 
             dir("${LIBPROJECT}") {
-                if ( PLATFORM_NAME == "linux-ppc64le" ) {
-                    sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
-                }
-                else {
+                // if ( PLATFORM_NAME == "linux-ppc64le" ) {
+                //     sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
+                // }
+                // else {
                     docker.image(dockerImage).inside(dockerParams) {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                             sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
@@ -150,7 +136,7 @@ stage("${LIBPROJECT}-build") {
                             sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
                         }
                     }
-                }
+                // }
             }
         }
     }
