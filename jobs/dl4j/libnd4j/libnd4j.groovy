@@ -130,7 +130,7 @@ stage("${LIBPROJECT}-build") {
               "Stream 1 Build CPU" : {
                   dir("stream1") {
                       bat("pwd")
-                      bat("cp -a ${WORKSPACE}/${LIBPROJECT} ${LIBPROJECT}")
+                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
                       bat '''
                       vcvars64.bat && bash buildnativeoperations.sh
                       '''
@@ -141,7 +141,7 @@ stage("${LIBPROJECT}-build") {
               "Stream 2 Build CUDA 7.5" : {
                   dir("stream2") {
                       bat("pwd")
-                      bat("cp -a ${WORKSPACE}/${LIBPROJECT} ${LIBPROJECT}")
+                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
                       bat '''
                       vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
                       '''
@@ -151,7 +151,7 @@ stage("${LIBPROJECT}-build") {
               "Stream 3 Build CUDA 8.0" : {
                   dir("stream3") {
                       bat("pwd")
-                      bat("cp -a ${WORKSPACE}/${LIBPROJECT} ${LIBPROJECT}")
+                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
                       bat '''
                       vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
                       '''
