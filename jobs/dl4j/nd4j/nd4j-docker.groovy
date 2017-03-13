@@ -18,7 +18,9 @@ dir(LIBPROJECT) {
 echo "${varResultCount}"
 
 if (varResultCount == 0) {
-    println("HA-HA-HA")
+    println("HA-HA-HA" + println(varResultCount.getClass()))
+}else{
+    println(varResultCount.getClass())
 }
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
