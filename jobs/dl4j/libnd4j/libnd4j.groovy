@@ -132,7 +132,7 @@ stage("${LIBPROJECT}-build") {
                           bat '''
                           vcvars64.bat && bash buildnativeoperations.sh
                           '''
-                          stash includes: 'blasbuild/cpu/blas/', name: 'win-cpu-blasbuild'
+                          stash includes: 'blasbuild/', name: 'win-cpu-blasbuild'
                           stash includes: 'include/', name: 'win-libnd4j-include'
                       }
                   }
@@ -144,7 +144,7 @@ stage("${LIBPROJECT}-build") {
                           bat '''
                           vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
                           '''
-                          stash includes: 'blasbuild/cuda-7.5/blas/', name: 'win-cuda75-blasbuild'
+                          stash includes: 'blasbuild/', name: 'win-cuda75-blasbuild'
                       }
                   }
               },
@@ -155,7 +155,7 @@ stage("${LIBPROJECT}-build") {
                           bat '''
                           vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
                           '''
-                          stash includes: 'blasbuild/cuda-8.0/blas/', name: 'win-cuda80-blasbuild'
+                          stash includes: 'blasbuild/', name: 'win-cuda80-blasbuild'
                       }
                   }
               }
