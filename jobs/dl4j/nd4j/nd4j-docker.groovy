@@ -9,7 +9,7 @@ dir("${LIBPROJECT}") {
         )
     } else {
         env.varResultCount = bat(script: "dir /s/b *.dll",
-        returnStatus: true)
+        returnStdout: true)
         }
     }
 
