@@ -67,14 +67,10 @@ node("master") {
     for (platform in platformsList) {
         println platform
         builders[platform] = {
-
-            node("${node}") {
-                build job: "devel/dl4j/all-${platform}", parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: "${platform}"]]
-                }
+            build job: "devel/dl4j/all-${platform}", parameters:
+                [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: platform]]
             }
         }
-    }
     println builders
     parallel builders
 }
