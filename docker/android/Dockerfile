@@ -19,6 +19,6 @@ RUN curl -fsSL "$ANDROID_NDK_URL" -o android-ndk-$ANDROID_NDK_VERSION-linux-x86_
 
 ENV PATH /opt/cmake/bin:$ANDROID_NDK_HOME:$PATH
 
-RUN groupadd jenkins -g 500 && useradd -u 500 -g 500 -m jenkins
+RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
 CMD ["cat"]
