@@ -2,33 +2,7 @@ env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 
-if (isUnix()) {
-    env.varResultCount = sh(
-            script: 'if [ -d "${WORKSPACE}/${LIBPROJECT}/blasbuild" ] ; then echo 1; else echo 0; fi',
-            returnStdout: true
-    ).trim()
-} else {
-    env.varResultCount = bat(
-            script: 'IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild (ECHO 1) ELSE ( ECHO  0)',
-            returnStdout: true
-    ).trim()
-}
 
-echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
-if (varResultCount.toBoolean()) {
-    echo("[ INFO ] ${LIBPROJECT} project was previously builded...")
-} else {
-    echo("[ INFO ] ${LIBPROJECT} wasn't build previously")
-    echo("[ INFO ] Resolve dependencies related to ${LIBPROJECT} ")
-}
-
-functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}", "${PLATFORM_NAME}", "${PROFILE_TYPE}")
-
-if (isUnix()) {
-    sh("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
-} else {
-    bat("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
-}
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
 
