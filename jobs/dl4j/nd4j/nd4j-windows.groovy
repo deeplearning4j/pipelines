@@ -2,7 +2,7 @@ node ('windows-x86_64') {
     checkout scm
     //load "jobs/dl4j/vars.groovy"
     //functions = load "jobs/dl4j/functions.groovy"
-    configFileProvider([configFile(fileId: 'maven-settings-id-3', variable: 'MAVEN_SETTINGS')]) {
+    configFileProvider([configFile(fileId: 'maven-settings-id-1', variable: 'MAVEN_SETTINGS')]) {
         bat (
             'vcvars64.bat' +
             '&&' +
