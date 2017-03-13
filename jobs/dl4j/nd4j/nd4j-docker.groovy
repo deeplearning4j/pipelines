@@ -4,15 +4,12 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 dir("${LIBPROJECT}") {
     if (isUnix()) {
         env.varResultCount = sh(
-                script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
-                returnStdout: true
-        ).trim()
+                script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' ",
+                returnStatus : true
+        )
     } else {
-        try {env.varResultCount = bat(script: "dir /s/b *.dll",
-                    returnStdout: true).trim
-        }catch("File Not Found") {
-            println("Catching the exception")
-        }
+        env.varResultCount = bat(script: "dir /s/b *.dll",
+                returnStatus : true)
     }
 }
 
