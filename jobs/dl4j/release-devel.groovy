@@ -10,6 +10,11 @@
 //     ],
 //     [$class: "ParametersDefinitionProperty",
 //         parameterDefinitions: [
+                // [$class: "StringParameterDefinition",
+                //     name: "VERSION",
+                //     defaultValue: "0.7.3-SNAPSHOT",
+                //     description: "Deeplearning component release version"
+                // ],
 //             [$class: "BooleanParameterDefinition",
 //                 name: "TESTS",
 //                 defaultValue: false,
