@@ -16,7 +16,7 @@ if (isUnix()) {
 
 echo "${varResultCount}"
 
-if (varResultCount == 0) {
+if (varResultCount.trim.toInteger == 0) {
      println("HA-HA-HA")
 }
 
