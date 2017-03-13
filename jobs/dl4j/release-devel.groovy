@@ -1,49 +1,49 @@
-properties([
-    [$class: "BuildDiscarderProperty",
-        strategy: [
-            $class: "LogRotator",
-            artifactDaysToKeepStr: "",
-            artifactNumToKeepStr: "",
-            daysToKeepStr: "",
-            numToKeepStr: "10"
-        ]
-    ],
-    [$class: "ParametersDefinitionProperty",
-        parameterDefinitions: [
-            [$class: "BooleanParameterDefinition",
-                name: "TESTS",
-                defaultValue: false,
-                description: "Select to run tests during mvn execution"
-            ],
-            [$class: "BooleanParameterDefinition",
-                name: "SONAR",
-                defaultValue: false,
-                description: "Select to check code with SonarQube"
-            ],
-            [$class: "StringParameterDefinition",
-                name: "GIT_BRANCHNAME",
-                defaultValue: "intropro072-01",
-                description: "Default Git branch value"
-            ],
-            [$class: "CredentialsParameterDefinition",
-                name: "GITCREDID",
-                required: false,
-                defaultValue: "github-private-deeplearning4j-id-1",
-                description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"
-            ],
-            [$class: "ChoiceParameterDefinition",
-                name: "PROFILE_TYPE",
-                choices: "nexus\njfrog\nbintray\nsonatype",
-                description: "Profile type"
-            ],
-            [$class: "BooleanParameterDefinition",
-                name: "CBUILD",
-                defaultValue: true,
-                description: "Select to build libnd4j"
-            ],
-        ]
-    ]
-])
+// properties([
+//     [$class: "BuildDiscarderProperty",
+//         strategy: [
+//             $class: "LogRotator",
+//             artifactDaysToKeepStr: "",
+//             artifactNumToKeepStr: "",
+//             daysToKeepStr: "",
+//             numToKeepStr: "10"
+//         ]
+//     ],
+//     [$class: "ParametersDefinitionProperty",
+//         parameterDefinitions: [
+//             [$class: "BooleanParameterDefinition",
+//                 name: "TESTS",
+//                 defaultValue: false,
+//                 description: "Select to run tests during mvn execution"
+//             ],
+//             [$class: "BooleanParameterDefinition",
+//                 name: "SONAR",
+//                 defaultValue: false,
+//                 description: "Select to check code with SonarQube"
+//             ],
+//             [$class: "StringParameterDefinition",
+//                 name: "GIT_BRANCHNAME",
+//                 defaultValue: "intropro072-01",
+//                 description: "Default Git branch value"
+//             ],
+//             [$class: "CredentialsParameterDefinition",
+//                 name: "GITCREDID",
+//                 required: false,
+//                 defaultValue: "github-private-deeplearning4j-id-1",
+//                 description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"
+//             ],
+//             [$class: "ChoiceParameterDefinition",
+//                 name: "PROFILE_TYPE",
+//                 choices: "nexus\njfrog\nbintray\nsonatype",
+//                 description: "Profile type"
+//             ],
+//             [$class: "BooleanParameterDefinition",
+//                 name: "CBUILD",
+//                 defaultValue: true,
+//                 description: "Select to build libnd4j"
+//             ],
+//         ]
+//     ]
+// ])
 
 def strToList(str) {
     if (str.getClass() == String && str.length()>0) {
@@ -76,7 +76,7 @@ node("master") {
         }
     }
     println builders
-    // parallel builders
+    parallel builders
 }
 
 // node("master") {
