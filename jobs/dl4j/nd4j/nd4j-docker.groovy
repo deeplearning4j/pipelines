@@ -3,11 +3,9 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 dir("${LIBPROJECT}") {
     if (isUnix()) {
-        def files = findFiles( glob: '*.groovy')
-        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
+
     } else {
-        def files = findFiles( glob: '*.groovy')
-        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
+        bat("dir")
     }
 }
 
