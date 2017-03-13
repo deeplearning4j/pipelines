@@ -3,24 +3,22 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 dir("${LIBPROJECT}") {
     if (isUnix()) {
-        env.varResultCount = sh(
-                script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' ",
-                returnStatus : true
-        )
+        def files = findFiles( glob: '*.groovy')
+        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
     } else {
-        env.varResultCount = bat(script: "dir /s/b *.dll",
-        returnStdout: true)
-        }
+        def files = findFiles( glob: '*.groovy')
+        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
     }
-
-
-echo "${varResultCount}"
-
-if (varResultCount) {
-    println("HA-HA-HA" + varResultCount.getClass())
-}else{
-    println(varResultCount.getClass())
 }
+
+
+//echo "${varResultCount}"
+//
+//if (varResultCount) {
+//    println("HA-HA-HA" + varResultCount.getClass())
+//} else {
+//    println(varResultCount.getClass())
+//}
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
 
