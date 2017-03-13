@@ -81,17 +81,23 @@ stage("${LIBPROJECT}-build") {
                         sh '''
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                         ./buildnativeoperations.sh -platform ${PLATFORM_NAME}
-                        find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
-                        mvn deploy:deploy-file \
-                        -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
-                        -DgroupId=org.nd4j \
-                        -DartifactId=${LIBPROJECT} \
-                        -Dversion=${VERSION} \
-                        -Dpackaging=tar \
-                        -DrepositoryId=local-nexus \
-                        -Dclassifier=${PLATFORM_NAME} \
-                        -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
                         '''
+                    }
+                    docker.image(dockerImage).inside(dockerParams){
+                        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
+                            sh'''
+                            find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
+                            mvn deploy:deploy-file \
+                            -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
+                            -DgroupId=org.nd4j \
+                            -DartifactId=${LIBPROJECT} \
+                            -Dversion=${VERSION} \
+                            -Dpackaging=tar \
+                            -DrepositoryId=local-nexus \
+                            -Dclassifier=${PLATFORM_NAME} \
+                            -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
+                            '''
+                        }
                     }
                 }
                 break
