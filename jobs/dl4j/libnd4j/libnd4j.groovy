@@ -149,7 +149,7 @@ stage("${LIBPROJECT}-build") {
                           bat '''
                           vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
                           '''
-                          stash includes: 'blasbuild/', name: 'win-cuda75-blasbuild'
+                          stash includes: 'blasbuild/cuda-7.5/', name: 'win-cuda75-blasbuild'
                       }
                   }
               },
@@ -160,6 +160,7 @@ stage("${LIBPROJECT}-build") {
                           bat '''
                           vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
                           '''
+                          bat("mklink /J blasbuild\\cuda blasbuild\\cuda-8.0")
                           stash includes: 'blasbuild/', name: 'win-cuda80-blasbuild'
                       }
                   }
