@@ -2,9 +2,8 @@ env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 
+functions.resolve_dependencies_for_nd4j()
 
-
-//functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
 
 /*
 dir("${LIBPROJECT}") {
