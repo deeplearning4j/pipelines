@@ -36,9 +36,6 @@ node("${DOCKER_NODE}") {
     // Remove .git folder from workspace
     functions.rm()
 
-    // Create .m2 direcory
-    functions.dirm2()
-
     // Set docker image and parameters for current platform
     functions.def_docker()
 
