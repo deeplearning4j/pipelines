@@ -8,10 +8,11 @@ dir("${LIBPROJECT}") {
                 returnStdout: true
         ).trim()
     } else {
-        env.varResultCount = bat(
-                script: "dir /s/b *.dll",
-                returnStdout: true
-        ).trim()
+        try {env.varResultCount = bat(script: "dir /s/b *.dll",
+                    returnStdout: true).trim
+        }catch("File Not Found") {
+            println("Catching the exception")
+        }
     }
 }
 
