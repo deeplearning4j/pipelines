@@ -6,18 +6,18 @@ dir(LIBPROJECT) {
         env.varResultCount = sh(
                 script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
                 returnStdout: true
-        ).trim().toInteger()
+        ).trim()
     } else {
         env.varResultCount = bat(
                 script: "",
                 returnStdout: true
-        )
+        ).trim()
     }
 }
 
 echo "${varResultCount}"
 
-if (varResultCount == 0) {
+if (varResultCount.toInteger() == 0) {
     println("HA-HA-HA" + varResultCount.getClass())
 }else{
     println(varResultCount.getClass())
