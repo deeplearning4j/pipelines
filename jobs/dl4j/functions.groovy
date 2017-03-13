@@ -484,7 +484,7 @@ def resolve_dependencies_for_nd4j(){
         if (isUnix()) {
             sh("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}/${LIBPROJECT}")
         } else {
-            bat("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}\\${LIBPROJECT}")
+            bat("bash 'tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}/${LIBPROJECT}'")
         }
     }
 
