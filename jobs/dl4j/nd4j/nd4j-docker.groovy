@@ -1,12 +1,23 @@
 env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
+if (isUnix()) {
+    def varResultCountFile = sh("find . -type f -name '*.so' | wc -l").trim.toInteger()
+} else {
+    def varResultCountFile = bat("")
+}
 
+echo varResultCountFile
+
+//functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
+
+/*
 dir("${LIBPROJECT}") {
     sh("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
 }
 def varResultCountFile = readFile("${WORKSPACE}/resultCountFile").toInteger()
 echo varResultCountFile.toString()
+
 
 if (varResultCountFile == 0) {
     functions.get_project_code("${LIBPROJECT}")
@@ -19,9 +30,11 @@ if (varResultCountFile == 0) {
             } else {
                     docker.image(dockerImage).inside(dockerParams) {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                    /**
-                     * HI MAN - this is HARD CODE for URL
-                     */
+                    */
+/**
+ * HI MAN - this is HARD CODE for URL
+ *//*
+
                         sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
                                 " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                                 " -Dtransitive=false \\\n" +
@@ -35,6 +48,7 @@ if (varResultCountFile == 0) {
         }
     }
 }
+
 
 
 stage("${PROJECT}-checkout-sources") {
@@ -124,3 +138,4 @@ stage("${PROJECT}-build") {
 }
 
 echo 'MARK: end of nd4j.groovy'
+*/
