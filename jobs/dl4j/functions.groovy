@@ -168,20 +168,97 @@ def getGpg() {
         }
 }
 
-def putLibnd4j() {
+def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_platform, profile_type) {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-        sh'''
-        find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
-        mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file \
-        -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
-        -DgroupId=org.nd4j \
-        -DartifactId=${LIBPROJECT} \
-        -Dversion=${VERSION} \
-        -Dpackaging=tar \
-        -DrepositoryId=local-nexus \
-        -Dclassifier=${PLATFORM_NAME} \
-        -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
-        '''
+        if (isUnix()) {
+            sh("tar -cvf ${LIBPROJECT}-${some_version}-${some_platform}.tar blasbuild")
+            switch (profile_type) {
+                case "nexus":
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=local-nexus " +
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                    break
+                case "sonatype":
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=sonatype-nexus-snapshots " +
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                    break
+                case "bintray":
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=bintray-deeplearning4j-maven " +
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                    break
+                case "jfrog":
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=local-jfrog " +
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                    break
+            }
+        } else {
+            bat("tar -cvf %LIBPROJECT%-%some_version%-%some_platform%.tar blasbuild")
+            switch (profile_type) {
+                case "nexus":
+                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=%LIBPROJECT% " +
+                            "-Dversion=%some_version% " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=local-nexus " +
+                            "-Dclassifier=%some_platform% " +
+                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                    break
+                case "sonatype":
+                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=%LIBPROJECT% " +
+                            "-Dversion=%some_version% " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=sonatype-nexus-snapshots " +
+                            "-Dclassifier=%some_platform% " +
+                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                    break
+                case "bintray":
+                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=%LIBPROJECT% " +
+                            "-Dversion=%some_version% " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=bintray-deeplearning4j-maven " +
+                            "-Dclassifier=%some_platform% " +
+                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                    break
+                case "jfrog":
+                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                            "-DgroupId=org.nd4j " +
+                            "-DartifactId=%LIBPROJECT% " +
+                            "-Dversion=%some_version% " +
+                            "-Dpackaging=tar " +
+                            "-DrepositoryId=local-jfrog " +
+                            "-Dclassifier=%some_platform% " +
+                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                    break
+            }
+        }
     }
 }
 

@@ -89,7 +89,7 @@ stage("${LIBPROJECT}-build") {
                         '''
                     }
                     docker.image(dockerImage).inside(dockerParams){
-                        functions.putLibnd4j()
+                        functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
                     }
                 }
                 break
@@ -97,18 +97,6 @@ stage("${LIBPROJECT}-build") {
             default:
                 break
         }
-
-        // sh'''
-        // mvn deploy:deploy-file \
-        // -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots \
-        // -DgroupId=org.nd4j \
-        // -DartifactId=${LIBPROJECT} \
-        // -Dversion=${VERSION}  \
-        // -Dpackaging=tar \
-        // -DrepositoryId=local-nexus \
-        // -Dclassifier=${PLATFORM_NAME}\
-        // -Dfile=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar
-        // '''
 
         if(SONAR.toBoolean()) {
           functions.sonar("${LIBPROJECT}")
