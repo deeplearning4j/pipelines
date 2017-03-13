@@ -14,9 +14,9 @@ if (isUnix()) {
 }
 
 
-echo "${varResultCountFile}"
+echo "${varResultCount}"
 
-if (varResultCountFile == 0) {
+if (varResultCount == 0) {
      println("HA-HA-HA")
 }
 
