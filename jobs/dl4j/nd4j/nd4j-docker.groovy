@@ -1,23 +1,24 @@
 env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-if (isUnix()) {
-     env.varResultCount= sh(
-             script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
-             returnStdout: true
-     ).toInteger()
-} else {
-     env.varResultCount = bat(
-             script: "",
-             returnStdout: true
-     )
+dir(LIBPROJECT) {
+    if (isUnix()) {
+        env.varResultCount = sh(
+                script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
+                returnStdout: true
+        ).toInteger()
+    } else {
+        env.varResultCount = bat(
+                script: "",
+                returnStdout: true
+        )
+    }
 }
-
 
 echo "${varResultCount}"
 
-if (varResultCount.trim.toInteger == 0) {
-     println("HA-HA-HA")
+if (varResultCount == 0) {
+    println("HA-HA-HA")
 }
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
