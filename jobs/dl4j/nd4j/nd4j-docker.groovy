@@ -27,7 +27,7 @@ functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}", "${PLATFORM_NAME
 if (isUnix()) {
     sh("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
 } else {
-    bat("\"tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
+    bat("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
 }
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
