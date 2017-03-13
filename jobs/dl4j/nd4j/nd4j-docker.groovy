@@ -1,21 +1,21 @@
 env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-dir(LIBPROJECT) {
+dir("${LIBPROJECT}") {
     if (isUnix()) {
-        def varResultCount = sh(
+        env.varResultCount = sh(
                 script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
                 returnStdout: true
         ).trim()
     } else {
-        def varResultCount = bat(
-                script: "",
+        env.varResultCount = bat(
+                script: "dir /s/b *.dll",
                 returnStdout: true
         ).trim()
     }
 }
 
-//echo "${varResultCount}"
+echo "${varResultCount}"
 
 if (varResultCount.toInteger() == 0) {
     println("HA-HA-HA" + varResultCount.getClass())
