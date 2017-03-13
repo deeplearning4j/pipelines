@@ -482,9 +482,9 @@ def resolve_dependencies_for_nd4j(){
         functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}", "${PLATFORM_NAME}", "${PROFILE_TYPE}")
 
         if (isUnix()) {
-            sh("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --directory ${WORKSPACE}/${LIBPROJECT}")
+            sh("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}/${LIBPROJECT}")
         } else {
-            bat("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --directory %WORKSPACE%\\%LIBPROJECT%")
+            bat("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}\\${LIBPROJECT}")
         }
     }
 
