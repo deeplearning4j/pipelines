@@ -22,7 +22,7 @@ if (varResultCountFile == 0) {
                     /**
                      * HI MAN - this is HARD CODE for URL
                      */
-                        sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                        sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
                                 " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                                 " -Dtransitive=false \\\n" +
                                 " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")

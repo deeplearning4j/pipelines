@@ -83,7 +83,7 @@ stage("${LIBPROJECT}-build") {
                         ./buildnativeoperations.sh -platform ${PLATFORM_NAME}
                         find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
                         mvn deploy:deploy-file \
-                        -Durl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots \
+                        -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
                         -DgroupId=org.nd4j \
                         -DartifactId=${LIBPROJECT} \
                         -Dversion=${VERSION} \
@@ -136,7 +136,7 @@ stage("${LIBPROJECT}-build") {
                 else {
                     docker.image(dockerImage).inside(dockerParams) {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                            sh("mvn -B dependency:get -DrepoUrl=http://ec2-54-200-65-148.us-west-2.compute.amazonaws.com:8088/nexus/content/repositories/snapshots  \\\n" +
+                            sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
                                     " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                                     " -Dtransitive=false \\\n" +
                                     " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
