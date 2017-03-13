@@ -32,7 +32,7 @@ stage("build javacpp") {
                   '&&' +
                   'vcvars64.bat' +
                   '&&' +
-                  'mvn -s clean install -DskipTests -Dmaven.javadoc.skip=true'
+                  'mvn -B -s %MAVEN_SETTINGS% clean install -DskipTests -Dmaven.javadoc.skip=true'
               )
             }
 
