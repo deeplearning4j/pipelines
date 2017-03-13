@@ -17,8 +17,6 @@ dir("${LIBPROJECT}") {
             // if any exception occurs, mark the build as failed
             currentBuild.result = 'FAILURE'
             throw e
-        } finally {
-            println("exo")
         }
     }
 }
