@@ -39,7 +39,7 @@ env.NEXUS_LOCAL = "http://jenkins-master.eastus.cloudapp.azure.com:8088"
 
 /** Below variables need to be reviewed once release approach will be approved
  */
-env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "0.7.2-SNAPSHOT"
+// env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "0.7.2-SNAPSHOT"
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 env.ND4J_VERSION = env.ND4J_VERSION ?: "${VERSION}"
 env.DL4J_VERSION = env.DL4J_VERSION ?: "${VERSION}"
