@@ -6,7 +6,7 @@ node ('windows-x86_64') {
         bat (
             'vcvars64.bat' +
             '&&' +
-            'git clone https://github.com/deeplearning4j/nd4j.git' +
+            'git clone -b intropro072-01 https://github.com/deeplearning4j/nd4j.git' +
             '&&' +
             'cd nd4j' +
             '&&' +
