@@ -27,9 +27,10 @@ dir("${LIBPROJECT}") {
             }
         }
     )
-
-    unstash 'cpu-blasbuild'
-    unstash 'cuda75-blasbuild'
-    unstash 'cuda80-blasbuild'
-    unstash 'libnd4j-include'
+    dir("${LIBPROJECT}") {
+        unstash 'cpu-blasbuild'
+        unstash 'cuda75-blasbuild'
+        unstash 'cuda80-blasbuild'
+        unstash 'libnd4j-include'
+    }
 }
