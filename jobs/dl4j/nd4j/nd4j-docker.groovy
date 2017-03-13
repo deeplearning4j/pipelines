@@ -11,8 +11,7 @@ dir("${LIBPROJECT}") {
 
 
         try {
-            env.varResultCount = bat(script: "dir /s/b *.dll",
-                    returnStatus : true)
+            bat(script: "dir /s/b *.dll")
         } catch (e) {
             // if any exception occurs, mark the build as failed
             currentBuild.result = 'FAILURE'
