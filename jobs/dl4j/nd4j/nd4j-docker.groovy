@@ -6,7 +6,7 @@ dir(LIBPROJECT) {
         env.varResultCount = sh(
                 script: "find ${WORKSPACE}/${LIBPROJECT} -type f -name '*.so' | wc -l",
                 returnStdout: true
-        ).toInteger()
+        ).trim().toInteger()
     } else {
         env.varResultCount = bat(
                 script: "",
