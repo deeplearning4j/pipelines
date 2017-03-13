@@ -5,7 +5,7 @@ if (isUnix()) {
      def varResultCountFile = sh(
              script: "find . -type f -name '*.so' | wc -l",
              returnStdout: true
-     ).toInteger
+     ).toInteger()
 } else {
      def varResultCountFile = bat("")
 }
