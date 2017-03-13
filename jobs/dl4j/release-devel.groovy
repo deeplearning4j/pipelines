@@ -68,7 +68,12 @@ node("master") {
         def xplatform = platform
         builders[platform] = {
             build job: "devel/dl4j/all-${xplatform}", parameters:
-                [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform]]
+                [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
+                [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE]
+                ]
             }
         }
     parallel builders
