@@ -15,7 +15,7 @@ dir("${LIBPROJECT}") {
 
 echo "${varResultCount}"
 
-if (varResultCount.toInteger() == 0) {
+if (varResultCount) {
     println("HA-HA-HA" + varResultCount.getClass())
 }else{
     println(varResultCount.getClass())
