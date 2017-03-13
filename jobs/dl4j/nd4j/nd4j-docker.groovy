@@ -1,26 +1,27 @@
 env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
-dir("${LIBPROJECT}") {
-    if (isUnix()) {
-        sh("ls")
-        def files = findFiles(glob: '**/TEST-*.xml')
-        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
-    } else {
-        bat("dir")
-        def files = findFiles(glob: '**/TEST-*.xml')
-        echo """${files[0].name} ${files[0].path} ${files[0].directory} ${files[0].length} ${files[0].lastModified}"""
-    }
-}
 
+if (isUnix()) {
+    env.varResultCount = sh(
+            script: 'if [ -d "${WORKSPACE}\\${LIBPROJECT}\\blasbuild" ] ; then echo 0; else echo 1; fi' ,
+            returnStdout: true
+    ).trim()
+} else {
+    env.varResultCount = bat(
+            script: 'IF EXIST %WORKSPACE%/%LIBPROJECT%/blasbuild (ECHO 0) ELSE ( ECHO  1)',
+            returnStdout: true
+    ).trim()
+}
 
 //echo "${varResultCount}"
 //
-//if (varResultCount) {
-//    println("HA-HA-HA" + varResultCount.getClass())
-//} else {
-//    println(varResultCount.getClass())
-//}
+if (varResultCount.toBoolean()) {
+    println("HA-HA-HA IT'S true " + varResultCount)
+}
+else {
+    println(varResultCount + " not true")
+}
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
 
