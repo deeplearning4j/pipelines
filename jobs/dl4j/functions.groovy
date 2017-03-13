@@ -273,12 +273,12 @@ def get_libnd4j_artifacts_snapshot_tar_ball(some_version, some_platform, profile
     switch (profile_type) {
         case "nexus":
             if (isUnix()) {
-                sh("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
             } else {
-                bat("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
@@ -287,12 +287,12 @@ def get_libnd4j_artifacts_snapshot_tar_ball(some_version, some_platform, profile
         case "sonatype":
 
             if (isUnix()) {
-                sh("mvn dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                sh("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
             } else {
-                bat("mvn dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                bat("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
@@ -300,12 +300,12 @@ def get_libnd4j_artifacts_snapshot_tar_ball(some_version, some_platform, profile
             break
         case "bintray":
             if (isUnix()) {
-                sh("mvn dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                sh("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
             } else {
-                bat("mvn dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                bat("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
@@ -313,12 +313,12 @@ def get_libnd4j_artifacts_snapshot_tar_ball(some_version, some_platform, profile
             break
         case "jfrog":
             if (isUnix()) {
-                sh("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
             } else {
-                bat("mvn dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                         "-Dartifact=org.nd4j:${LIBPROJECT}:${some_version}:tar " + "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
