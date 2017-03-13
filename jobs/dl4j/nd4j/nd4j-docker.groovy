@@ -10,7 +10,7 @@ if (isUnix()) {
      def varResultCountFile = bat("")
 }
 
-echo varResultCountFile
+echo ${varResultCountFile}
 
 //functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}","${PLATFORM_NAME}","${PROFILE_TYPE}")
 
