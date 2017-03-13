@@ -124,12 +124,10 @@ stage("${LIBPROJECT}-build") {
       break
 
       case ["windows-x86_64"]:
-
-      dir("${LIBPROJECT}") {
           parallel (
               "Stream 1 Build CPU" : {
                   dir("stream1") {
-                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${WORKSPACE}\\${LIBPROJECT}\\stream1\\libnd")
+                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
                       bat '''
                       vcvars64.bat && bash buildnativeoperations.sh
                       '''
@@ -139,7 +137,7 @@ stage("${LIBPROJECT}-build") {
               },
               "Stream 2 Build CUDA 7.5" : {
                   dir("stream2") {
-                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${WORKSPACE}\\${LIBPROJECT}\\stream2\\libnd")
+                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
                       bat '''
                       vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
                       '''
@@ -148,7 +146,7 @@ stage("${LIBPROJECT}-build") {
               },
               "Stream 3 Build CUDA 8.0" : {
                   dir("stream3") {
-                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${WORKSPACE}\\${LIBPROJECT}\\stream3\\libnd")
+                      bat("cp -a ${WORKSPACE}\\${LIBPROJECT} ${LIBPROJECT}")
                       bat '''
                       vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
                       '''
@@ -157,6 +155,7 @@ stage("${LIBPROJECT}-build") {
               }
           )
 
+      dir("${LIBPROJECT}") {
           unstash 'win-cpu-blasbuild'
           unstash 'win-cuda75-blasbuild'
           unstash 'win-cuda80-blasbuild'
