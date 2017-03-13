@@ -1,4 +1,4 @@
-node ('windows-slave') {
+node ('windows-x86_64') {
     checkout scm
     load "job/dl4j/vars.groovy"
     functions = load "job/dl4j/functions.groovy"
