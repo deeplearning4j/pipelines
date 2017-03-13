@@ -65,14 +65,12 @@ node("master") {
     println platformsList
     def builders = [:]
     for (platform in platformsList) {
-        println platform
         def xplatform = platform
         builders[platform] = {
             build job: "devel/dl4j/all-${xplatform}", parameters:
                 [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform]]
             }
         }
-    println builders
     parallel builders
 }
 
