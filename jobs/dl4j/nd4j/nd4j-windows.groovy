@@ -1,7 +1,7 @@
 node ('windows-x86_64') {
     checkout scm
-    load "job/dl4j/vars.groovy"
-    functions = load "job/dl4j/functions.groovy"
+    load "jobs/dl4j/vars.groovy"
+    functions = load "jobs/dl4j/functions.groovy"
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         bat (
             'vcvars64.bat' +
