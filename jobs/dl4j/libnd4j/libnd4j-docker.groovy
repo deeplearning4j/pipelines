@@ -129,7 +129,7 @@ stage("${LIBPROJECT}-build") {
                 // else {
                     docker.image(dockerImage).inside(dockerParams) {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                            sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
+                            sh("mvn -B -s ${MAVEN_SETTINGS} dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
                                     " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
                                     " -Dtransitive=false \\\n" +
                                     " -Ddest=${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar")
