@@ -87,7 +87,7 @@ stage("${LIBPROJECT}-build") {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                             sh'''
                             find . -name '*.so' | tar -cvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar --files-from -
-                            mvn -B deploy:deploy-file \
+                            mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file \
                             -Durl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots \
                             -DgroupId=org.nd4j \
                             -DartifactId=${LIBPROJECT} \
