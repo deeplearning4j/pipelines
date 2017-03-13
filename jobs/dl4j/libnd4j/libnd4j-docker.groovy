@@ -69,6 +69,11 @@ stage("${LIBPROJECT}-build") {
                     unstash 'cuda75-blas'
                     unstash 'cuda80-blasbuild'
                     unstash 'cuda80-blas'
+                    env.TRICK_NVCC = "YES"
+                    env.LIBND4J_HOME = "${PWD}"
+                    docker.image(dockerImage).inside(dockerParams){
+                        functions.putLibnd4j()
+                    }
                 }
                 break
 

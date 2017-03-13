@@ -32,5 +32,8 @@ dir("${LIBPROJECT}") {
         unstash 'cuda75-blasbuild'
         unstash 'cuda80-blasbuild'
         unstash 'libnd4j-include'
+        env.TRICK_NVCC = "YES"
+        env.LIBND4J_HOME = "${PWD}"
+        functions.putLibnd4j()
     }
 }
