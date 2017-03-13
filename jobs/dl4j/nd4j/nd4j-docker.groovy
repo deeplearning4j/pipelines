@@ -2,12 +2,12 @@ env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 if (isUnix()) {
-     env.varResultCountFile = sh(
+     def varResultCountFile = sh(
              script: "find . -type f -name '*.so' | wc -l",
              returnStdout: true
-     ).toiInteger
+     ).toInteger
 } else {
-     env.varResultCountFile = bat("")
+     def varResultCountFile = bat("")
 }
 
 echo varResultCountFile
