@@ -18,7 +18,7 @@ dir("${LIBPROJECT}") {
             currentBuild.result = 'FAILURE'
             throw e
         } finally {
-            ptintln("exo")
+            println("exo")
         }
     }
 }
