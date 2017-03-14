@@ -1,11 +1,19 @@
-env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
-env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
+//functions.resolve_dependencies_for_nd4j()
+// linux-x86_64 android-arm android-x86 linux-ppc64le macosx-x86_64 windows-x86_64
 
-
-
-functions.resolve_dependencies_for_nd4j()
-
-
+switch ("${PLATFORM_NAME}") {
+    case "linux-x86_64":
+    case "android-arm":
+    case "android-x86":
+    case "linux-ppc64le":
+        println("Value between: linux-x86_64 android-arm android-x86 linux-ppc64le" + PLATFORM_NAME)
+        break
+    case "macosx-x86_64":
+    case "windows-x86_64":
+    default:
+        println("Value between: macosx-x86_64 windows-x86_64" + PLATFORM_NAME)
+        break
+}
 /*docker.image(dockerImage).inside(dockerParams) {
 // configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
 
