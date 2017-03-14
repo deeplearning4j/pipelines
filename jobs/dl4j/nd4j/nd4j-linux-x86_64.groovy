@@ -18,12 +18,10 @@ stage("${PROJECT}-build") {
                       [cudaVersion: "8.0", scalaVersion: "2.11"]]
 
     for (lib in nd4jlibs) {
-        env.CUDA_VERSION = lib.cudaVersion
-        env.SCALA_VERSION = lib.scalaVersion
         echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
-        sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
-        sh("./change-scala-versions.sh ${SCALA_VERSION}")
-        sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+        sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
+        sh("./change-scala-versions.sh ${lib.scalaVersion}")
+        sh("./change-cuda-versions.sh ${lib.cudaVersion}")
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             docker.image(dockerImage).inside(dockerParams) {
                 functions.getGpg()
