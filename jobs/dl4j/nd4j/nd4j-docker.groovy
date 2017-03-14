@@ -40,9 +40,9 @@ stage("${PROJECT}-build") {
                           [cudaVersion: "8.0", scalaVersion: "2.11"]]
 
         for (lib in nd4jlibs) {
-            echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
             env.CUDA_VERSION = lib.cudaVersion
             env.SCALA_VERSION = lib.scalaVersion
+            echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
             if (isUnix()) {
 //                sh("ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda")
                 sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
@@ -72,6 +72,7 @@ stage("${PROJECT}-build") {
                         docker.image(dockerImage).inside(dockerParams) {
                             functions.getGpg()
                             sh '''
+env
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${CUDA_VERSION},!:nd4j-cuda-${CUDA_VERSION}-platform'
                               '''
