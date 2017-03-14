@@ -4,14 +4,14 @@
 stage("${PROJECT}-ResolveDependencies") {
     switch ("${PLATFORM_NAME}") {
         case ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le"]:
-            echo('[ INFO ] PLATFORM_NAME Value set to: ' + "${$LATFORM_NAME}")
+            echo('[ INFO ] PLATFORM_NAME Value set to: ' + "${PLATFORM_NAME}")
             echo('[ INFO ] Current build will be executed inside docker container')
             docker.image(dockerImage).inside(dockerParams) {
                 functions.resolve_dependencies_for_nd4j()
             }
             break
         case ["macosx-x86_64", "windows-x86_64"]:
-            echo('[ INFO ] PLATFORM_NAME Value set to:' + "${$LATFORM_NAME}")
+            echo('[ INFO ] PLATFORM_NAME Value set to:' + "${PLATFORM_NAME}")
             echo('[ INFO ] Current build will be executed under platform shell')
             functions.resolve_dependencies_for_nd4j()
             break
