@@ -29,37 +29,21 @@ node(PLATFORM_NAME) {
 
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
-
-    // Remove .git folder from workspace
     functions.rm()
-
-    // Create .m2 direcory
-    // functions.dirm2()
-
-    // Set docker image and parameters for current platform
     functions.def_docker()
 
     stage("${PROJECT}") {
-      load "${PDIR}/${PROJECT}/${PROJECT}-docker.groovy"
+        load "${PDIR}/${PROJECT}/${PROJECT}-${PLATFORM_NAME}.groovy"
     }
 
     stage('RELEASE') {
-      // def isSnapshot = VERSION.endsWith('SNAPSHOT')
-
-      if(isSnapshot) {
-        echo "End of building and publishing of the ${PROJECT}-${VERSION}"
-      }
-      else {
-        // timeout(time:1, unit:'HOURS') {
-        timeout(20) {
-            input message:"Approve release of version ${PROJECT}-${VERSION} ?"
+        if (isSnapshot) {
+            echo "End of building and publishing of the ${PROJECT}-${VERSION}"
+        } else {
+            timeout(20) {
+                input message: "Approve release of version ${PROJECT}-${VERSION} ?"
+            }
+            functions.release("${PROJECT}")
         }
-
-        functions.release("${PROJECT}")
-      }
-
     }
-
-    // step([$class: 'WsCleanup'])
-
 }
