@@ -71,7 +71,9 @@ stage("${PROJECT}-build") {
                     case "android-x86":
                         docker.image(dockerImage).inside(dockerParams) {
                             functions.getGpg()
+
                             sh '''
+ gpg --list-keys
 env
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${CUDA_VERSION},!:nd4j-cuda-${CUDA_VERSION}-platform'
