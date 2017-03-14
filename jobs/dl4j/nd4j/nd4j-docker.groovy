@@ -48,7 +48,8 @@ stage("${PROJECT}-build") {
                 sh("./change-cuda-versions.sh ${lib.cudaVersion}")
             } else {
                 bat("IF EXIST ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda (RD /q /s ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda && XCOPY /E /I /Q ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda) ELSE ( XCOPY /E /I /Q ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda )")
-                bat("bash change-scala-versions.sh ${lib.scalaVersion}")
+                bat("""bash
+./change-scala-versions.sh ${lib.scalaVersion}""")
                 bat("bash change-cuda-versions.sh ${lib.cudaVersion}")
             }
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
