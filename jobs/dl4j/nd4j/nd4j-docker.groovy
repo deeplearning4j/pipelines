@@ -11,7 +11,7 @@ switch ("${PLATFORM_NAME}") {
     case "macosx-x86_64":
     case "windows-x86_64":
     default:
-        println("Value between: macosx-x86_64 windows-x86_64" + PLATFORM_NAME)
+        println("Value between: macosx-x86_64 windows-x86_64 and default" + PLATFORM_NAME)
         break
 }
 /*docker.image(dockerImage).inside(dockerParams) {
