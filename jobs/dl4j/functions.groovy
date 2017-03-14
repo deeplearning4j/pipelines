@@ -1,51 +1,59 @@
+def clenap_folder_userContent() {
+    node("master") {
+        dir("${JENKINS_HOME}/userContent") {
+            sh("rm -rf *")
+        }
+    }
+}
+
 def get_project_code(proj) {
-  if (isUnix()) {
-    checkout([$class: 'GitSCM',
-              branches: [[name: "*/${GIT_BRANCHNAME}"]],
-              doGenerateSubmoduleConfigurations: false,
-              extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
-                          [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
-              //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-              submoduleCfg: [],
-              userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
-  } else {
-      // it says - Running on Windowslinux
-      // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
-      echo "Running on Windows"
-      // git 'https://github.com/deeplearning4j/libnd4j.git'
-      checkout([$class: 'GitSCM',
-                branches: [[name: "*/${GIT_BRANCHNAME}"]],
-                doGenerateSubmoduleConfigurations: false,
-                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
-                            [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
-                //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-                submoduleCfg: [],
-                userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
-  }
+    if (isUnix()) {
+        checkout([$class: 'GitSCM',
+                  branches: [[name: "*/${GIT_BRANCHNAME}"]],
+                  doGenerateSubmoduleConfigurations: false,
+                  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
+                               [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
+                  //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+                  submoduleCfg: [],
+                  userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+    } else {
+        // it says - Running on Windowslinux
+        // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+        echo "Running on Windows"
+        // git 'https://github.com/deeplearning4j/libnd4j.git'
+        checkout([$class: 'GitSCM',
+                  branches: [[name: "*/${GIT_BRANCHNAME}"]],
+                  doGenerateSubmoduleConfigurations: false,
+                  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
+                               [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
+                  //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+                  submoduleCfg: [],
+                  userRemoteConfigs: [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+    }
 }
 
 // Remove .git folder and other unneeded files from workspace
 def rm() {
-  echo "Remove .git folder from workspace - ${WORKSPACE}"
-  dir("${WORKSPACE}") {
-    if (isUnix()) {
-        sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
-    } else {
-        echo "Skipping .git deletion because it is windows"
-    }
+    echo "Remove .git folder from workspace - ${WORKSPACE}"
+    dir("${WORKSPACE}") {
+        if (isUnix()) {
+            sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
+        } else {
+            echo "Skipping .git deletion because it is windows"
+        }
 
-  }
+    }
 }
 
 def checktag(proj) {
-  echo "Check if ${proj}-${VERSION} has been released already"
-  def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${VERSION}")
+    echo "Check if ${proj}-${VERSION} has been released already"
+    def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${VERSION}")
     if (check_tag) {
-      echo ("Version exists: " + check_tag)
-      error("Failed to proceed with current version: " + check_tag)
+        echo ("Version exists: " + check_tag)
+        error("Failed to proceed with current version: " + check_tag)
     }
     else {
-      echo ("There is no tag with provided value: ${proj}-${VERSION}" )
+        echo ("There is no tag with provided value: ${proj}-${VERSION}" )
     }
 }
 
@@ -54,84 +62,84 @@ def checktag(proj) {
 // }
 
 def def_docker() {
-  echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-  switch(PLATFORM_NAME) {
-    case "linux-ppc64le":
-      dockerImage = "${DOCKER_CUDA_PPC}"
-      dockerParams = dockerParams_ppc
-      sh ("mkdir -p ${JENKINS_M2DIR_PPC64LE} ${JENKINS_SBTDIR_PPC64LE}")
-      break
+    echo "Setting docker parameters and image for ${PLATFORM_NAME}"
+    switch(PLATFORM_NAME) {
+        case "linux-ppc64le":
+            dockerImage = "${DOCKER_CUDA_PPC}"
+            dockerParams = dockerParams_ppc
+            sh ("mkdir -p ${JENKINS_M2DIR_PPC64LE} ${JENKINS_SBTDIR_PPC64LE}")
+            break
 
-    case "linux-x86_64":
-      dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
-      dockerParams = dockerParams_nvidia
-      sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
-      break
+        case "linux-x86_64":
+            dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
+            dockerParams = dockerParams_nvidia
+            sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
+            break
 
-    case ["android-arm", "android-x86"]:
-        dockerImage = "${DOCKER_ANDROID_IMAGE}"
-        sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
-        break
+        case ["android-arm", "android-x86"]:
+            dockerImage = "${DOCKER_ANDROID_IMAGE}"
+            sh ("mkdir -p ${JENKINS_M2DIR_AMD64} ${JENKINS_SBTDIR_AMD64}")
+            break
 
-    case ["macosx"]:
-        echo "Running on OS X, skipping docker part"
-        break
+        case ["macosx"]:
+            echo "Running on OS X, skipping docker part"
+            break
 
-    case ["windows-x86_64"]:
-        echo "Running on windows, skipping docker part"
-        break
+        case ["windows-x86_64"]:
+            echo "Running on windows, skipping docker part"
+            break
 
-    default:
-      error("Platform name is not defined or unsupported")
-      break
-  }
+        default:
+            error("Platform name is not defined or unsupported")
+            break
+    }
 }
 
 def sonar(proj) {
-  echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
-  // requires SonarQube Scanner 2.8+
-  def scannerHome = tool 'SS28';
-  dir("${proj}") {
-    // withSonarQubeEnv("${SQS}") {
-    withSonarQubeEnv('SonarQubeServer') {
-      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
+    echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
+    // requires SonarQube Scanner 2.8+
+    def scannerHome = tool 'SS28';
+    dir("${proj}") {
+        // withSonarQubeEnv("${SQS}") {
+        withSonarQubeEnv('SonarQubeServer') {
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
           -Dsonar.projectName=${proj} -Dsonar.projectVersion=${VERSION} \
           -Dsonar.sources=."
-          // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
+            // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
+        }
     }
-  }
 }
 
 // mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$VERSION
 def verset(ver, allowss) {
-  def mvnHome = tool 'M339'
-  sh ("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+    def mvnHome = tool 'M339'
+    sh ("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
 }
 
 def release(proj) {
-  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-  // Here you need to put stuff for atrifacts releasing
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Here you need to put stuff for atrifacts releasing
 
-  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-  // Tag builded branch with new version
-  if (CREATE_TAG.toBoolean()) {
-    echo ("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
-    echo ("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
-    dir("${proj}") {
-      sshagent(credentials: ["${GITCREDID}"]) {
-        sh 'git config user.email "jenkins@skymind.io"'
-        sh 'git config user.name "Jenkins"'
-        sh 'git status'
-        // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-        sh('git commit -a -m \"Update to version ${VERSION}\"')
-        sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
-        // sh("git push origin test-${proj}-${VERSION}")
-      }
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // Tag builded branch with new version
+    if (CREATE_TAG.toBoolean()) {
+        echo ("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
+        echo ("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
+        dir("${proj}") {
+            sshagent(credentials: ["${GITCREDID}"]) {
+                sh 'git config user.email "jenkins@skymind.io"'
+                sh 'git config user.name "Jenkins"'
+                sh 'git status'
+                // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+                sh('git commit -a -m \"Update to version ${VERSION}\"')
+                sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
+                // sh("git push origin test-${proj}-${VERSION}")
+            }
+        }
     }
-  }
-  else {
-      echo ("Parameter CREATE_TAG is undefined so tagging has been skipped")
-  }
+    else {
+        echo ("Parameter CREATE_TAG is undefined so tagging has been skipped")
+    }
 }
 
 def getGpg() {
@@ -139,9 +147,9 @@ def getGpg() {
             file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
             file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
             usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
-            if (isUnix()) {
-                sh("rm -rf ${HOME}/.gnupg/*.gpg")
-                sh'''
+        if (isUnix()) {
+            sh("rm -rf ${HOME}/.gnupg/*.gpg")
+            sh'''
                 gpg --list-keys
                 cp ${GPG_PUBRING} ${HOME}/.gnupg/
                 cp ${GPG_SECRING} ${HOME}/.gnupg/
@@ -149,12 +157,12 @@ def getGpg() {
                 chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
                 gpg --list-keys
                 '''
-            } else {
-                sh("env")
-                // It says - Running on Windowslinux
-                // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
-                echo "Running on Windows"
-                bat'''
+        } else {
+            sh("env")
+            // It says - Running on Windowslinux
+            // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
+            echo "Running on Windows"
+            bat'''
                 rm -rf %USERPROFILE%/.gnupg/*.gpg
                 ls -la %USERPROFILE%/.gnupg
                 gpg.exe --list-keys
@@ -164,98 +172,100 @@ def getGpg() {
                 ls -la %USERPROFILE%/.gnupg
                 gpg.exe --list-keys
                 '''
-            }
         }
+    }
 }
 
 def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_platform, profile_type) {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         if (isUnix()) {
-            sh("tar -cvf ${LIBPROJECT}-${some_version}-${some_platform}.tar blasbuild")
+//            sh("tar -cvf ${LIBPROJECT}-${some_version}-${some_platform}.tar blasbuild")
+            zip dir: "${WORKSPACE}/libnd4j/blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
                     sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
-                            "-Dpackaging=tar " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=local-nexus " +
                             "-Dclassifier=${some_platform} " +
-                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "sonatype":
                     sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
-                            "-Dpackaging=tar " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=sonatype-nexus-snapshots " +
                             "-Dclassifier=${some_platform} " +
-                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "bintray":
                     sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
-                            "-Dpackaging=tar " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=bintray-deeplearning4j-maven " +
                             "-Dclassifier=${some_platform} " +
-                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "jfrog":
                     sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
-                            "-Dpackaging=tar " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=local-jfrog " +
                             "-Dclassifier=${some_platform} " +
-                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.tar")
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
             }
         } else {
-            bat("tar -cvf %LIBPROJECT%-%some_version%-%some_platform%.tar blasbuild")
+//            bat("tar -cvf %LIBPROJECT%-%some_version%-%some_platform%.tar blasbuild")
+            zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
-                            "-DartifactId=%LIBPROJECT% " +
-                            "-Dversion=%some_version% " +
-                            "-Dpackaging=tar " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=local-nexus " +
-                            "-Dclassifier=%some_platform% " +
-                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "sonatype":
-                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
-                            "-DartifactId=%LIBPROJECT% " +
-                            "-Dversion=%some_version% " +
-                            "-Dpackaging=tar " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=sonatype-nexus-snapshots " +
-                            "-Dclassifier=%some_platform% " +
-                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "bintray":
-                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                             "-DgroupId=org.nd4j " +
-                            "-DartifactId=%LIBPROJECT% " +
-                            "-Dversion=%some_version% " +
-                            "-Dpackaging=tar " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=bintray-deeplearning4j-maven " +
-                            "-Dclassifier=%some_platform% " +
-                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "jfrog":
-                    bat("mvn -B -s %MAVEN_SETTINGS% deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
-                            "-DartifactId=%LIBPROJECT% " +
-                            "-Dversion=%some_version% " +
-                            "-Dpackaging=tar " +
+                            "-DartifactId=${LIBPROJECT} " +
+                            "-Dversion=${some_version} " +
+                            "-Dpackaging=zip " +
                             "-DrepositoryId=local-jfrog " +
-                            "-Dclassifier=%some_platform% " +
-                            "-Dfile=%LIBPROJECT%-%some_version%-%some_platform%.tar")
+                            "-Dclassifier=${some_platform} " +
+                            "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
             }
         }
@@ -269,67 +279,67 @@ def download_nd4j_native_from_maven_central(some_version) {
     }
 }
 
-def get_libnd4j_artifacts_snapshot_tar_ball(some_version, some_platform, profile_type) {
+def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_type) {
     switch (profile_type) {
         case "nexus":
             if (isUnix()) {
                 sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
                 bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             }
             break
         case "sonatype":
 
             if (isUnix()) {
                 sh("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
                 bat("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             }
             break
         case "bintray":
             if (isUnix()) {
                 sh("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
                 bat("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             }
             break
         case "jfrog":
             if (isUnix()) {
                 sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
                 bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
-                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=tar " +
+                        "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.tar ")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             }
             break
     }
@@ -477,14 +487,15 @@ def resolve_dependencies_for_nd4j(){
     } else {
         echo("[ INFO ] ${LIBPROJECT} wasn't build previously")
         echo("[ INFO ] Download sources for ${LIBPROJECT} ")
-        functions.get_project_code("${LIBPROJECT}")
+        dir ("${LIBPROJECT}") {writeFile file:'dummy', text:''}
         echo("[ INFO ] Resolve dependencies related to ${LIBPROJECT} ")
-        functions.get_libnd4j_artifacts_snapshot_tar_ball("${VERSION}", "${PLATFORM_NAME}", "${PROFILE_TYPE}")
+        functions.get_libnd4j_artifacts_snapshot_ball("${VERSION}", "${PLATFORM_NAME}", "${PROFILE_TYPE}")
+
 
         if (isUnix()) {
-            sh("tar -xvf ${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}/${LIBPROJECT}")
+            unzip zipFile: "${WORKSPACE}/${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}"
         } else {
-            bat("tar -xvf ${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.tar -C ${WORKSPACE}\\${LIBPROJECT}")
+            unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}\\${LIBPROJECT}"
         }
     }
 
