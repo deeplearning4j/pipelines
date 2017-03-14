@@ -1,6 +1,7 @@
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
 
+
 settings_xml = 'maven-settings-id-1'
 // gitcredid = 'github-private-deeplearning4j-id-1'
 // env.GITCREDID = "github-private-deeplearning4j-id-1"
