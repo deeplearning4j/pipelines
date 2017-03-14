@@ -281,7 +281,7 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
-                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip -X")
+                        "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
                 bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
