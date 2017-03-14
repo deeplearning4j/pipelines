@@ -10,9 +10,11 @@ switch ("${PLATFORM_NAME}") {
         break
     case "macosx-x86_64":
     case "windows-x86_64":
-    default:
         println("Value between: macosx-x86_64 windows-x86_64 and default " + PLATFORM_NAME)
         break
+    default:
+        break
+
 }
 /*docker.image(dockerImage).inside(dockerParams) {
 // configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
