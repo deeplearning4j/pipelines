@@ -47,7 +47,7 @@ stage("${PROJECT}-build") {
                 sh("./change-scala-versions.sh ${lib.scalaVersion}")
                 sh("./change-cuda-versions.sh ${lib.cudaVersion}")
             } else {
-                bat("IF EXIST ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda (RD /q /s ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda && XCOPY /E /S  ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda) ELSE ( XCOPY /E /S  ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda )")
+                bat("IF EXIST ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda (RD /q /s ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda && XCOPY /E /I  ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda) ELSE ( XCOPY /E /I  ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda )")
                 bat("bash change-scala-versions.sh ${lib.scalaVersion}")
                 bat("bash change-cuda-versions.sh ${lib.cudaVersion}")
             }
