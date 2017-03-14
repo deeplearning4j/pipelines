@@ -1,3 +1,5 @@
+env.CUDA_VERSION= env.CUDA_VERSION ?: "8.0"
+
 stage("${PROJECT}-ResolveDependencies") {
     docker.image(dockerImage).inside(dockerParams) {
         functions.resolve_dependencies_for_nd4j()
@@ -14,7 +16,7 @@ stage("${PROJECT}-build") {
         functions.verset("${VERSION}", true)
 //        env.LIBND4J_HOME = "${WORKSPACE}/libnd4j"
 
-        sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
+        sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             docker.image(dockerImage).inside(dockerParams) {
                 functions.getGpg()
