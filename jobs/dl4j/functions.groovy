@@ -277,13 +277,13 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
     switch (profile_type) {
         case "nexus":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                sh("mvn -B dependency:get -DremoteRepositories =http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip -X")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                bat("mvn -B dependency:get -DremoteRepositories=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
@@ -293,13 +293,13 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
         case "sonatype":
 
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                sh("mvn -B dependency:get -DremoteRepositories=https://oss.sonatype.org/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                bat("mvn -B dependency:get -DremoteRepositories=https://oss.sonatype.org/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
@@ -308,13 +308,13 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
             break
         case "bintray":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                sh("mvn -B dependency:get -DremoteRepositories=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                bat("mvn -B dependency:get -DremoteRepositories=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
@@ -323,13 +323,13 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
             break
         case "jfrog":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                sh("mvn -B dependency:get -DremoteRepositories=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                bat("mvn -B dependency:get -DremoteRepositories=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
