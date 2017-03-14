@@ -6,13 +6,21 @@ switch ("${PLATFORM_NAME}") {
     case "android-arm":
     case "android-x86":
     case "linux-ppc64le":
-        println("Value between: linux-x86_64 android-arm android-x86 linux-ppc64le " + PLATFORM_NAME)
+        println('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME,
+                '''[ INFO ] Current build will be executed inside docker container ''')
+        docker.image(dockerImage).inside(dockerParams) {
+            functions.resolve_dependencies_for_nd4j()
+        }
+
         break
     case "macosx-x86_64":
     case "windows-x86_64":
-        println("Value between: macosx-x86_64 windows-x86_64 and default " + PLATFORM_NAME)
+        println('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME,
+                '''[ INFO ] Current build will be executed under platform shell ''')
+        functions.resolve_dependencies_for_nd4j()
         break
     default:
+        error("Platform name is not defined or unsupported")
         break
 
 }
