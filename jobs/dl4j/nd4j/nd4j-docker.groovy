@@ -2,46 +2,17 @@ env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "${VERSION}"
 env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 
-functions.resolve_dependencies_for_nd4j()
-
-/*
-dir("${LIBPROJECT}") {
-    sh("find . -type f -name '*.so' | wc -l > ${WORKSPACE}/resultCountFile")
-}
-def varResultCountFile = readFile("${WORKSPACE}/resultCountFile").toInteger()
-echo varResultCountFile.toString()
 
 
-if (varResultCountFile == 0) {
-    functions.get_project_code("${LIBPROJECT}")
 
-    stage("${PROJECT}-resolve-dependencies") {
 
-        dir("${LIBPROJECT}") {
-            if ( PLATFORM_NAME == "linux-ppc64le" ) {
-                sh ("rm -rf ${WORKSPACE}/libnd4j && cp -a /srv/jenkins/libnd4j ${WORKSPACE}/")
-            } else {
-                    docker.image(dockerImage).inside(dockerParams) {
+docker.image(dockerImage).inside(dockerParams) {
                         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                    */
-/**
- * HI MAN - this is HARD CODE for URL
- *//*
-
-                        sh("mvn -B dependency:get -DrepoUrl=${NEXUS_LOCAL}/nexus/content/repositories/snapshots  \\\n" +
-                                " -Dartifact=org.nd4j:${LIBPROJECT}:${LIBBND4J_SNAPSHOT}:tar \\\n" +
-                                " -Dtransitive=false \\\n" +
-                                " -Ddest=${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar")
-                        //
-                        sh("tar -xvf ${LIBPROJECT}-${LIBBND4J_SNAPSHOT}.tar;")
-                        sh("cd blasbuild && ln -s cuda-${CUDA_VERSION} cuda")
-                    }
-                }
-            }
-        }
+                            functions.resolve_dependencies_for_nd4j()
     }
 }
 
+/*
 
 
 stage("${PROJECT}-checkout-sources") {
