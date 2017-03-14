@@ -41,16 +41,18 @@ stage("${PROJECT}-build") {
 
         for (lib in nd4jlibs) {
             echo "[ INFO ] ++ Building nd4j with cuda " + lib.cudaVersion + " and scala " + lib.scalaVersion
+            env.CUDA_VERSION = lib.cudaVersion
+            env.SCALA_VERSION = lib.scalaVersion
             if (isUnix()) {
-//                sh("ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda")
-                sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${lib.cudaVersion} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
-                sh("./change-scala-versions.sh ${lib.scalaVersion}")
-                sh("./change-cuda-versions.sh ${lib.cudaVersion}")
+//                sh("ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda")
+                sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
+                sh("./change-scala-versions.sh ${SCALA_VERSION}")
+                sh("./change-cuda-versions.sh ${CUDA_VERSION}")
             } else {
-                bat("IF EXIST ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda (RD /q /s ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda && XCOPY /E /I /Q ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda) ELSE ( XCOPY /E /I /Q ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${lib.cudaVersion} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda )")
+                bat("IF EXIST ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda (RD /q /s ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda && XCOPY /E /I /Q ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${CUDA_VERSION} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda) ELSE ( XCOPY /E /I /Q ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda-${CUDA_VERSION} ${WORKSPACE}\\${LIBPROJECT}\\blasbuild\\cuda )")
                 bat("""bash
-./change-scala-versions.sh ${lib.scalaVersion}""")
-                bat("bash change-cuda-versions.sh ${lib.cudaVersion}")
+./change-scala-versions.sh ${SCALA_VERSION}""")
+                bat("bash change-cuda-versions.sh ${CUDA_VERSION}")
             }
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch (PLATFORM_NAME) {
@@ -71,14 +73,14 @@ stage("${PROJECT}-build") {
                             functions.getGpg()
                             sh '''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${lib.scalaVersion},!:nd4j-cuda-${lib.scalaVersion}-platform'
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${CUDA_VERSION},!:nd4j-cuda-${CUDA_VERSION}-platform'
                               '''
                         }
                         break
                     case "macosx-x86_64":
                         functions.getGpg()
                         sh '''
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${lib.scalaVersion},!:nd4j-cuda-${lib.scalaVersion}-platform'
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${CUDA_VERSION},!:nd4j-cuda-${CUDA_VERSION}-platform'
                               '''
                         break
                     case "windows-x86_64":
