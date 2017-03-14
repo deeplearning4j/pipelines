@@ -3,14 +3,14 @@ env.CUDA_VERSION = env.CUDA_VERSION ?: "7.5"
 
 
 
+functions.resolve_dependencies_for_nd4j()
 
 
+/*docker.image(dockerImage).inside(dockerParams) {
+// configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
 
-docker.image(dockerImage).inside(dockerParams) {
-                        configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                            functions.resolve_dependencies_for_nd4j()
-    }
-}
+//    }
+}*/
 
 /*
 
