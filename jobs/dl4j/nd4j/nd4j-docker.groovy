@@ -3,14 +3,18 @@
 
 stage("${PROJECT}-ResolveDependencies") {
     switch ("${PLATFORM_NAME}") {
-        case ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le"]:
+        case "linux-x86_64":
+        case "android-arm":
+        case "android-x86":
+        case "linux-ppc64le":
             echo('[ INFO ] PLATFORM_NAME Value set to: ' + "${PLATFORM_NAME}")
             echo('[ INFO ] Current build will be executed inside docker container')
             docker.image(dockerImage).inside(dockerParams) {
                 functions.resolve_dependencies_for_nd4j()
             }
             break
-        case ["macosx-x86_64", "windows-x86_64"]:
+        case "macosx-x86_64":
+        case "windows-x86_64":
             echo('[ INFO ] PLATFORM_NAME Value set to:' + "${PLATFORM_NAME}")
             echo('[ INFO ] Current build will be executed under platform shell')
             functions.resolve_dependencies_for_nd4j()
@@ -49,7 +53,8 @@ stage("${PROJECT}-build") {
             }
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 switch (PLATFORM_NAME) {
-                    case ["linux-x86_64", "linux-ppc64le"]:
+                    case "linux-x86_64":
+                    case "linux-ppc64le":
                         docker.image(dockerImage).inside(dockerParams) {
                             functions.getGpg()
                             sh '''
@@ -59,7 +64,8 @@ stage("${PROJECT}-build") {
                                 '''
                         }
                         break
-                    case ["android-arm", "android-x86"]:
+                    case "android-arm":
+                    case "android-x86":
                         docker.image(dockerImage).inside(dockerParams) {
                             functions.getGpg()
                             sh '''
@@ -76,7 +82,7 @@ stage("${PROJECT}-build") {
                         break
                     case "windows-x86_64":
                         functions.getGpg()
-                        bat ("mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} ")
+                        bat("mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} ")
 
                     default:
                         break
