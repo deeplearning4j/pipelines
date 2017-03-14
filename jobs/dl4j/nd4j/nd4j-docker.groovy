@@ -24,13 +24,6 @@ switch ("${PLATFORM_NAME}") {
         break
 
 }
-/*docker.image(dockerImage).inside(dockerParams) {
-// configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-
-//    }
-}*/
-
-/*
 
 
 stage("${PROJECT}-checkout-sources") {
@@ -120,4 +113,4 @@ stage("${PROJECT}-build") {
 }
 
 echo 'MARK: end of nd4j.groovy'
-*/
+
