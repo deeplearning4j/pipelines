@@ -71,14 +71,14 @@ stage("${PROJECT}-build") {
                             functions.getGpg()
                             sh '''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${lib.scalaVersion},!:nd4j-cuda-${lib.scalaVersion}-platform'
                               '''
                         }
                         break
                     case "macosx-x86_64":
                         functions.getGpg()
                         sh '''
-                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
+                              mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${TESTS} -pl '!:nd4j-cuda-${lib.scalaVersion},!:nd4j-cuda-${lib.scalaVersion}-platform'
                               '''
                         break
                     case "windows-x86_64":
