@@ -6,12 +6,12 @@ switch ("${PLATFORM_NAME}") {
     case "android-arm":
     case "android-x86":
     case "linux-ppc64le":
-        println("Value between: linux-x86_64 android-arm android-x86 linux-ppc64le" + PLATFORM_NAME)
+        println("Value between: linux-x86_64 android-arm android-x86 linux-ppc64le " + PLATFORM_NAME)
         break
     case "macosx-x86_64":
     case "windows-x86_64":
     default:
-        println("Value between: macosx-x86_64 windows-x86_64 and default" + PLATFORM_NAME)
+        println("Value between: macosx-x86_64 windows-x86_64 and default " + PLATFORM_NAME)
         break
 }
 /*docker.image(dockerImage).inside(dockerParams) {
