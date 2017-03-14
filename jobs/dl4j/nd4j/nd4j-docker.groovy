@@ -6,7 +6,7 @@ switch ("${PLATFORM_NAME}") {
     case "android-arm":
     case "android-x86":
     case "linux-ppc64le":
-        println('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME,
+        echo('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME,
                 '''[ INFO ] Current build will be executed inside docker container ''')
         docker.image(dockerImage).inside(dockerParams) {
             functions.resolve_dependencies_for_nd4j()
@@ -15,7 +15,7 @@ switch ("${PLATFORM_NAME}") {
         break
     case "macosx-x86_64":
     case "windows-x86_64":
-        println('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME,
+        echo('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME,
                 '''[ INFO ] Current build will be executed under platform shell ''')
         functions.resolve_dependencies_for_nd4j()
         break
