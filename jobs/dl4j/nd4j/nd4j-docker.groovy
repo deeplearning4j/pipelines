@@ -1,34 +1,35 @@
 //functions.resolve_dependencies_for_nd4j()
 // linux-x86_64 android-arm android-x86 linux-ppc64le macosx-x86_64 windows-x86_64
 
-switch ("${PLATFORM_NAME}") {
-    case "linux-x86_64":
-    case "android-arm":
-    case "android-x86":
-    case "linux-ppc64le":
-        echo('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME + "\n" +
-                '''[ INFO ] Current build will be executed inside docker container ''')
-        docker.image(dockerImage).inside(dockerParams) {
+stage("${PROJECT}-ResolveDependencies") {
+    switch ("${PLATFORM_NAME}") {
+        case "linux-x86_64":
+        case "android-arm":
+        case "android-x86":
+        case "linux-ppc64le":
+            echo('''[ INFO ] PLATFORM_NAME Value set to:  $PLATFORM_NAME
+                    [ INFO ] Current build will be executed inside docker container ''')
+            docker.image(dockerImage).inside(dockerParams) {
+                functions.resolve_dependencies_for_nd4j()
+            }
+
+            break
+        case "macosx-x86_64":
+        case "windows-x86_64":
+            echo('''[ INFO ] PLATFORM_NAME Value set to:  $PLATFORM_NAME
+                    [ INFO ] Current build will be executed under platform shell ''')
             functions.resolve_dependencies_for_nd4j()
-        }
-
-        break
-    case "macosx-x86_64":
-    case "windows-x86_64":
-        echo('''[ INFO ] PLATFORM_NAME Value set to:  ''' + PLATFORM_NAME + "\n" +
-                '''[ INFO ] Current build will be executed under platform shell ''')
-        functions.resolve_dependencies_for_nd4j()
-        break
-    default:
-        error("Platform name is not defined or unsupported")
-        break
-
+            break
+        default:
+            error("Platform name is not defined or unsupported")
+            break
+    }
 }
-
 
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
+
 
 stage("${PROJECT}-build") {
     dir("${LIBPROJECT}/blasbuild") {
@@ -37,17 +38,17 @@ stage("${PROJECT}-build") {
 
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-        env.LIBND4J_HOME="${WORKSPACE}/libnd4j"
+        env.LIBND4J_HOME = "${WORKSPACE}/libnd4j"
 
         final nd4jlibs = [
-            [
-                cudaVersion: "7.5",
-                scalaVersion: "2.10"
-            ],
                 [
-                cudaVersion: "8.0",
-                scalaVersion: "2.11"
-            ]
+                        cudaVersion : "7.5",
+                        scalaVersion: "2.10"
+                ],
+                [
+                        cudaVersion : "8.0",
+                        scalaVersion: "2.11"
+                ]
         ]
 
         for (lib in nd4jlibs) {
@@ -55,22 +56,21 @@ stage("${PROJECT}-build") {
             sh("./change-scala-versions.sh ${lib.scalaVersion}")
             sh("./change-cuda-versions.sh ${lib.cudaVersion}")
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                switch(PLATFORM_NAME) {
+                switch (PLATFORM_NAME) {
                     case ["linux-x86_64", "linux-ppc64le"]:
                         if (TESTS.toBoolean()) {
                             docker.image(dockerImage).inside(dockerParams) {
                                 functions.getGpg()
-                                sh'''
+                                sh '''
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR}
                                 '''
                             }
-                        }
-                        else {
+                        } else {
                             docker.image(dockerImage).inside(dockerParams) {
                                 functions.getGpg()
-                                sh'''
+                                sh '''
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=true
@@ -81,22 +81,21 @@ stage("${PROJECT}-build") {
 
                     case ["android-arm", "android-x86"]:
                         if (TESTS.toBoolean()) {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              functions.getGpg()
-                              sh'''
+                            docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
+                                sh '''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                               '''
-                          }
-                        }
-                        else {
-                          docker.image(dockerImage).inside(dockerParams) {
-                              functions.getGpg()
-                              sh'''
+                            }
+                        } else {
+                            docker.image(dockerImage).inside(dockerParams) {
+                                functions.getGpg()
+                                sh '''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                               mvn clean install -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DskipTests -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform'
                               '''
-                          }
+                            }
                         }
                         break
 
