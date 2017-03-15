@@ -31,7 +31,7 @@ stage("${PROJECT}-build") {
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
                                 '''*/
-                bat '''bash
+                bat '''bash -c  gpg --list-keys
 pwd'''
             }
         }

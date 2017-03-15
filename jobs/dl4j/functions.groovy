@@ -157,14 +157,14 @@ def getGpg() {
             // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
             echo "Running on Windows"
             bat '''
-                rm -rf %USERPROFILE%\\.gnupg\\*.gpg
-                ls -la %USERPROFILE%\\.gnupg
-                gpg.exe --list-keys
-                echo %GPG_PUBRING% %GPG_SECRING% %HOME%
-                cp %GPG_PUBRING% %USERPROFILE%\\.gnupg\\
-                cp %GPG_SECRING% %USERPROFILE%\\.gnupg\\
-                ls -la %USERPROFILE%\\.gnupg
-                gpg.exe --list-keys
+                bash -c "rm -rf ${HOME}/.gnupg/*.gpg"
+                bash -c "gpg --list-keys"
+                bash -c "cp ${GPG_PUBRING} ${HOME}/.gnupg/"
+                bash -c "cp ${GPG_SECRING} ${HOME}/.gnupg/"
+                bash -c "chmod 700 $HOME/.gnupg"
+                bash -c "chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg"
+                bash -c "gpg --list-keys"
+                bash -c "gpg.exe --list-keys"
                 '''
         }
     }
