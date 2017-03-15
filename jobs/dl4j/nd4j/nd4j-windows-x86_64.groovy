@@ -30,7 +30,7 @@ stage("${PROJECT}-build") {
                 bat '''
                                cp %MAVEN_SETTINGS% %WORKSPACE%\\settings.xml
                                "C:\\Program Files\\Git\\bin\\bash.exe" -c "gpg --list-keys"
-                               "C:\\Program Files\\Git\\bin\\bash.exe" -c  "mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%" 
+                               bash -c  "mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%" 
                                '''
 
             }
