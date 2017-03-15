@@ -26,9 +26,9 @@ stage("${PROJECT}-build") {
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 functions.getGpg()
                 bat '''         
-                                bash -c "echo ${WORKSPACE}"
+                                bash -c "cp "
                                 bash -c "gpg --list-keys"
-                                bash -c "mvn -B -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% "
+                                mvn -B -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST%
                                 '''
 
             }
