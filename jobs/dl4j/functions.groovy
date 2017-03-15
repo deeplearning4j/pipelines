@@ -152,7 +152,7 @@ def getGpg() {
                 gpg --list-keys
                 '''
         } else {
-            sh("env")
+//            sh("env")
             // It says - Running on Windowslinux
             // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
             echo "Running on Windows"
