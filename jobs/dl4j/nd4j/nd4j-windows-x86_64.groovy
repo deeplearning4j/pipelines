@@ -19,7 +19,7 @@ stage("${PROJECT}-build") {
             env.CUDA_VERSION = lib.cudaVersion
             env.SCALA_VERSION = lib.scalaVersion
             echo "[ INFO ] ++ Building nd4j with cuda " + CUDA_VERSION + " and scala " + SCALA_VERSION
-            bat('''bash -c "if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi"''')
+            bat('''bash -c "if [ -L %WORKSPACE%/%LIBPROJECT%/blasbuild/cuda ] ; then rm -f %WORKSPACE%/%LIBPROJECT%/blasbuild/cuda && ln -s %WORKSPACE%/%LIBPROJECT%/blasbuild/cuda-%CUDA_VERSION% %WORKSPACE%/%LIBPROJECT%/blasbuild/cuda ; else  ln -s %WORKSPACE%/%LIBPROJECT%/blasbuild/cuda-%CUDA_VERSION% %WORKSPACE%/%LIBPROJECT%/blasbuild/cuda ; fi"''')
             bat('''bash -c "./change-scala-versions.sh ${SCALA_VERSION}" ''')
             bat('''bash -c "./change-cuda-versions.sh ${CUDA_VERSION}" ''')
 
