@@ -157,13 +157,13 @@ def getGpg() {
             // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
             echo "Running on Windows"
             bat '''
-                rm -rf %USERPROFILE%/.gnupg/*.gpg
-                ls -la %USERPROFILE%/.gnupg
+                rm -rf %USERPROFILE%\.gnupg\*.gpg
+                ls -la %USERPROFILE%\.gnupg
                 gpg.exe --list-keys
                 echo %GPG_PUBRING% %GPG_SECRING% %HOME%
-                cp %GPG_PUBRING% %USERPROFILE%/.gnupg/
-                cp %GPG_SECRING% %USERPROFILE%/.gnupg/
-                ls -la %USERPROFILE%/.gnupg
+                cp %GPG_PUBRING% %USERPROFILE%\.gnupg\
+                cp %GPG_SECRING% %USERPROFILE%\.gnupg\
+                ls -la %USERPROFILE%\.gnupg
                 gpg.exe --list-keys
                 '''
         }
