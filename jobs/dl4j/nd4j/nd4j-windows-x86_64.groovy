@@ -10,12 +10,16 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-/*        env.LIBND4J_HOME = bat( script: '''bash -c "echo /${WORKSPACE}\\${LIBPROJECT} | sed -e 's/\\\\/\\//g' -e 's/://' "''',
+        env.WORKSPACE_BASH = bat(script: '''bash -c "echo /${WORKSPACE} | sed -e 's/\\\\/\\//g' -e 's/://' "''',
                 returnStdout: true
-        ).trim()*/
+        ).trim()
+
+        bat("set")
+
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
                           [cudaVersion: "8.0", scalaVersion: "2.11"]]
+
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION = lib.cudaVersion
@@ -29,10 +33,10 @@ stage("${PROJECT}-build") {
                 functions.getGpg()
 
                 bat '''
-                                cp %MAVEN_SETTINGS% %WORKSPACE%/settings.xml
-                                "C:\\Program Files\\Git\\bin\\bash.exe" -c "gpg --list-keys"
+                               cp %MAVEN_SETTINGS% %WORKSPACE%\\settings.xml
+                               "C:\\Program Files\\Git\\bin\\bash.exe" -c "gpg --list-keys"
                                "C:\\Program Files\\Git\\bin\\bash.exe" -c  "mvn -B -s %WORKSPACE%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% " 
-                                '''
+                               '''
 
             }
         }
