@@ -31,7 +31,7 @@ stage("${PROJECT}-build") {
                 bat '''         
                                 bash -c "cp "
                                 bash -c "gpg --list-keys"
-                                mvn -B -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST%
+                                bash -c "mvn -B -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% "
                                 '''
 
             }
