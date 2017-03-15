@@ -28,7 +28,7 @@ node(PLATFORM_NAME) {
 
     checkout scm
 
-    load "${PDIR}/vars.groovy"
+    load "jobs/dl4j/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
     functions.rm()
     functions.def_docker()
