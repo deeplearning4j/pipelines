@@ -10,7 +10,7 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
 //        functions.verset("${VERSION}", true)
-        env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/')
+        env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','')
 
 
         bat("set")
