@@ -10,9 +10,9 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-        env.LIBND4J_HOME = bat( script: '''bash -c "echo /${WORKSPACE}\\${LIBPROJECT} | sed -e 's/\\\\/\\//g' -e 's/://' "''',
+/*        env.LIBND4J_HOME = bat( script: '''bash -c "echo /${WORKSPACE}\\${LIBPROJECT} | sed -e 's/\\\\/\\//g' -e 's/://' "''',
                 returnStdout: true
-        ).trim()
+        ).trim()*/
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
                           [cudaVersion: "8.0", scalaVersion: "2.11"]]
