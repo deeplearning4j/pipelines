@@ -23,15 +23,12 @@ stage("${PROJECT}-build") {
             bat('''bash -c "./change-scala-versions.sh %SCALA_VERSION%" ''')
             bat('''bash -c "./change-cuda-versions.sh %CUDA_VERSION%" ''')
 
-
-//            bat('''IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda (RD /q /s %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda && XCOPY /E /Q /I %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda-%CUDA_VERSION% %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda) ELSE ( XCOPY /E /Q /I %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda-%CUDA_VERSION% %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda )''')
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-//                functions.getGpg()
-/*                sh '''
-                                gpg --list-keys
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
-                                '''*/
+                functions.getGpg()
+                bat '''
+                                bash -c "gpg --list-keys"
+                                bash -c "mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}"
+                                '''
 
             }
         }
