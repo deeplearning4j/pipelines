@@ -1,18 +1,17 @@
 stage("${PROJECT}-ResolveDependencies") {
-    functions.resolve_dependencies_for_nd4j()
+//    functions.resolve_dependencies_for_nd4j()
 }
 
 
 stage("${PROJECT}-checkout-sources") {
-    functions.get_project_code("${PROJECT}")
+//    functions.get_project_code("${PROJECT}")
 }
 
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
-        functions.verset("${VERSION}", true)
-        env.WORKSPACE_BASH = bat(script: ''' echo /%WORKSPACE% | bash -c "sed s/://g" | bash -c "sed -e 's/\\\\\\/\\//g'" ''',
-                returnStdout: true
-        ).trim()
+//        functions.verset("${VERSION}", true)
+        def WORKSPACE_BASH =  WORKSPACE.replace('\\','/')
+
 
         bat("set")
 
@@ -35,7 +34,7 @@ stage("${PROJECT}-build") {
                 bat '''
                                cp %MAVEN_SETTINGS% %WORKSPACE%\\settings.xml
                                "C:\\Program Files\\Git\\bin\\bash.exe" -c "gpg --list-keys"
-                               "C:\\Program Files\\Git\\bin\\bash.exe" -c  "mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% " 
+                               "C:\\Program Files\\Git\\bin\\bash.exe" -c  "mvn -B -s /%WORKSPACE_BASH%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% " 
                                '''
 
             }
