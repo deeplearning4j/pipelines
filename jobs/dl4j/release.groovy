@@ -18,7 +18,7 @@ properties([
             [$class: "BooleanParameterDefinition",
                 name: "SKIP_TEST",
                 defaultValue: false,
-                description: "Select to run tests during mvn execution"
+                description: "Select to run skip tests during mvn execution"
             ],
             [$class: "BooleanParameterDefinition",
                 name: "SONAR",
