@@ -1,15 +1,15 @@
 stage("${PROJECT}-ResolveDependencies") {
-//    functions.resolve_dependencies_for_nd4j()
+    functions.resolve_dependencies_for_nd4j()
 }
 
 
 stage("${PROJECT}-checkout-sources") {
-//    functions.get_project_code("${PROJECT}")
+    functions.get_project_code("${PROJECT}")
 }
 
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
-//        functions.verset("${VERSION}", true)
+        functions.verset("${VERSION}", true)
         env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','')
 
 
