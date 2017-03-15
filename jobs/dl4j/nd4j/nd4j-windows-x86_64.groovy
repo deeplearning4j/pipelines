@@ -10,7 +10,7 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-        env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','') + "/" + "${LIBPROJECT}"
+        env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/') + "/" + "${LIBPROJECT}"
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
                           [cudaVersion: "8.0", scalaVersion: "2.11"]]
