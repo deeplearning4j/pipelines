@@ -9,7 +9,7 @@ stage("${PROJECT}-checkout-sources") {
 
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
-        functions.verset("${VERSION}", true)
+//        functions.verset("${VERSION}", true)
 //        env.LIBND4J_HOME = "${WORKSPACE}/libnd4j"
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
