@@ -1,5 +1,5 @@
 stage("${PROJECT}-ResolveDependencies") {
-        functions.resolve_dependencies_for_nd4j()
+    functions.resolve_dependencies_for_nd4j()
 }
 
 
@@ -31,5 +31,8 @@ stage("${PROJECT}-build") {
                                 '''
             }
         }
+    }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${PROJECT}")
     }
 }
