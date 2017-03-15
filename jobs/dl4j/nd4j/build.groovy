@@ -1,3 +1,4 @@
+PLATFORM_NAME = PLATFORM_NAME?: "master"
 node(PLATFORM_NAME) {
 
     properties([
