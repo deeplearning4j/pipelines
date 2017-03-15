@@ -10,6 +10,7 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
+        env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','')
         env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/') + "/" + "${LIBPROJECT}"
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
@@ -31,11 +32,11 @@ stage("${PROJECT}-build") {
 //                               "C:\\Program Files\\Git\\bin\\bash.exe" -c "gpg --list-keys"
 //                               bash -c  "mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%"
 //                               '''
-
+                bat ("cp %MAVEN_SETTINGS% %WORKSPACE%\\settings.xml")
                 bat (
                         'vcvars64.bat' +
                                 '&&' +
-                                'mvn -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
+                                'bash -c "export PATH=$PATH:/c/msys64/mingw64/bin && mvn -s %WORKSPACE_BASH%/settings.xml clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
                 )
 
             }
