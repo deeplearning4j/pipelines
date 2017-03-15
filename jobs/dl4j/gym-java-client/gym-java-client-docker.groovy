@@ -10,7 +10,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             switch(PLATFORM_NAME) {
                 case "linux-x86_64":
-                    if (TESTS.toBoolean()) {
+                    if (SKIP_TEST.toBoolean()) {
                       docker.image(dockerImage).inside(dockerParams) {
                           functions.getGpg()
                           sh'''
@@ -28,7 +28,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
                     }
                 break
                   case "linux-ppc64le":
-                      if (TESTS.toBoolean()) {
+                      if (SKIP_TEST.toBoolean()) {
                         docker.image(dockerImage).inside(dockerParams) {
                             functions.getGpg()
                             sh'''

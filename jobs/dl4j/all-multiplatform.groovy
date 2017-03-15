@@ -21,7 +21,7 @@ properties([
                 description: "Possible values: linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86\nmacosx\nwindows-x86_64"
             ],
             [$class: "BooleanParameterDefinition",
-                name: "TESTS",
+                name: "SKIP_TEST",
                 defaultValue: false,
                 description: "Select to run tests during mvn execution"
             ],

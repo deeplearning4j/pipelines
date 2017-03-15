@@ -16,7 +16,7 @@
                 //     description: "Deeplearning component release version"
                 // ],
 //             [$class: "BooleanParameterDefinition",
-//                 name: "TESTS",
+//                 name: "SKIP_TEST",
 //                 defaultValue: false,
 //                 description: "Select to run tests during mvn execution"
 //             ],
