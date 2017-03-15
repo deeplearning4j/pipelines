@@ -35,10 +35,6 @@ stage("${PROJECT}-build") {
                 bat (
                         'vcvars64.bat' +
                                 '&&' +
-                                'git clone -b intropro072-01 https://github.com/deeplearning4j/nd4j.git' +
-                                '&&' +
-                                'cd nd4j' +
-                                '&&' +
                                 'mvn -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST%'
                 )
 
