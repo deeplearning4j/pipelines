@@ -177,7 +177,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
             zip dir: "${WORKSPACE}/libnd4j/blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -207,7 +207,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
                             "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "jfrog":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -222,7 +222,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
             zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -252,7 +252,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
                             "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "jfrog":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -277,13 +277,13 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
     switch (profile_type) {
         case "nexus":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
@@ -323,13 +323,13 @@ def get_libnd4j_artifacts_snapshot_ball(some_version, some_platform, profile_typ
             break
         case "jfrog":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
                         "-Ddest=${LIBPROJECT}-${some_version}-${some_platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://jenkins-master.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${some_platform} " +
@@ -364,7 +364,7 @@ def open_staging_repository(profile_type) {
                               usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
                 env.STAGE_REPO_ID = sh(
                         script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
-                                "-X POST \"http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/profiles/11d78539739bc/start\" " +
+                                "-X POST \"http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/profiles/1a9c575a8e8c/start\" " +
                                 "-d \"<promoteRequest><data><description>Jenkins(Skymind) :: version:${VERSION} :: job:${JOB_NAME} :: build:${BUILD_NUMBER}</description></data></promoteRequest>\" | grep stagedRepositoryId | sed -e 's,.*<stagedRepositoryId>\\([^<]*\\)</stagedRepositoryId>.*,\\1,g'",
                         returnStdout: true
                 ).trim()
@@ -412,14 +412,14 @@ def close_staging_repository(profile_type) {
                               usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
                 // do something that fails
                 env.CLOSE_RESULT = sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
-                        "-X POST \"http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
+                        "-X POST \"http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
                         " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\" | wc -l",
                         returnStdout: true
                 ).trim()
                 echo "CLOSE_RESULT:" + " ${CLOSE_RESULT}"
                 if (env.CLOSE_RESULT != null && env.CLOSE_RESULT.toInteger() > 0) {
                     sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
-                            "-X POST \"http://jenkins-master.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
+                            "-X POST \"http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
                             " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
                     )
                     error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
