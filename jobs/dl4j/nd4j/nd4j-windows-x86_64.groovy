@@ -10,7 +10,7 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-        env.LIBND4J_HOME = bat( script: '''bash -c "echo /${WORKSPACE}\\${LIBPROJECT} | sed -e 's/\\/\//g' -e 's/://' " ''',
+        env.LIBND4J_HOME = bat( script: '''bash -c "echo /${WORKSPACE}\\${LIBPROJECT} | sed -e 's/\\\\/\\//g' -e 's/://' "''',
                 returnStdout: true
         ).trim()
 
