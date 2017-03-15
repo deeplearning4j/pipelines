@@ -108,7 +108,11 @@ def sonar(proj) {
 // mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$VERSION
 def verset(ver, allowss) {
     def mvnHome = tool 'M339'
-    sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+    if (isUnix()) {
+        sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+    } else (
+    bat("'${mvnHome}\\bin\\mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+    )
 }
 
 def release(proj) {
