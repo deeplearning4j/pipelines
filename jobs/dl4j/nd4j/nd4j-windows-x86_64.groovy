@@ -10,7 +10,7 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-        env.WORKSPACE_BASH = bat(script: '''bash -c "echo /${WORKSPACE} | sed -e \'s/\\\\/\\//g\' -e \'s/://\' "''',
+        env.WORKSPACE_BASH = bat(script: ''' echo /%AAAA% | bash -c "sed s/://g" | bash -c "sed -e 's/\\\\\\/\\//g'" ''',
                 returnStdout: true
         ).trim()
 
