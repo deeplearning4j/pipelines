@@ -25,7 +25,7 @@ stage("${PROJECT}-build") {
             bat('''IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda (RD /q /s %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda && XCOPY /E /Q /I %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda-%CUDA_VERSION% %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda) ELSE ( XCOPY /E /Q /I %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda-%CUDA_VERSION% %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda )''')
             sh(script: "./change-scala-versions.sh ${SCALA_VERSION}")
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                functions.getGpg()
+//                functions.getGpg()
 /*                sh '''
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
