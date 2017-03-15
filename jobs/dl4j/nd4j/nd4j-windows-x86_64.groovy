@@ -10,7 +10,7 @@ stage("${PROJECT}-checkout-sources") {
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.verset("${VERSION}", true)
-
+        env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','') + "/" + "${LIBPROJECT}"
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
                           [cudaVersion: "8.0", scalaVersion: "2.11"]]
@@ -35,7 +35,7 @@ stage("${PROJECT}-build") {
                 bat (
                         'vcvars64.bat' +
                                 '&&' +
-                                'mvn -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST%'
+                                'mvn -s %MAVEN_SETTINGS% clean deploy -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
                 )
 
             }
