@@ -21,8 +21,8 @@ stage("${PROJECT}-build") {
             env.SCALA_VERSION = lib.scalaVersion
             echo "[ INFO ] ++ Building nd4j with cuda " + CUDA_VERSION + " and scala " + SCALA_VERSION
             bat('''IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda (RD /q /s %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda && XCOPY /E /Q /I %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda-%CUDA_VERSION% %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda) ELSE ( XCOPY /E /Q /I %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda-%CUDA_VERSION% %WORKSPACE%\\%LIBPROJECT%\\blasbuild\\cuda )''')
-            bat('''"C:\\Program Files\\Git\\bin\\bash.exe" -c "./change-scala-versions.sh %SCALA_VERSION%" ''')
-            bat('''"C:\\Program Files\\Git\\bin\\bash.exe" -c "./change-cuda-versions.sh %CUDA_VERSION%" ''')
+//            bat('''"C:\\Program Files\\Git\\bin\\bash.exe" -c "./change-scala-versions.sh %SCALA_VERSION%" ''')
+//            bat('''"C:\\Program Files\\Git\\bin\\bash.exe" -c "./change-cuda-versions.sh %CUDA_VERSION%" ''')
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 functions.getGpg()
