@@ -1,3 +1,4 @@
+env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node("${PLATFORM_NAME}") {
 
     properties([
@@ -7,7 +8,7 @@ node("${PLATFORM_NAME}") {
                             [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.7.3-SNAPSHOT", description: "Deeplearning component release version"],
                             [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "Build project on architecture"],
 //                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\nFor x86_64-jenkins-slave-cuda,amd64\nfor PowerPC - ppc,power8"],
-                            [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: false, description: "Select to run skip tests during mvn execution"],
+                            [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: true, description: "Select to run skip tests during mvn execution"],
                             [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
 //                            [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
                             // [$class: "StringParameterDefinition", name: "ND4J_VERSION", defaultValue: "", description: "Set preferred nd4j version, leave it empty to use VERSION"],
@@ -17,7 +18,7 @@ node("${PLATFORM_NAME}") {
                             // [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
                             [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
                             [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
-                            [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
+//                            [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
                             [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
                     ]
             ]
@@ -29,7 +30,7 @@ node("${PLATFORM_NAME}") {
 
     checkout scm
 
-    load "${PDIR}/vars.groovy"
+    load "jobs/dl4j/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
     functions.rm()
@@ -38,7 +39,7 @@ node("${PLATFORM_NAME}") {
     functions.def_docker()
 
     stage("${RL4J_PROJECT}") {
-      load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-docker.groovy"
+      load "${PDIR}/${RL4J_PROJECT}/${RL4J_PROJECT}-${PLATFORM_NAME}.groovy"
     }
 
 
