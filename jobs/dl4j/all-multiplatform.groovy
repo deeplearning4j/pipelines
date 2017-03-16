@@ -5,7 +5,7 @@ properties([
             artifactDaysToKeepStr: "",
             artifactNumToKeepStr: "",
             daysToKeepStr: "",
-            numToKeepStr: "10"
+            numToKeepStr: "12"
         ]
     ],
     [$class: "ParametersDefinitionProperty",
@@ -96,37 +96,37 @@ node(PLATFORM_NAME) {
                     [
                         name: "datavec",
                         type: "java",
-                        loadFile: "${PDIR}/datavec/datavec-docker.groovy"
+                        loadFile: "${PDIR}/datavec/datavec-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "deeplearning4j",
                         type: "java",
-                        loadFile: "${PDIR}/deeplearning4j/deeplearning4j-docker.groovy"
+                        loadFile: "${PDIR}/deeplearning4j/deeplearning4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "arbiter",
                         type: "java",
-                        loadFile: "${PDIR}/arbiter/arbiter-docker.groovy"
+                        loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4s",
                         type: "scala",
-                        loadFile: "${PDIR}/nd4s/nd4s-docker.groovy"
+                        loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "gym-java-client",
                         type: "java",
-                        loadFile: "${PDIR}/gym-java-client/gym-java-client-docker.groovy"
+                        loadFile: "${PDIR}/gym-java-client/gym-java-client-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "rl4j",
                         type: "java",
-                        loadFile: "${PDIR}/rl4j/rl4j-docker.groovy"
+                        loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "scalnet",
                         type: "scala",
-                        loadFile: "${PDIR}/scalnet/scalnet-docker.groovy"
+                        loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"
                     ]
                 ]
             ],
