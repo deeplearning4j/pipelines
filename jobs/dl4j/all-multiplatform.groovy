@@ -5,7 +5,7 @@ properties([
             artifactDaysToKeepStr: "",
             artifactNumToKeepStr: "",
             daysToKeepStr: "",
-            numToKeepStr: "12"
+            numToKeepStr: "25"
         ]
     ],
     [$class: "ParametersDefinitionProperty",

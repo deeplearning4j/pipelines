@@ -22,11 +22,7 @@ stage("${PROJECT}-build") {
             }
         }
 
-        stash includes: "nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar", name: "nd4j${PLATFORM_NAME}"
-        node("master") {
-            unstash "nd4j${PLATFORM_NAME}"
-            functions.copy_nd4j_native_to_user_content()
-        }
+        functions.copy_nd4j_native_to_user_content()
     }
 
     if (SONAR.toBoolean()) {

@@ -30,6 +30,8 @@ stage("${PROJECT}-build") {
                                 '''
             }
         }
+
+        copy_nd4j_native_to_user_content()
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")

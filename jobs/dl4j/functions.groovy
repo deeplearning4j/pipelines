@@ -493,6 +493,11 @@ def cleanup_userContent() {
 def copy_nd4j_native_to_user_content() {
     // def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     // for (int i = 0; i < listPlatformVersion.size(); i++) {
+    stash includes: "nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar", name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+    node("master") {
+        unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+        functions.copy_nd4j_native_to_user_content()
+    }
         echo("[ INFO ] Copying nd4j jar to userContent for release")
         sh("find . -name *nd4j-native*.jar")
         sh("cp ./nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar ${JENKINS_HOME}/userContent/nd4j_artifacts/")
