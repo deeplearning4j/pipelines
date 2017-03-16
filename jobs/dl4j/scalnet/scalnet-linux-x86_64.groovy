@@ -28,6 +28,9 @@ stage("${SCALNET_PROJECT}-build") {
             }
         }
     }
+    if (SONAR.toBoolean()) {
+        functions.sonar("${GYM_JAVA_CLIENT_PROJECT}")
+    }
 }
 
 
