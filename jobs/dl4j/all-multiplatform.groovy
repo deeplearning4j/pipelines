@@ -87,26 +87,26 @@ node(PLATFORM_NAME) {
                 dockerParams: "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro --tmpfs /tmp:size=4g",
                 jenkinsStorage: "/srv/jenkins/storage",
                 apps: [
-                    // [
-                    //     name: "libnd4j",
-                    //     loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
-                    // ],
-                    // [
-                    //     name: "nd4j",
-                    //     loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
-                    // ],
-                    // [
-                    //     name: "datavec",
-                    //     loadFile: "${PDIR}/datavec/datavec-${PLATFORM_NAME}.groovy"
-                    // ],
-                    // [
-                    //     name: "deeplearning4j",
-                    //     loadFile: "${PDIR}/deeplearning4j/deeplearning4j-${PLATFORM_NAME}.groovy"
-                    // ],
-                    // [
-                    //     name: "arbiter",
-                    //     loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"
-                    // ],
+                    [
+                        name: "libnd4j",
+                        loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
+                    ],
+                    [
+                        name: "nd4j",
+                        loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
+                    ],
+                    [
+                        name: "datavec",
+                        loadFile: "${PDIR}/datavec/datavec-${PLATFORM_NAME}.groovy"
+                    ],
+                    [
+                        name: "deeplearning4j",
+                        loadFile: "${PDIR}/deeplearning4j/deeplearning4j-${PLATFORM_NAME}.groovy"
+                    ],
+                    [
+                        name: "arbiter",
+                        loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"
+                    ],
                     [
                         name: "nd4s",
                         loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"
