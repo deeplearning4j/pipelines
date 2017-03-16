@@ -1,5 +1,6 @@
 env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node(PLATFORM_NAME) {
+    currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
     ws(WORKSPACE + "_" + PLATFORM_NAME) {
         properties([
                 [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
