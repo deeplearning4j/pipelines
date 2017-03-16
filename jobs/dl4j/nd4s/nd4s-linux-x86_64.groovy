@@ -3,8 +3,11 @@ stage("${ND4S_PROJECT}-checkout-sources") {
 }
 
 stage("${ND4S_PROJECT}-build") {
-    echo "Copying nd4j artifacts from userContent"
-    // functions.copy_nd4j_native_from_user_content()
+    if (!isSnapshot) {
+        echo "Copying nd4j artifacts from userContent"
+        unctions.copy_nd4j_native_from_user_content()
+    }
+
     echo "Building ${ND4S_PROJECT} version ${VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
