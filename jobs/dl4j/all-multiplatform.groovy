@@ -85,47 +85,38 @@ node(PLATFORM_NAME) {
                 apps: [
                     [
                         name: "libnd4j",
-                        type: "c",
                         loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4j",
-                        type: "java",
                         loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "datavec",
-                        type: "java",
                         loadFile: "${PDIR}/datavec/datavec-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "deeplearning4j",
-                        type: "java",
                         loadFile: "${PDIR}/deeplearning4j/deeplearning4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "arbiter",
-                        type: "java",
                         loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4s",
-                        type: "scala",
                         loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "gym-java-client",
-                        type: "java",
                         loadFile: "${PDIR}/gym-java-client/gym-java-client-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "rl4j",
-                        type: "java",
                         loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "scalnet",
-                        type: "scala",
                         loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"
                     ]
                 ]
@@ -138,12 +129,10 @@ node(PLATFORM_NAME) {
                 apps: [
                     [
                         name: "libnd4j",
-                        type: "c",
                         loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4j",
-                        type: "java",
                         loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
                     ]
                 ]
@@ -156,12 +145,10 @@ node(PLATFORM_NAME) {
                 apps: [
                     [
                         name: "libnd4j",
-                        type: "c",
                         loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4j",
-                        type: "java",
                         loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
                     ]
                 ]
@@ -174,12 +161,10 @@ node(PLATFORM_NAME) {
                 apps: [
                     [
                         name: "libnd4j",
-                        type: "c",
                         loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4j",
-                        type: "java",
                         loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
                     ]
                 ]
@@ -189,12 +174,10 @@ node(PLATFORM_NAME) {
                 apps: [
                     [
                         name: "libnd4j",
-                        type: "c",
                         loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4j",
-                        type: "java",
                         loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
                     ]
                 ]
@@ -204,12 +187,10 @@ node(PLATFORM_NAME) {
                 apps: [
                     [
                         name: "libnd4j",
-                        type: "c",
                         loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"
                     ],
                     [
                         name: "nd4j",
-                        type: "java",
                         loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"
                     ]
                 ]
