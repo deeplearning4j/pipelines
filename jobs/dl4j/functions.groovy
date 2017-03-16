@@ -496,10 +496,10 @@ def copy_nd4j_native_to_user_content() {
     stash includes: "nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar", name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
     node("master") {
         unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
-    }
         echo("[ INFO ] Copying nd4j jar to userContent for release")
         sh("find . -name *nd4j-native*.jar")
         sh("cp ./nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar ${JENKINS_HOME}/userContent/nd4j_artifacts/")
+    }
     // }
 }
 
