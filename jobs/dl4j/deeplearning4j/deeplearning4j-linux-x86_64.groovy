@@ -16,9 +16,11 @@ stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 
 stage("build test resources on ${PLATFORM_NAME}") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-        docker.image(dockerImage).inside(dockerParams) {
-            sh("mvn -B clean install")
+        dir('dl4j-test-resources') {
+            docker.image(dockerImage).inside(dockerParams) {
+                sh("mvn -B clean install")
 
+            }
         }
     }
 }
