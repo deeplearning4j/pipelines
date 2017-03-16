@@ -1,6 +1,6 @@
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
-
+env.CBUILD = env.CBUILD ?: "true"
 
 
 settings_xml = 'maven-settings-id-1'
