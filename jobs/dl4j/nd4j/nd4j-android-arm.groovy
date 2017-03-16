@@ -21,7 +21,14 @@ stage("${PROJECT}-build") {
                 sh('''mvn -B -s ${MAVEN_SETTINGS} clean deploy -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform' ''')
             }
         }
+
+        stash includes: "nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar", name: "nd4j${PLATFORM_NAME}"
+        node("master") {
+            unstash "nd4j${PLATFORM_NAME}"
+            functions.copy_nd4j_native_to_user_content()
+        }
     }
+
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")
     }
