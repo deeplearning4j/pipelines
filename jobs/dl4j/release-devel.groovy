@@ -88,7 +88,7 @@ node("master") {
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
                     [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
                     [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
-                    [$class: 'BooleanParameterValue', name: 'SONAR', value: TESTS.toBoolean()],
+                    [$class: 'BooleanParameterValue', name: 'SONAR', value: SONAR.toBoolean()],
                     [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
                     [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
                     [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE],
