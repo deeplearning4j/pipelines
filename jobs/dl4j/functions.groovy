@@ -504,4 +504,14 @@ def copy_nd4j_native_to_user_content() {
     // }
 }
 
+def copy_nd4j_native_from_user_content() {
+    node("master"){
+        dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
+            sh("ls -la")
+            stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+        }
+    }
+    unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+}
+
 return this;
