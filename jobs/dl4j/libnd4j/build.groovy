@@ -38,7 +38,7 @@ node("${PLATFORM_NAME}") {
         functions.def_docker()
 
         stage("${LIBPROJECT}") {
-            load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-docker.groovy"
+            load "${PDIR}/${LIBPROJECT}/${LIBPROJECT}-${PLATFORM_NAME}.groovy"
         }
 
         stage('RELEASE') {
