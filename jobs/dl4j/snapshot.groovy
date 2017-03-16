@@ -78,23 +78,24 @@ node("master") {
         functions.cleanup_userContent()
     }
 
-    def platformsList = strToList(PLATFORMS)
-    def builders = [:]
-    for (platform in platformsList) {
-        def xplatform = platform
-        builders[platform] = {
-            build job: "devel/all-multiplatform", parameters:
-                [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
-                [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
-                [$class: 'BooleanParameterValue', name: 'TESTS', value: TESTS.toBoolean()],
-                [$class: 'BooleanParameterValue', name: 'SONAR', value: TESTS.toBoolean()],
-                [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
-                [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE],
-                [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()]
-                ]
+    stage("RunningBuilds") {
+        def platformsList = strToList(PLATFORMS)
+        def builders = [:]
+        for (platform in platformsList) {
+            def xplatform = platform
+            builders[platform] = {
+                build job: "devel/all-multiplatform", parameters:
+                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
+                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                    [$class: 'BooleanParameterValue', name: 'TESTS', value: TESTS.toBoolean()],
+                    [$class: 'BooleanParameterValue', name: 'SONAR', value: TESTS.toBoolean()],
+                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE],
+                    [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()]
+                    ]
+                }
             }
-        }
-    parallel builders
-    // functions.download_nd4j_native_from_jenkins_user_content(VERSION)
+        parallel builders
+    }
 }
