@@ -7,6 +7,7 @@ stage("${DATAVEC_PROJECT}-build") {
     echo "Building ${DATAVEC_PROJECT} version ${VERSION}"
 
     dir("${DATAVEC_PROJECT}") {
+        functions.checktag("${DATAVEC_PROJECT}")
         functions.verset("${VERSION}", true)
         def listScalaVersion = ["2.10", "2.11"]
         for (int i = 0; i < listScalaVersion.size(); i++) {

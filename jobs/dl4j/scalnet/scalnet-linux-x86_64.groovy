@@ -5,6 +5,7 @@ stage("${SCALNET_PROJECT}-checkout-sources") {
 stage("${SCALNET_PROJECT}-build") {
     echo "Building ${SCALNET_PROJECT} version ${VERSION}"
     dir("${SCALNET_PROJECT}") {
+        functions.checktag("${SCALNET_PROJECT}")
         sh("sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet<\\/artifactId>/' pom.xml")
         functions.verset("${VERSION}", false)
 

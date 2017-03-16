@@ -5,6 +5,7 @@ stage("${ARBITER_PROJECT}-checkout-sources") {
 stage("${ARBITER_PROJECT}-build") {
     echo "Building ${ARBITER_PROJECT} version ${VERSION}"
     dir("${ARBITER_PROJECT}") {
+        functions.checktag("${ARBITER_PROJECT}")
         functions.verset("${VERSION}", true)
         def listScalaVersion = ["2.10", "2.11"]
 
