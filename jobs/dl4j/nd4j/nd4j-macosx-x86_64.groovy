@@ -2,7 +2,6 @@ stage("${PROJECT}-ResolveDependencies") {
     functions.resolve_dependencies_for_nd4j()
 }
 
-
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
@@ -11,7 +10,6 @@ stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
-//        env.LIBND4J_HOME = "${WORKSPACE}/libnd4j"
 
         final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
                           [cudaVersion: "8.0", scalaVersion: "2.11"]]

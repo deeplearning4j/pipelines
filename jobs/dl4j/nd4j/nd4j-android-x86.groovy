@@ -4,7 +4,6 @@ stage("${PROJECT}-ResolveDependencies") {
     }
 }
 
-
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
@@ -13,7 +12,6 @@ stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
-//        env.LIBND4J_HOME = "${WORKSPACE}/libnd4j"
 
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
             docker.image(dockerImage).inside(dockerParams) {

@@ -16,8 +16,8 @@
 //                     description: "Deeplearning component release version"
 //                 ],
 //             [$class: "BooleanParameterDefinition",
-//                 name: "TESTS",
-//                 defaultValue: false,
+//                 name: "SKIP_TEST",
+//                 defaultValue: true,
 //                 description: "Select to run tests during mvn execution"
 //             ],
 //             [$class: "BooleanParameterDefinition",
@@ -87,7 +87,7 @@ node("master") {
                 build job: "devel/all-multiplatform", parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
                     [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
-                    [$class: 'BooleanParameterValue', name: 'TESTS', value: TESTS.toBoolean()],
+                    [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
                     [$class: 'BooleanParameterValue', name: 'SONAR', value: TESTS.toBoolean()],
                     [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
                     [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],

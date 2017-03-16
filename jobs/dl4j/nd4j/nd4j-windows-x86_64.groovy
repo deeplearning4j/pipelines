@@ -2,7 +2,6 @@ stage("${PROJECT}-ResolveDependencies") {
     functions.resolve_dependencies_for_nd4j()
 }
 
-
 stage("${PROJECT}-checkout-sources") {
     functions.get_project_code("${PROJECT}")
 }
