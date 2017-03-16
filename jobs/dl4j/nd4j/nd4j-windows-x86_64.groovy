@@ -9,6 +9,7 @@ stage("${PROJECT}-checkout-sources") {
 
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
+        functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
         env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','')
         env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/') + "/" + "${LIBPROJECT}"

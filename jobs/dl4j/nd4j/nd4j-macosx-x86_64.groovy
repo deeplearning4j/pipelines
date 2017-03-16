@@ -9,6 +9,7 @@ stage("${PROJECT}-checkout-sources") {
 
 stage("${PROJECT}-build") {
     dir("${PROJECT}") {
+        functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
 //        env.LIBND4J_HOME = "${WORKSPACE}/libnd4j"
 
