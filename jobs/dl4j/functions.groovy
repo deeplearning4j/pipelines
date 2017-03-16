@@ -482,8 +482,12 @@ def resolve_dependencies_for_nd4j() {
             unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}\\${LIBPROJECT}"
         }
     }
+}
 
-
+def cleanup_userContent() {
+    dir("${JENKINS_HOME}/userContent/nd4j_artifacts"){
+        sh("rm -rf *.jar")
+    }
 }
 
 return this;

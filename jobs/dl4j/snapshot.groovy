@@ -74,8 +74,8 @@ node("master") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
-    if (isSnapshot) {
-        functions.cleanup_user_content()
+    if (!isSnapshot) {
+        functions.cleanup_userContent()
     }
 
     def platformsList = strToList(PLATFORMS)
