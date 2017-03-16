@@ -83,8 +83,8 @@ def sonar(proj) {
     dir("${proj}") {
         // withSonarQubeEnv("${SQS}") {
         withSonarQubeEnv('SonarQubeServer') {
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj} \
-          -Dsonar.projectName=${proj} -Dsonar.projectVersion=${VERSION} \
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj}:${PLATFORM_NAME} \
+          -Dsonar.projectName=${proj}-${PLATFORM_NAME} -Dsonar.projectVersion=${VERSION} \
           -Dsonar.sources=."
             // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
         }
