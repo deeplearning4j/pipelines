@@ -1,0 +1,100 @@
+// properties([
+//     [$class: "BuildDiscarderProperty",
+//         strategy: [
+//             $class: "LogRotator",
+//             artifactDaysToKeepStr: "",
+//             artifactNumToKeepStr: "",
+//             daysToKeepStr: "",
+//             numToKeepStr: "10"
+//         ]
+//     ],
+//     [$class: "ParametersDefinitionProperty",
+//         parameterDefinitions: [
+//                 [$class: "StringParameterDefinition",
+//                     name: "VERSION",
+//                     defaultValue: "0.7.3-SNAPSHOT",
+//                     description: "Deeplearning component release version"
+//                 ],
+//             [$class: "BooleanParameterDefinition",
+//                 name: "TESTS",
+//                 defaultValue: false,
+//                 description: "Select to run tests during mvn execution"
+//             ],
+//             [$class: "BooleanParameterDefinition",
+//                 name: "SONAR",
+//                 defaultValue: false,
+//                 description: "Select to check code with SonarQube"
+//             ],
+//             [$class: "StringParameterDefinition",
+//                 name: "GIT_BRANCHNAME",
+//                 defaultValue: "intropro072-01",
+//                 description: "Default Git branch value"
+//             ],
+//             [$class: "CredentialsParameterDefinition",
+//                 name: "GITCREDID",
+//                 required: false,
+//                 defaultValue: "github-private-deeplearning4j-id-1",
+//                 description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"
+//             ],
+//             [$class: "ChoiceParameterDefinition",
+//                 name: "PROFILE_TYPE",
+//                 choices: "nexus\njfrog\nbintray\nsonatype",
+//                 description: "Profile type"
+//             ],
+//             [$class: "BooleanParameterDefinition",
+//                 name: "CBUILD",
+//                 defaultValue: true,
+//                 description: "Select to build libnd4j"
+//             ],
+//         ]
+//     ]
+// ])
+
+def strToList(str) {
+    if (str.getClass() == String && str.length()>0) {
+        tmpList = []
+        for ( i in str.split(",")) {
+            def item = i
+            tmpList.add(item);
+        }
+    }
+    else {
+        error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
+    }
+    return tmpList
+}
+
+node("master") {
+    echo "Cleanup WS"
+    step([$class: 'WsCleanup'])
+
+    checkout scm
+
+    env.PDIR = "jobs/dl4j"
+    load "${PDIR}/vars.groovy"
+    functions = load "${PDIR}/functions.groovy"
+
+    if (isSnapshot) {
+        functions.cleanup_user_content()
+    }
+
+    def platformsList = strToList(PLATFORMS)
+    def builders = [:]
+    for (platform in platformsList) {
+        def xplatform = platform
+        builders[platform] = {
+            build job: "devel/all-multiplatform", parameters:
+                [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
+                [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
+                [$class: 'BooleanParameterValue', name: 'TESTS', value: TESTS.toBoolean()],
+                [$class: 'BooleanParameterValue', name: 'SONAR', value: TESTS.toBoolean()],
+                [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
+                [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE],
+                [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()]
+                ]
+            }
+        }
+    parallel builders
+    // functions.download_nd4j_native_from_jenkins_user_content(VERSION)
+}

@@ -1,4 +1,5 @@
 stage("${LIBPROJECT}-build") {
+    functions.def_docker(i.platform, i.dockerImage, i.dockerParams, i.jenkinsStorage)
     if (CBUILD.toBoolean()) {
         functions.get_project_code("${LIBPROJECT}")
         dir("${LIBPROJECT}") {
