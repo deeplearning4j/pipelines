@@ -1,39 +1,83 @@
-dir("${LIBPROJECT}") {
-    parallel (
-        "Stream 1 Build CPU" : {
-            dir("stream1") {
-                git 'https://github.com/deeplearning4j/libnd4j.git'
-                bat 'bash buildnativeoperations.sh'
-                stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
-                stash includes: 'blas/', name: 'cpu-blas'
-                stash includes: 'include/', name: 'libnd4j-include'
+stage("${LIBPROJECT}-build") {
+    functions.get_project_code("${LIBPROJECT}")
+    parallel(
+            "Stream 0 ${LIBPROJECT}-BuildCuda-CPU-${PLATFORM_NAME}": {
+                dir("stream0") {
+                    sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+                    dir("${LIBPROJECT}") {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh '''
+                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                    ./buildnativeoperations.sh -c cpu
+                                    '''
+                            stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
+                            stash includes: 'blas/', name: 'cpu-blas'
+                        }
+                    }
+                }
+            },
+            "Stream 1 ${LIBPROJECT}-BuildCuda-7.5-${PLATFORM_NAME}": {
+                dir("stream1") {
+                    sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+                    dir("${LIBPROJECT}") {
+                        // Hardcode here: override dockerImage as it make sense for linux-x86_64 only
+                        if (PLATFORM_NAME == "linux-x86_64") {
+                            dockerImage = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
+                        }
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh '''
+                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                    ./buildnativeoperations.sh -c cuda -v 7.5
+                                    '''
+                            stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
+                            stash includes: 'blas/', name: 'cuda75-blas'
+                        }
+                    }
+                }
+            },
+            "Stream 2 ${LIBPROJECT}-BuildCuda-8.0-${PLATFORM_NAME}": {
+                dir("stream2") {
+                    sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+                    dir("${LIBPROJECT}") {
+                        docker.image(dockerImage).inside(dockerParams) {
+                            sh '''
+                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                    ./buildnativeoperations.sh -c cuda -v 8.0
+                                    '''
+                            stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
+                            stash includes: 'blas/', name: 'cuda80-blas'
+                        }
+                    }
+                }
             }
-        },
-        "Stream 2 Build CUDA 7.5" : {
-            dir("stream2") {
-                git 'https://github.com/deeplearning4j/libnd4j.git'
-                bat '''
-                vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5
-                '''
-                stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
-            }
-        },
-        "Stream 3 Build CUDA 8.0" : {
-            dir("stream3") {
-                git 'https://github.com/deeplearning4j/libnd4j.git'
-                bat '''
-                vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0
-                '''
-                stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
-            }
-        }
     )
-    unstash 'cpu-blasbuild'
-    unstash 'cpu-blas'
-    unstash 'cuda75-blasbuild'
-    unstash 'cuda80-blasbuild'
-    unstash 'libnd4j-include'
-    env.TRICK_NVCC = "YES"
-    env.LIBND4J_HOME = "${PWD}"
-    functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
+    dir("libnd4j") {
+        unstash 'cpu-blasbuild'
+        unstash 'cpu-blas'
+        unstash 'cuda75-blasbuild'
+        unstash 'cuda75-blas'
+        unstash 'cuda80-blasbuild'
+        unstash 'cuda80-blas'
+    }
+
+
+}
+if (PUSH_LIBND4J_NEXUSLOCAL.toBoolean()) {
+    echo PUSH_LIBND4J_NEXUSLOCAL
+    dir("${LIBPROJECT}") {
+        env.TRICK_NVCC = "YES"
+        env.LIBND4J_HOME = "${PWD}"
+        docker.image(dockerImage).inside(dockerParams) {
+            functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
+        }
+    }
+}
+
+if (SONAR.toBoolean()) {
+    functions.sonar("${LIBPROJECT}")
+}
+}
+else {
+    echo "Skipping libnd4j build, using snapshot"
+}
 }
