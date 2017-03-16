@@ -35,14 +35,11 @@ dockerParams_tmpfs = "-v ${WORKSPACE}:${WORKSPACE}:rw ${JENKINS_M2DIR_AMD64}:/ho
 dockerParams_ppc = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_PPC64LE}:/home/jenkins/.m2:rw"
 dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_M2DIR_AMD64}:/home/jenkins/.m2:rw  -v ${JENKINS_SBTDIR_AMD64}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
 
-env.NEXUS_LOCAL = "http://master-jenkins.eastus.cloudapp.azure.com:8088"
+
 // env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
 /** Below variables need to be reviewed once release approach will be approved
  */
-// env.LIBBND4J_SNAPSHOT = env.LIBBND4J_SNAPSHOT ?: "0.7.2-SNAPSHOT"
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
-env.ND4J_VERSION = env.ND4J_VERSION ?: "${VERSION}"
-env.DL4J_VERSION = env.DL4J_VERSION ?: "${VERSION}"
-env.DATAVEC_VERSION = env.DATAVEC_VERSION ?: "${VERSION}"
+
