@@ -1,3 +1,4 @@
+env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node("${PLATFORM_NAME}") {
 
     properties([
@@ -17,7 +18,7 @@ node("${PLATFORM_NAME}") {
                             // [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
                             [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro072-01", description: "Default Git branch value"],
                             [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
-                            [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
+//                            [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
                             [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
                     ]
             ]
@@ -25,11 +26,9 @@ node("${PLATFORM_NAME}") {
 
     step([$class: 'WsCleanup'])
 
-    // dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${WORKSPACE}/.m2:/home/jenkins/.m2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-
     checkout scm
 
-    load "${PDIR}/vars.groovy"
+    load "jobs/dl4j/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
     // Remove .git folder from workspace
@@ -39,7 +38,7 @@ node("${PLATFORM_NAME}") {
     functions.def_docker()
 
     stage("${SCALNET_PROJECT}") {
-      load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-docker.groovy"
+      load "${PDIR}/${SCALNET_PROJECT}/${SCALNET_PROJECT}-${PLATFORM_NAME}.groovy"
     }
 
 
