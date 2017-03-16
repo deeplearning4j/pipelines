@@ -1,3 +1,4 @@
+env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node("${PLATFORM_NAME}") {
 
     properties([
@@ -7,7 +8,7 @@ node("${PLATFORM_NAME}") {
                             [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.7.3-SNAPSHOT", description: "Deeplearning component release version"],
                             [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nlinux-ppc64le\nandroid-arm\nandroid-x86\nlinux-x86", description: "Build project on architecture"],
 //                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\nFor x86_64-jenkins-slave-cuda,amd64\nfor PowerPC - ppc,power8"],
-                            [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: false, description: "Select to run skip tests during mvn execution"],
+                            [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: true, description: "Select to run skip tests during mvn execution"],
                             [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
 //                            [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
 //                            [$class: "StringParameterDefinition", name: "ND4J_VERSION", defaultValue: "", description: "Set preferred nd4j version, leave it empty to use VERSION"],
@@ -28,7 +29,7 @@ node("${PLATFORM_NAME}") {
 
     checkout scm
 
-    load "${PDIR}/vars.groovy"
+    load "jobs/dl4j/vars.groovy"
 
     functions = load "${PDIR}/functions.groovy"
 
@@ -39,7 +40,7 @@ node("${PLATFORM_NAME}") {
     functions.def_docker()
 
     stage("${ARBITER_PROJECT}") {
-      load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-docker.groovy"
+      load "${PDIR}/${ARBITER_PROJECT}/${ARBITER_PROJECT}-${PLATFORM_NAME}.groovy"
     }
 
 
