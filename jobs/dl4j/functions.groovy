@@ -489,17 +489,7 @@ def resolve_dependencies_for_nd4j() {
     echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
     Boolean BLASBUILD_CHECK = fileExists "${LIBPROJECT}/blasbuild"
 
-    if (isUnix()) {
-        sh """pwd
-ls -la ${WORKSPACE}/${LIBPROJECT}/blasbuild
-ls -la ${WORKSPACE}/"""
-    } else {
-        bat ''' echo %cd%
-dir %WORKSPACE%/%LIBPROJECT%/blasbuild
-dir dir %WORKSPACE%'''
-    }
-
-    echo(" BLASBUILD_CHECK is : " + BLASBUILD_CHECK)
+    echo("[ INFO ] BLASBUILD_CHECK is result: " + BLASBUILD_CHECK)
 
     if (BLASBUILD_CHECK) {
         echo("[ INFO ] ${LIBPROJECT} project was previously builded...")
