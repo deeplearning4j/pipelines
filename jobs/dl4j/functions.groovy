@@ -8,7 +8,7 @@ def clenap_folder_userContent() {
 
 def get_project_code(proj) {
     if (isUnix()) {
-        if (PLATFORM_NAME =="linux-ppc64le") {
+        if (PLATFORM_NAME == "linux-ppc64le") {
             sh("git clone -b ${GIT_BRANCHNAME} --single-branch https://github.com/${ACCOUNT}/${proj}.git --depth=1")
         } else {
             checkout([$class                           : 'GitSCM',
@@ -62,7 +62,7 @@ def checktag(proj) {
 
 def def_docker() {
     echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-    switch(PLATFORM_NAME) {
+    switch (PLATFORM_NAME) {
         case "linux-x86_64":
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
             dockerParams = dockerParams_tmpfs_nvidia
@@ -130,7 +130,7 @@ def verset(ver, allowss) {
     if (isUnix()) {
         sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     } else (
-    bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+            bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     )
 }
 
@@ -486,9 +486,21 @@ def close_staging_repository(profile_type) {
 }
 
 def resolve_dependencies_for_nd4j() {
+    echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
     Boolean BLASBUILD_CHECK = fileExists '${LIBPROJECT}/blasbuild'
 
-    echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
+    if (isUnix()) {
+        sh """pwd
+ls -la ${WORKSPACE}/${LIBPROJECT}/blasbuild
+ls -la ${WORKSPACE}/"""
+    } else {
+        bat ''' echo %cd%
+dir %WORKSPACE%/%LIBPROJECT%/blasbuild
+dir dir %WORKSPACE%'''
+    }
+
+    echo(" BLASBUILD_CHECK is : " + BLASBUILD_CHECK)
+
     if (BLASBUILD_CHECK) {
         echo("[ INFO ] ${LIBPROJECT} project was previously builded...")
     } else {
@@ -508,7 +520,7 @@ def resolve_dependencies_for_nd4j() {
 }
 
 def cleanup_userContent() {
-    dir("${JENKINS_HOME}/userContent/nd4j_artifacts"){
+    dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
         sh("rm -rf *.jar")
     }
 }
@@ -527,7 +539,7 @@ def copy_nd4j_native_to_user_content() {
 }
 
 def copy_nd4j_native_from_user_content() {
-    node("master"){
+    node("master") {
         dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
             sh("ls -la")
             stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
