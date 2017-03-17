@@ -486,20 +486,10 @@ def close_staging_repository(profile_type) {
 }
 
 def resolve_dependencies_for_nd4j() {
-    if (isUnix()) {
-        env.varResultCount = sh(
-                script: 'if [ -d "${WORKSPACE}/${LIBPROJECT}/blasbuild" ] ; then echo true; else echo false; fi',
-                returnStdout: true
-        ).trim()
-    } else {
-        env.varResultCount = bat(
-                script: 'IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild (ECHO true) ELSE ( ECHO  false)',
-                returnStdout: true
-        ).trim()
-    }
+    Boolean BLASBUILD_CHECK = fileExists 'blasbuild'
 
     echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
-    if (varResultCount.toBoolean()) {
+    if (BLASBUILD_CHECK) {
         echo("[ INFO ] ${LIBPROJECT} project was previously builded...")
     } else {
         echo("[ INFO ] ${LIBPROJECT} wasn't build previously")
