@@ -79,7 +79,7 @@ def def_docker() {
             dockerParams = dockerParams
             break
 
-        case ["macosx-x86_64","windows-x86_64"]:
+        case ["macosx-x86_64", "windows-x86_64"]:
             echo "Running on ${platform}, skipping docker part"
             break
 
