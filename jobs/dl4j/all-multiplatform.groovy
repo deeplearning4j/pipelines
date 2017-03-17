@@ -206,7 +206,7 @@ node(PLATFORM_NAME) {
                 for (app in i.apps) {
                     echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                     stage(app.name) {
-                        def_docker()
+                        functions.def_docker()
                         // functions.def_docker(i.platform, i.dockerImage, i.dockerParams, i.jenkinsStorage)
                         load app.loadFile
                     }
