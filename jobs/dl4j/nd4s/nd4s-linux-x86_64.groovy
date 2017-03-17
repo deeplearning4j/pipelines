@@ -5,7 +5,8 @@ stage("${ND4S_PROJECT}-checkout-sources") {
 stage("${ND4S_PROJECT}-build") {
     if (!isSnapshot) {
         echo "Copying nd4j artifacts from userContent"
-        unctions.copy_nd4j_native_from_user_content()
+        functions.copy_nd4j_native_from_user_content()
+        functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
     }
 
     echo "Building ${ND4S_PROJECT} version ${VERSION}"
@@ -31,7 +32,7 @@ stage("${ND4S_PROJECT}-build") {
             sh '''
               cp -a ${WORKSPACE}/.ivy2 ${HOME}/
               cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
-              sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} +publish
+              sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} -Dnd4jVersion=${VERSION} +publish
               find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
               '''
         }
