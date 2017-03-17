@@ -9,7 +9,7 @@ stage("${ND4S_PROJECT}-DependenciesCheck") {
 
             ND4J_NATIVE_COUNT = sh(script: 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l', returnStdout: true).trim().toInteger()
             println(ND4J_NATIVE_COUNT)
-            sleep unit: "MINUTES", time: 10
+            sleep unit: "MINUTES", time: 5
         }
 
         functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
