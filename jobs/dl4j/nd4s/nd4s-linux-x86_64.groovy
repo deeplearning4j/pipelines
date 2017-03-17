@@ -1,17 +1,12 @@
 stage("${ND4S_PROJECT}-DependenciesCheck") {
     if (!isSnapshot) {
         echo "Copying nd4j artifacts from userContent"
-        functions.copy_nd4j_native_from_user_content()
-
         int ND4J_NATIVE_COUNT = 0
         while (ND4J_NATIVE_COUNT < 5) {
             sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
-            node("master") {
-                dir("${JENKINS_HOME}/userContent") {
-                    stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
-                }
-            }
-            unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+
+            functions.copy_nd4j_native_from_user_content()
+
             ND4J_NATIVE_COUNT = sh(script: 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l', returnStdout: true).trim().toInteger()
             println(ND4J_NATIVE_COUNT)
             sleep unit: "MINUTES", time: 10
