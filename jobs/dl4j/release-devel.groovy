@@ -99,4 +99,10 @@ node("master") {
         }
         parallel builders
     }
+
+
+    if (!isSnapshot) {
+        functions.cleanup_userContent()
+        functions.close_staging_repository("${PROFILE_TYPE}")
+    }
 }
