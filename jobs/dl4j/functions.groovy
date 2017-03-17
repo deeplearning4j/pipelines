@@ -62,7 +62,7 @@ def checktag(proj) {
 
 def def_docker() {
     echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-    switch("${PLATFORM_NAME}") {
+    switch(PLATFORM_NAME) {
         case "linux-x86_64":
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
             dockerParams = dockerParams_tmpfs_nvidia

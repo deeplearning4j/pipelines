@@ -204,7 +204,7 @@ node(PLATFORM_NAME) {
         for (i in appsList) {
             if ( PLATFORM_NAME == i.platform ) {
                 for (app in i.apps) {
-                    echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
+                    // echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                     stage(app.name) {
                         functions.def_docker()
                         // functions.def_docker(i.platform, i.dockerImage, i.dockerParams, i.jenkinsStorage)
