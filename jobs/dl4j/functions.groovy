@@ -74,6 +74,7 @@ def def_docker() {
             break
 
         case ["android-arm", "android-x86"]:
+            echo "here"
             dockerImage = "${DOCKER_ANDROID_IMAGE}"
             dockerParams = dockerParams
             break
