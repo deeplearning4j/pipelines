@@ -75,6 +75,7 @@ node("master") {
 
     if (!isSnapshot) {
         functions.cleanup_userContent()
+        functions.open_staging_repository("${PROFILE_TYPE}")
     }
 
     stage("RunningBuilds") {

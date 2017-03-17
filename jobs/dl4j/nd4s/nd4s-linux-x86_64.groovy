@@ -1,14 +1,32 @@
+stage("${ND4S_PROJECT}-DependenciesCheck") {
+    if (!isSnapshot) {
+        echo "Copying nd4j artifacts from userContent"
+        functions.copy_nd4j_native_from_user_content()
+
+        int ND4J_NATIVE_COUNT = 0
+        while (ND4J_NATIVE_COUNT < 5) {
+            sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
+            node("master") {
+                dir("${JENKINS_HOME}/userContent") {
+                    stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+                }
+            }
+            unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
+            ND4J_NATIVE_COUNT = sh(script: 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l', returnStdout: true).trim().toInteger()
+            println(ND4J_NATIVE_COUNT)
+            sleep unit: "SECONDS", time: 10
+        }
+
+        functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
+    }
+}
+
+
 stage("${ND4S_PROJECT}-checkout-sources") {
     functions.get_project_code("${ND4S_PROJECT}")
 }
 
 stage("${ND4S_PROJECT}-build") {
-    if (!isSnapshot) {
-        echo "Copying nd4j artifacts from userContent"
-        functions.copy_nd4j_native_from_user_content()
-        functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
-    }
-
     echo "Building ${ND4S_PROJECT} version ${VERSION}"
     dir("${ND4S_PROJECT}") {
         functions.checktag("${ND4S_PROJECT}")
