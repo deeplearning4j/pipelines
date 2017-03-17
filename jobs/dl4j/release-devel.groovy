@@ -51,14 +51,13 @@
 // ])
 
 def strToList(str) {
-    if (str.getClass() == String && str.length()>0) {
+    if (str.getClass() == String && str.length() > 0) {
         tmpList = []
-        for ( i in str.split(",")) {
+        for (i in str.split(",")) {
             def item = i
             tmpList.add(item);
         }
-    }
-    else {
+    } else {
         error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
     }
     return tmpList
@@ -85,17 +84,18 @@ node("master") {
             def xplatform = platform
             builders[platform] = {
                 build job: "./all-multiplatform", parameters:
-                    [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
-                    [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
-                    [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
-                    [$class: 'BooleanParameterValue', name: 'SONAR', value: SONAR.toBoolean()],
-                    [$class: 'StringParameterValue',name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                    [$class: 'StringParameterValue',name: 'GITCREDID', value: GITCREDID],
-                    [$class: 'StringParameterValue',name: 'PROFILE_TYPE', value: PROFILE_TYPE],
-                    [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()]
-                    ]
-                }
+                        [[$class: 'StringParameterValue', name: 'PLATFORM_NAME', value: xplatform],
+                         [$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+                         [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
+                         [$class: 'BooleanParameterValue', name: 'SONAR', value: SONAR.toBoolean()],
+                         [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                         [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID],
+                         [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
+                         [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
+                         [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID]
+                        ]
             }
+        }
         parallel builders
     }
 }
