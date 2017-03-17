@@ -6,8 +6,8 @@ node(PLATFORM_NAME) {
                 [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
                 [$class: "ParametersDefinitionProperty", parameterDefinitions:
                         [
-                                [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "", description: "Deeplearning component release version"],
-                                [$class: "StringParameterDefinition", name: "TAG_NAME", defaultValue: "", description: "Deeplearning component release version"],
+                                [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "", description: "Deeplearning component  version"],
+                                [$class: "StringParameterDefinition", name: "TAG_NAME", defaultValue: "", description: "Deeplearning component desired tag name"],
                                 [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"],
                                 [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
 
