@@ -8,14 +8,18 @@ def clenap_folder_userContent() {
 
 def get_project_code(proj) {
     if (isUnix()) {
-        checkout([$class                           : 'GitSCM',
-                  branches                         : [[name: "*/${GIT_BRANCHNAME}"]],
-                  doGenerateSubmoduleConfigurations: false,
-                  extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
-                                                      [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
-                  //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
-                  submoduleCfg                     : [],
-                  userRemoteConfigs                : [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+        if (PLATFORM_NAME =="linux-ppc64le") {
+            sh("git clone -b ${GIT_BRANCHNAME} --single-branch https://github.com/${ACCOUNT}/${proj}.git.git --depth=1")
+        } else {
+            checkout([$class                           : 'GitSCM',
+                      branches                         : [[name: "*/${GIT_BRANCHNAME}"]],
+                      doGenerateSubmoduleConfigurations: false,
+                      extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
+                                                          [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
+                      //  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"], [$class: 'CloneOption', honorRefspec: true, noTags: false, reference: '', shallow: true]],
+                      submoduleCfg                     : [],
+                      userRemoteConfigs                : [[url: "git@github.com:${ACCOUNT}/${proj}.git", credentialsId: "${GITCREDID}"]]])
+        }
     } else {
         // it says - Running on Windowslinux
         // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
