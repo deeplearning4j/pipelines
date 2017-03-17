@@ -84,7 +84,7 @@ node("master") {
         for (platform in platformsList) {
             def xplatform = platform
             builders[platform] = {
-                build job: "devel/all-multiplatform", parameters:
+                build job: "./all-multiplatform", parameters:
                     [[$class: 'StringParameterValue', name:'PLATFORM_NAME', value: xplatform],
                     [$class: 'StringParameterValue',name: 'VERSION', value: VERSION],
                     [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
