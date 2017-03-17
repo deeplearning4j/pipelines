@@ -486,7 +486,7 @@ def close_staging_repository(profile_type) {
 }
 
 def resolve_dependencies_for_nd4j() {
-    Boolean BLASBUILD_CHECK = fileExists 'blasbuild'
+    Boolean BLASBUILD_CHECK = fileExists '${LIBPROJECT}/blasbuild'
 
     echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
     if (BLASBUILD_CHECK) {
