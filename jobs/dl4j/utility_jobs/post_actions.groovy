@@ -8,9 +8,15 @@ node(PLATFORM_NAME) {
                         [
                                 [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "", description: "Deeplearning component release version"],
                                 [$class: "StringParameterDefinition", name: "TAG_NAME", defaultValue: "", description: "Deeplearning component release version"],
-                                [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"]
+                                [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"],
+                                [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
+
                         ]
                 ]
         ])
+
+        if (STAGE_REPO_ID.length() > 0){
+            functions.close_staging_repository("${PROFILE_TYPE}")
+        }
     }
 }
