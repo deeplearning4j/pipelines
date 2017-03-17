@@ -80,7 +80,7 @@ def def_docker() {
             break
 
         case ["macosx-x86_64", "windows-x86_64"]:
-            echo "Running on ${platform}, skipping docker part"
+            echo "Running on ${PLATFORM_NAME}, skipping docker part"
             break
 
         default:
