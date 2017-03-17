@@ -376,7 +376,7 @@ def install_nd4j_native_to_local_maven_repository(some_version) {
     def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     for (int i = 0; i < listPlatformVersion.size(); i++) {
         println("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
-        sh("mvn install:install-file -Dfile=nd4j-native-${some_version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${some_version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
+        sh("mvn -B install:install-file -Dfile=nd4j-native-${some_version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${some_version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
     }
 }
 

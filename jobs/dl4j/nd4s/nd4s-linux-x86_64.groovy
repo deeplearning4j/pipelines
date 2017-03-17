@@ -11,8 +11,9 @@ stage("${ND4S_PROJECT}-DependenciesCheck") {
             println(ND4J_NATIVE_COUNT)
             sleep unit: "MINUTES", time: 5
         }
-
-        functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
+        docker.image(dockerImage).inside(dockerParams) {
+            functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
+        }
     }
 }
 
