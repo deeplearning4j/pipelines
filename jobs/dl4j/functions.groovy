@@ -459,12 +459,12 @@ def close_staging_repository(profile_type) {
 def resolve_dependencies_for_nd4j() {
     if (isUnix()) {
         env.varResultCount = sh(
-                script: 'if [ -d "${WORKSPACE}/${LIBPROJECT}/blasbuild" ] ; then echo 1; else echo 0; fi',
+                script: 'if [ -d "${WORKSPACE}/${LIBPROJECT}/blasbuild" ] ; then echo true; else echo false; fi',
                 returnStdout: true
         ).trim()
     } else {
         env.varResultCount = bat(
-                script: 'IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild (ECHO 1) ELSE ( ECHO  0)',
+                script: 'IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild (ECHO true) ELSE ( ECHO  false)',
                 returnStdout: true
         ).trim()
     }
