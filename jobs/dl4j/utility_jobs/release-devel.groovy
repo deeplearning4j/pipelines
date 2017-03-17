@@ -62,7 +62,7 @@ def strToList(str) {
     }
     return tmpList
 }
-
+env.STAGE_REPO_ID = env.STAGE_REPO_ID ?: ""
 node("master") {
     echo "Cleanup WS"
     step([$class: 'WsCleanup'])
