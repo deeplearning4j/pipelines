@@ -93,7 +93,7 @@ node("master") {
                          [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID],
                          [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
                          [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
-                         [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID]
+                         [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""]
                         ]
             }
         }
