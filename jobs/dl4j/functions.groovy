@@ -9,7 +9,7 @@ def clenap_folder_userContent() {
 def get_project_code(proj) {
     if (isUnix()) {
         if (PLATFORM_NAME =="linux-ppc64le") {
-            sh("git clone -b ${GIT_BRANCHNAME} --single-branch https://github.com/${ACCOUNT}/${proj}.git.git --depth=1")
+            sh("git clone -b ${GIT_BRANCHNAME} --single-branch https://github.com/${ACCOUNT}/${proj}.git --depth=1")
         } else {
             checkout([$class                           : 'GitSCM',
                       branches                         : [[name: "*/${GIT_BRANCHNAME}"]],
