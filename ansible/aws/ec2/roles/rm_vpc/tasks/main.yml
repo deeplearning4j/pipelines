@@ -1,0 +1,31 @@
+---
+ - name: Get facts
+   local_action:
+     module: ec2_remote_facts
+     region: '{{ aws_region }}'
+     filters:
+       instance-state-name: running
+       "tag:Name": '{{ec2_tag_Name}}'
+   register: ec2_facts
+
+ - debug: var=hostvars[inventory_hostname]
+
+ - name: Terminate instances
+   local_action:
+     module: ec2
+     region: "{{ aws_region }}"
+     instance_ids: "{{ item.id }}"
+     state: absent
+     wait: True
+   with_items: '{{ec2_facts.instances}}'
+  #  with_items: ec2_facts.instances
+
+ # - name: delete VPC
+ #   local_action:
+ #     module: ec2_vpc
+ #     vpc_id: "{{ ec2_facts.vpc_id }}"
+ #     region: "{{ aws_region }}"
+ #     state: absent
+ #     resource_tags: "{}"
+ #     wait: yes
+ #   with_items: ec2_facts

@@ -1,0 +1,143 @@
+---
+ # - name: VPC+SUBNETS provision for HDP cluster
+ #   local_action:
+ #     module: ec2_vpc
+ #     region: '{{aws_region}}'
+ #     cidr_block: '{{aws_vpc}}'
+ #     resource_tags: '{"Name":"{{aws_prefix}}_vpc"}'
+ #     subnets:
+ #       - cidr: '{{aws_subnet}}'
+ #         az: "{{ aws_az1 }}"
+ #         resource_tags: '{"Name":"{{aws_prefix}}_net_1"}'
+ #      #  - cidr: 10.0.2.64/26
+ #      #    az: "{{ aws_az1 }}"
+ #      #    resource_tags: '{"Name":"{{ aws_prefix }}_net_1b"}'
+ #      #  - cidr: 10.0.2.128/26
+ #      #    az: "{{ aws_az2 }}"
+ #      #    resource_tags: '{"Name":"{{ aws_prefix }}_net_1c"}'
+ #     internet_gateway: yes
+ #     route_tables:
+ #       - subnets:
+ #           - '{{aws_subnet}}'
+ #         routes:
+ #           - dest: '{{all_nets}}'
+ #             gw: igw
+ #   register: vpc
+ #
+ # - name: write vpc id to {{aws_vars_file}} file
+ #  #  become: true
+ #   local_action: shell echo "{{aws_prefix}}"_vpc":" "{{vpc.vpc_id}}"
+ #                   > '{{aws_vars_file}}'
+ #
+ # - name: write subnets id to {{aws_vars_file}} file
+ #   # become: true
+ #   local_action: shell echo "{{item.resource_tags.Name}}"":" "{{item.id}}"
+ #                   >> '{{aws_vars_file}}'
+ #   with_items: '{{vpc.subnets}}'
+ #
+ # - name: SG provision
+ #   local_action:
+ #     module: ec2_group
+ #     region: '{{aws_region}}'
+ #     vpc_id: '{{vpc.vpc_id}}'
+ #     name: '{{aws_prefix}}_sg'
+ #     description: security group for HDP cluster
+ #     rules:
+ #       # inter-node cluster communication.
+ #       - proto: all
+ #         cidr_ip: '{{aws_subnet}}'
+ #       # cidr_ip: '{{all_nets}}'
+ #       # If enable the line "cidr_ip: '{{all_nets}}'"
+ #       # all the stuff below untill "rules_egress:" may be commented
+ #       # Allow to ping hosts
+ #       - proto: icmp
+ #         # from_port: 8 # icmp type, -1 = any type
+ #         from_port: -1
+ #         to_port:  -1
+ #         cidr_ip: '{{all_nets}}'
+ #        #  group_id: '{{name}}'
+ #       # Allow ssh access from anywhere
+ #       - proto: tcp
+ #         from_port: 22
+ #         to_port: 22
+ #         cidr_ip: '{{all_nets}}'
+ #       # Access to Web and REST API.
+ #       - proto: tcp
+ #         from_port: 8080
+ #         to_port: 8080
+ #         cidr_ip: '{{all_nets}}'
+ #       # Jenkins JNLP port
+ #       - proto: tcp
+ #         from_port: 50000
+ #         to_port: 50000
+ #         cidr_ip: '{{all_nets}}'
+ #     rules_egress:
+ #       - proto: all
+ #         cidr_ip: '{{all_nets}}'
+ #   register: sg
+ #
+ # - name: write sg id to '{{aws_vars_file}}' file
+ #   local_action: shell echo "{{aws_prefix}}"_sg":" "{{sg.group_id}}"
+ #                   >> '{{aws_vars_file}}'
+ #
+ # - include_vars: "{{aws_vars_file}}"
+
+ - name: Jenkins Node Provision
+   local_action:
+     module: ec2
+     region: '{{aws_region}}'
+     key_name: '{{ec2_keypair}}'
+     group: ['default', 'ssh-https', 'Public HTTP']
+     # group_id: '{{ec2_sg_0}}'
+     # group_id: ['{{ec2_sg_0}}', '{{ec2_sg_1}}', '{{ec2_sg_2}}']
+     instance_type: '{{ec2_instance_type}}'
+     image: '{{ec2_image}}'
+     vpc_subnet_id: '{{ec2_subnet}}'
+     # region: '{{aws_region}}'
+     # zone: '{{aws_az1}}'
+     instance_tags: '{"Name":"{{ec2_tag_Name}}","Type":"{{ec2_tag_Type}}"}'
+     # assign_public_ip only available with vpc_subnet_id
+     assign_public_ip: yes
+     wait: true
+     count: 1
+     volumes:
+     - device_name: /dev/sda1
+      #  volume_type: gp2
+       volume_size: '{{ec2_root_disk_size}}'
+       delete_on_termination: true
+     - device_name: /dev/sdb
+      #  volume_type: gp2
+       volume_size: '{{ec2_data_disk_size}}'
+       delete_on_termination: true
+   # with_sequence: count='{{ec2_node_number}}'
+   register: ec2
+
+ # Next 3 statements should be used with "count: 1" activated
+ - debug: var={{item}}
+   with_items: '{{ec2.instances}}'
+
+ # - add_host: name={{item.private_ip}} >
+ #             groups=tag_Type_{{ec2_tag_nn_Type}},tag_Environment_{{ec2_tag_Environment}}
+ #             ec2_region={{aws_region}}
+ #             ec2_tag_Name={{ec2_tag_nn_Name}}
+ #             ec2_tag_Type={{ec2_tag_nn_Type}}
+ #             ec2_tag_Environment={{ec2_tag_Environment}}
+ #             ec2_ip_address={{item.private_ip}}
+ #   with_items: '{{ec2.instances}}'
+
+ - name: Wait for instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
+   with_items: '{{ec2.instances}}'
+
+ # - add_host: name={{item.public_ip}} >
+ #             groups=tag_Type_{{ec2_tag_nn_Type}},tag_Environment_{{ec2_tag_Environment}}
+ #             ec2_region={{aws_region}}
+ #             ec2_tag_Name={{ec2_tag_nn_Name}}
+ #             ec2_tag_Type={{ec2_tag_nn_Type}}
+ #             ec2_tag_Environment={{ec2_tag_Environment}}
+ #             ec2_ip_address={{item.public_ip}}
+ #   with_items: '{{ec2.instances}}'
+ #
+ # - name: Wait for NN instances to boot by checking the ssh port
+ #   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
+ #   with_items: '{{ec2.instances}}'
