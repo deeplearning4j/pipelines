@@ -135,18 +135,12 @@ def verset(ver, allowss) {
 }
 
 def tag(proj) {
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // Here you need to put stuff for atrifacts releasing
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Tag builded branch with new version
     if (CREATE_TAG.toBoolean()) {
         echo("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
         echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
         dir("${proj}") {
             sshagent(credentials: ["${GITCREDID}"]) {
-                sh 'pwd'
-                sh 'ls -al'
                 sh 'git config user.email "jenkins@skymind.io"'
                 sh 'git config user.name "Jenkins"'
                 sh 'git status'
@@ -154,7 +148,7 @@ def tag(proj) {
                 // 'nothing to commit, working directory clean' which returns 1
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
                 sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
-                // sh("git push origin test-${proj}-${VERSION}")
+                sh("git push origin test-${proj}-${VERSION}")
                 echo("Tag ${proj}-${VERSION} has been added to to github.com/${ACCOUNT}/${proj}")
             }
         }
