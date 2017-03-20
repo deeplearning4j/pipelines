@@ -7,7 +7,7 @@ properties([[$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", 
             ]]
 ])
 
-node("master") {
+node(PLATFORM_NAME) {
     step([$class: 'WsCleanup'])
 
     checkout scm
