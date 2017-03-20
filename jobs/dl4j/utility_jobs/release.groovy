@@ -102,41 +102,20 @@ node("master") {
 
 
     if (!isSnapshot) {
-      stage("Cleanup-User-Content") {
-        functions.cleanup_userContent()
-      }
-
-      stage("Close-Staging-Repository") {
-        functions.close_staging_repository("${PROFILE_TYPE}")
-      }
-
-      stage("Clone-Progects-Repositories") {
-        node("linux-x86_64") {
-          functions.get_project_code("${PROJECT}")
-          functions.get_project_code("${LIBPROJECT}")
-          functions.get_project_code("${DATAVEC_PROJECT}")
-          functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
-          functions.get_project_code("${ARBITER_PROJECT}")
-          functions.get_project_code("${ND4S_PROJECT}")
-          functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
-          functions.get_project_code("${RL4J_PROJECT}")
-          functions.get_project_code("${SCALNET_PROJECT}")
+        stage("Cleanup-User-Content") {
+          functions.cleanup_userContent()
         }
-      }
 
-      stage("Clone-Progects-Repositories") {
-        node("linux-x86_64") {
-          functions.tag("${PROJECT}")
-          functions.tag("${LIBPROJECT}")
-          functions.tag("${DATAVEC_PROJECT}")
-          functions.tag("${DEEPLEARNING4J_PROJECT}")
-          functions.tag("${ARBITER_PROJECT}")
-          functions.tag("${ND4S_PROJECT}")
-          functions.tag("${GYM_JAVA_CLIENT_PROJECT}")
-          functions.tag("${RL4J_PROJECT}")
-          functions.tag("${SCALNET_PROJECT}")
+        stage("Close-Staging-Repository") {
+          functions.close_staging_repository("${PROFILE_TYPE}")
         }
-      }
 
+        stage("Tag-GitHub-Repositories") {
+            build job: "./tag-all", parameters:
+                    [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+                     [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                     [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+                    ]
+        }
     }
 }
