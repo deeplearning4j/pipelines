@@ -501,7 +501,7 @@ def resolve_dependencies_for_nd4j() {
 
 
         if (isUnix()) {
-            unzip zipFile: "${WORKSPACE}/${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}"
+            unzip zipFile: "${WORKSPACE}/${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}/blasbuild"
         } else {
             unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}\\${LIBPROJECT}"
         }
