@@ -17,9 +17,9 @@ node("${PLATFORM_NAME}") {
                 ]
         ])
 
-        step([$class: 'WsCleanup'])
+        // step([$class: 'WsCleanup'])
 
-        checkout scm
+        // checkout scm
 
         load "jobs/dl4j/vars.groovy"
         functions = load "${PDIR}/functions.groovy"
