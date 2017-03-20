@@ -145,8 +145,8 @@ def tag(proj) {
         echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
         dir("${proj}") {
             sshagent(credentials: ["${GITCREDID}"]) {
-                              sh 'pwd'
-                              sh 'ls -al'
+                sh 'pwd'
+                sh 'ls -al'
 
                 sh 'git config user.email "jenkins@skymind.io"'
                 sh 'git config user.name "Jenkins"'
@@ -155,6 +155,7 @@ def tag(proj) {
                 sh('git commit -a -m \"Update to version ${VERSION}\"')
                 sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
                 // sh("git push origin test-${proj}-${VERSION}")
+                echo("Tag ${proj}-${VERSION} has been added to to github.com/${ACCOUNT}/${proj}")
             }
         }
     } else {
