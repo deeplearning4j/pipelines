@@ -41,7 +41,7 @@ def rm() {
     echo "Remove .git folder from workspace - ${WORKSPACE}"
     dir("${WORKSPACE}") {
         if (isUnix()) {
-            sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
+            sh("rm -rf .git* docs imgs ansible README.md .gnupg")
         } else {
             echo "Skipping .git deletion because it is windows"
         }
@@ -147,7 +147,7 @@ def tag(proj) {
             sshagent(credentials: ["${GITCREDID}"]) {
                               sh 'pwd'
                               sh 'ls -al'
-                              
+
                 sh 'git config user.email "jenkins@skymind.io"'
                 sh 'git config user.name "Jenkins"'
                 sh 'git status'
