@@ -19,6 +19,9 @@ node("master") {
     // Remove .git folder from workspace
     functions.rm()
 
+    sh("pwd")
+    sh("ls -al")
+
     stage("Clone-Progects-Repositories") {
         functions.get_project_code("${LIBPROJECT}")
         functions.get_project_code("${PROJECT}")
