@@ -428,7 +428,7 @@ def open_staging_repository(profile_type) {
 
 def close_staging_repository(profile_type) {
     switch (profile_type) {
-        case "local-nexus":
+        case "nexus":
             println("[ LOCAL-NEXUS ]")
             println("[ INFO ] Try to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'local-nexus-admin-user-1',
