@@ -44,9 +44,7 @@ stage("${LIBPROJECT}-build") {
             unstash 'libnd4j-include'
 
             if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {
-                docker.image(dockerImage).inside(dockerParams){
-                    functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
-                }
+                functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
             }
         }
     }
