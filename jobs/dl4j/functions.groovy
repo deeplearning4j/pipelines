@@ -244,7 +244,12 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
             zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    bat ("cp %MAVEN_SETTINGS% %WORKSPACE%\\settings.xml")
+                    bat (
+                            'vcvars64.bat' +
+                            '&&' +
+                            'bash -c "export PATH=$PATH:/c/msys64/mingw64/bin &&' +
+                            "mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
