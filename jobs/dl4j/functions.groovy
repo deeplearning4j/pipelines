@@ -41,7 +41,7 @@ def rm() {
     echo "Remove .git folder from workspace - ${WORKSPACE}"
     dir("${WORKSPACE}") {
         if (isUnix()) {
-            sh("rm -rf .git* docs imgs ansible README.md .gnupg")
+            sh("rm -rf .git* docs docker imgs ansible README.md .gnupg")
         } else {
             echo "Skipping .git deletion because it is windows"
         }
