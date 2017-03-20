@@ -500,12 +500,10 @@ def resolve_dependencies_for_nd4j() {
         echo("[ INFO ] Resolve dependencies related to ${LIBPROJECT} ")
         functions.get_libnd4j_artifacts_snapshot_ball("${VERSION}", "${PLATFORM_NAME}", "${PROFILE_TYPE}")
 
-        dir("${WORKSPACE}/${LIBPROJECT}/blasbuild") {
-            if (isUnix()) {
-                unzip zipFile: "${WORKSPACE}/${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}"
-            } else {
-                unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}\\${LIBPROJECT}"
-            }
+        if (isUnix()) {
+            unzip zipFile: "${WORKSPACE}/${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}/blasbuild"
+        } else {
+            unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}\\${LIBPROJECT}\\blasbuild"
         }
     }
 }
