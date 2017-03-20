@@ -245,7 +245,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
             zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -255,7 +255,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
                             "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "sonatype":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -265,7 +265,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
                             "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "bintray":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -275,7 +275,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
                             "-Dfile=${LIBPROJECT}-${some_version}-${some_platform}.zip")
                     break
                 case "jfrog":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
