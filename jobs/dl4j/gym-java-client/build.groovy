@@ -56,7 +56,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${GYM_JAVA_CLIENT_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${GYM_JAVA_CLIENT_PROJECT}")
+                functions.tag("${GYM_JAVA_CLIENT_PROJECT}")
             }
 
         }

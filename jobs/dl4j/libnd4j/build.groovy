@@ -52,7 +52,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${LIBPROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${LIBPROJECT}")
+                functions.tag("${LIBPROJECT}")
             }
 
         }

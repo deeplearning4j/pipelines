@@ -54,7 +54,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${ND4S_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${ND4S_PROJECT}")
+                functions.tag("${ND4S_PROJECT}")
             }
 
         }

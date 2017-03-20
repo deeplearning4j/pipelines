@@ -134,7 +134,7 @@ def verset(ver, allowss) {
     )
 }
 
-def release(proj) {
+def tag(proj) {
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // Here you need to put stuff for atrifacts releasing
 

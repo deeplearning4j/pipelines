@@ -58,7 +58,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${DEEPLEARNING4J_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${DEEPLEARNING4J_PROJECT}")
+                functions.tag("${DEEPLEARNING4J_PROJECT}")
             }
 
         }
