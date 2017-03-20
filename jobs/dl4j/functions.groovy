@@ -147,7 +147,7 @@ def tag(proj) {
                 // Disabled commit to avoid
                 // 'nothing to commit, working directory clean' which returns 1
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
-                sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
+                sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
                 // sh("git push origin test-${proj}-${VERSION}")
                 echo("Tag ${proj}-${VERSION} has been added to to github.com/${ACCOUNT}/${proj}")
             }

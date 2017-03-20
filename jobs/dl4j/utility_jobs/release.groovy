@@ -110,12 +110,11 @@ node("master") {
           functions.close_staging_repository("${PROFILE_TYPE}")
         }
 
-        stage("Tag-GitHub-Repositories") {
-            build job: "./tag-all", parameters:
-                    [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
-                     [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                     [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
-                    ]
-        }
+        build job: "./tag-all", parameters:
+              [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+               [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+               [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+              ]
+
     }
 }

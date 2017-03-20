@@ -102,7 +102,19 @@ node("master") {
 
 
     if (!isSnapshot) {
-        functions.cleanup_userContent()
-        functions.close_staging_repository("${PROFILE_TYPE}")
+        stage("Cleanup-User-Content") {
+          functions.cleanup_userContent()
+        }
+
+        stage("Close-Staging-Repository") {
+          functions.close_staging_repository("${PROFILE_TYPE}")
+        }
+
+        build job: "./tag-all", parameters:
+              [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+               [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+               [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+              ]
+
     }
 }
