@@ -153,7 +153,7 @@ def tag(proj) {
                 sh 'git status'
                 // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
                 sh('git commit -a -m \"Update to version ${VERSION}\"')
-                sh("echo $?")
+                sh("echo \$?")
                 sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
                 // sh("git push origin test-${proj}-${VERSION}")
                 echo("Tag ${proj}-${VERSION} has been added to to github.com/${ACCOUNT}/${proj}")
