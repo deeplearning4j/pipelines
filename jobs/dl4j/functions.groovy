@@ -147,13 +147,12 @@ def tag(proj) {
             sshagent(credentials: ["${GITCREDID}"]) {
                 sh 'pwd'
                 sh 'ls -al'
-
                 sh 'git config user.email "jenkins@skymind.io"'
                 sh 'git config user.name "Jenkins"'
                 sh 'git status'
-                // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
+                // Disabled commit to avoid
+                // 'nothing to commit, working directory clean' which returns 1
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
-                sh("echo \$?")
                 sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
                 // sh("git push origin test-${proj}-${VERSION}")
                 echo("Tag ${proj}-${VERSION} has been added to to github.com/${ACCOUNT}/${proj}")
