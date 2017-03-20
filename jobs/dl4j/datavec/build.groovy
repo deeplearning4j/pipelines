@@ -59,7 +59,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${DATAVEC_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${DATAVEC_PROJECT}")
+                functions.tag("${DATAVEC_PROJECT}")
             }
 
         }

@@ -56,7 +56,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${RL4J_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${RL4J_PROJECT}")
+                functions.tag("${RL4J_PROJECT}")
             }
 
         }

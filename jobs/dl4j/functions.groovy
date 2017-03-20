@@ -41,7 +41,7 @@ def rm() {
     echo "Remove .git folder from workspace - ${WORKSPACE}"
     dir("${WORKSPACE}") {
         if (isUnix()) {
-            sh("rm -rf {.git,.gitignore,docs,imgs,ansible,README.md,.gnupg}")
+            sh("rm -rf .git* docs docker imgs ansible README.md .gnupg")
         } else {
             echo "Skipping .git deletion because it is windows"
         }
@@ -134,11 +134,7 @@ def verset(ver, allowss) {
     )
 }
 
-def release(proj) {
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // Here you need to put stuff for atrifacts releasing
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+def tag(proj) {
     // Tag builded branch with new version
     if (CREATE_TAG.toBoolean()) {
         echo("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
@@ -148,10 +144,12 @@ def release(proj) {
                 sh 'git config user.email "jenkins@skymind.io"'
                 sh 'git config user.name "Jenkins"'
                 sh 'git status'
-                // DO NOT ENABLE COMMIT AND TAGGING UNTIL IT IS NEEDED FOR REAL RELEASE
-                sh('git commit -a -m \"Update to version ${VERSION}\"')
-                sh("git tag -a test-${proj}-${VERSION} -m test-${proj}-${VERSION}")
+                // Disabled commit to avoid
+                // 'nothing to commit, working directory clean' which returns 1
+                // sh('git commit -a -m \"Update to version ${VERSION}\"')
+                sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
                 // sh("git push origin test-${proj}-${VERSION}")
+                echo("Tag ${proj}-${VERSION} has been added to to github.com/${ACCOUNT}/${proj}")
             }
         }
     } else {

@@ -55,7 +55,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${SCALNET_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${SCALNET_PROJECT}")
+                functions.tag("${SCALNET_PROJECT}")
             }
 
         }
