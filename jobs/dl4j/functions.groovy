@@ -8,7 +8,7 @@ def clenap_folder_userContent() {
 
 def get_project_code(proj) {
     if (isUnix()) {
-        if (PLATFORM_NAME =="linux-ppc64le") {
+        if (PLATFORM_NAME == "linux-ppc64le") {
             sh("git clone -b ${GIT_BRANCHNAME} --single-branch https://github.com/${ACCOUNT}/${proj}.git --depth=1")
         } else {
             checkout([$class                           : 'GitSCM',
@@ -62,7 +62,7 @@ def checktag(proj) {
 
 def def_docker() {
     echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-    switch(PLATFORM_NAME) {
+    switch (PLATFORM_NAME) {
         case "linux-x86_64":
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
             dockerParams = dockerParams_tmpfs_nvidia
@@ -79,8 +79,8 @@ def def_docker() {
             dockerParams = dockerParams
             break
 
-        case ["macosx-x86_64","windows-x86_64"]:
-            echo "Running on ${platform}, skipping docker part"
+        case ["macosx-x86_64", "windows-x86_64"]:
+            echo "Running on ${PLATFORM_NAME}, skipping docker part"
             break
 
         default:
@@ -130,7 +130,7 @@ def verset(ver, allowss) {
     if (isUnix()) {
         sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     } else (
-    bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+            bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     )
 }
 
@@ -376,7 +376,7 @@ def install_nd4j_native_to_local_maven_repository(some_version) {
     def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     for (int i = 0; i < listPlatformVersion.size(); i++) {
         println("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
-        sh("mvn install:install-file -Dfile=nd4j-native-${some_version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${some_version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
+        sh("mvn -B install:install-file -Dfile=nd4j-native-${some_version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${some_version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
     }
 }
 
@@ -486,20 +486,12 @@ def close_staging_repository(profile_type) {
 }
 
 def resolve_dependencies_for_nd4j() {
-    if (isUnix()) {
-        env.varResultCount = sh(
-                script: 'if [ -d "${WORKSPACE}/${LIBPROJECT}/blasbuild" ] ; then echo 1; else echo 0; fi',
-                returnStdout: true
-        ).trim()
-    } else {
-        env.varResultCount = bat(
-                script: 'IF EXIST %WORKSPACE%\\%LIBPROJECT%\\blasbuild (ECHO 1) ELSE ( ECHO  0)',
-                returnStdout: true
-        ).trim()
-    }
-
     echo("[ INFO ] Check is there was build for ${LIBPROJECT}")
-    if (varResultCount.toBoolean()) {
+    Boolean BLASBUILD_CHECK = fileExists "${LIBPROJECT}/blasbuild"
+
+    echo("[ INFO ] BLASBUILD_CHECK is result: " + BLASBUILD_CHECK)
+
+    if (BLASBUILD_CHECK) {
         echo("[ INFO ] ${LIBPROJECT} project was previously builded...")
     } else {
         echo("[ INFO ] ${LIBPROJECT} wasn't build previously")
@@ -518,7 +510,7 @@ def resolve_dependencies_for_nd4j() {
 }
 
 def cleanup_userContent() {
-    dir("${JENKINS_HOME}/userContent/nd4j_artifacts"){
+    dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
         sh("rm -rf *.jar")
     }
 }
@@ -537,7 +529,7 @@ def copy_nd4j_native_to_user_content() {
 }
 
 def copy_nd4j_native_from_user_content() {
-    node("master"){
+    node("master") {
         dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
             sh("ls -la")
             stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
