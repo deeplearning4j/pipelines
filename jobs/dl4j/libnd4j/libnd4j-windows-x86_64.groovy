@@ -42,7 +42,17 @@ stage("${LIBPROJECT}-build") {
             unstash 'cuda75-blasbuild'
             unstash 'cuda80-blasbuild'
             unstash 'libnd4j-include'
+
+            if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {
+                docker.image(dockerImage).inside(dockerParams){
+                    functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
+                }
+            }
         }
+    }
+
+    if (SONAR.toBoolean()) {
+        functions.sonar("${LIBPROJECT}")
     }
 }
 echo 'MARK: end of libnd4j.groovy'
