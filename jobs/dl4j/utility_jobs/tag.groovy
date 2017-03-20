@@ -13,14 +13,15 @@ node("master") {
     checkout scm
 
     load "jobs/dl4j/vars.groovy"
+    env.CREATE_TAG = env.CREATE_TAG ?: "true"
     functions = load "jobs/dl4j/functions.groovy"
 
     // Remove .git folder from workspace
     functions.rm()
 
     stage("Clone-Progects-Repositories") {
-        functions.get_project_code("${PROJECT}")
         functions.get_project_code("${LIBPROJECT}")
+        functions.get_project_code("${PROJECT}")
         functions.get_project_code("${DATAVEC_PROJECT}")
         functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
         functions.get_project_code("${ARBITER_PROJECT}")
@@ -31,8 +32,8 @@ node("master") {
     }
 
     stage("Clone-Progects-Repositories") {
-        functions.tag("${PROJECT}")
         functions.tag("${LIBPROJECT}")
+        functions.tag("${PROJECT}")
         functions.tag("${DATAVEC_PROJECT}")
         functions.tag("${DEEPLEARNING4J_PROJECT}")
         functions.tag("${ARBITER_PROJECT}")
