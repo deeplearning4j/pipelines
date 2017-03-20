@@ -145,6 +145,9 @@ def tag(proj) {
         echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
         dir("${proj}") {
             sshagent(credentials: ["${GITCREDID}"]) {
+                              sh 'pwd'
+                              sh 'ls -al'
+                              
                 sh 'git config user.email "jenkins@skymind.io"'
                 sh 'git config user.name "Jenkins"'
                 sh 'git status'
