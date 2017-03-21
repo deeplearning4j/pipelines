@@ -16,8 +16,10 @@ node("${PLATFORM_NAME}") {
                                 // [$class: "ChoiceParameterDefinition", name: "SCALA_VERSION", choices: "2.10\n2.11", description: "Scala version definition"],
                                 // [$class: "ChoiceParameterDefinition", name: "CUDA_VERSION", choices: "7.5\n8.0", description: "Cuda version definition"],
                                 [$class: "BooleanParameterDefinition", name: "PUSH_LIBND4J_LOCALREPO", defaultValue: false, description: "Select to build libnd4j nd push it to local repo"],                              [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro081", description: "Default Git branch value"],
+                                [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro081", description: "Default Git branch value"],
                                 [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
-                                [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"],
+//                                [$class: "StringParameterDefinition", name: "PDIR", defaultValue: "jobs/dl4j", description: "Path to groovy scripts"],
+                                [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "sonatype\nnexus\njfrog\nbintray", description: "Profile type"]
                                 [$class: "BooleanParameterDefinition", name: "PUSH_LIBND4J_LOCALREPO", defaultValue: false, description: "Select to build libnd4j nd push it to local repo"]
                         ]
                 ]
@@ -51,7 +53,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${LIBPROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${LIBPROJECT}")
+                functions.tag("${LIBPROJECT}")
             }
 
         }
