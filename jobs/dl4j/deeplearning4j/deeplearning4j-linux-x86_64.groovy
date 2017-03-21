@@ -33,17 +33,21 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
         functions.checktag("${DATAVEC_PROJECT}")
         functions.verset("${VERSION}", true)
 
-        def listScalaVersion = ["2.10", "2.11"]
-        def listCudaVersion = ["7.5", "8.0"]
+        def listScalaVersion = ["2.10", "2.11","2.11"]
+        def listCudaVersion = ["7.5", "8.0","8.0"]
+        def listSparkVersion = ["1", "1","2"]
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             env.SCALA_VERSION = listScalaVersion[i]
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
             env.CUDA_VERSION = listCudaVersion[i];
+            echo "[ INFO ] ++ SET Spark Version to: " + listSparkVersion[i]
+            env.SPARK_VERSION = listSparkVersion[i]
 
             sh("./change-scala-versions.sh ${SCALA_VERSION}")
             sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+            sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
