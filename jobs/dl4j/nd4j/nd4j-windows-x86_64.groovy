@@ -1,4 +1,4 @@
-stage("${PROJECT}-ResolveDependencies") {
+stage("${PROJECT}-Resolve-Dependencies") {
     functions.resolve_dependencies_for_nd4j()
 }
 
