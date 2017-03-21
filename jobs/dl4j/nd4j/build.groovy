@@ -47,7 +47,7 @@ node(PLATFORM_NAME) {
                 timeout(20) {
                     input message: "Approve release of version ${PROJECT}-${VERSION} ?"
                 }
-                functions.release("${PROJECT}")
+                functions.tag("${PROJECT}")
             }
         }
     }
