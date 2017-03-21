@@ -9,7 +9,7 @@ node(PLATFORM_NAME) {
                                 [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "", description: "Deeplearning component  version"],
 //                                [$class: "StringParameterDefinition", name: "TAG_NAME", defaultValue: "", description: "Deeplearning component desired tag name"],
 //                                [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"],
-                                [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"]
+                                [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "sonatype\nnexus\njfrog\nbintray", description: "Profile type"]
 
                         ]
                 ]

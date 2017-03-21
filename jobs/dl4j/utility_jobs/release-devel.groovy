@@ -38,7 +38,7 @@
 //             ],
 //             [$class: "ChoiceParameterDefinition",
 //                 name: "PROFILE_TYPE",
-//                 choices: "nexus\njfrog\nbintray\nsonatype",
+//                 choices: "sonatype\nnexus\njfrog\nbintray",
 //                 description: "Profile type"
 //             ],
 //             [$class: "BooleanParameterDefinition",
