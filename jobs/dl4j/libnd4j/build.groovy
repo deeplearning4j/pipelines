@@ -12,7 +12,7 @@ node("${PLATFORM_NAME}") {
                                 [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro081", description: "Default Git branch value"],
                                 [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
                                 [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "sonatype\nnexus\njfrog\nbintray", description: "Profile type"],
-                                [$class: "BooleanParameterDefinition", name: "PUSH_LIBND4J_LOCALREPO", defaultValue: false, description: "Select to push libnd4j to local staging repo"]
+                                [$class: "BooleanParameterDefinition", name: "PUSH_LIBND4J_LOCALREPO", defaultValue: false, description: "Select to push libnd4j to choosen staging repo"]
                         ]
                 ]
         ])
