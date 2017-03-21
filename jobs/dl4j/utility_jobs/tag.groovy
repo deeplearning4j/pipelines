@@ -31,7 +31,8 @@ node(PLATFORM_NAME) {
         functions.get_project_code("${ND4S_PROJECT}")
         functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
         functions.get_project_code("${RL4J_PROJECT}")
-        functions.get_project_code("${SCALNET_PROJECT}")
+        // enable scalnet after 0.8.0 releasße
+        // functions.get_project_code("${SCALNET_PROJECT}")
     }
 
     stage("Tag-Repositories") {
@@ -43,7 +44,7 @@ node(PLATFORM_NAME) {
         functions.tag("${ND4S_PROJECT}")
         functions.tag("${GYM_JAVA_CLIENT_PROJECT}")
         functions.tag("${RL4J_PROJECT}")
-        functions.tag("${SCALNET_PROJECT}")
+        // functions.tag("${SCALNET_PROJECT}")
     }
 }
 echo 'MARK: end of tag.groovy'
