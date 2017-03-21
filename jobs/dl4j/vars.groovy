@@ -40,3 +40,4 @@ dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/sto
 /** Below variables need to be reviewed once release approach will be approved
  */
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
+env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"

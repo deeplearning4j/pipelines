@@ -244,7 +244,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
             zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${some_version}-${some_platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    bat ("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${some_version} " +
@@ -502,7 +502,7 @@ def resolve_dependencies_for_nd4j() {
         if (isUnix()) {
             unzip zipFile: "${WORKSPACE}/${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}/blasbuild"
         } else {
-            unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}/${LIBPROJECT}/blasbuild"
+            unzip zipFile: "${WORKSPACE}\\${LIBPROJECT}-${VERSION}-${PLATFORM_NAME}.zip", dir: "${WORKSPACE}\\${LIBPROJECT}\\blasbuild"
         }
     }
 }
