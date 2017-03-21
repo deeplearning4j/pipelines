@@ -534,4 +534,56 @@ def copy_nd4j_native_from_user_content() {
     unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
 }
 
+def nd4s_install_snapshot_dependencies_to_maven2_local_repository( some_goup_id, some_artifact_id, some_version, some_packaging, some_classifier, some_profile_type ) {
+    switch (some_profile_type) {
+        case "sonatype":
+            some_repo_url="http://oss.sonatype.org/content/repositories/snapshots"
+            for (int i = 0; i < some_classifier.size(); i++){
+                echo("[ INFO ] try to download  and install dependencies of given artifact: " + some_goup_id + ":" +  some_artifact_id + ":" +some_version + ":" +some_packaging + ":" + some_classifier[i] )
+                if (isUnix()) {
+                    sh("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                } else {
+                    bat("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                }
+            }
+            break
+        case "nexus":
+            some_repo_url="http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots"
+            for (int i = 0; i < some_classifier.size(); i++){
+                echo("[ INFO ] try to download  and install dependencies of given artifact: " + some_goup_id + ":" +  some_artifact_id + ":" +some_version + ":" +some_packaging + ":" + some_classifier[i] )
+                if (isUnix()) {
+                    sh("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                } else {
+                    bat("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                }
+            }
+            break
+        case "jfrog":
+            some_repo_url="http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local"
+            for (int i = 0; i < some_classifier.size(); i++){
+                echo("[ INFO ] try to download  and install dependencies of given artifact: " + some_goup_id + ":" +  some_artifact_id + ":" +some_version + ":" +some_packaging + ":" + some_classifier[i] )
+                if (isUnix()) {
+                    sh("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                } else {
+                    bat("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                }
+            }
+            break
+        case "bintray":
+            some_repo_url="https://oss.sonatype.org/content/repositories/snapshots"
+            for (int i = 0; i < some_classifier.size(); i++){
+                echo("[ INFO ] try to download  and install dependencies of given artifact: " + some_goup_id + ":" +  some_artifact_id + ":" +some_version + ":" +some_packaging + ":" + some_classifier[i] )
+                if (isUnix()) {
+                    sh("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                } else {
+                    bat("mvn -B dependency:get -DrepoUrl=${some_repo_url} -DgroupId=${some_goup_id} -DartifactId=${some_artifact_id} -Dversion=${some_version} -Dpackaging=${some_packaging} -Dclassifier=${some_classifier[i]}")
+                }
+            }
+            break
+        default:
+            break
+    }
+}
+
+
 return this;
