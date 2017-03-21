@@ -12,10 +12,7 @@ node("${PLATFORM_NAME}") {
 //                            [$class: "LabelParameterDefinition", name: "DOCKER_NODE", defaultValue: "jenkins-slave-cuda", description: "Correct parameters:\nFor x86_64-jenkins-slave-cuda,amd64\nfor PowerPC - ppc,power8"],
                                 // [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: false, description: "Select to run skip tests during mvn execution"],
                                 // [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
-<<<<<<<<< Temporary merge branch 1
-=========
                                 [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"],
->>>>>>>>> Temporary merge branch 2
 //                            [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
                                 // [$class: "StringParameterDefinition", name: "ND4J_VERSION", defaultValue: "", description: "Set preferred nd4j version, leave it empty to use VERSION"],
                                 // [$class: "StringParameterDefinition", name: "DL4J_VERSION", defaultValue: "", description: "Set preferred dl4j version, leave it empty to use VERSION"],
@@ -57,21 +54,11 @@ node("${PLATFORM_NAME}") {
                 timeout(20) {
                     input message: "Approve release of version ${ND4S_PROJECT}-${VERSION} ?"
                 }
-<<<<<<<<< Temporary merge branch 1
-
-                functions.release("${ND4S_PROJECT}")
+                functions.tag("${ND4S_PROJECT}")
             }
 
         }
 
-=========
-
-                functions.release("${ND4S_PROJECT}")
-            }
-
-        }
-
->>>>>>>>> Temporary merge branch 2
-        // step([$class: 'WsCleanup'])
+       // step([$class: 'WsCleanup'])
     }
 }

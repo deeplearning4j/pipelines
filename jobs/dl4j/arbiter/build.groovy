@@ -58,7 +58,7 @@ node("${PLATFORM_NAME}") {
                     input message: "Approve release of version ${ARBITER_PROJECT}-${VERSION} ?"
                 }
 
-                functions.release("${ARBITER_PROJECT}")
+                functions.tag("${ARBITER_PROJECT}")
             }
 
         }
