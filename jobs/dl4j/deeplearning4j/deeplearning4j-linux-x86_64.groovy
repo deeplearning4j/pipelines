@@ -43,10 +43,11 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
             env.CUDA_VERSION = listCudaVersion[i];
             echo "[ INFO ] ++ SET Spark Version to: " + listSparkVersion[i]
-            env.SPARK_VERSION =
+            env.SPARK_VERSION = listSparkVersion[i]
 
             sh("./change-scala-versions.sh ${SCALA_VERSION}")
             sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+            sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
