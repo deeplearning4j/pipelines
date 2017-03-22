@@ -27,7 +27,7 @@
 //             ],
 //             [$class: "StringParameterDefinition",
 //                 name: "GIT_BRANCHNAME",
-//                 defaultValue: "intropro081",
+//                 defaultValue: "master",
 //                 description: "Default Git branch value"
 //             ],
 //             [$class: "CredentialsParameterDefinition",
