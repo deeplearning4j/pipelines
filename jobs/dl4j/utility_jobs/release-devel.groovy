@@ -113,6 +113,7 @@ node("master") {
         build job: "./tag-all", parameters:
               [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
                [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+               [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
                [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
               ]
 
