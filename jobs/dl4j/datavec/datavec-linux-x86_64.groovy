@@ -9,11 +9,18 @@ stage("${DATAVEC_PROJECT}-build") {
     dir("${DATAVEC_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
         functions.verset("${VERSION}", true)
-        def listScalaVersion = ["2.10", "2.11"]
-        for (int i = 0; i < listScalaVersion.size(); i++) {
-            echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
-            env.SCALA_VERSION = listScalaVersion[i]
+//        def listVersion = ["2.10", "2.11"]
+
+        final listVersion = [[sparkVersion: "1", scalaVersion: "2.11"],
+                             [sparkVersion: "2", scalaVersion: "2.11"],
+                             [sparkVersion: "1", scalaVersion: "2.10"]]
+
+        for ( lib in listVersion) {
+            echo "[ INFO ] ++ SET Scala Version to: " + lib.scalaVersion
+            env.SCALA_VERSION = lib.scalaVersion
+            env.SPARK_VERSION = lib.sparkVersion
             sh "./change-scala-versions.sh ${SCALA_VERSION}"
+            sh "./change-spark-versions.sh ${SPARK_VERSION}"
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {

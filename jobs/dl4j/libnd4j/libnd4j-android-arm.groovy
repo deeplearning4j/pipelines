@@ -8,12 +8,18 @@ stage("${LIBPROJECT}-build") {
                         ./buildnativeoperations.sh -platform ${PLATFORM_NAME}
                         '''
             }
-        }
-        if (SONAR.toBoolean()) {
-            functions.sonar("${LIBPROJECT}")
+            if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {
+                docker.image(dockerImage).inside(dockerParams){
+                    functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
+                }
+            }
         }
     } else {
         echo "Skipping libnd4j build, using snapshot"
+    }
+
+    if (SONAR.toBoolean()) {
+        functions.sonar("${LIBPROJECT}")
     }
 }
 

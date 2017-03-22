@@ -1,6 +1,7 @@
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
 env.CBUILD = env.CBUILD ?: "true"
+env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
 
 
 settings_xml = 'maven-settings-id-1'
@@ -31,7 +32,7 @@ env.JENKINS_DOCKER_SBTDIR = "/srv/jenkins/storage/docker_ivy2"
 
 dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw"
 dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw -v ${JENKINS_DOCKER_SBTDIR}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro --tmpfs /tmp:size=4g"
+dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro --tmpfs /tmp:size=6g"
 
 // env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
@@ -39,3 +40,4 @@ dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/sto
 /** Below variables need to be reviewed once release approach will be approved
  */
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
+env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"

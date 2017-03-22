@@ -33,17 +33,21 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
         functions.checktag("${DATAVEC_PROJECT}")
         functions.verset("${VERSION}", true)
 
-        def listScalaVersion = ["2.10", "2.11"]
-        def listCudaVersion = ["7.5", "8.0"]
+        def listScalaVersion = ["2.10", "2.11","2.11"]
+        def listCudaVersion = ["7.5", "8.0","8.0"]
+        def listSparkVersion = ["1", "1","2"]
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             env.SCALA_VERSION = listScalaVersion[i]
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
             env.CUDA_VERSION = listCudaVersion[i];
+            echo "[ INFO ] ++ SET Spark Version to: " + listSparkVersion[i]
+            env.SPARK_VERSION = listSparkVersion[i]
 
             sh("./change-scala-versions.sh ${SCALA_VERSION}")
             sh("./change-cuda-versions.sh ${CUDA_VERSION}")
+            sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
@@ -51,7 +55,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                     functions.getGpg()
                     sh '''
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -Dnd4j.version=${VERSION} -Ddeeplearning4j.version=${VERSION} -Ddatavec.version=${VERSION} -Ddl4j-test-resources.version=${VERSION}
                 '''
                 }
             }

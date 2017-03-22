@@ -27,7 +27,7 @@
 //             ],
 //             [$class: "StringParameterDefinition",
 //                 name: "GIT_BRANCHNAME",
-//                 defaultValue: "intropro081",
+//                 defaultValue: "master",
 //                 description: "Default Git branch value"
 //             ],
 //             [$class: "CredentialsParameterDefinition",
@@ -38,7 +38,7 @@
 //             ],
 //             [$class: "ChoiceParameterDefinition",
 //                 name: "PROFILE_TYPE",
-//                 choices: "nexus\njfrog\nbintray\nsonatype",
+//                 choices: "sonatype\nnexus\njfrog\nbintray",
 //                 description: "Profile type"
 //             ],
 //             [$class: "BooleanParameterDefinition",
@@ -101,20 +101,32 @@ node("master") {
     }
 
 
-    if (!isSnapshot) {
+    if (isSnapshot) {
+
+        echo "Snapshots of version ${VERSION} are builded"
+
+    } else {
+
         stage("Cleanup-User-Content") {
-          functions.cleanup_userContent()
+            functions.cleanup_userContent()
         }
 
         stage("Close-Staging-Repository") {
-          functions.close_staging_repository("${PROFILE_TYPE}")
+            functions.close_staging_repository("${PROFILE_TYPE}")
         }
 
-        build job: "./tag-all", parameters:
-              [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
-               [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-               [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
-              ]
+        stage("Wait-For-User-Input") {
 
+            timeout(time: 77, unit: 'DAYS') {
+                input message:"Approve release of version ${VERSION} ?"
+            }
+
+            build job: "./tag-all", parameters:
+                [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+                 [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                 [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
+                 [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+                ]
+        }
     }
 }

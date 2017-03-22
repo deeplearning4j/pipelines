@@ -2,13 +2,13 @@ properties([[$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", 
             [$class: "ParametersDefinitionProperty", parameterDefinitions: [
                     [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.8.1-SNAPSHOT", description: "Deeplearning component release version"],
                     [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nandroid-arm\nandroid-x86\nlinux-ppc64le\nmacosx-x86_64\nwindows-x86_64", description: "Build project on architecture"],
-                    [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: true, description: "Select to skip tests during mvn execution"],
+                    [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: true, description: "Select to run tests during mvn execution"],
                     [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
                     [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"],
                     [$class: "BooleanParameterDefinition", name: "CREATE_TAG", defaultValue: false, description: "Select to create tag for release in git repository"],
-                    [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "intropro081", description: "Default Git branch value"],
+                    [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "master", description: "Default Git branch value"],
                     [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
-                    [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\njfrog\nbintray\nsonatype", description: "Profile type"],
+                    [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "sonatype\nnexus\njfrog\nbintray", description: "Profile type"],
                     [$class: "BooleanParameterDefinition", name: "CBUILD", defaultValue: true, description: "Select to build libnd4j"]
             ]
             ]
@@ -44,8 +44,8 @@ node(PLATFORM_NAME) {
                          [name: "arbiter", loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"],
                          [name: "nd4s", loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"],
                          [name: "gym-java-client", loadFile: "${PDIR}/gym-java-client/gym-java-client-${PLATFORM_NAME}.groovy"],
-                         [name: "rl4j", loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"],
-                         [name: "scalnet", loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"]
+                         [name: "rl4j", loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"]//,
+//                         [name: "scalnet", loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"]
                  ]
                 ],
                 [platform      : "linux-ppc64le",
@@ -100,6 +100,6 @@ node(PLATFORM_NAME) {
                 }
             }
         }
-        echo 'MARK: end of all-multiplatform.groovy'
+        echo "MARK: end of all-multiplatform.groovy"
     }
 }
