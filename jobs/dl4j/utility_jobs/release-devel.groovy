@@ -103,19 +103,23 @@ node("master") {
 
     if (!isSnapshot) {
         stage("Cleanup-User-Content") {
-          functions.cleanup_userContent()
+            functions.cleanup_userContent()
         }
 
         stage("Close-Staging-Repository") {
-          functions.close_staging_repository("${PROFILE_TYPE}")
+            functions.close_staging_repository("${PROFILE_TYPE}")
+        }
+
+        timeout(time: 77, unit: 'DAYS') {
+            input message:"Approve release of version ${VERSION} ?"
         }
 
         build job: "./tag-all", parameters:
-              [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
-               [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-               [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
-               [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
-              ]
+            [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+             [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+             [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
+             [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+            ]
 
     }
 }
