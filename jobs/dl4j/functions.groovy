@@ -573,7 +573,7 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( some_goup_id,
             }
             break
         case "bintray":
-            some_repo_url="https://oss.sonatype.org/content/repositories/snapshots"
+            some_repo_url="https://oss.jfrog.org/artifactory/oss-snapshot-local"
             for (int i = 0; i < some_classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + some_goup_id + ":" +  some_artifact_id + ":" +some_version + ":" +some_packaging + ":" + some_classifier[i] )
                 if (isUnix()) {
