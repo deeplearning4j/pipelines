@@ -148,7 +148,7 @@ def tag(proj) {
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
                 sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
                 echo("Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj}")
-                if(PUSH_TAG.toBoolean()) {
+                if(TAG.toBoolean()) {
                   sh("git push origin test-${proj}-${VERSION}")
                   echo("Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj}")
                 }
