@@ -100,6 +100,6 @@ node(PLATFORM_NAME) {
                 }
             }
         }
-        echo 'MARK: end of all-multiplatform.groovy'
+        echo "MARK: end of all-multiplatform.groovy on ${PLATFORM_NAME}"
     }
 }
