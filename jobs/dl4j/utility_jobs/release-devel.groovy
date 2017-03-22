@@ -101,7 +101,12 @@ node("master") {
     }
 
 
-    if (!isSnapshot) {
+    if (isSnapshot) {
+
+        echo "Snapshots of version ${VERSION} are builded"
+
+    } else {
+
         stage("Cleanup-User-Content") {
             functions.cleanup_userContent()
         }
@@ -110,16 +115,18 @@ node("master") {
             functions.close_staging_repository("${PROFILE_TYPE}")
         }
 
-        timeout(time: 77, unit: 'DAYS') {
-            input message:"Approve release of version ${VERSION} ?"
+        stage("Wait-For-User-Input") {
+
+            timeout(time: 77, unit: 'DAYS') {
+                input message:"Approve release of version ${VERSION} ?"
+            }
+
+            build job: "./tag-all", parameters:
+                [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+                 [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                 [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
+                 [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+                ]
         }
-
-        build job: "./tag-all", parameters:
-            [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
-             [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-             [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
-             [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
-            ]
-
     }
 }

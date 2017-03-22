@@ -1,4 +1,4 @@
-stage("${ND4S_PROJECT}-DependenciesCheck") {
+stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
     if (!isSnapshot) {
         echo "Copying nd4j artifacts from userContent"
         int ND4J_NATIVE_COUNT = 0
