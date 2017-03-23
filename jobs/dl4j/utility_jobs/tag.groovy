@@ -11,8 +11,9 @@ properties([[$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", 
 node(PLATFORM_NAME) {
     step([$class: 'WsCleanup'])
 
-    checkout scm
-
+    ansiColor('xterm') {
+        checkout scm
+    }
     load "jobs/dl4j/vars.groovy"
     env.CREATE_TAG = env.CREATE_TAG ?: "true"
     functions = load "jobs/dl4j/functions.groovy"
@@ -20,9 +21,12 @@ node(PLATFORM_NAME) {
     // Remove .git folder from workspace
     functions.rm()
 
-    sh("pwd")
-    sh("ls -al")
-
+    ansiColor('vga') {
+        sh("pwd")
+    }
+    ansiColor('css') {
+        sh("ls -al")
+    }
     stage("Clone-Progects-Repositories") {
         functions.get_project_code("${LIBPROJECT}")
         functions.get_project_code("${PROJECT}")
