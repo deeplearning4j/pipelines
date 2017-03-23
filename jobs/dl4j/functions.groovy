@@ -67,7 +67,9 @@ def def_docker() {
             def nvidia_docker_volume = sh(returnStdout: true, script: "docker volume ls -f DRIVER=nvidia-docker -q").trim()
             if (nvidia_docker_volume.length() > 0 && sh("ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}`")) {
                 dockerParams = dockerParams_tmpfs_nvidia + " --volume="+ nvidia_docker_volume + ":/usr/local/nvidia:ro"
+                echo "if"
             } else {
+                echo "else"
                 dockerParams = dockerParams_tmpfs_nvidia
             }
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"

@@ -1,4 +1,5 @@
 stage("${LIBPROJECT}-build") {
+    echo dockerParams
     if (CBUILD.toBoolean()) {
         functions.get_project_code("${LIBPROJECT}")
         parallel(
