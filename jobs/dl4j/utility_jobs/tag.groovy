@@ -48,4 +48,6 @@ node(PLATFORM_NAME) {
         // functions.tag("${SCALNET_PROJECT}")
     }
 }
-echo 'MARK: end of tag.groovy'
+ansiColor('gnome-terminal') {
+    echo 'MARK: end of tag.groovy'
+}
