@@ -84,7 +84,7 @@ node("master") {
         for (platform in platformsList) {
             def xplatform = platform
             builders[platform] = {
-                build job: "./all-multiplatform", parameters:
+                build job: "./${JOB_MULTIPLATFORM}", parameters:
                         [[$class: 'StringParameterValue', name: 'PLATFORM_NAME', value: xplatform],
                          [$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
                          [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
@@ -111,22 +111,30 @@ node("master") {
             functions.cleanup_userContent()
         }
 
+        stage("Wait-For-User-Input") {
+            timeout(time: 77, unit: 'DAYS') {
+                input message:"Approve release of version ${VERSION} ?"
+            }
+        }
+
         stage("Close-Staging-Repository") {
             functions.close_staging_repository("${PROFILE_TYPE}")
         }
 
-        stage("Wait-For-User-Input") {
+        stage("Tag-Release") {
 
-            timeout(time: 77, unit: 'DAYS') {
-                input message:"Approve release of version ${VERSION} ?"
-            }
-
-            build job: "./tag-all", parameters:
+            build job: "./${JOB_TAG}", parameters:
                 [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
                  [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
                  [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
                  [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
                 ]
+
         }
     }
+}
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of release-devel.groovy \033[0m"
+    // echo 'MARK: end of release-devel.groovy'
 }

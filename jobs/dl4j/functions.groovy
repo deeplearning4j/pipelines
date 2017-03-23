@@ -1,3 +1,27 @@
+def express(text) {
+  ansiColor('xterm') {
+      echo "\033[1;43m ${text} \033[0m"
+  }
+}
+
+def info(text) {
+  ansiColor('xterm') {
+      echo "\033[32m ${text} \033[0m"
+  }
+}
+
+def warn(text) {
+  ansiColor('xterm') {
+      echo "\033[43m ${text} \033[0m"
+  }
+}
+
+def error(text) {
+  ansiColor('xterm') {
+      echo "\033[41m ${text} \033[0m"
+  }
+}
+
 def clenap_folder_userContent() {
     node("master") {
         dir("${JENKINS_HOME}/userContent") {
@@ -137,7 +161,9 @@ def tag(proj) {
     // Tag builded branch with new version
     if (CREATE_TAG.toBoolean()) {
         echo("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
-        echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
+        ansiColor('xterm') {
+            echo("\033[43m Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj} \033[0m")
+        }
         dir("${proj}") {
             sshagent(credentials: ["${GITCREDID}"]) {
                 sh 'git config user.email "jenkins@skymind.io"'
@@ -146,16 +172,22 @@ def tag(proj) {
                 // Disabled commit to avoid
                 // 'nothing to commit, working directory clean' which returns 1
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
-                sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
-                echo("Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj}")
+                ansiColor('xterm') {
+                    sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
+                    echo("\033[42m Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj} \033[0m")
+                }
                 if(TAG.toBoolean()) {
-                  sh("git push origin ${proj}-${VERSION}")
-                  echo("Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj}")
+                    ansiColor('xterm') {
+                        sh("git push origin ${proj}-${VERSION}")
+                        echo("\033[42m Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj} \033[0m")
+                    }
                 }
             }
         }
     } else {
-        echo("Parameter CREATE_TAG is undefined so tagging has been skipped")
+          ansiColor('xterm') {
+              echo("\033[33m Parameter CREATE_TAG is undefined so tagging has been skipped \033[0m")
+          }
     }
 }
 
@@ -366,7 +398,7 @@ def download_nd4j_native_from_jenkins_user_content(some_version) {
 //    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     for (int i = 0; i < listPlatformVersion.size(); i++) {
-        println("[ INFO ] Try download nd4j-native version : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar")
+        echo("[ INFO ] Try download nd4j-native version : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar")
         sh("wget --no-verbose ${JENKINS_URL}/userContent/nd4j-native-${some_version}-${listPlatformVersion[i]}.jar")
     }
 }
@@ -375,7 +407,7 @@ def install_nd4j_native_to_local_maven_repository(some_version) {
 //    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
     for (int i = 0; i < listPlatformVersion.size(); i++) {
-        println("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
+        echo("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${some_version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
         sh("mvn -B install:install-file -Dfile=nd4j-native-${some_version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${some_version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
     }
 }
@@ -392,8 +424,10 @@ def open_staging_repository(profile_type) {
                         returnStdout: true
                 ).trim()
                 if (env.STAGE_REPO_ID != null && env.STAGE_REPO_ID.length() > 0) {
-                    println("[ LOCAL-NEXUS ]")
-                    println("[ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID}")
+                  ansiColor('xterm') {
+                    echo("[ LOCAL-NEXUS ]")
+                    echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
+                  }
                 } else {
                     error "[ ERROR ] Error appear in local-nexus REST API call during to OPEN request..."
                 }
@@ -409,8 +443,10 @@ def open_staging_repository(profile_type) {
                         returnStdout: true
                 ).trim()
                 if (env.STAGE_REPO_ID != null && env.STAGE_REPO_ID.length() > 0) {
-                    println("[ LOCAL-NEXUS ]")
-                    println("[ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID}")
+                    echo("[ LOCAL-NEXUS ]")
+                    ansiColor('xterm') {
+                        echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
+                    }
                 } else {
                     error "[ ERROR ] Error appear in local-nexus REST API call..."
                 }
@@ -421,7 +457,9 @@ def open_staging_repository(profile_type) {
         case "bintray":
             break
         default:
-            println("Unknown repository")
+            ansiColor('xterm') {
+                echo("\033[41m Unknown repository \033[0m")
+            }
             break
     }
 }
@@ -429,8 +467,8 @@ def open_staging_repository(profile_type) {
 def close_staging_repository(profile_type) {
     switch (profile_type) {
         case "nexus":
-            println("[ LOCAL-NEXUS ]")
-            println("[ INFO ] Try to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
+            echo("[ LOCAL-NEXUS ]")
+            echo("[ INFO ] Try to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'local-nexus-admin-user-1',
                               usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
                 // do something that fails
@@ -447,14 +485,14 @@ def close_staging_repository(profile_type) {
                     )
                     error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
                 } else {
-                    println("[ LOCAL-NEXUS ]")
-                    println("[ INFO ] local-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                    echo("[ LOCAL-NEXUS ]")
+                    echo("[ INFO ] local-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
                 }
             }
             break
         case "sonatype-nexus":
-            println("[ SONATYPE ]")
-            println("[ INFO ] sonatype-nexusTry to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
+            echo("[ SONATYPE ]")
+            echo("[ INFO ] sonatype-nexusTry to CLOSE stagingRepositoryId :" + "${STAGE_REPO_ID}")
             withCredentials([[$class          : 'UsernamePasswordMultiBinding', credentialsId: 'local-nexus-admin-user-1',
                               usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
                 // do something that fails
@@ -470,8 +508,8 @@ def close_staging_repository(profile_type) {
                     )
                     error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
                 } else {
-                    println("[ SONATYPE-NEXUS ]")
-                    println("[ INFO ] sonatype-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                    echo("[ SONATYPE-NEXUS ]")
+                    echo("[ INFO ] sonatype-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
                 }
             }
             break
@@ -480,7 +518,7 @@ def close_staging_repository(profile_type) {
         case "bintray-jfrog":
             break
         default:
-            println("Unknown repository")
+            echo("Unknown repository")
             break
     }
 }
@@ -587,6 +625,5 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( some_goup_id,
             break
     }
 }
-
 
 return this;
