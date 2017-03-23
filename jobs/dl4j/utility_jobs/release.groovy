@@ -84,7 +84,7 @@ node("master") {
         for (platform in platformsList) {
             def xplatform = platform
             builders[platform] = {
-                build job: "./all-multiplatform", parameters:
+                build job: "./${JOB_MULTIPLATFORM}", parameters:
                         [[$class: 'StringParameterValue', name: 'PLATFORM_NAME', value: xplatform],
                          [$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
                          [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
@@ -123,7 +123,7 @@ node("master") {
 
         stage("Tag-Release") {
 
-            build job: "./tag-all", parameters:
+            build job: "./${JOB_TAG}", parameters:
                 [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
                  [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
                  [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
