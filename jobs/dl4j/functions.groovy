@@ -137,7 +137,9 @@ def tag(proj) {
     // Tag builded branch with new version
     if (CREATE_TAG.toBoolean()) {
         echo("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
-        echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
+        ansiColor('xterm') {
+            echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
+        }
         dir("${proj}") {
             sshagent(credentials: ["${GITCREDID}"]) {
                 sh 'git config user.email "jenkins@skymind.io"'
@@ -146,16 +148,22 @@ def tag(proj) {
                 // Disabled commit to avoid
                 // 'nothing to commit, working directory clean' which returns 1
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
-                sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
-                echo("Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj}")
+                ansiColor('xterm') {
+                    sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
+                    echo("\033[32m Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj} \033[0m")
+                }
                 if(TAG.toBoolean()) {
-                  sh("git push origin ${proj}-${VERSION}")
-                  echo("Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj}")
+                    ansiColor('xterm') {
+                        sh("git push origin ${proj}-${VERSION}")
+                        echo("\033[32m Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj} \033[0m")
+                    }
                 }
             }
         }
     } else {
-        echo("Parameter CREATE_TAG is undefined so tagging has been skipped")
+          ansiColor('xterm') {
+              echo("\033[33m Parameter CREATE_TAG is undefined so tagging has been skipped \033[0m")
+          }
     }
 }
 
