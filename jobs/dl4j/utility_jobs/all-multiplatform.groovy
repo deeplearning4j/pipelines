@@ -100,6 +100,10 @@ node(PLATFORM_NAME) {
                 }
             }
         }
-        echo "MARK: end of all-multiplatform.groovy"
     }
+}
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of all-multiplatform.groovy \033[0m"
+    // echo 'MARK: end of all-multiplatform.groovy'
 }
