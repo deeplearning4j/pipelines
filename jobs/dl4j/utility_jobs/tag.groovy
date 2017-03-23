@@ -21,16 +21,26 @@ node(PLATFORM_NAME) {
     functions.rm()
 
     stage("Clone-Progects-Repositories") {
+        functions.express("Downloading ${LIBPROJECT} repositiry")
         functions.get_project_code("${LIBPROJECT}")
+        functions.express("Downloading ${PROJECT} repositiry")
         functions.get_project_code("${PROJECT}")
+        functions.express("Downloading ${DATAVEC_PROJECT} repositiry")
         functions.get_project_code("${DATAVEC_PROJECT}")
+        functions.express("Downloading ${DEEPLEARNING4J_PROJECT} repositiry")
         functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
+        functions.express("Downloading ${ARBITER_PROJECT} repositiry")
         functions.get_project_code("${ARBITER_PROJECT}")
+        functions.express("Downloading ${ND4S_PROJECT} repositiry")
         functions.get_project_code("${ND4S_PROJECT}")
+        functions.express("Downloading ${GYM_JAVA_CLIENT_PROJECT} repositiry")
         functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
+        functions.express("Downloading ${RL4J_PROJECT} repositiry")
         functions.get_project_code("${RL4J_PROJECT}")
         // enable scalnet after 0.8.0 releasße
+        // functions.express("Downloading ${SCALNET_PROJECT} repositiry")
         // functions.get_project_code("${SCALNET_PROJECT}")
+
     }
 
     stage("Tag-Repositories") {
