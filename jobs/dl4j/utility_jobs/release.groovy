@@ -111,15 +111,17 @@ node("master") {
             functions.cleanup_userContent()
         }
 
+        stage("Wait-For-User-Input") {
+            timeout(time: 77, unit: 'DAYS') {
+                input message:"Approve release of version ${VERSION} ?"
+            }
+        }
+
         stage("Close-Staging-Repository") {
             functions.close_staging_repository("${PROFILE_TYPE}")
         }
 
-        stage("Wait-For-User-Input") {
-
-            timeout(time: 77, unit: 'DAYS') {
-                input message:"Approve release of version ${VERSION} ?"
-            }
+        stage("Tag-Release") {
 
             build job: "./tag-all", parameters:
                 [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
@@ -127,6 +129,7 @@ node("master") {
                  [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
                  [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
                 ]
+
         }
     }
 }
