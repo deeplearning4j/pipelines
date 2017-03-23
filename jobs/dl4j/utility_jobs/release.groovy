@@ -133,3 +133,8 @@ node("master") {
         }
     }
 }
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of release.groovy \033[0m"
+    // echo 'MARK: end of release.groovy'
+}
