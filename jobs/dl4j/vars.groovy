@@ -3,6 +3,10 @@ env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
 env.CBUILD = env.CBUILD ?: "true"
 env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
 
+// Utility job names
+// env.JOB_RELEASE = "RELEASE"
+env.JOB_MULTIPLATFORM = "all-multiplatform"
+env.JOB_TAG = "all-tag"
 
 settings_xml = 'maven-settings-id-1'
 // gitcredid = 'github-private-deeplearning4j-id-1'

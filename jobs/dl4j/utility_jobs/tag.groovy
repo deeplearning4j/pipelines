@@ -20,32 +20,67 @@ node(PLATFORM_NAME) {
     // Remove .git folder from workspace
     functions.rm()
 
-    sh("pwd")
-    sh("ls -al")
-
     stage("Clone-Progects-Repositories") {
+        functions.express("Downloading ${LIBPROJECT} repository")
         functions.get_project_code("${LIBPROJECT}")
+
+        functions.express("Downloading ${PROJECT} repository")
         functions.get_project_code("${PROJECT}")
+
+        functions.express("Downloading ${DATAVEC_PROJECT} repository")
         functions.get_project_code("${DATAVEC_PROJECT}")
+
+        functions.express("Downloading ${DEEPLEARNING4J_PROJECT} repository")
         functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
+
+        functions.express("Downloading ${ARBITER_PROJECT} repository")
         functions.get_project_code("${ARBITER_PROJECT}")
+
+        functions.express("Downloading ${ND4S_PROJECT} repository")
         functions.get_project_code("${ND4S_PROJECT}")
+
+        functions.express("Downloading ${GYM_JAVA_CLIENT_PROJECT} repository")
         functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
+
+        functions.express("Downloading ${RL4J_PROJECT} repository")
         functions.get_project_code("${RL4J_PROJECT}")
+
         // enable scalnet after 0.8.0 releasße
+        // functions.express("Downloading ${SCALNET_PROJECT} repository")
         // functions.get_project_code("${SCALNET_PROJECT}")
+
     }
 
     stage("Tag-Repositories") {
+        functions.express("Adding tag  ${LIBPROJECT}-${VERSION} to repository")
         functions.tag("${LIBPROJECT}")
+
+        functions.express("Adding tag  ${PROJECT}-${VERSION} to repository")
         functions.tag("${PROJECT}")
+
+        functions.express("Adding tag  ${DATAVEC_PROJECT}-${VERSION} to repository")
         functions.tag("${DATAVEC_PROJECT}")
+
+        functions.express("Adding tag  ${DEEPLEARNING4J_PROJECT}-${VERSION} to repository")
         functions.tag("${DEEPLEARNING4J_PROJECT}")
+
+        functions.express("Adding tag  ${ARBITER_PROJECT}-${VERSION} to repository")
         functions.tag("${ARBITER_PROJECT}")
+
+        functions.express("Adding tag  ${ND4S_PROJECT}-${VERSION} to repository")
         functions.tag("${ND4S_PROJECT}")
+
+        functions.express("Adding tag  ${GYM_JAVA_CLIENT_PROJECT}-${VERSION} to repository")
         functions.tag("${GYM_JAVA_CLIENT_PROJECT}")
+
+        functions.express("Adding tag  ${RL4J_PROJECT}-${VERSION} to repository")
         functions.tag("${RL4J_PROJECT}")
+
+        // functions.express("Adding tag  ${SCALNET_PROJECT}-${VERSION} to repository")
         // functions.tag("${SCALNET_PROJECT}")
     }
 }
-echo 'MARK: end of tag.groovy'
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of tag.groovy \033[0m"
+    // echo 'MARK: end of tag.groovy'
+}
