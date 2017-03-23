@@ -11,9 +11,8 @@ properties([[$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", 
 node(PLATFORM_NAME) {
     step([$class: 'WsCleanup'])
 
-    ansiColor('xterm') {
-        checkout scm
-    }
+    checkout scm
+
     load "jobs/dl4j/vars.groovy"
     env.CREATE_TAG = env.CREATE_TAG ?: "true"
     functions = load "jobs/dl4j/functions.groovy"
@@ -21,12 +20,6 @@ node(PLATFORM_NAME) {
     // Remove .git folder from workspace
     functions.rm()
 
-    ansiColor('vga') {
-        sh("pwd")
-    }
-    ansiColor('css') {
-        sh("ls -al")
-    }
     stage("Clone-Progects-Repositories") {
         functions.get_project_code("${LIBPROJECT}")
         functions.get_project_code("${PROJECT}")
@@ -52,6 +45,7 @@ node(PLATFORM_NAME) {
         // functions.tag("${SCALNET_PROJECT}")
     }
 }
-ansiColor('gnome-terminal') {
-    echo 'MARK: end of tag.groovy'
-}
+// ansiColor('gnome-terminal') {
+    echo "\033[42m MARK: end of tag.groovy \033[0m"
+    // echo 'MARK: end of tag.groovy'
+// }
