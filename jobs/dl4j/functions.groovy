@@ -64,8 +64,13 @@ def def_docker() {
     echo "Setting docker parameters and image for ${PLATFORM_NAME}"
     switch (PLATFORM_NAME) {
         case "linux-x86_64":
+            def nvidia_docker_volume = sh(returnStdout: true, script: "docker volume ls -f DRIVER=nvidia-docker -q").trim()
+            if (nvidia_docker_volume.length() > 0 && sh("ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}`")) {
+                dockerParams = dockerParams_tmpfs_nvidia + " --volume="+ nvidia_docker_volume + ":/usr/local/nvidia:ro"
+            } else {
+                dockerParams = dockerParams_tmpfs_nvidia
+            }
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
-            dockerParams = dockerParams_tmpfs_nvidia
             break
 
         case "linux-ppc64le":
