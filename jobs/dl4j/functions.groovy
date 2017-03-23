@@ -162,7 +162,7 @@ def tag(proj) {
     if (CREATE_TAG.toBoolean()) {
         echo("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
         ansiColor('xterm') {
-            echo("Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj}")
+            echo("\033[43m Adding tag ${proj}-${VERSION} to github.com/${ACCOUNT}/${proj} \033[0m")
         }
         dir("${proj}") {
             sshagent(credentials: ["${GITCREDID}"]) {
@@ -174,12 +174,12 @@ def tag(proj) {
                 // sh('git commit -a -m \"Update to version ${VERSION}\"')
                 ansiColor('xterm') {
                     sh("git tag -a ${proj}-${VERSION} -m ${proj}-${VERSION}")
-                    echo("\033[32m Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj} \033[0m")
+                    echo("\033[42m Tag ${proj}-${VERSION} has been added to locally copied github.com/${ACCOUNT}/${proj} \033[0m")
                 }
                 if(TAG.toBoolean()) {
                     ansiColor('xterm') {
                         sh("git push origin ${proj}-${VERSION}")
-                        echo("\033[32m Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj} \033[0m")
+                        echo("\033[42m Tag ${proj}-${VERSION} has been pushed to github.com/${ACCOUNT}/${proj} \033[0m")
                     }
                 }
             }
