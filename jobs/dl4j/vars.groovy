@@ -35,8 +35,8 @@ env.JENKINS_DOCKER_SBTDIR = "/srv/jenkins/storage/docker_ivy2"
 // env.JENKINS_SBTDIR_PPC64LE = "/srv/jenkins/storage/docker_ivy2"
 
 dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw"
-dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw -v ${JENKINS_DOCKER_SBTDIR}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro"
-dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro --tmpfs /tmp:size=6g"
+dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw -v ${JENKINS_DOCKER_SBTDIR}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0"
+dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --tmpfs /tmp:size=6g"
 
 // env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"

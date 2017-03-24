@@ -6,4 +6,4 @@
 
 ### 3. [EC2 instance with nvidia-docker on demand](docs/nvidia-amd64.md)
 
-### 4. [Docker images details](docker/README.md)
+### 4. [Docker details](docs/docker.md)
