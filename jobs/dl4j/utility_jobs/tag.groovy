@@ -46,8 +46,8 @@ node(PLATFORM_NAME) {
         functions.get_project_code("${RL4J_PROJECT}")
 
         // enable scalnet after 0.8.0 releasße
-        // functions.express("Downloading ${SCALNET_PROJECT} repository")
-        // functions.get_project_code("${SCALNET_PROJECT}")
+        functions.express("Downloading ${SCALNET_PROJECT} repository")
+        functions.get_project_code("${SCALNET_PROJECT}")
 
     }
 
@@ -76,8 +76,8 @@ node(PLATFORM_NAME) {
         functions.express("Adding tag  ${RL4J_PROJECT}-${VERSION} to repository")
         functions.tag("${RL4J_PROJECT}")
 
-        // functions.express("Adding tag  ${SCALNET_PROJECT}-${VERSION} to repository")
-        // functions.tag("${SCALNET_PROJECT}")
+        functions.express("Adding tag  ${SCALNET_PROJECT}-${VERSION} to repository")
+        functions.tag("${SCALNET_PROJECT}")
     }
 }
 ansiColor('xterm') {
