@@ -44,8 +44,8 @@ node(PLATFORM_NAME) {
                          [name: "arbiter", loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"],
                          [name: "nd4s", loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"],
                          [name: "gym-java-client", loadFile: "${PDIR}/gym-java-client/gym-java-client-${PLATFORM_NAME}.groovy"],
-                         [name: "rl4j", loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"]//,
-//                         [name: "scalnet", loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"]
+                         [name: "rl4j", loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"],
+                         [name: "scalnet", loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"]
                  ]
                 ],
                 [platform      : "linux-ppc64le",
