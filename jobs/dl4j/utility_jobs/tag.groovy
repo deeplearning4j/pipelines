@@ -45,7 +45,6 @@ node(PLATFORM_NAME) {
         functions.express("Downloading ${RL4J_PROJECT} repository")
         functions.get_project_code("${RL4J_PROJECT}")
 
-        // enable scalnet after 0.8.0 releasße
         functions.express("Downloading ${SCALNET_PROJECT} repository")
         functions.get_project_code("${SCALNET_PROJECT}")
 
