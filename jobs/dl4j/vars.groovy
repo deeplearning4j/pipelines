@@ -47,6 +47,10 @@ dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/sto
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
 
+/*
+SONAR_SERVER should be configured in Jenkins/configure in SonarQube servers
+SONAR_SCANNER should be configured in Jenkins/configureTools in SonarQube Scanner
+*/
 env.SONAR_SERVER = "SonarQubeServer"
 // env.SONAR_SCANNER = "SS28"
 // env.SONAR_SCANNER = "SS29"
