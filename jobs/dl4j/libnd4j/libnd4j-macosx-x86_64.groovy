@@ -7,7 +7,7 @@ stage("${LIBPROJECT}-build") {
                         sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
                         dir("${LIBPROJECT}") {
                             // env.TRICK_NVCC = "YES"
-                            env.LIBND4J_HOME = "${PWD}"
+                            // env.LIBND4J_HOME = sh(returnStdout: true, script: "pwd").trim()
 
                             sh '''
                               if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -23,7 +23,7 @@ stage("${LIBPROJECT}-build") {
                         sh("cp -a ${WORKSPACE}/${LIBPROJECT} .\\")
                         dir("${LIBPROJECT}") {
                             // env.TRICK_NVCC = "YES"
-                            env.LIBND4J_HOME = "${PWD}"
+                            // env.LIBND4J_HOME = sh(returnStdout: true, script: "pwd").trim()
 
                             sh '''
                               ./buildnativeoperations.sh -c cuda -сс macosx
