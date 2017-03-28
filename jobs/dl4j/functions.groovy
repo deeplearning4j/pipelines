@@ -141,12 +141,12 @@ def def_docker() {
 def sonar(proj) {
     echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
     // requires SonarQube Scanner 2.8+
-    def scannerHome = tool 'SS28';
+    def scannerHome = tool "${SONAR_SCANNER}";
     dir("${proj}") {
         // withSonarQubeEnv("${SQS}") {
-        withSonarQubeEnv('SonarQubeServer') {
+        withSonarQubeEnv("SONAR_SERVER") {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj}:${PLATFORM_NAME} \
-          -Dsonar.projectName=${proj}-${PLATFORM_NAME} -Dsonar.projectVersion=${VERSION} \
+          -Dsonar.projectName=${PLATFORM_NAME}:${proj} -Dsonar.projectVersion=${VERSION} \
           -Dsonar.sources=."
             // -Dsonar.sources=. -Dsonar.exclusions=**/*reduce*.h"
         }
