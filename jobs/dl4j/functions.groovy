@@ -144,7 +144,7 @@ def sonar(proj) {
     def scannerHome = tool "${SONAR_SCANNER}";
     dir("${proj}") {
         // withSonarQubeEnv("${SQS}") {
-        withSonarQubeEnv("SONAR_SERVER") {
+        withSonarQubeEnv("${SONAR_SERVER}") {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj}:${PLATFORM_NAME} \
           -Dsonar.projectName=${PLATFORM_NAME}:${proj} -Dsonar.projectVersion=${VERSION} \
           -Dsonar.sources=."
