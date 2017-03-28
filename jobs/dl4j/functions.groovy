@@ -158,9 +158,9 @@ def verset(ver, allowss) {
     def mvnHome = tool 'M339'
     if (isUnix()) {
         sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
-    } else (
+    } else {
             bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
-    )
+    }
 }
 
 def tag(proj) {
