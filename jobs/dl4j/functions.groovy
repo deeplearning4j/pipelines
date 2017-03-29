@@ -4,6 +4,7 @@ def express(text) {
   }
 }
 
+/*
 def info(text) {
   ansiColor('xterm') {
       echo "\033[32m ${text} \033[0m"
@@ -21,14 +22,7 @@ def error(text) {
       echo "\033[41m ${text} \033[0m"
   }
 }
-
-def clenap_folder_userContent() {
-    node("master") {
-        dir("${JENKINS_HOME}/userContent") {
-            sh("rm -rf *")
-        }
-    }
-}
+*/
 
 def get_project_code(proj) {
     if (isUnix()) {
@@ -324,13 +318,6 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(some_version, some_pl
                     break
             }
         }
-    }
-}
-
-def download_nd4j_native_from_maven_central(some_version) {
-    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
-    for (int i = 0; i < listPlatformVersion.size(); i++) {
-        sh("wget --no-verbose http://repo1.maven.org/maven2/org/nd4j/nd4j-native/0.7.2/nd4j-native-0.7.2-${listPlatformVersion[i]}.jar ")
     }
 }
 
