@@ -31,6 +31,7 @@ env.DOCKER_CUDA_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64l
 env.DOCKER_ANDROID_IMAGE = "deeplearning4j-docker-registry.bintray.io/android:latest"
 env.JENKINS_DOCKER_M2DIR = "/srv/jenkins/storage/docker_m2"
 env.JENKINS_DOCKER_SBTDIR = "/srv/jenkins/storage/docker_ivy2"
+
 // env.JENKINS_M2DIR_PPC64LE = "/srv/jenkins/storage/docker_m2"
 // env.JENKINS_SBTDIR_PPC64LE = "/srv/jenkins/storage/docker_ivy2"
 
@@ -45,3 +46,12 @@ dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/sto
  */
 env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
 env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
+
+/*
+SONAR_SERVER should be configured in Jenkins/configure in SonarQube servers
+SONAR_SCANNER should be configured in Jenkins/configureTools in SonarQube Scanner
+*/
+env.SONAR_SERVER = "SonarQubeServer"
+// env.SONAR_SCANNER = "SS28"
+// env.SONAR_SCANNER = "SS29"
+env.SONAR_SCANNER = "SS30"
