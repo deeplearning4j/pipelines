@@ -19,7 +19,7 @@ stage("${LIBPROJECT}-build") {
                             functions.get_project_code("${LIBPROJECT}")
                             dir("${LIBPROJECT}") {
                                 bat '''
-                    vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5 %LIBND4J_BUILD_CUDA_PARAMS%
+                    vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5 %BUILD_CUDA_PARAMS%
                     '''
                                 stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
                             }
@@ -30,7 +30,7 @@ stage("${LIBPROJECT}-build") {
                             functions.get_project_code("${LIBPROJECT}")
                             dir("${LIBPROJECT}") {
                                 bat '''
-                    vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0 %LIBND4J_BUILD_CUDA_PARAMS% && rmdir /s /q blasbuild\\cuda && mklink /J blasbuild\\cuda blasbuild\\cuda-8.0
+                    vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 8.0 %BUILD_CUDA_PARAMS% && rmdir /s /q blasbuild\\cuda && mklink /J blasbuild\\cuda blasbuild\\cuda-8.0
                     '''
                                 stash includes: 'blasbuild/', name: 'cuda80-blasbuild'
                             }

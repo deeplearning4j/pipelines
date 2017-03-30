@@ -2,7 +2,7 @@ isSnapshot = VERSION.endsWith('SNAPSHOT')
 env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
 env.CBUILD = env.CBUILD ?: "true"
 env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
-env.LIBND4J_BUILD_CUDA_PARAMS = env.LIBND4J_BUILD_CUDA_PARAMS ?: ""
+env.BUILD_CUDA_PARAMS = env.BUILD_CUDA_PARAMS ?: ""
 
 // Utility job names
 // env.JOB_RELEASE = "RELEASE"
