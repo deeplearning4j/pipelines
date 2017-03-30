@@ -46,6 +46,11 @@
 //                 defaultValue: true,
 //                 description: "Select to build libnd4j"
 //             ],
+                // [$class: "StringParameterDefinition",
+                //     name: "BUILD_CUDA_PARAMS",
+                //     defaultValue: "",
+                //     description: "Append default parameters for buildnativeoperations.sh, defaults:\nlinux: -c cuda -v 7.5; -c cuda -v 8.0\nwindows: -c cuda -v 7.5; -c cuda -v 8.0\nmacosx: -c cuda\nIt doesn't apply for CPU builds!!!"
+                // ]
 //         ]
 //     ]
 // ])
@@ -94,7 +99,7 @@ node("master") {
                          [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
                          [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
                          [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""],
-                         [$class: "StringParameterDefinition", name: "BUILD_CUDA_PARAMS", defaultValue: "", description: "Append default parameters for buildnativeoperations.sh, defaults:\nlinux: -c cuda -v 7.5; -c cuda -v 8.0\nwindows: -c cuda -v 7.5; -c cuda -v 8.0\nmacosx: -c cuda\nIt doesn't apply for CPU builds!!!"]
+                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS]
                         ]
             }
         }
