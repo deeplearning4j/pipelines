@@ -151,7 +151,7 @@ def sonar(proj) {
               bat("${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${ACCOUNT}:${proj}:${PLATFORM_NAME} \
                   -Dsonar.projectName=${PLATFORM_NAME}:${proj} -Dsonar.projectVersion=${VERSION} \
                   -Dsonar.sources=.")
-
+            }
         }
     }
 }
