@@ -93,8 +93,7 @@ node("master") {
                          [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID],
                          [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
                          [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
-                         [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""],
-                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: "-cc 30"]
+                         [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""]
                         ]
             }
         }
