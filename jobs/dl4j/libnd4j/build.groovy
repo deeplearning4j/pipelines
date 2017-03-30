@@ -39,7 +39,7 @@ node("${PLATFORM_NAME}") {
             // def isSnapshot = VERSION.endsWith('SNAPSHOT')
 
             if (isSnapshot) {
-                echo "End of building and publishing of the ${LIBPROJECT}-${VERSION}"
+                echo "End of building of the ${LIBPROJECT}-${VERSION}"
             } else {
                 // timeout(time:1, unit:'HOURS') {
                 timeout(20) {
