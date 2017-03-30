@@ -22,7 +22,7 @@ stage("${SCALNET_PROJECT}-build") {
                 docker.image(dockerImage).inside(dockerParams) {
                     functions.getGpg()
                     sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} 
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscalastyle.skip -DscalaVersion=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
                 '''
                 }
 
@@ -35,4 +35,6 @@ stage("${SCALNET_PROJECT}-build") {
 }
 
 
-echo 'MARK: end of scalnet.groovy'
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of scalnet-linux-x86_64.groovy \033[0m"
+}

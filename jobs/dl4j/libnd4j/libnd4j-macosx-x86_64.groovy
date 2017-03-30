@@ -53,4 +53,6 @@ stage("${LIBPROJECT}-build") {
     }
 }
 
-echo 'MARK: end of libnd4j.groovy'
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of libnd4j-macosx-x86_64.groovy \033[0m"
+}

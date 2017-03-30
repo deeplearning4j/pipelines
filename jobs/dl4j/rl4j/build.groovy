@@ -65,3 +65,7 @@ node("${PLATFORM_NAME}") {
         // step([$class: 'WsCleanup'])
     }
 }
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of rl4j/build.groovy \033[0m"
+}

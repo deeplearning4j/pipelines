@@ -66,4 +66,6 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
     }
 }
 
-echo 'MARK: end of deeplearning4j.groovy'
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of deeplearning4j.groovy \033[0m"
+}

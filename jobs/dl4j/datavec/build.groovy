@@ -68,3 +68,6 @@ node("${PLATFORM_NAME}") {
         // step([$class: 'WsCleanup'])
     }
 }
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of datavec/build.groovy \033[0m"
+}
