@@ -26,7 +26,7 @@ stage("${LIBPROJECT}-build") {
                             env.LIBND4J_HOME = sh(returnStdout: true, script: "pwd").trim()
 
                             sh '''
-                              ./buildnativeoperations.sh -c cuda -сс macosx
+                              ./buildnativeoperations.sh -c cuda -сс macosx ${LIBND4J_BUILD_CUDA_PARAMS}
                               '''
                             stash includes: 'blasbuild/cuda/blas/', name: 'osx-cuda-blasbuild'
                             stash includes: 'blas/', name: 'osx-cuda-blas'
