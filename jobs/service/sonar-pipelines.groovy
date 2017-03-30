@@ -3,7 +3,7 @@ properties([
                 [
                         [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "1.1", description: "Pipeline scripts version"],
                         [$class: "StringParameterDefinition", name: "BRANCH", defaultValue: "master", description: "Branch to be checked"],
-                        [$class: "ChoiceParameterDefinition", name: "PLATFORM", choices: "linux-x86_64\nandroid-arm\nandroid-x86\nlinux-ppc64le\nmacosx-x86_64\nwindows-x86_64", description: "Run sonar on architecture"]
+                        [$class: "ChoiceParameterDefinition", name: "PLATFORM", choices: "linux-x86_64\nlinux-ppc64le\nmacosx-x86_64\nwindows-x86_64", description: "Run sonar on architecture"]
                 ]
         ]
 ])
