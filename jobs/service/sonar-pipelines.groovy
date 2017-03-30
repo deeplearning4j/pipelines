@@ -8,11 +8,12 @@ properties([
         ]
 ])
 
+
 env.SONAR_SERVER = "SonarQubeServer"
 // env.SONAR_SCANNER = "SS28"
 // env.SONAR_SCANNER = "SS29"
 env.SONAR_SCANNER = "SS30"
-env.SONAR_MS_SCANNER = "SSMS22"
+// env.SONAR_MS_SCANNER = "SSMS22"
 
 
 node(PLATFORM) {
@@ -22,7 +23,6 @@ node(PLATFORM) {
     checkout scm
 
     stage('Check sources with SonarQube') {
-      def scannerHome = tool 'SS30';
       long epoch = System.currentTimeMillis()/1000;
       dir("${WORKSPACE}") {
         if (isUnix()) {
