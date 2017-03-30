@@ -30,3 +30,7 @@ stage("${PROJECT}-build") {
         functions.sonar("${PROJECT}")
     }
 }
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of nd4j-android-arm.groovy \033[0m"
+}

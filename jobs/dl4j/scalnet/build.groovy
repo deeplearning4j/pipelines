@@ -65,3 +65,7 @@ node("${PLATFORM_NAME}") {
 
     }
 }
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of scalnet/build.groovy \033[0m"
+}

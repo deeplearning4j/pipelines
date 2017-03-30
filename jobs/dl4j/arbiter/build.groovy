@@ -67,3 +67,7 @@ node("${PLATFORM_NAME}") {
 
     }
 }
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of arbiter/build.groovy \033[0m"
+}

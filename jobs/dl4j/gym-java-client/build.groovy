@@ -65,3 +65,7 @@ node("${PLATFORM_NAME}") {
         // step([$class: 'WsCleanup'])
     }
 }
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of gym-java-client/build.groovy \033[0m"
+}

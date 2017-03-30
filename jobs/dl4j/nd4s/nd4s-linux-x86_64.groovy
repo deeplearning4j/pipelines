@@ -60,4 +60,6 @@ stage("${ND4S_PROJECT}-build") {
     }
 }
 
-echo 'MARK: end of nd4s.groovy'
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of nd4s-linux-x86_64.groovy \033[0m"
+}

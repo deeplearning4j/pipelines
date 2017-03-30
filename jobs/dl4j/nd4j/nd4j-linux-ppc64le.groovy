@@ -29,7 +29,7 @@ stage("${PROJECT}-build") {
                     sh '''
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} 
+                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
                                 '''
                 }
             }
@@ -41,4 +41,8 @@ stage("${PROJECT}-build") {
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")
     }
+}
+
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of nd4j-linux-ppc64le.groovy \033[0m"
 }

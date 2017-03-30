@@ -22,4 +22,6 @@ stage("${RL4J_PROJECT}-build") {
     }
 }
 
-echo 'MARK: end of rl4j.groovy'
+ansiColor('xterm') {
+    echo "\033[42m MARK: end of rl4j-linux-x86_64.groovy \033[0m"
+}
