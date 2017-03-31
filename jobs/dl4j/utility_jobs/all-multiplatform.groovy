@@ -21,7 +21,7 @@ node("master") {
 }
 node(PLATFORM_NAME) {
     currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
-    ws(WORKSPACE + "_" + PLATFORM_NAME "_" + BUILD_ID) {
+    ws(WORKSPACE + "_" + PLATFORM_NAME + "_" + BUILD_ID) {
         step([$class: 'WsCleanup'])
 
         checkout scm
