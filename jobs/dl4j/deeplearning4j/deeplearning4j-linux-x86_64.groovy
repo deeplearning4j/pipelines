@@ -43,7 +43,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
         // functions.sed("dl4j-test-resources")
 
         // debug versions setting
-        sh("cat pom.xml")
+        // sh("cat pom.xml")
 
         functions.verset("${VERSION}", true)
 
