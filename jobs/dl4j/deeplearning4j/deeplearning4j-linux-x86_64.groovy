@@ -49,7 +49,6 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             sh("./change-cuda-versions.sh ${CUDA_VERSION}")
             sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
-
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 docker.image(dockerImage).inside(dockerParams) {
                     functions.getGpg()
