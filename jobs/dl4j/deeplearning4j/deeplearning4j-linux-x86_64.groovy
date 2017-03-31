@@ -31,6 +31,8 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
 
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DEEPLEARNING4J_PROJECT}")
+
+        // remove sed functions after setting project.version variable in pom.xml
         // nd4j.version in pom.xml
         functions.sed("${PROJECT}")
         // deeplearning4j.version in pom.xml
@@ -38,16 +40,12 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
         // datavec.version in pom.xml
         functions.sed("${DATAVEC_PROJECT}")
         // dl4j-test-resources.version in pom.xml
-        functions.sed("dl4j-test-resources")
+        // functions.sed("dl4j-test-resources")
 
         // debug versions setting
         sh("cat pom.xml")
 
         functions.verset("${VERSION}", true)
-
-        // debug versions setting
-        sh("cat pom.xml")
-        error("no need to run further")
 
         def listScalaVersion = ["2.10", "2.11","2.11"]
         def listCudaVersion = ["7.5", "8.0","8.0"]
