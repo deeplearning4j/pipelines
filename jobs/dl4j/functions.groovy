@@ -169,11 +169,21 @@ def sed(proj) {
 // to change spark version in all pom.xml files found from project root directory
 def sed_spark_1() {
   if (isUnix()) {
+    if (isSnapshot) {
+      sh'''
+        SPLIT_VERSION=(${VERSION//-/ })
+        for f in $(find . -name 'pom.xml' -not -path '*target*'); do
+            sed -i "s/version>.*_spark_.*</version>${SPLIT_VERSION[0]}_spark_1-${SPLIT_VERSION[1]}</g" $f
+        done
+        echo $SPLIT_VERSION
+      '''
+    } else {
       sh'''
         for f in $(find . -name 'pom.xml' -not -path '*target*'); do
             sed -i "s/version>.*_spark_.*</version>${VERSION}_spark_1</g" $f
         done
       '''
+      }
     } else {
           echo("sed_spark_1 does not work in windows")
           error("Failed to proceed with sed_spark_1 function on Windows")
