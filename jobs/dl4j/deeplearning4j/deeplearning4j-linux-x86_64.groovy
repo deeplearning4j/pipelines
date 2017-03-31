@@ -30,7 +30,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
     echo "Building ${DEEPLEARNING4J_PROJECT} version ${VERSION}"
 
     dir("${DEEPLEARNING4J_PROJECT}") {
-        functions.checktag("${DATAVEC_PROJECT}")
+        functions.checktag("${DEEPLEARNING4J_PROJECT}")
         functions.verset("${VERSION}", true)
 
         def listScalaVersion = ["2.10", "2.11","2.11"]
