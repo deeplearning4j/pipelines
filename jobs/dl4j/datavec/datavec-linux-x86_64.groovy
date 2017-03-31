@@ -12,10 +12,13 @@ stage("${DATAVEC_PROJECT}-build") {
         functions.sed("${PROJECT}")
 
         // debug sed
-        sh("cat datavec-spark/pom.xml")
+        sh("cat pom.xml")
 
         // set spark version in all pom.xml files
         functions.sed_spark_1()
+
+        // debug sed_spark_1
+        sh("cat datavec-spark/pom.xml")
         functions.verset("${VERSION}", true)
 //        def listVersion = ["2.10", "2.11"]
 
