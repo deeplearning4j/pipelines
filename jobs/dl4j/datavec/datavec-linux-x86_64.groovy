@@ -8,7 +8,20 @@ stage("${DATAVEC_PROJECT}-build") {
 
     dir("${DATAVEC_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
+/*
+        // line <nd4j.version>${project.parent.version}</nd4j.version> in pom.xml
+        functions.sed("${PROJECT}")
+*/
+        // set spark version in all pom.xml files
+        functions.sed_spark_1()
+
+        // set project version
         functions.verset("${VERSION}", true)
+
+        // debug versions setting
+        // sh("cat pom.xml")
+        // error("no need to run further")
+        
 //        def listVersion = ["2.10", "2.11"]
 
         final listVersion = [[sparkVersion: "1", scalaVersion: "2.11"],

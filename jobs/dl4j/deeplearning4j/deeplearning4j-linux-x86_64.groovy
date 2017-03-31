@@ -30,7 +30,25 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
     echo "Building ${DEEPLEARNING4J_PROJECT} version ${VERSION}"
 
     dir("${DEEPLEARNING4J_PROJECT}") {
-        functions.checktag("${DATAVEC_PROJECT}")
+        functions.checktag("${DEEPLEARNING4J_PROJECT}")
+/*
+        // remove sed functions after setting project.version variable in pom.xml
+        // nd4j.version in pom.xml
+        functions.sed("${PROJECT}")
+        // deeplearning4j.version in pom.xml
+        functions.sed("${DEEPLEARNING4J_PROJECT}")
+        // datavec.version in pom.xml
+        functions.sed("${DATAVEC_PROJECT}")
+        // dl4j-test-resources.version in pom.xml
+        // functions.sed("dl4j-test-resources")
+
+        // debug versions setting
+        // sh("cat pom.xml")
+*/
+
+        // set spark version in all pom.xml files
+        functions.sed_spark_1()
+
         functions.verset("${VERSION}", true)
 
         def listScalaVersion = ["2.10", "2.11","2.11"]
@@ -48,7 +66,6 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             sh("./change-scala-versions.sh ${SCALA_VERSION}")
             sh("./change-cuda-versions.sh ${CUDA_VERSION}")
             sh("./change-spark-versions.sh ${SPARK_VERSION}")
-
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 docker.image(dockerImage).inside(dockerParams) {

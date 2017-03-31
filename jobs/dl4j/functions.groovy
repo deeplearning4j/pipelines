@@ -82,7 +82,7 @@ def def_docker() {
     echo "Setting docker parameters and image for ${PLATFORM_NAME}"
     switch (PLATFORM_NAME) {
         case "linux-x86_64":
-            def nvidia_docker_volume = sh(returnStdout: true, script: "docker volume ls -f DRIVER=nvidia-docker -q").trim()
+            def nvidia_docker_volume = sh(returnStdout: true, script: "docker volume ls -f DRIVER=nvidia-docker -q| tail -1").trim()
             if (sh(returnStdout: true, script: "ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}` && true || false")) {
                 dockerParams = dockerParams_tmpfs_nvidia + " --volume="+ nvidia_docker_volume + ":/usr/local/nvidia:ro"
             } else {
@@ -156,13 +156,37 @@ def sonar(proj) {
     }
 }
 
+// to change versions in pom.xml file, call this in project root directory
+def sed(proj) {
+  if (isUnix()) {
+      sh("sed -i \"s/<${proj}.version>.*<\\/${proj}.version>/<${proj}.version>${VERSION}<\\/${proj}.version>/\" pom.xml")
+  } else {
+      echo("sed does not work in Windows")
+      error("Failed to proceed with sed function on Windows")
+  }
+}
+
+// to change spark version in all pom.xml files found from project root directory
+def sed_spark_1() {
+  if (isUnix()) {
+      sh'''
+        for f in $(find . -name 'pom.xml' -not -path '*target*'); do
+            sed -i "s/version>.*_spark_.*</version>${VERSION}_spark_1</g" $f
+        done
+      '''
+    } else {
+          echo("sed_spark_1 does not work in windows")
+          error("Failed to proceed with sed_spark_1 function on Windows")
+    }
+}
+
 // mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$VERSION
 def verset(ver, allowss) {
     def mvnHome = tool 'M339'
     if (isUnix()) {
-        sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+        sh("'${mvnHome}/bin/mvn' -B versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     } else {
-        bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+        bat("mvn -B versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     }
 }
 
