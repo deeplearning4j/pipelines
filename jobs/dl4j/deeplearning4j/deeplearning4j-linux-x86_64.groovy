@@ -51,8 +51,8 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
 
         functions.verset("${VERSION}", true)
 
-        // debug versions setting
-        sh("cat pom.xml")
+        // debug spark versions setting
+        sh("cat deeplearning4j-scaleout/spark/pom.xml")
         error("no need to run further")
 
         def listScalaVersion = ["2.10", "2.11","2.11"]
