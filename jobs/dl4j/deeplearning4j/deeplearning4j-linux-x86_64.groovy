@@ -31,7 +31,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
 
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DEEPLEARNING4J_PROJECT}")
-
+/*
         // remove sed functions after setting project.version variable in pom.xml
         // nd4j.version in pom.xml
         functions.sed("${PROJECT}")
@@ -44,8 +44,16 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
 
         // debug versions setting
         // sh("cat pom.xml")
+*/
+
+        // set spark version in all pom.xml files
+        functions.sed_spark_1()
 
         functions.verset("${VERSION}", true)
+
+        // debug versions setting
+        sh("cat pom.xml")
+        error("no need to run further")
 
         def listScalaVersion = ["2.10", "2.11","2.11"]
         def listCudaVersion = ["7.5", "8.0","8.0"]
