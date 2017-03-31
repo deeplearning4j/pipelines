@@ -161,7 +161,8 @@ def sed(proj) {
   if (isUnix()) {
       sh("sed -i \"s/<${proj}.version>.*<\\/${proj}.version>/<${proj}.version>${VERSION}<\\/${proj}.version>/\" pom.xml")
   } else {
-      echo("sed does not work in windows")
+      echo("sed does not work in Windows")
+      error("Failed to proceed with sed function on Windows")
   }
 }
 
@@ -176,6 +177,7 @@ def sed_spark_1() {
       '''
     } else {
           echo("sed_spark_1 does not work in windows")
+          error("Failed to proceed with sed_spark_1 function on Windows")
     }
 }
 
