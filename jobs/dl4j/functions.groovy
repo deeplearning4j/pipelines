@@ -171,18 +171,11 @@ def sed_spark_1() {
   if (isUnix()) {
     if (isSnapshot) {
       def versplit = VERSION.tokenize('-')
-      echo("${versplit[0]}" + " " + "${versplit[1]}")
-
       env.VERSPLIT0 = "${versplit[0]}"
       env.VERSPLIT1 = "${versplit[1]}"
-
-      echo("${VERSPLIT0}" + " " + "${VERSPLIT1}")
       sh'''
-      echo ${VERSPLIT0}
-      echo ${VERSPLIT1}
-      sleep 4
         for f in $(find . -name 'pom.xml' -not -path '*target*'); do
-            sed -i "s/version>.*_spark_.*</version>${versplit[0]}_spark_1-${versplit[1]}</g" $f
+            sed -i "s/version>.*_spark_.*</version>${VERSPLIT0}_spark_1-${VERSPLIT1}</g" $f
         done
       '''
     } else {
