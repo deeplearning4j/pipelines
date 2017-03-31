@@ -8,6 +8,10 @@ stage("${DATAVEC_PROJECT}-build") {
 
     dir("${DATAVEC_PROJECT}") {
         functions.checktag("${DATAVEC_PROJECT}")
+        // for testing purposes, remove after succesful execution
+        functions.sed("${PROJECT}")
+        // set spark version in all pom.xml files
+        functions.sed_spark_1()
         functions.verset("${VERSION}", true)
 //        def listVersion = ["2.10", "2.11"]
 
