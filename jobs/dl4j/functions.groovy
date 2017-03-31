@@ -156,6 +156,29 @@ def sonar(proj) {
     }
 }
 
+// to change versions pom.xml file1, call this in project root directory
+def sed(proj) {
+  if (isUnix()) {
+      sh("sed -i \"s/<${proj}.version>.*<\/${proj}.version>/<${proj}.version>${VERSION}<\/${proj}.version>/\" pom.xml")
+  } else {
+      echo("sed does not work in windows")
+  }
+}
+
+// to change spark version in all pom.xml files found from project root directory
+def sed_spark_1() {
+  if (isUnix()) {
+      sh
+      '''
+        for f in $(find . -name 'pom.xml' -not -path '*target*'); do
+            sed -i "s/version>.*_spark_.*</version>${VERSION}_spark_1</g" $f
+        done
+      '''
+    } else {
+          echo("sed_spark_1 does not work in windows")
+    }
+}
+
 // mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$VERSION
 def verset(ver, allowss) {
     def mvnHome = tool 'M339'
