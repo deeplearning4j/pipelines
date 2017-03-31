@@ -156,7 +156,7 @@ def sonar(proj) {
     }
 }
 
-// to change versions pom.xml file1, call this in project root directory
+// to change versions in pom.xml file, call this in project root directory
 def sed(proj) {
   if (isUnix()) {
       sh("sed -i \"s/<${proj}.version>.*<\\/${proj}.version>/<${proj}.version>${VERSION}<\\/${proj}.version>/\" pom.xml")
