@@ -170,11 +170,11 @@ def sed(proj) {
 def sed_spark_1() {
   if (isUnix()) {
     if (isSnapshot) {
+      def versplit = VERSION.split('-')
+      echo("${versplit[0]}" + " " + "${versplit[1]}")
       sh'''
-
-        echo ${SPLIT_VERSION}
         for f in $(find . -name 'pom.xml' -not -path '*target*'); do
-            sed -i "s/version>.*_spark_.*</version>${SPLIT_VERSION[0]}_spark_1-${SPLIT_VERSION[1]}</g" $f
+            sed -i "s/version>.*_spark_.*</version>${versplit[0]}_spark_1-${versplit[1]}</g" $f
         done
       '''
     } else {
