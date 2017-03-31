@@ -18,10 +18,10 @@ stage("${DATAVEC_PROJECT}-build") {
         // set project version
         functions.verset("${VERSION}", true)
 
-        // debug versions setting
-        // sh("cat pom.xml")
-        // error("no need to run further")
-        
+        debug versions setting
+        sh("cat pom.xml")
+        error("no need to run further")
+
 //        def listVersion = ["2.10", "2.11"]
 
         final listVersion = [[sparkVersion: "1", scalaVersion: "2.11"],
