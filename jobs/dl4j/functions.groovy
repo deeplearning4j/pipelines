@@ -173,6 +173,9 @@ def sed_spark_1() {
       def versplit = VERSION.split('-')
       echo("${versplit[0]}" + " " + "${versplit[1]}")
       sh'''
+      echo $versplit[0]
+      echo $versplit[1]
+      sleep 4
         for f in $(find . -name 'pom.xml' -not -path '*target*'); do
             sed -i "s/version>.*_spark_.*</version>${versplit[0]}_spark_1-${versplit[1]}</g" $f
         done
