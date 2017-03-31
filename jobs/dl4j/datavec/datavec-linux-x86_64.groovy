@@ -10,6 +10,10 @@ stage("${DATAVEC_PROJECT}-build") {
         functions.checktag("${DATAVEC_PROJECT}")
         // for testing purposes, remove after succesful execution
         functions.sed("${PROJECT}")
+
+        // debug sed
+        sh("cat datavec-spark/pom.xml")
+
         // set spark version in all pom.xml files
         functions.sed_spark_1()
         functions.verset("${VERSION}", true)
