@@ -195,9 +195,9 @@ def sed_spark_1() {
 def verset(ver, allowss) {
     def mvnHome = tool 'M339'
     if (isUnix()) {
-        sh("'${mvnHome}/bin/mvn' -B versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+        sh("'${mvnHome}/bin/mvn' -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     } else {
-        bat("mvn -B versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
+        bat("mvn -q versions:set -DallowSnapshots=${allowss} -DgenerateBackupPoms=false -DnewVersion=${ver}")
     }
 }
 
