@@ -19,8 +19,8 @@ stage("${DATAVEC_PROJECT}-build") {
         functions.verset("${VERSION}", true)
 
         // debug versions setting
-        sh("cat pom.xml")
-        error("no need to run further")
+        // sh("cat pom.xml")
+        // error("no need to run further")
 
 //        def listVersion = ["2.10", "2.11"]
 
