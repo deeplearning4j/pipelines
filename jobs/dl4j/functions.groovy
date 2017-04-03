@@ -581,8 +581,8 @@ def resolve_dependencies_for_nd4j() {
 }
 
 def cleanup_userContent() {
-    dir("${JENKINS_HOME}/userContent/${PARENT_JOB}") {
-        sh("rm -rf *.jar")
+    dir("${JENKINS_HOME}/userContent") {
+        sh("rm -rf ${JOB_BASE_NAME}-${BUILD_ID}")
     }
 }
 

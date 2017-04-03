@@ -22,6 +22,7 @@ stage("${PROJECT}-build") {
             }
         }
         // if (!isSnapshot) {
+        echo PARENT_JOB
         if (PARENT_JOB.length() > 0) {
             functions.copy_nd4j_native_to_user_content()
         }
