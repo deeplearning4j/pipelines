@@ -29,7 +29,7 @@ def notifyStarted() {
   emailext (
       subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
-Check console output at ${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
+Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
     )
@@ -39,7 +39,7 @@ def notifySuccessful() {
   emailext (
       subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
-Check console output at '${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
+Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
     )
@@ -498,7 +498,7 @@ def open_staging_repository(profile_type) {
                     echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
                   }
                     emailext (
-                      subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+
                       body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
                       Staging repositoty - ${STAGE_REPO_ID} has been opened
                       at url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}
