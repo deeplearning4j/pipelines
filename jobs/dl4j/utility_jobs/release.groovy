@@ -78,7 +78,7 @@ node("master") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
-    functions.cleanup_userContent()
+    // functions.cleanup_userContent()
 
     if (!isSnapshot) {
         functions.open_staging_repository("${PROFILE_TYPE}")
