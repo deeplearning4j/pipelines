@@ -100,7 +100,8 @@ node("master") {
                          [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
                          [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
                          [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""],
-                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS]
+                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS],
+                         [$class: 'StringParameterValue', name: 'PARENT_JOB', value: JOB_BASE_NAME + "-" + BUILD_ID]
                         ]
             }
         }
