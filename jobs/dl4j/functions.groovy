@@ -539,6 +539,7 @@ def open_staging_repository(profile_type) {
                                <p>Check console output at &QUOT;<a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
                                subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
                       to: "${MAIL_RECIPIENT}"
+                      )
                 } else {
                     emailext (
                        subject: "FAILED: opening repository at sonatype, '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
