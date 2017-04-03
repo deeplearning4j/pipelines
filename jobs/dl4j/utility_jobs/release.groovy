@@ -78,6 +78,7 @@ node("master") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
+    // send email about starting
     functions.notifyStarted()
 
     if (!isSnapshot) {
@@ -141,6 +142,8 @@ node("master") {
 
         }
     }
+    // send email about successful finishing
+    functions.notifySuccessful()
 }
 
 ansiColor('xterm') {

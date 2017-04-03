@@ -29,6 +29,9 @@ node(PLATFORM_NAME) {
         load "jobs/dl4j/vars.groovy"
         functions = load "jobs/dl4j/functions.groovy"
 
+        // send email about starting
+        functions.notifyStarted()
+
         // Remove .git folder from workspace
         functions.rm()
 
@@ -106,6 +109,8 @@ node(PLATFORM_NAME) {
             }
         }
     }
+    // send email about successful finishing
+    functions.notifySuccessful()
 }
 
 ansiColor('xterm') {

@@ -28,8 +28,8 @@ def notifyStarted() {
   // send to email
   emailext (
       subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      body: """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-        <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+      body: """STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+Check console output at ${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
     )
@@ -38,8 +38,8 @@ def notifyStarted() {
 def notifySuccessful() {
   emailext (
       subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      body: """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-        <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+      body: """SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+Check console output at '${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
     )
@@ -589,7 +589,7 @@ def close_staging_repository(profile_type) {
                     )
 
                     error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
-                    
+
                 } else {
                     echo("[ LOCAL-NEXUS ]")
                     echo("[ INFO ] local-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
