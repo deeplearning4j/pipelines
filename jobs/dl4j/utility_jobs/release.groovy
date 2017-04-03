@@ -78,8 +78,9 @@ node("master") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
+    functions.cleanup_userContent()
+
     if (!isSnapshot) {
-        functions.cleanup_userContent()
         functions.open_staging_repository("${PROFILE_TYPE}")
     }
 
@@ -109,7 +110,7 @@ node("master") {
 
     if (isSnapshot) {
 
-        echo "Snapshots of version ${VERSION} are builded"
+        echo "Snapshots of version ${VERSION} are built"
 
     } else {
 

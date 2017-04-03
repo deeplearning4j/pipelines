@@ -35,7 +35,8 @@ stage("${PROJECT}-build") {
 
             }
         }
-        if (!isSnapshot) {
+        // if (!isSnapshot) {
+        if (isSnapshot.length() > 0) {
             functions.copy_nd4j_native_to_user_content()
         }
     }
