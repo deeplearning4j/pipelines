@@ -38,9 +38,6 @@ stage("${PROJECT}-build") {
         if (!isSnapshot) {
             functions.copy_nd4j_native_to_user_content()
         }
-        // debug Jenkins environment
-        bat("env")
-        // error("no need to run further")
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")

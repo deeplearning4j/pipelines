@@ -32,10 +32,6 @@ node(PLATFORM_NAME) {
         // Remove .git folder from workspace
         functions.rm()
 
-        // debug Jenkins environment
-        sh("env")
-        // error("no need to run further")
-
         final appsList = [
                 [platform      : "linux-x86_64",
                  dockerImage   : "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
