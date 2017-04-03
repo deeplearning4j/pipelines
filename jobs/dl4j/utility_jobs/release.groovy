@@ -78,9 +78,12 @@ node("master") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
+    functions.notifyStarted()
+
     if (!isSnapshot) {
         functions.cleanup_userContent()
         functions.open_staging_repository("${PROFILE_TYPE}")
+        // functions.notifyRepositoryStatus('opened')
     }
 
     stage("RunningBuilds") {

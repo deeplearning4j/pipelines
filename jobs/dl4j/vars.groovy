@@ -1,3 +1,6 @@
+// email recipients
+env.MAIL_RECIPIENT = "marynenko@gmail.com"
+
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
 env.CBUILD = env.CBUILD ?: "true"
