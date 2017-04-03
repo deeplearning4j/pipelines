@@ -108,16 +108,15 @@ node("master") {
         parallel builders
     }
 
+    stage("Cleanup-User-Content") {
+        functions.cleanup_userContent()
+    }
 
     if (isSnapshot) {
 
         echo "Snapshots of version ${VERSION} are built"
 
     } else {
-
-        stage("Cleanup-User-Content") {
-            functions.cleanup_userContent()
-        }
 
         stage("Wait-For-User-Input") {
             timeout(time: 77, unit: 'DAYS') {
