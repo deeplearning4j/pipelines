@@ -50,7 +50,6 @@ node("${PLATFORM_NAME}") {
 
 
         stage('RELEASE') {
-            // def isSnapshot = VERSION.endsWith('SNAPSHOT')
 
             if (isSnapshot) {
                 echo "End of building and publishing of the ${DATAVEC_PROJECT}-${VERSION}"
