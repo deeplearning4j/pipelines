@@ -603,7 +603,7 @@ def copy_nd4j_native_to_user_content() {
 def copy_nd4j_native_from_user_content() {
     node("master") {
         echo("[ INFO ] Copying nd4j jar from userContent for release")
-        dir("${JENKINS_HOME}/userContent/nd4j_artifacts/${PARENT_JOB}") {
+        dir("${JENKINS_HOME}/userContent/${PARENT_JOB}") {
             sh("ls -la")
             stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
         }
