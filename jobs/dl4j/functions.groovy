@@ -502,7 +502,6 @@ def open_staging_repository(profile_type) {
                                <p>Staging repositoty - ${STAGE_REPO_ID} has been opened</p>
                                <p>at url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}</p>
                                <p>Check console output at &QUOT;<a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-                               subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
                       subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
                       to: "${MAIL_RECIPIENT}"
                     )
@@ -537,7 +536,6 @@ def open_staging_repository(profile_type) {
                       body: """<p>Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':</p>
                                <p>Staging repositoty - ${STAGE_REPO_ID} has been opened</p>
                                <p>Check console output at &QUOT;<a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-                               subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
                       to: "${MAIL_RECIPIENT}"
                       )
                 } else {
