@@ -498,10 +498,10 @@ def open_staging_repository(profile_type) {
                     echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
                   }
                     emailext (
-                      body: """<p>Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':</p>
-                               <p>Staging repositoty - ${STAGE_REPO_ID} has been opened</p>
-                               <p>at url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}</p>
-                               <p>Check console output at &QUOT;<a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                      body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
+                               Staging repositoty - ${STAGE_REPO_ID} has been opened
+                               at url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}
+                               Check console output at <a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>""",
                       subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
                       to: "${MAIL_RECIPIENT}"
                     )
@@ -509,8 +509,8 @@ def open_staging_repository(profile_type) {
                 } else {
                     emailext (
                        subject: "FAILED: opening repository in local-nexus '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                       body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                                Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} : [${env.BUILD_NUMBER}]</a>""",
                        to: "${MAIL_RECIPIENT}"
                     )
                     error "[ ERROR ] Error appear in local-nexus REST API call during to OPEN request..."
@@ -533,16 +533,16 @@ def open_staging_repository(profile_type) {
                     }
                     emailext (
                       subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
-                      body: """<p>Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':</p>
-                               <p>Staging repositoty - ${STAGE_REPO_ID} has been opened</p>
-                               <p>Check console output at &QUOT;<a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                      body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
+                               Staging repositoty - ${STAGE_REPO_ID} has been opened
+                               Check console output at <a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>""",
                       to: "${MAIL_RECIPIENT}"
                       )
                 } else {
                     emailext (
                        subject: "FAILED: opening repository at sonatype, '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                       body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                         Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>""",
                        to: "${MAIL_RECIPIENT}"
                     )
                     error "[ ERROR ] Error appear in local-nexus REST API call..."
@@ -580,10 +580,27 @@ def close_staging_repository(profile_type) {
                             "-X POST \"http://master-jenkins.skymind.io:8088/nexus/service/local/staging/bulk/close\"" +
                             " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
                     )
+
+                    emailext (
+                       subject: "FAILED: closing repository in local-nexus '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                                Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} : [${env.BUILD_NUMBER}]</a>""",
+                       to: "${MAIL_RECIPIENT}"
+                    )
+
                     error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
+                    
                 } else {
                     echo("[ LOCAL-NEXUS ]")
                     echo("[ INFO ] local-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                    emailext (
+                      body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
+                               Staging repositoty - ${STAGE_REPO_ID} has been closed
+                               url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}
+                               Check console output at <a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>""",
+                      subject: "Repository ${STAGE_REPO_ID} is CLOSED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+                      to: "${MAIL_RECIPIENT}"
+                    )
                 }
             }
             break
@@ -598,15 +615,32 @@ def close_staging_repository(profile_type) {
                         " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\" | wc -l",
                         returnStdout: true
                 ).trim()
+
                 if (env.CLOSE_RESULT != null && env.CLOSE_RESULT.toInteger() > 0) {
                     sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
                             "-X POST \"https://oss.sonatype.org:443/service/local/staging/bulk/close\"" +
                             " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
                     )
-                    error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
+
+                    emailext (
+                       subject: "FAILED: closing repository at sonatype, '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                         Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>""",
+                       to: "${MAIL_RECIPIENT}"
+                    )
+
+                    error "[ ERROR ] Error appear in sonatype REST API call during CLOSE request..."
+
                 } else {
                     echo("[ SONATYPE-NEXUS ]")
                     echo("[ INFO ] sonatype-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                    emailext (
+                      body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
+                               Staging sonatype-nexus repositoty - ${STAGE_REPO_ID} has been closed
+                               Check console output at <a href=\'${env.BUILD_URL}\'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>""",
+                      subject: "Repository ${STAGE_REPO_ID} is CLOSED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+                      to: "${MAIL_RECIPIENT}"
+                    )
                 }
             }
             break
