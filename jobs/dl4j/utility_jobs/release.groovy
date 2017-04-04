@@ -157,7 +157,7 @@ node("master") {
     }
 }
 
-def notifyFailed() {
+def notifyBuildFailed() {
   emailext (
       subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
