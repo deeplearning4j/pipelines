@@ -153,15 +153,11 @@ node("master") {
         throw e
     } finally {
     // Success or failure, always send notifications
-        notifyBuildFailed(currentBuild.result)
+        emailext (
+            subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+            body: """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+          <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+            to: "marynenko@gmail.com"
+          )
     }
-}
-
-def notifyBuildFailed() {
-  emailext (
-      subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      body: """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-      to: "marynenko@gmail.com"
-    )
 }
