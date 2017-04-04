@@ -28,7 +28,7 @@ def notifyStarted(buildName) {
   // send to email
   emailext (
       // subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      subject: "STARTED: Job '${buildName}'",
+      subject: "STARTED ${buildName}: Job '${env.JOB_NAME}'",
       body: """STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
 Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
@@ -39,7 +39,7 @@ Check console output at '${env.BUILD_URL}'""",
 def notifySuccessful(buildName) {
   emailext (
       // subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      subject: "SUCCESSFUL: Job '${buildName}'",
+      subject: "SUCCESSFUL ${buildName}: Job '${env.JOB_NAME}'",
       body: """SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
 Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
@@ -99,19 +99,6 @@ def rm() {
         }
 
     }
-}
-
-def strToList(str) {
-    if (str.getClass() == String && str.length() > 0) {
-        tmpList = []
-        for (i in str.split(",")) {
-            def item = i
-            tmpList.add(item);
-        }
-    } else {
-        error "strToList(): Input arg isn't string or empty, class: ${str.getClass()}, size: ${str.length()}"
-    }
-    return tmpList
 }
 
 def checktag(proj) {

@@ -55,7 +55,7 @@
 //     ]
 // ])
 
-/* moved to functions
+
 def strToList(str) {
     if (str.getClass() == String && str.length() > 0) {
         tmpList = []
@@ -68,7 +68,7 @@ def strToList(str) {
     }
     return tmpList
 }
-*/
+
 env.STAGE_REPO_ID = env.STAGE_REPO_ID ?: ""
 node("master") {
     // currentBuild.displayName = "#${currentBuild.number}"
