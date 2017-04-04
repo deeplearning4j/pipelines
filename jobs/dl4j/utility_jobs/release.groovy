@@ -144,11 +144,10 @@ node("master") {
         }
         // send email about successful finishing
         functions.notifySuccessful()
-    }
-
-    ansiColor('xterm') {
-        echo "\033[42m MARK: end of release.groovy \033[0m"
-        // echo 'MARK: end of release.groovy'
+        ansiColor('xterm') {
+            echo "\033[42m MARK: end of release.groovy \033[0m"
+            // echo 'MARK: end of release.groovy'
+        }
     } catch (e) {
         currentBuild.result = "FAILED"
         notifyFailed()
