@@ -150,7 +150,6 @@ node("master") {
         }
     } catch (e) {
         currentBuild.result = "FAILED"
-        notifyFailed()
         throw e
     }
 }
