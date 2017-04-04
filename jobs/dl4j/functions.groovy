@@ -24,6 +24,38 @@ def error(text) {
 }
 */
 
+def notifyStarted() {
+  // send to email
+  emailext (
+      subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      body: """STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+Check console output at '${env.BUILD_URL}'""",
+      to: "${MAIL_RECIPIENT}"
+      // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+    )
+}
+
+def notifySuccessful() {
+  emailext (
+      subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      body: """SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+Check console output at '${env.BUILD_URL}'""",
+      to: "${MAIL_RECIPIENT}"
+      // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+    )
+}
+
+// def notifyRepositoryStatus(stat) {
+//   emailext (
+//       subject: "Repository is ${stat}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+//       body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+//         <p>Staging repositoty - ${STAGE_REPO_ID} has been ${stat}</p>
+//         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+//       recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+//     )
+// }
+
+
 def get_project_code(proj) {
     if (isUnix()) {
         if (PLATFORM_NAME == "linux-ppc64le") {
@@ -273,7 +305,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
             zip dir: "${WORKSPACE}/libnd4j/blasbuild", zipFile: "${LIBPROJECT}-${version}-${platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -303,7 +335,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "jfrog":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -318,7 +350,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
             zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${version}-${platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -348,7 +380,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "jfrog":
-                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -366,13 +398,13 @@ def get_libnd4j_artifacts_snapshot_ball(version, platform, profile_type) {
     switch (profile_type) {
         case "nexus":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
                         "-Ddest=${LIBPROJECT}-${version}-${platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots " +
+                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
@@ -412,13 +444,13 @@ def get_libnd4j_artifacts_snapshot_ball(version, platform, profile_type) {
             break
         case "jfrog":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
                         "-Ddest=${LIBPROJECT}-${version}-${platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local " +
+                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
@@ -453,7 +485,7 @@ def open_staging_repository(profile_type) {
                               usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
                 env.STAGE_REPO_ID = sh(
                         script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
-                                "-X POST \"http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/profiles/1a9c575a8e8c/start\" " +
+                                "-X POST \"http://master-jenkins.skymind.io:8088/nexus/service/local/staging/profiles/1a9c575a8e8c/start\" " +
                                 "-d \"<promoteRequest><data><description>Jenkins(Skymind) :: version:${VERSION} :: job:${JOB_NAME} :: build:${BUILD_NUMBER}</description></data></promoteRequest>\" | grep stagedRepositoryId | sed -e 's,.*<stagedRepositoryId>\\([^<]*\\)</stagedRepositoryId>.*,\\1,g'",
                         returnStdout: true
                 ).trim()
@@ -462,7 +494,22 @@ def open_staging_repository(profile_type) {
                     echo("[ LOCAL-NEXUS ]")
                     echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
                   }
+                    emailext (
+
+                      body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
+                      Staging repositoty - ${STAGE_REPO_ID} has been opened
+                      at url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}
+                      Check console output at \'${env.BUILD_URL}\'""",
+                      to: "${MAIL_RECIPIENT}"
+                    )
+
                 } else {
+                    emailext (
+                       subject: "FAILED: opening repository in local-nexus '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                       Check console output at '${env.BUILD_URL}'""",
+                       to: "${MAIL_RECIPIENT}"
+                    )
                     error "[ ERROR ] Error appear in local-nexus REST API call during to OPEN request..."
                 }
             }
@@ -481,7 +528,20 @@ def open_staging_repository(profile_type) {
                     ansiColor('xterm') {
                         echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
                     }
+                    emailext (
+                      subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+                      body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                      Staging repositoty - ${STAGE_REPO_ID} has been opened
+                      Check console output at '${env.BUILD_URL}'""",
+                      to: "${MAIL_RECIPIENT}"
+                      )
                 } else {
+                    emailext (
+                       subject: "FAILED: opening repository at sonatype, '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                       Check console output at '${env.BUILD_URL}'""",
+                       to: "${MAIL_RECIPIENT}"
+                    )
                     error "[ ERROR ] Error appear in local-nexus REST API call..."
                 }
             }
@@ -492,7 +552,7 @@ def open_staging_repository(profile_type) {
             break
         default:
             ansiColor('xterm') {
-                echo("\033[41m Unknown repository \033[0m")
+                echo("\033[41m Unknown profile type \033[0m")
             }
             break
     }
@@ -507,20 +567,37 @@ def close_staging_repository(profile_type) {
                               usernameVariable: 'LOCAL_NEXUS_USER', passwordVariable: 'LOCAL_NEXUS_USER_PASSWORD']]) {
                 // do something that fails
                 env.CLOSE_RESULT = sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
-                        "-X POST \"http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
+                        "-X POST \"http://master-jenkins.skymind.io:8088/nexus/service/local/staging/bulk/close\"" +
                         " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\" | wc -l",
                         returnStdout: true
                 ).trim()
                 echo "CLOSE_RESULT:" + " ${CLOSE_RESULT}"
                 if (env.CLOSE_RESULT != null && env.CLOSE_RESULT.toInteger() > 0) {
                     sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
-                            "-X POST \"http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/service/local/staging/bulk/close\"" +
+                            "-X POST \"http://master-jenkins.skymind.io:8088/nexus/service/local/staging/bulk/close\"" +
                             " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
                     )
+
+                    emailext (
+                       subject: "FAILED: closing repository in local-nexus '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                       Check console output at '${env.BUILD_URL}'""",
+                       to: "${MAIL_RECIPIENT}"
+                    )
+
                     error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
+
                 } else {
                     echo("[ LOCAL-NEXUS ]")
                     echo("[ INFO ] local-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                    emailext (
+                      subject: "Repository ${STAGE_REPO_ID} is CLOSED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+                      body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                      Staging repositoty - ${STAGE_REPO_ID} has been closed
+                      url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}
+                      Check console output at '${env.BUILD_URL}'""",
+                      to: "${MAIL_RECIPIENT}"
+                    )
                 }
             }
             break
@@ -535,15 +612,32 @@ def close_staging_repository(profile_type) {
                         " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\" | wc -l",
                         returnStdout: true
                 ).trim()
+
                 if (env.CLOSE_RESULT != null && env.CLOSE_RESULT.toInteger() > 0) {
                     sh(script: "curl -u ${LOCAL_NEXUS_USER}:${LOCAL_NEXUS_USER_PASSWORD} -H 'Accept: application/xml' -H 'Content-Type: application/xml' " +
                             "-X POST \"https://oss.sonatype.org:443/service/local/staging/bulk/close\"" +
                             " -d \"<stagingActionRequest><data><stagedRepositoryIds><string>${STAGE_REPO_ID}</string></stagedRepositoryIds><autoDropAfterRelease>false</autoDropAfterRelease></data></stagingActionRequest>\""
                     )
-                    error "[ ERROR ] Error appear in local-nexus REST API call during CLOSE request..."
+
+                    emailext (
+                       subject: "FAILED: closing repository at sonatype, \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+                       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                       Check console output at '${env.BUILD_URL}'""",
+                       to: "${MAIL_RECIPIENT}"
+                    )
+
+                    error "[ ERROR ] Error appear in sonatype REST API call during CLOSE request..."
+
                 } else {
                     echo("[ SONATYPE-NEXUS ]")
                     echo("[ INFO ] sonatype-nexus stagingRepositoryId :" + "${STAGE_REPO_ID}" + " is CLOSED")
+                    emailext (
+                      subject: "Repository ${STAGE_REPO_ID} is CLOSED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
+                      body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+                      Staging sonatype-nexus repositoty - ${STAGE_REPO_ID} has been closed
+                      Check console output at '${env.BUILD_URL}'""",
+                      to: "${MAIL_RECIPIENT}"
+                    )
                 }
             }
             break
@@ -625,7 +719,7 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
             }
             break
         case "nexus":
-            repo_url="http://master-jenkins.eastus.cloudapp.azure.com:8088/nexus/content/repositories/snapshots"
+            repo_url="http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots"
             for (int i = 0; i < classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + group_id + ":" +  artifact_id + ":" +version + ":" +packaging + ":" + classifier[i] )
                 if (isUnix()) {
@@ -636,7 +730,7 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
             }
             break
         case "jfrog":
-            repo_url="http://master-jenkins.eastus.cloudapp.azure.com:8081/artifactory/libs-snapshot-local"
+            repo_url="http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local"
             for (int i = 0; i < classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + group_id + ":" +  artifact_id + ":" +version + ":" +packaging + ":" + classifier[i] )
                 if (isUnix()) {

@@ -78,10 +78,12 @@ node("master") {
     load "${PDIR}/vars.groovy"
     functions = load "${PDIR}/functions.groovy"
 
-    // functions.cleanup_userContent()
+    // send email about starting
+    functions.notifyStarted()
 
     if (!isSnapshot) {
         functions.open_staging_repository("${PROFILE_TYPE}")
+        // functions.notifyRepositoryStatus('opened')
     }
 
     stage("RunningBuilds") {
@@ -139,6 +141,8 @@ node("master") {
 
         }
     }
+    // send email about successful finishing
+    functions.notifySuccessful()
 }
 
 ansiColor('xterm') {
