@@ -71,7 +71,7 @@ def strToList(str) {
 */
 env.STAGE_REPO_ID = env.STAGE_REPO_ID ?: ""
 node("master") {
-    currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
+    // currentBuild.displayName = "#${currentBuild.number}"
     echo "Cleanup WS"
     step([$class: 'WsCleanup'])
 
