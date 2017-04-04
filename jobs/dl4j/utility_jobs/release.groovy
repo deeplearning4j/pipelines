@@ -55,6 +55,7 @@
 //     ]
 // ])
 
+/* moved to functions
 def strToList(str) {
     if (str.getClass() == String && str.length() > 0) {
         tmpList = []
@@ -67,8 +68,10 @@ def strToList(str) {
     }
     return tmpList
 }
+*/
 env.STAGE_REPO_ID = env.STAGE_REPO_ID ?: ""
 node("master") {
+    currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
     echo "Cleanup WS"
     step([$class: 'WsCleanup'])
 
@@ -79,7 +82,7 @@ node("master") {
     functions = load "${PDIR}/functions.groovy"
 
     // send email about starting
-    functions.notifyStarted()
+    functions.notifyStarted(currentBuild.displayName)
 
     if (!isSnapshot) {
         functions.cleanup_userContent()
@@ -143,7 +146,7 @@ node("master") {
         }
     }
     // send email about successful finishing
-    functions.notifySuccessful()
+    functions.notifySuccessful(currentBuild.displayName)
 }
 
 ansiColor('xterm') {
