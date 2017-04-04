@@ -69,83 +69,89 @@ def strToList(str) {
 }
 env.STAGE_REPO_ID = env.STAGE_REPO_ID ?: ""
 node("master") {
-    echo "Cleanup WS"
-    step([$class: 'WsCleanup'])
+    try {
+        echo "Cleanup WS"
+        step([$class: 'WsCleanup'])
 
-    checkout scm
+        checkout scm
 
-    env.PDIR = "jobs/dl4j"
-    load "${PDIR}/vars.groovy"
-    functions = load "${PDIR}/functions.groovy"
+        env.PDIR = "jobs/dl4j"
+        load "${PDIR}/vars.groovy"
+        functions = load "${PDIR}/functions.groovy"
 
-    // send email about starting
-    functions.notifyStarted()
+        // send email about starting
+        functions.notifyStarted()
 
-    if (!isSnapshot) {
-        functions.open_staging_repository("${PROFILE_TYPE}")
-        // functions.notifyRepositoryStatus('opened')
-    }
+        if (!isSnapshot) {
+            functions.open_staging_repository("${PROFILE_TYPE}")
+            // functions.notifyRepositoryStatus('opened')
+        }
 
-    stage("RunningBuilds") {
-        def platformsList = strToList(PLATFORMS)
-        def builders = [:]
-        for (platform in platformsList) {
-            def xplatform = platform
-            builders[platform] = {
-                build job: "./${JOB_MULTIPLATFORM}", parameters:
-                        [[$class: 'StringParameterValue', name: 'PLATFORM_NAME', value: xplatform],
-                         [$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
-                         [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
-                         [$class: 'BooleanParameterValue', name: 'SONAR', value: SONAR.toBoolean()],
-                         [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                         [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID],
-                         [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
-                         [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
-                         [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""],
-                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS],
-                         [$class: 'StringParameterValue', name: 'PARENT_JOB', value: JOB_BASE_NAME + "-" + BUILD_ID]
-                        ]
+        stage("RunningBuilds") {
+            def platformsList = strToList(PLATFORMS)
+            def builders = [:]
+            for (platform in platformsList) {
+                def xplatform = platform
+                builders[platform] = {
+                    build job: "./${JOB_MULTIPLATFORM}", parameters:
+                            [[$class: 'StringParameterValue', name: 'PLATFORM_NAME', value: xplatform],
+                             [$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+                             [$class: 'BooleanParameterValue', name: 'SKIP_TEST', value: SKIP_TEST.toBoolean()],
+                             [$class: 'BooleanParameterValue', name: 'SONAR', value: SONAR.toBoolean()],
+                             [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                             [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID],
+                             [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
+                             [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
+                             [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""],
+                             [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS],
+                             [$class: 'StringParameterValue', name: 'PARENT_JOB', value: JOB_BASE_NAME + "-" + BUILD_ID]
+                            ]
+                }
+            }
+            parallel builders
+        }
+
+        stage("Cleanup-User-Content") {
+            functions.cleanup_userContent()
+        }
+
+        if (isSnapshot) {
+
+            echo "Snapshots of version ${VERSION} are built"
+
+        } else {
+
+            stage("Wait-For-User-Input") {
+                timeout(time: 77, unit: 'DAYS') {
+                    input message:"Approve release of version ${VERSION} ?"
+                }
+            }
+
+            stage("Close-Staging-Repository") {
+                functions.close_staging_repository("${PROFILE_TYPE}")
+            }
+
+            stage("Tag-Release") {
+
+                build job: "./${JOB_TAG}", parameters:
+                    [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
+                     [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
+                     [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
+                     [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
+                    ]
+
             }
         }
-        parallel builders
+        // send email about successful finishing
+        functions.notifySuccessful()
     }
 
-    stage("Cleanup-User-Content") {
-        functions.cleanup_userContent()
+    ansiColor('xterm') {
+        echo "\033[42m MARK: end of release.groovy \033[0m"
+        // echo 'MARK: end of release.groovy'
+    } catch (e) {
+        currentBuild.result = "FAILED"
+        notifyFailed()
+        throw e
     }
-
-    if (isSnapshot) {
-
-        echo "Snapshots of version ${VERSION} are built"
-
-    } else {
-
-        stage("Wait-For-User-Input") {
-            timeout(time: 77, unit: 'DAYS') {
-                input message:"Approve release of version ${VERSION} ?"
-            }
-        }
-
-        stage("Close-Staging-Repository") {
-            functions.close_staging_repository("${PROFILE_TYPE}")
-        }
-
-        stage("Tag-Release") {
-
-            build job: "./${JOB_TAG}", parameters:
-                [[$class: 'StringParameterValue', name: 'VERSION', value: VERSION],
-                 [$class: 'StringParameterValue', name: 'GIT_BRANCHNAME', value: GIT_BRANCHNAME],
-                 [$class: 'BooleanParameterValue', name: 'TAG', value: TAG.toBoolean()],
-                 [$class: 'StringParameterValue', name: 'GITCREDID', value: GITCREDID]
-                ]
-
-        }
-    }
-    // send email about successful finishing
-    functions.notifySuccessful()
-}
-
-ansiColor('xterm') {
-    echo "\033[42m MARK: end of release.groovy \033[0m"
-    // echo 'MARK: end of release.groovy'
 }
