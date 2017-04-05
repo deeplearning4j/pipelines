@@ -236,7 +236,7 @@ def verset(ver, allowss) {
 }
 
 def tag(proj) {
-    // Tag builded branch with new version
+    // Tag built branch with new version
     if (CREATE_TAG.toBoolean()) {
         echo("Parameter CREATE_TAG is defined and it is: ${CREATE_TAG}")
         ansiColor('xterm') {
@@ -660,9 +660,9 @@ def resolve_dependencies_for_nd4j() {
     echo("[ INFO ] BLASBUILD_CHECK is result: " + BLASBUILD_CHECK)
 
     if (BLASBUILD_CHECK) {
-        echo("[ INFO ] ${LIBPROJECT} project was previously builded...")
+        echo("[ INFO ] ${LIBPROJECT} project was previously built...")
     } else {
-        echo("[ INFO ] ${LIBPROJECT} wasn't build previously")
+        echo("[ INFO ] ${LIBPROJECT} wasn't built previously")
         echo("[ INFO ] Download sources for ${LIBPROJECT} ")
         functions.get_project_code("${LIBPROJECT}")
         echo("[ INFO ] Resolve dependencies related to ${LIBPROJECT} ")
