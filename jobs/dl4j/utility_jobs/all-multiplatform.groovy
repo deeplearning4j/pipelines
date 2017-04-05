@@ -26,17 +26,6 @@ def notifyFailed() {
 }
 
 env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
-node("master") {
-  try {
-      step([$class: 'WsCleanup'])
-  } catch (e) {
-    currentBuild.result = "FAILED"
-    notifyFailed()
-    throw e
-
-    }
-}
-
 node(PLATFORM_NAME) {
   try {
     currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
