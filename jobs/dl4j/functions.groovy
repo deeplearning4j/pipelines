@@ -36,6 +36,19 @@ Check console output at '${env.BUILD_URL}'""",
     )
 }
 
+def notifyInput(buildName) {
+  // send to email
+  emailext (
+      // subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      subject: "User input required: Job '${env.JOB_NAME}'",
+      body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - ${buildName}:
+      has reached \"Wait-For-User-Input\" stage, please select \"Proceed\" or \"Abort\"
+Console output at '${env.BUILD_URL}'""",
+      to: "${MAIL_RECIPIENT}"
+      // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+    )
+}
+
 def notifySuccessful(buildName) {
   emailext (
       // subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",

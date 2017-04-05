@@ -134,6 +134,9 @@ node("master") {
     } else {
 
         stage("Wait-For-User-Input") {
+
+            functions.notifyInput(currentBuild.displayName)
+
             timeout(time: 77, unit: 'DAYS') {
                 input message:"Approve release of version ${VERSION} ?"
             }
