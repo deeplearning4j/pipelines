@@ -497,7 +497,7 @@ def open_staging_repository(profile_type) {
                     echo("\033[1;43m [ INFO ] local-nexus stagingRepositoryId is:" + "${STAGE_REPO_ID} \033[0m")
                   }
                     emailext (
-
+                      subject: "Repository ${STAGE_REPO_ID} is opened: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'",
                       body: """Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':
                       Staging repositoty - ${STAGE_REPO_ID} has been opened
                       at url - http://master-jenkins.skymind.io:8088/nexus/content/repositories/${STAGE_REPO_ID}
