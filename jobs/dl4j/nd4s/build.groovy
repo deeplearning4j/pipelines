@@ -3,7 +3,7 @@ def notifyFailed() {
       subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
       Check console output at '${env.BUILD_URL}'""",
-      to: "marynenko@gmail.com"
+      to: "engineering@skymind.io"
     )
 }
 
