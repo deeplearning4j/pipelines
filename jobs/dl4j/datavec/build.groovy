@@ -1,5 +1,15 @@
+def notifyFailed() {
+  emailext (
+      subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+      Check console output at '${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
+      to: "marynenko@gmail.com"
+    )
+}
+
 env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node("${PLATFORM_NAME}") {
+  try {
     currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
     ws(WORKSPACE + "_" + PLATFORM_NAME) {
         properties([
@@ -65,6 +75,15 @@ node("${PLATFORM_NAME}") {
         }
 
         // step([$class: 'WsCleanup'])
+    }
+  // send email about successful finishing
+  functions.notifySuccessful(currentBuild.displayName)
+
+  } catch (e) {
+    currentBuild.result = "FAILED"
+    notifyFailed()
+    throw e
+
     }
 }
 ansiColor('xterm') {
