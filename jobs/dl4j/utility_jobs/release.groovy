@@ -55,6 +55,7 @@
 //     ]
 // ])
 
+
 def strToList(str) {
     if (str.getClass() == String && str.length() > 0) {
         tmpList = []
@@ -67,8 +68,20 @@ def strToList(str) {
     }
     return tmpList
 }
+
+def notifyFailed() {
+  emailext (
+      subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+      Check console output at '${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]""",
+      to: "marynenko@gmail.com"
+    )
+}
+
 env.STAGE_REPO_ID = env.STAGE_REPO_ID ?: ""
 node("master") {
+  try {
+    // currentBuild.displayName = "#${currentBuild.number}"
     echo "Cleanup WS"
     step([$class: 'WsCleanup'])
 
@@ -79,7 +92,7 @@ node("master") {
     functions = load "${PDIR}/functions.groovy"
 
     // send email about starting
-    functions.notifyStarted()
+    functions.notifyStarted(currentBuild.displayName)
 
     if (!isSnapshot) {
         functions.open_staging_repository("${PROFILE_TYPE}")
@@ -142,7 +155,14 @@ node("master") {
         }
     }
     // send email about successful finishing
-    functions.notifySuccessful()
+    functions.notifySuccessful(currentBuild.displayName)
+
+  } catch (e) {
+    currentBuild.result = "FAILED"
+    notifyFailed()
+    throw e
+
+    }
 }
 
 ansiColor('xterm') {

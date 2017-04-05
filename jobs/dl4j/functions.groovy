@@ -24,10 +24,11 @@ def error(text) {
 }
 */
 
-def notifyStarted() {
+def notifyStarted(buildName) {
   // send to email
   emailext (
-      subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      // subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      subject: "STARTED ${buildName}: Job '${env.JOB_NAME}'",
       body: """STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
 Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
@@ -35,9 +36,10 @@ Check console output at '${env.BUILD_URL}'""",
     )
 }
 
-def notifySuccessful() {
+def notifySuccessful(buildName) {
   emailext (
-      subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      // subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      subject: "SUCCESSFUL ${buildName}: Job '${env.JOB_NAME}'",
       body: """SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
 Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"

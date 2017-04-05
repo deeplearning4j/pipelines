@@ -31,7 +31,7 @@ node(PLATFORM_NAME) {
         functions = load "jobs/dl4j/functions.groovy"
 
         // send email about starting
-        functions.notifyStarted()
+        functions.notifyStarted(currentBuild.displayName)
 
         // Remove .git folder from workspace
         functions.rm()
@@ -107,7 +107,7 @@ node(PLATFORM_NAME) {
         }
     }
     // send email about successful finishing
-    functions.notifySuccessful()
+    functions.notifySuccessful(currentBuild.displayName)
 }
 
 ansiColor('xterm') {
