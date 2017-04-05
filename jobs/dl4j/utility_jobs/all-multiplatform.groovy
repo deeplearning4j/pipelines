@@ -26,7 +26,7 @@ def notifyFailed() {
 }
 
 env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
-// node("master") {
+node("master") {
   try {
       step([$class: 'WsCleanup'])
   } catch (e) {
@@ -35,7 +35,7 @@ env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
     throw e
 
     }
-// }
+}
 
 node(PLATFORM_NAME) {
   try {
