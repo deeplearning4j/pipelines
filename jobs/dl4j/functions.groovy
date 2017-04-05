@@ -29,7 +29,9 @@ def notifyStarted(buildName) {
   emailext (
       // subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       subject: "STARTED ${buildName}: Job '${env.JOB_NAME}'",
-      body: """STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+      body: """STARTED: Job '${env.JOB_NAME}':
+Job URL is:
+${JOB_URL}
 Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
@@ -40,10 +42,11 @@ def notifyInput(buildName) {
   // send to email
   emailext (
       // subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-      subject: "User input required: Job '${env.JOB_NAME}'",
-      body: """Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' - ${buildName}:
-      has reached \"Wait-For-User-Input\" stage, please select \"Proceed\" or \"Abort\"
-Console output at '${env.BUILD_URL}'""",
+      subject: "USER INPUT REQUIRED: Job '${env.JOB_NAME}'",
+      body: """Job '${env.JOB_NAME}' - ${buildName}:
+has reached \"Wait-For-User-Input\" stage, please select \"Proceed\" or \"Abort\" at
+${JOB_URL}
+Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
     )
@@ -53,7 +56,9 @@ def notifySuccessful(buildName) {
   emailext (
       // subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       subject: "SUCCESSFUL ${buildName}: Job '${env.JOB_NAME}'",
-      body: """SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
+      body: """SUCCESSFUL: Job '${env.JOB_NAME}':
+Job URL is:
+${JOB_URL}
 Check console output at '${env.BUILD_URL}'""",
       to: "${MAIL_RECIPIENT}"
       // recipientProviders: [[$class: 'DevelopersRecipientProvider']]
