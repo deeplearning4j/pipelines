@@ -30,12 +30,9 @@ stage("${PROJECT}-build") {
                                 '''
             }
         }
-        
-        // debug Jenkins environment
-        sh("env")
-        // error("no need to run further")
 
-        if (!isSnapshot) {
+        // if (!isSnapshot) {
+        if (PARENT_JOB.length() > 0) {
             functions.copy_nd4j_native_to_user_content()
         }
     }

@@ -35,12 +35,10 @@ stage("${PROJECT}-build") {
 
             }
         }
-        if (!isSnapshot) {
+        // if (!isSnapshot) {
+        if (PARENT_JOB.length() > 0) {
             functions.copy_nd4j_native_to_user_content()
         }
-        // debug Jenkins environment
-        bat("env")
-        // error("no need to run further")
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")

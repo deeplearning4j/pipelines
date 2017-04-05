@@ -95,7 +95,6 @@ node("master") {
     functions.notifyStarted(currentBuild.displayName)
 
     if (!isSnapshot) {
-        functions.cleanup_userContent()
         functions.open_staging_repository("${PROFILE_TYPE}")
         // functions.notifyRepositoryStatus('opened')
     }
@@ -116,23 +115,23 @@ node("master") {
                          [$class: 'StringParameterValue', name: 'PROFILE_TYPE', value: PROFILE_TYPE],
                          [$class: 'BooleanParameterValue', name: 'CBUILD', value: CBUILD.toBoolean()],
                          [$class: 'StringParameterValue', name: 'STAGE_REPO_ID', value: STAGE_REPO_ID, default: ""],
-                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS]
+                         [$class: 'StringParameterValue', name: 'BUILD_CUDA_PARAMS', value: BUILD_CUDA_PARAMS],
+                         [$class: 'StringParameterValue', name: 'PARENT_JOB', value: JOB_BASE_NAME + "-" + BUILD_ID]
                         ]
             }
         }
         parallel builders
     }
 
+    stage("Cleanup-User-Content") {
+        functions.cleanup_userContent()
+    }
 
     if (isSnapshot) {
 
-        echo "Snapshots of version ${VERSION} are builded"
+        echo "Snapshots of version ${VERSION} are built"
 
     } else {
-
-        stage("Cleanup-User-Content") {
-            functions.cleanup_userContent()
-        }
 
         stage("Wait-For-User-Input") {
             timeout(time: 77, unit: 'DAYS') {

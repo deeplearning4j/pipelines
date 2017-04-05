@@ -21,7 +21,8 @@ stage("${PROJECT}-build") {
                 sh('''mvn -B -s ${MAVEN_SETTINGS} clean deploy -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform' ''')
             }
         }
-        if (!isSnapshot) {
+        // if (!isSnapshot) {
+        if (PARENT_JOB.length() > 0) {
             functions.copy_nd4j_native_to_user_content()
         }
     }

@@ -285,9 +285,6 @@ def getGpg() {
                 gpg --list-keys
                 '''
         } else {
-//            sh("env")
-            // It says - Running on Windowslinux
-            // echo "Running on Windows" + System.properties['os.name'].toLowerCase()
             echo "Running on Windows"
             bat '''
                 bash -c "rm -rf ${HOME}/.gnupg/*.gpg"
@@ -680,8 +677,9 @@ def resolve_dependencies_for_nd4j() {
 }
 
 def cleanup_userContent() {
-    dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
-        sh("rm -rf *.jar")
+    dir("${JENKINS_HOME}/userContent") {
+        sh("rm -rf ${JOB_BASE_NAME}-${BUILD_ID}")
+        sh("rm -rf ${JOB_BASE_NAME}-${BUILD_ID}@tmp")
     }
 }
 
@@ -693,14 +691,16 @@ def copy_nd4j_native_to_user_content() {
         unstash "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
         echo("[ INFO ] Copying nd4j jar to userContent for release")
         sh("find . -name *nd4j-native*.jar")
-        sh("cp ./nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar ${JENKINS_HOME}/userContent/nd4j_artifacts/")
+        sh("mkdir -p ${JENKINS_HOME}/userContent/${PARENT_JOB}")
+        sh("cp ./nd4j-backends/nd4j-backend-impls/nd4j-native/target/nd4j-native-${VERSION}-${PLATFORM_NAME}.jar ${JENKINS_HOME}/userContent/${PARENT_JOB}/")
     }
     // }
 }
 
 def copy_nd4j_native_from_user_content() {
     node("master") {
-        dir("${JENKINS_HOME}/userContent/nd4j_artifacts") {
+        echo("[ INFO ] Copying nd4j jar from userContent for release")
+        dir("${JENKINS_HOME}/userContent/${PARENT_JOB}") {
             sh("ls -la")
             stash includes: '*.jar', name: "nd4j-${PLATFORM_NAME}-${BUILD_NUMBER}"
         }
