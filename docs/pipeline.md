@@ -1,10 +1,30 @@
 # Jenkins pipeline for deeplearning4j components
+## Build schema  
+ <p align="center">
+   <img src="/imgs/build_scheme.png"/>
+ </p>
+
+ _closing stage_ and _github tagging_ not available for **SNAPSHOT**  
+
+ If user pushуи **_Abort_** on **Wait-for-User-Input stage**
+ - staging repository stays opened and collects all built artifacts,
+ on **_Proceed_**
+ - staging repository will be closed and next step pushes tags to github.  
+
+ **libnd4j** starts builds of CPU lib, CUDA 7.5 and CUDA 8.0 libs in parallel using docker containers with gcc, g++ and cmake.  
+ **nd4j** builds on java 1.8 in docker containers using libs from **libnd4j** build step.  
+ **nd4s** build through scala builder(sbt) and uses artifacts from nd4j which are copied to temporary dir in Jenkins userContent. (functions.copy_nd4j_native_to_user_content)  
+
+  <p align="center">
+    <img src="/imgs/libnd4j_build_scheme.png"/>
+  </p>
+
 ## **RELEASE**  
-Start all-multiplatform job for build all platforms in parallel to release components. Upload all libraries to staging repository, make tag and push it to github.  
+Starts all-multiplatform jobs to build all platforms in parallel to release components. Uploads all libraries to the staging repository and pushes tags to github.  
 Link: http://master-jenkins.skymind.io:8080/job/dl4j/job/RELEASE  
 Job parameters:  
 * PLATFORMS:  
-    **desc:** Build libraries on one or several platforms in parallel, linux-x86_64 and android* platforms can be built on same jenkins linux node, windows-x86_64, linux-ppc64le and macosx-x86_64 should be built on their native jenkins nodes (nodes choices automatically by labels). If any platform unchecked - RELEASE won't be successful because of nd4s dependency  of all platforms.  
+    **desc:** Build libraries on one or several platforms in parallel, linux-x86_64 and android* platforms can be built on the same jenkins linux node, windows-x86_64, linux-ppc64le and macosx-x86_64 should be built on their native jenkins nodes (build makes a choice of corresponding node automatically by the labels). If any platform unchecked - RELEASE won't be successful because of nd4s dependency  of all platforms. If you'll need to release without one or more platforms - scripts should be edited.  
     **available values:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64  
     **default value:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64  
 * VERSION:  
@@ -101,23 +121,3 @@ All-multiplatform job for all other platforms builds only 2 components (libnd4j,
 [datavec-linux-x86_64.groovy](/jobs/dl4j/datavec/datavec-linux-x86_64.groovy) - builds datavec component for linux x86-64, the main logic of script is:  
 `checkout from github-> setup scala (./change-scala-versions.sh) and spark (./change-spark-versions.sh) versions -> maven clean deploy`  
 Most of others scripts works same, all artifacts and libraries copying to temp dir for using them in others components build.  
-
-
-## Build schema  
- <p align="center">
-   <img src="/imgs/build_scheme.png"/>
- </p>
-
-_closing stage_ and _github tagging_ not available for **SNAPSHOT**  
-
-If user will push **_Abort_** on **Wait-for-User-Input stage** staging repository left opened and all built artifacts will be uploaded there,
-on **_Proceed_** staging repository will be closed and next step pushes tag to github.  
-
-**libnd4j** starts builds of CPU lib, CUDA 7.5 and CUDA 8.0 libs in parallel using docker containers with gcc, g++ and cmake.  
-**nd4j** builds on java 1.8 in docker containers which using libs from **libnd4j** build step.  
-**nd4s** build through scala builder(sbt) and uses artifacts from nd4j which deployed in temporary user dir. (functions.copy_nd4j_native_to_user_content)  
-
-
- <p align="center">
-   <img src="/imgs/libnd4j_build_scheme.png"/>
- </p>
