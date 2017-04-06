@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         // for support with jobs/dl4j/vars.groovy
-        VERSION = ""
+        VERSION = "nonempty"
     }
 
     stages {
