@@ -18,8 +18,8 @@ pipeline {
                 script {
                     load "jobs/dl4j/vars.groovy"
                 }
-                sh("du -s $JENKINS_DOCKER_M2DIR/repository")
-                sh("du -s $JENKINS_DOCKER_SBTDIR/cache")
+                sh("rm -rf $JENKINS_DOCKER_M2DIR/repository")
+                sh("rm -rf $JENKINS_DOCKER_SBTDIR/cache")
             }
         }
 
@@ -29,8 +29,7 @@ pipeline {
                 script {
                     load "jobs/dl4j/vars.groovy"
                 }
-                sh("du -s $JENKINS_DOCKER_M2DIR/repository")
-                sh("du -s $JENKINS_DOCKER_SBTDIR/cache")
+                sh("rm -rf $JENKINS_DOCKER_M2DIR/repository")
             }
         }
     }
