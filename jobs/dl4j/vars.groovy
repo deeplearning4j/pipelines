@@ -1,5 +1,5 @@
 // email recipients
-env.MAIL_RECIPIENT = "engineering@skymind.io"
+env.MAIL_RECIPIENT = "samuel@skymind.io"
 
 isSnapshot = VERSION.endsWith('SNAPSHOT')
 env.GpgVAR = VERSION.endsWith('SNAPSHOT') ? "false" : "true"
