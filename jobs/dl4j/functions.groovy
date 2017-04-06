@@ -151,8 +151,7 @@ def def_docker() {
 
         case ["android-arm", "android-x86"]:
             dockerImage = "${DOCKER_ANDROID_IMAGE}"
-            // dockerParams = dockerParams
-            dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw"
+            dockerParams = dockerParams
             sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
             break
 
