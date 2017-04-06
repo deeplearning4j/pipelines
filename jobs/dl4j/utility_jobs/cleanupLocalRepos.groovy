@@ -6,6 +6,11 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr:'10'))
     }
 
+    environment {
+        // for support with jobs/dl4j/vars.groovy
+        VERSION = ""
+    }
+
     stages {
         stage('clean-userContent-linux-x86_64') {
             agent { node { label 'linux-x86_64' } }
