@@ -19,7 +19,7 @@ pipeline {
                     load "jobs/dl4j/vars.groovy"
                 }
                 sh("du -sh $JENKINS_DOCKER_M2DIR $JENKINS_DOCKER_SBTDIR")
-                sh("rm -rf $JENKINS_DOCKER_M2DIR/repository")
+                sh("rm -rf $JENKINS_DOCKER_M2DIR/repository $JENKINS_DOCKER_M2DIR/*/repository")
                 sh("rm -rf $JENKINS_DOCKER_SBTDIR/cache")
                 sh("du -sh $JENKINS_DOCKER_M2DIR $JENKINS_DOCKER_SBTDIR")
             }
@@ -31,7 +31,7 @@ pipeline {
                     load "jobs/dl4j/vars.groovy"
                 }
                 sh("du -sh $JENKINS_DOCKER_M2DIR")
-                sh("rm -rf $JENKINS_DOCKER_M2DIR/repository")
+                sh("rm -rf $JENKINS_DOCKER_M2DIR/repository $JENKINS_DOCKER_M2DIR/*/repository")
                 sh("du -sh $JENKINS_DOCKER_M2DIR")
             }
         }
@@ -39,7 +39,7 @@ pipeline {
             agent { node { label 'macosx-x86_64' } }
             steps {
                 sh("du -sh $HOME/.m2")
-                sh("rm -rf $HOME/.m2/repository")
+                sh("rm -rf $HOME/.m2/repository $HOME/.m2/*/repository")
                 sh("du -sh $HOME/.m2")
             }
         }
