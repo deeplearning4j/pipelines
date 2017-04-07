@@ -30,7 +30,7 @@ stage("${PROJECT}-build") {
                 bat (
                         'vcvars64.bat' +
                                 '&&' +
-                                'bash -c "export PATH=$PATH:/c/msys64/mingw64/bin && mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
+                                'bash -c "export PATH=$PATH:/c/msys64/mingw64/bin && mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dmaven.repo.local=%HOME%/.m2/%PROFILE_TYPE%/repository -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
                 )
 
             }
