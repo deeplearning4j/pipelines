@@ -6,7 +6,7 @@
 
  _closing stage_ and _github tagging_ not available for **SNAPSHOT**  
 
- If user pushуи **_Abort_** on **Wait-for-User-Input stage**
+ If user selects **_Abort_** on **Wait-for-User-Input stage**
  - staging repository stays opened and collects all built artifacts,
  on **_Proceed_**
  - staging repository will be closed and next step pushes tags to github.  
@@ -20,11 +20,11 @@
   </p>
 
 ## **RELEASE**  
-Starts all-multiplatform jobs to build all platforms in parallel to release components. Uploads all libraries to the staging repository and pushes tags to github.  
+Launches all-multiplatform jobs in parallel for all platforms. Uploads all libraries to the staging repository and pushes tags to github.  
 Link: http://master-jenkins.skymind.io:8080/job/dl4j/job/RELEASE  
 Job parameters:  
 * PLATFORMS:  
-    **desc:** Build libraries on one or several platforms in parallel, linux-x86_64 and android* platforms can be built on the same jenkins linux node, windows-x86_64, linux-ppc64le and macosx-x86_64 should be built on their native jenkins nodes (build makes a choice of corresponding node automatically by the labels). If any platform unchecked - RELEASE won't be successful because of nd4s dependency  of all platforms. If you'll need to release without one or more platforms - scripts should be edited.  
+    **desc:** Build libraries on one or several platforms in parallel, linux-x86_64 and android* platforms can be built on the same jenkins linux node, windows-x86_64, linux-ppc64le and macosx-x86_64 should be built on their native jenkins nodes (build makes a choice of corresponding node automatically by the labels). If any platform unchecked - RELEASE won't be successful because of nd4s dependency of all platforms. If you need to release without one or more platforms - scripts should be edited.  
     **available values:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64  
     **default value:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64  
 * VERSION:  
@@ -43,18 +43,19 @@ Job parameters:
     **desc:** Profile type  
     **available values:** nexus, jfrog, bintray, sonatype  
 * CBUILD  
-    **desc:** Development option, it is not recommended to uncheck it. If unchecked it will try to find libnd4j from snapshot repository instead of building it  
+    **desc:** Development option, it is not recommended to uncheck it. If unchecked - skips libnd4j building.  
     **default value:** ON  
 * TAG  
     **desc:** push tags to GitHub  
     **default value:** OFF  
 
 ## **SNAPSHOT**  
-Start all-multiplatform job for build all platforms in parallel to build components.  
+Start all-multiplatform jobs in parallel to build components for all platforms.  
 Basically it is same to RELEASE excluding upload to snapshot repository and git tagging.  
-link: http://master-jenkins.sJob parameters:  
+link: http://master-jenkins.skymind.io:8080/job/dl4j/job/SNAPSHOT/
+Job parameters:  
 * PLATFORMS:  
-    **desc:** Build libraries on one or several platforms in parallel, linux-x86_64 and android* platforms can be built on same jenkins linux node, windows-x86_64, linux-ppc64le and macosx-x86_64 should be built on their native jenkins nodes (nodes choices automatically by labels). If any platform unchecked - RELEASE won't be successful because of nd4s dependency  of all platforms.  
+    **desc:** Build libraries for one or several platforms in parallel, linux-x86_64 and android* platforms can be built on same linux node, windows-x86_64, linux-ppc64le and macosx-x86_64 should be built on their native jenkins nodes (build makes a choice of corresponding node automatically by the labels). If any platform unchecked - SNAPSHOT won't be successful because of nd4s dependency  of all platforms. If you need to create snapshots without one or more platforms - scripts should be edited.
     **available values:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64  
     **default value:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64  
 * VERSION:  
@@ -76,22 +77,51 @@ link: http://master-jenkins.sJob parameters:
     **desc:** Development option, it is not recommended to uncheck it. If unchecked it will try to find libnd4j from snapshot repository instead of building it  
     **default value:** ON  
 
-
-
-
 ---  
 
-Pipeline downloads code from <http://github.com/deeplearning4j/pipelines.git>, master branch with credentials from jenkins, and run main release/snapshot script `jobs/dl4j/utility_jobs/release.groovy`, which load scripts specific for each platform.  
-For example libnd4j groovy scripts:  
-1. jobs\dl4j\libnd4j\
-\ ----- libnd4j-android-arm.groovy  
-\ ----- libnd4j-android-arm.groovy  
-\ ----- libnd4j-linux-ppc64le.groovy  
-\ ----- libnd4j-linux-x86_64.groovy  
-\ ----- libnd4j-macosx-x86_64.groovy  
-\ ----- libnd4j-windows-x86_64.groovy  
+Pipeline downloads code from master branch of <http://github.com/deeplearning4j/pipelines.git>,
+by credentials (github-private-deeplearning4j-id-1) configured in  Jenkins: (http://master-jenkins.skymind.io:8080/credentials/store/system/domain/_/credential/github-private-deeplearning4j-id-1/),   
+and run main release/snapshot script `jobs/dl4j/utility_jobs/release.groovy`, which loads specific scripts for each platform. Two components - **libnd4j** and **nd4j** have to be built on all platforms, others are to be built on linux-x86_64 only.   
 
-`jobs\dl4j\libnd4j\build.groovy` - script for each component (arbiter, datavec, libnd4j etc) which can be run as standalone job:  
+##### Scripts for builds:
+1. **libnd4j** scripts in [jobs/dl4j/libnd4j/](/jobs/dl4j/libnd4j/):  
+[libnd4j-android-arm.groovy](/jobs/dl4j/libnd4j/libnd4j-android-arm.groovy)  
+[libnd4j-android-x86.groovy](/jobs/dl4j/libnd4j/libnd4j-android-x86.groovy)  
+[libnd4j-linux-ppc64le.groovy](/jobs/dl4j/libnd4j/libnd4j-linux-ppc64le.groovy)    
+[libnd4j-linux-x86_64.groovy](/jobs/dl4j/libnd4j/libnd4j-linux-x86_64.groovy)  
+[libnd4j-macosx-x86_64.groovy](/jobs/dl4j/libnd4j/libnd4j-macosx-x86_64.groovy)
+[libnd4j/libnd4j-windows-x86_64.groovy](/jobs/dl4j/libnd4j/libnd4j-windows-x86_64.groovy)  
+
+2. **nd4j** scripts in [jobs/dl4j/nd4j/](/jobs/dl4j/nd4j):    
+[nd4j-android-arm.groovy](/jobs/dl4j/nd4j/nd4j-android-arm.groovy)  
+[nd4j-android-x86.groovy](/jobs/dl4j/nd4j/nd4j-android-x86.groovy)   
+[nd4j-linux-ppc64le.groovy](/jobs/dl4j/nd4j/nd4j-linux-ppc64le.groovy)  
+[nd4j-linux-x86_64.groovy](/jobs/dl4j/nd4j/nd4j-linux-x86_64.groovy)  
+[nd4j-macosx-x86_64.groovy](/jobs/dl4j/nd4j/nd4j-macosx-x86_64.groovy)  
+[nd4j-windows-x86_64.groovy](/jobs/dl4j/nd4j/nd4j-windows-x86_64.groovy)  
+
+3. **datavec** script:  
+[jobs/dl4j/datavec/datavec-linux-x86_64.groovy](/jobs/dl4j/datavec/datavec-linux-x86_64.groovy)
+
+4. **deeplearning4j** script:  
+[jobs/dl4j/deeplearning4j/deeplearning4j-linux-x86_64.groovy](/jobs/dl4j/deeplearning4j/deeplearning4j-linux-x86_64.groovy)
+
+5. **arbiter** script:  
+[jobs/dl4j/arbiter/arbiter-linux-x86_64.groovy](/jobs/dl4j/arbiter/arbiter-linux-x86_64.groovy)
+
+6. **nd4s** script:  
+[jobs/dl4j/nd4s/nd4s-linux-x86_64.groovy](/jobs/dl4j/nd4s/nd4s-linux-x86_64.groovy)
+
+7. **gym-java-client** script:  
+[jobs/dl4j/gym-java-client/gym-java-client-linux-x86_64.groovy](/jobs/dl4j/gym-java-client/gym-java-client-linux-x86_64.groovy)
+
+8. **rl4j** script:  
+[jobs/dl4j/rl4j/rl4j-linux-x86_64.groovy](/jobs/dl4j/rl4j/rl4j-linux-x86_64.groovy)
+
+9. **scalnet** groovy scripts:  
+[jobs/dl4j/scalnet/scalnet-linux-x86_64.groovy](/jobs/dl4j/scalnet/scalnet-linux-x86_64.groovy)
+
+`jobs/dl4j/*/build.groovy` - script for each component (arbiter, datavec, libnd4j etc) which can be run as standalone job:  
 <http://master-jenkins.skymind.io:8080/job/dl4j/job/Arbiter/>  
 <http://master-jenkins.skymind.io:8080/job/dl4j/job/DataVec/>  
 <http://master-jenkins.skymind.io:8080/job/dl4j/job/libnd4j/>  
@@ -103,7 +133,7 @@ For example libnd4j groovy scripts:
 <http://master-jenkins.skymind.io:8080/job/dl4j/job/ScalNet/>  
 
 
-Every job run build.groovy in it own dir:
+Every job run build.groovy from corresponding folder:
 ```
 jobs/dl4j/arbiter/build.groovy
 jobs/dl4j/datavec/build.groovy
@@ -111,13 +141,10 @@ jobs/dl4j/libnd4j/build.groovy
 ...
 ```
 
-[release.groovy](/jobs/dl4j/utility_jobs/release.groovy) script starts in parallel N-value of [all-multiplatform](http://master-jenkins.skymind.io:8080/job/dl4j/job/all-multiplatform/) job, N = count of support platform (current value - 6).  
-**linux-x86_64** is main platform, RELEASE and SNAPSHOT jobs starts whole build cycle for all 9 components. On nd4s stage task waits until all necessary artifacts will be built for all other platforms (functions.copy_nd4j_native_from_user_content).  
+[release.groovy](/jobs/dl4j/utility_jobs/release.groovy) the script starts N-value of [all-multiplatform](http://master-jenkins.skymind.io:8080/job/dl4j/job/all-multiplatform/) jobs in parallel, N = count of support platform (current value - 6).  
+**linux-x86_64** is the main platform, RELEASE and SNAPSHOT jobs starts whole build cycle for all 9 components. On nd4s stage task waits until all necessary artifacts are built for all other platforms (functions.copy_nd4j_native_from_user_content).  
 Opens and closes staging repository on jenkins master node.  
 All-multiplatform job for all other platforms builds only 2 components (libnd4j, nd4j), collect artifacts and put them to temporary storage  (functions.copy_nd4j_native_to_user_content), to be used later in all-multiplatform job for linux-x86_64 platform.  
 
 [vars.groovy](/jobs/dl4j/vars.groovy) - environment variables for whole build system.  
-[functions.groovy](/jobs/dl4j/functions.groovy) - functions which using by build scripts for downloading source code, sonar source code check, pushing tags, upload artifacts to repository, _nd4j_ component download dependencies, download libnd4j pre-built libraries etc.  
-[datavec-linux-x86_64.groovy](/jobs/dl4j/datavec/datavec-linux-x86_64.groovy) - builds datavec component for linux x86-64, the main logic of script is:  
-`checkout from github-> setup scala (./change-scala-versions.sh) and spark (./change-spark-versions.sh) versions -> maven clean deploy`  
-Most of others scripts works same, all artifacts and libraries copying to temp dir for using them in others components build.  
+[functions.groovy](/jobs/dl4j/functions.groovy) - functions used by build scripts for downloading source code, code check with sonar, pushing tags, upload artifacts to repository etc.  
