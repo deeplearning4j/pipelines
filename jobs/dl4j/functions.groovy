@@ -140,16 +140,19 @@ def def_docker() {
                 dockerParams = dockerParams_tmpfs_nvidia
             }
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
+            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case "linux-ppc64le":
             dockerImage = "${DOCKER_CUDA_PPC}"
             dockerParams = dockerParams
+            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case ["android-arm", "android-x86"]:
             dockerImage = "${DOCKER_ANDROID_IMAGE}"
             dockerParams = dockerParams
+            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case ["macosx-x86_64", "windows-x86_64"]:
@@ -161,26 +164,6 @@ def def_docker() {
             break
     }
 }
-
-// def def_docker(platform, docker_image, docker_params, jenkins_storage) {
-//   echo "Setting docker parameters and image for ${PLATFORM_NAME}"
-//   switch(platform) {
-//     case ["linux-x86_64", "linux-ppc64le", "android-arm", "android-x86"]:
-//         echo ("[ INFO ] Parameters: ${platform} ${docker_image} ${docker_params} ${jenkins_storage}")
-//         dockerImage = docker_image
-//         dockerParams = docker_params
-//         sh ("mkdir -p ${jenkins_storage}/docker_m2 ${jenkins_storage}/docker_ivy2")
-//         break
-//
-//     case ["macosx-x86_64","windows-x86_64"]:
-//         echo "Running on ${platform}, skipping docker part"
-//         break
-//
-//     default:
-//         error("Platform name is not defined or unsupported")
-//         break
-//   }
-// }
 
 def sonar(proj) {
     echo "Check ${ACCOUNT}/${proj} code with SonarQube Scanner"
