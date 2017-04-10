@@ -1,6 +1,6 @@
 stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
     // if (!isSnapshot) {
-    // if (PARENT_JOB.length() > 0) {
+    if (PARENT_JOB.length() > 0) {
         echo "Copying nd4j artifacts from userContent"
         int ND4J_NATIVE_COUNT = 0
         while (ND4J_NATIVE_COUNT < 6) {
@@ -15,11 +15,11 @@ stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
         docker.image(dockerImage).inside(dockerParams) {
             functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
         }
-    // } else {
-    //     docker.image(dockerImage).inside(dockerParams) {
-    //         functions.nd4s_install_snapshot_dependencies_to_maven2_local_repository("org.nd4j", "nd4j-native", "${VERSION}", "jar", ["linux-x86_64","android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"], "${PROFILE_TYPE}")
-    //     }
-    // }
+    } else {
+        docker.image(dockerImage).inside(dockerParams) {
+            functions.nd4s_install_snapshot_dependencies_to_maven2_local_repository("org.nd4j", "nd4j-native", "${VERSION}", "jar", ["linux-x86_64","android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"], "${PROFILE_TYPE}")
+        }
+    }
 }
 
 
