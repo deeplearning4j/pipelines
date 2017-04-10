@@ -18,6 +18,18 @@
   <p align="center">
     <img src="/imgs/libnd4j_build_scheme.png"/>
   </p>
+  
+ If any platform will fail you may try to relaunch all-multiplatform job choosing the corresponding platform (the one which has failed)  
+ first - you need to notice the **stagingRepositoryId** in the log of the failed RELEASE job:  
+ <p align="center">
+   <img src="/imgs/repo_id.png"/>
+ </p>
+ Than launch all-multiplatform job passing noticed **stagingRepositoryId** right **VERSION** and **PROFILE_TYPE** - they should be the same as for failed RELEASE job, e.g:  
+ <p align="center">
+   <img src="/imgs/macosx_04.png"/>
+ </p> 
+ The RELEASE job with one or more failed platform builds should wait (at the **nd4s-Platform-Builds-Wait** stage ) for relaunched builds successful finishing.  
+ (_that doesn’t work in case of linux-x86_64 build failing, ‘cos that is the main stream and if it fails - the whole RELEASE job should be restarted from scratch_)  
 
 ## **RELEASE**  
 Launches all-multiplatform jobs in parallel for all platforms. Uploads all libraries to the staging repository and pushes tags to github.  
