@@ -19,23 +19,6 @@
     <img src="/imgs/libnd4j_build_scheme.png"/>
   </p>
  
-## ON FAIL
- If any platform will fail you may try to relaunch all-multiplatform job choosing the corresponding platform (the one which has failed)  
- first - you need to notice the **stagingRepositoryId** in the log of the failed RELEASE job:  
- <p align="center">
-   <img src="/imgs/repo_id.png"/>
- </p>
- Than launch all-multiplatform job passing noticed **stagingRepositoryId** right **VERSION**, **PROFILE_TYPE** and **PARENT_JOB** - they should be the same as for failed RELEASE job, e.g:  
- <p align="center">
-   <img src="/imgs/macosx_04.png"/>
- </p> 
- **PARENT_JOB** parameter based on job type and build number
- <p align="center">
-   <img src="/imgs/job_type_build.png"/>
- </p> 
- The RELEASE job with one or more failed platform builds should wait (at the **nd4s-Platform-Builds-Wait** stage ) for relaunched builds successful finishing.  
- (_that doesn’t work in case of linux-x86_64 build failing, ‘cos that is the main stream and if it fails - the whole RELEASE job should be restarted from scratch_)  
-
 ## **RELEASE**  
 Launches all-multiplatform jobs in parallel for all platforms. Uploads all libraries to the staging repository and pushes tags to github.  
 Link: http://master-jenkins.skymind.io:8080/job/dl4j/job/RELEASE  
@@ -165,3 +148,21 @@ All-multiplatform job for all other platforms builds only 2 components (libnd4j,
 
 [vars.groovy](/jobs/dl4j/vars.groovy) - environment variables for whole build system.  
 [functions.groovy](/jobs/dl4j/functions.groovy) - functions used by build scripts for downloading source code, code check with sonar, pushing tags, upload artifacts to repository etc.  
+
+## ON FAIL
+ If any platform will fail you may try to relaunch all-multiplatform job choosing the corresponding platform (the one which has failed)  
+ first - you need to notice the **stagingRepositoryId** in the log of the failed RELEASE job:  
+ <p align="center">
+   <img src="/imgs/repo_id.png"/>
+ </p>
+ Than launch all-multiplatform job passing noticed **stagingRepositoryId** right **VERSION**, **PROFILE_TYPE** and **PARENT_JOB** - they should be the same as for failed RELEASE job, e.g:  
+ <p align="center">
+   <img src="/imgs/macosx_04.png"/>
+ </p> 
+ **PARENT_JOB** parameter based on job type and build number
+ <p align="center">
+   <img src="/imgs/job_type_build.png"/>
+ </p> 
+ The RELEASE job with one or more failed platform builds should wait (at the **nd4s-Platform-Builds-Wait** stage ) for relaunched builds successful finishing.  
+ (_that doesn’t work in case of linux-x86_64 build failing, ‘cos that is the main stream and if it fails - the whole RELEASE job should be restarted from scratch_)  
+ _No such function for SNAPSHOT_
