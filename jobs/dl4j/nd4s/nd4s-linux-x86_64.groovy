@@ -13,7 +13,7 @@ stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
             sleep unit: "MINUTES", time: 1
         }
         docker.image(dockerImage).inside(dockerParams) {
-            functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
+            functions.install_nd4j_native_to_local_maven_repository("${VERSION}", "${HOME}/.m2/${PROFILE_TYPE}/repository")
         }
     } else {
         docker.image(dockerImage).inside(dockerParams) {
