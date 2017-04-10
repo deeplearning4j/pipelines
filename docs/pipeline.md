@@ -149,7 +149,7 @@ All-multiplatform job for all other platforms builds only 2 components (libnd4j,
 [vars.groovy](/jobs/dl4j/vars.groovy) - environment variables for whole build system.  
 [functions.groovy](/jobs/dl4j/functions.groovy) - functions used by build scripts for downloading source code, code check with sonar, pushing tags, upload artifacts to repository etc.  
 
-### ON FAIL
+## ON FAIL
  If any platform will fail you may try to relaunch all-multiplatform job choosing the corresponding platform (the one which has failed)  
  first - you need to notice the **stagingRepositoryId** in the log of the failed RELEASE job:  
  <p align="center">
