@@ -3,7 +3,7 @@ stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
     // if (PARENT_JOB.length() > 0) {
         echo "Copying nd4j artifacts from userContent"
         int ND4J_NATIVE_COUNT = 0
-        while (ND4J_NATIVE_COUNT < 5) {
+        while (ND4J_NATIVE_COUNT < 6) {
             sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
 
             functions.copy_nd4j_native_from_user_content()
