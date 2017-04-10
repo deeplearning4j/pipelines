@@ -18,7 +18,8 @@
   <p align="center">
     <img src="/imgs/libnd4j_build_scheme.png"/>
   </p>
-  
+ 
+## ON FAIL
  If any platform will fail you may try to relaunch all-multiplatform job choosing the corresponding platform (the one which has failed)  
  first - you need to notice the **stagingRepositoryId** in the log of the failed RELEASE job:  
  <p align="center">
