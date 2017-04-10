@@ -34,10 +34,10 @@ stage("${PROJECT}-build") {
                 }
             }
         }
-//       // if (!isSnapshot) {
-        //  if (PARENT_JOB.length() > 0) {
-//            functions.copy_nd4j_native_to_user_content()
-//        }
+
+        if (PARENT_JOB.length() > 0) {
+            functions.copy_nd4j_native_to_user_content()
+        }
     }
     if (SONAR.toBoolean()) {
         functions.sonar("${PROJECT}")
