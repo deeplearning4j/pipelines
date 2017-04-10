@@ -477,6 +477,7 @@ def install_nd4j_native_to_local_maven_repository(version, m2local) {
     for (int i = 0; i < listPlatformVersion.size(); i++) {
         echo("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
         sh("mvn -B install:install-file -Dmaven.repo.local=${m2local} -Dfile=nd4j-native-${version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
+        sh("mvn -B install:install-file -Dfile=nd4j-native-${version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
     }
 }
 
