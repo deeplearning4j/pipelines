@@ -470,13 +470,11 @@ def download_nd4j_native_from_jenkins_user_content(version) {
     }
 }
 
-def install_nd4j_native_to_local_maven_repository(version, m2local) {
+def install_nd4j_native_to_local_maven_repository(version) {
 //    def listPlatformVersion = ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"]
-    m2local = m2local ?: "${HOME}/.m2"
     def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "linux-x86_64", "macosx-x86_64", "windows-x86_64"]
     for (int i = 0; i < listPlatformVersion.size(); i++) {
         echo("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
-        sh("mvn -B install:install-file -Dmaven.repo.local=${m2local} -Dfile=nd4j-native-${version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
         sh("mvn -B install:install-file -Dfile=nd4j-native-${version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
     }
 }
