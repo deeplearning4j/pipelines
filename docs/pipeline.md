@@ -152,16 +152,19 @@ All-multiplatform job for all other platforms builds only 2 components (libnd4j,
 #### On all-multiplatform job fail (in RELEASE job):
  During RELEASE job one or more all-multiplatform job may fail for different reasons. In that case you may try to relaunch all-multiplatform job choosing the corresponding platform (the one which has failed).  
  At first - you need to notice the **stagingRepositoryId** in the log of the failed RELEASE job:  
+
  <p align="center">
    <img src="/imgs/repo_id.png"/>
  </p>  
 
  Then launch all-multiplatform job passing noticed **stagingRepositoryId**, right **VERSION**, **PROFILE_TYPE** and **PARENT_JOB** - they should be the same as for failed RELEASE job, e.g:  
+
  <p align="center">
    <img src="/imgs/macosx_04.png"/>
  </p>  
 
- **PARENT_JOB** parameter based on job type and build number
+ **PARENT_JOB** parameter based on job type and build number  
+ 
  <p align="center">
    <img src="/imgs/job_type_build.png"/>
  </p>  
