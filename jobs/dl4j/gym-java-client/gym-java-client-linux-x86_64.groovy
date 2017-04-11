@@ -11,7 +11,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
             docker.image(dockerImage).inside(dockerParams) {
                 functions.getGpg()
                 sh '''
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.repo.local=${HOME}/.m2/${PROFILE_TYPE}/repository -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
+                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
                 '''
             }
         }

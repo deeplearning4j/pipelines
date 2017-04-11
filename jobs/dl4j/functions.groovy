@@ -140,19 +140,19 @@ def def_docker() {
                 dockerParams = dockerParams_tmpfs_nvidia
             }
             dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
-            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
+            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/nexus ${JENKINS_DOCKER_M2DIR}/jfrog ${JENKINS_DOCKER_M2DIR}/sonatype ${JENKINS_DOCKER_M2DIR}/bintray ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case "linux-ppc64le":
             dockerImage = "${DOCKER_CUDA_PPC}"
             dockerParams = dockerParams
-            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
+            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/nexus ${JENKINS_DOCKER_M2DIR}/jfrog ${JENKINS_DOCKER_M2DIR}/sonatype ${JENKINS_DOCKER_M2DIR}/bintray ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case ["android-arm", "android-x86"]:
             dockerImage = "${DOCKER_ANDROID_IMAGE}"
             dockerParams = dockerParams
-            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR} ${JENKINS_DOCKER_SBTDIR}")
+            sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/nexus ${JENKINS_DOCKER_M2DIR}/jfrog ${JENKINS_DOCKER_M2DIR}/sonatype ${JENKINS_DOCKER_M2DIR}/bintray ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case ["macosx-x86_64", "windows-x86_64"]:
