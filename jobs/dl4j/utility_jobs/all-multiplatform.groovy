@@ -11,7 +11,7 @@ properties([[$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", 
                     [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "sonatype\nnexus\njfrog\nbintray", description: "Profile type"],
                     [$class: "BooleanParameterDefinition", name: "CBUILD", defaultValue: true, description: "Select to build libnd4j"],
                     [$class: "StringParameterDefinition", name: "BUILD_CUDA_PARAMS", defaultValue: "", description: "Append default parameters for buildnativeoperations.sh, defaults:\nlinux: -c cuda -v 7.5; -c cuda -v 8.0\nwindows: -c cuda -v 7.5; -c cuda -v 8.0\nmacosx: -c cuda\nIt doesn't apply for CPU builds!!!"],
-                    [$class: "StringParameterDefinition", name: "PARENT_JOB", defaultValue: "", description: "This parameter sets by upstream job (release or snapshot).\n!!! Do not set it manually !!!"]
+                    [$class: "StringParameterDefinition", name: "PARENT_JOB", defaultValue: "", description: "This parameter sets by upstream job (release or snapshot). \n!!! In case of RELEASE job failure, set it as RELEASE-<failed RELEASE job ID>!!!"]
             ]
             ]
 ])
