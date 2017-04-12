@@ -28,6 +28,9 @@ env.RL4J_PROJECT = "rl4j"
 env.SCALNET_PROJECT = "scalnet"
 env.DATAVEC_PROJECT = "datavec"
 
+env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
+env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
+
 env.DOCKER_UBUNTU14_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda75:latest"
 env.DOCKER_UBUNTU14_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda80:latest"
 env.DOCKER_CENTOS6_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
@@ -40,17 +43,15 @@ env.JENKINS_DOCKER_SBTDIR = "/srv/jenkins/storage/docker_ivy2"
 // env.JENKINS_M2DIR_PPC64LE = "/srv/jenkins/storage/docker_m2"
 // env.JENKINS_SBTDIR_PPC64LE = "/srv/jenkins/storage/docker_ivy2"
 
-dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw"
-dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}:/home/jenkins/.m2:rw -v ${JENKINS_DOCKER_SBTDIR}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0"
-dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --tmpfs /tmp:size=6g"
+dockerParams = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE}:/home/jenkins/.m2:rw"
+dockerParams_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE}:/home/jenkins/.m2:rw -v ${JENKINS_DOCKER_SBTDIR}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0"
+dockerParams_tmpfs_nvidia = "-v ${WORKSPACE}:${WORKSPACE}:rw -v ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE}:/home/jenkins/.m2:rw -v ${JENKINS_DOCKER_SBTDIR}:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --tmpfs /tmp:size=6g"
 
 // env.SBTCREDID = "sbt-local-artifactory-id-1"
 // env.SBTCREDID = "SBT_CREDENTIALS_DO-192"
 
 /** Below variables need to be reviewed once release approach will be approved
  */
-env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
-env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
 
 /*
 SONAR_SERVER should be configured in Jenkins/configure in SonarQube servers
