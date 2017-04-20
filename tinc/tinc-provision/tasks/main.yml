@@ -1,0 +1,57 @@
+- name: install the tinc package
+  apt:
+    name: tinc
+    state: latest
+  sudo: yes
+  when: ansible_os_family == "Debian"
+- name: install the tinc package (OSX)
+- homebrew:
+    name: tinc
+    state: latest
+  sudo: yes
+  when: ansible_os_family == "Darwin"
+- name: create network configuration dir
+  command: mkdir -p "/etc/tinc/{{netname}}/hosts"
+  sudo: yes
+- name: copy the tinc.conf template
+  template:
+    src: tinc.conf.j2
+    dest: "/etc/tinc/{{netname}}/tinc.conf"
+  sudo: yes
+- name: choose an IP for the internal machine
+  set_fact:
+    machine_ip: "10.9.7.{{254|random(start=4)}}" # master = 1, mac = 2, power = 3
+- name: Check to see if a host file for this host exists
+  stat: path="/etc/tinc/{{netname}}/hosts/{{ansible_fqdn}}"
+  register: keypair_exists
+- name: create the local host file
+  template:
+    src: externalnyc.j2
+    dest: "/etc/tinc/{{netname}}/hosts/{{ansible_fqdn}}"
+  when: keypair_exists.stat.exists == false
+  sudo: yes
+- name: copy the gateway file
+  copy:
+    src: gateway
+    dest: "/etc/tinc/{{netname}}/hosts/gateway"
+  sudo: yes
+- name: copy the tinc-down script
+  copy:
+    src: tinc-down
+    dest: "/etc/tinc/{{netname}}/"
+    mode: 755
+  sudo: yes
+- name: Check to see if a tinc-up file for this host exists
+  stat: path="/etc/tinc/{{netname}}/tinc-up"
+  register: tinc_up_exists
+- name: translate the tinc-up script
+  template:
+    src: tinc-up.j2
+    dest: "/etc/tinc/{{netname}}/tinc-up"
+    mode: 755
+  sudo: yes
+  when: tinc_up_exists.stat.exists == false
+- name: generate keypair
+  command: sudo tincd -n "{{netname}}" -K4096
+  when: keypair_exists.stat.exists == false
+  sudo: yes
