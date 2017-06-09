@@ -1,11 +1,11 @@
 package skil
 
 stage("${SKIL_PROJECT}-checkout-sources") {
-    functions.get_project_code("${SKIL_PROJECT}")
+    env.ACCOUNT = "skymindio"
+    functions.get_project_code("lagom-skil-api")
 }
 
 stage("${SKIL_PROJECT}-build") {
-    env.ACCOUNT = "skymindio"
     echo "Building ${SKIL_PROJECT} version ${VERSION}"
     dir("${SKIL_PROJECT}") {
         functions.checktag("${SKIL_PROJECT}")

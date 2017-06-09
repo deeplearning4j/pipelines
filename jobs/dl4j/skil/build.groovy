@@ -13,7 +13,6 @@ env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 
 node("${PLATFORM_NAME}") {
     try {
-    env.ACCOUNT = "skymindio"
     currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
     ws(WORKSPACE + "_" + PLATFORM_NAME) {
         properties([
