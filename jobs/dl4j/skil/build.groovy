@@ -5,7 +5,7 @@ def notifyFailed() {
       subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
       Check console output at '${env.BUILD_URL}'""",
-      to: "samuel@skymind.io"
+      to: "${MAIL_RECIPIENT}"
     )
 }
 
@@ -18,7 +18,7 @@ node("${PLATFORM_NAME}") {
     ws(WORKSPACE + "_" + PLATFORM_NAME) {
         properties([
                 [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
-		[$class: 'HudsonNotificationProperty', endpoints: [[event: 'all', format: 'JSON', loglines: 0, protocol: 'HTTP', timeout: 30000, url: 'https://webhooks.gitter.im/e/67663f7b1ef2c0951c2f']]],
+                [$class: 'HudsonNotificationProperty', endpoints: [[event: 'all', format: 'JSON', loglines: 0, protocol: 'HTTP', timeout: 30000, url: 'https://webhooks.gitter.im/e/67663f7b1ef2c0951c2f']]],
                 [$class: "ParametersDefinitionProperty", parameterDefinitions:
                         [
                                 [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.8.1-SNAPSHOT", description: "Deeplearning component release version"],
