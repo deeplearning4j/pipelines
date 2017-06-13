@@ -28,94 +28,96 @@ def notifyFailed() {
 env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node(PLATFORM_NAME) {
   try {
-    currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
-    ws(WORKSPACE + "_" + PLATFORM_NAME) {
-        step([$class: 'WsCleanup'])
+    timeout(time:5, unit:'HOURS') {
 
-        checkout scm
+      currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
+      ws(WORKSPACE + "_" + PLATFORM_NAME) {
+          step([$class: 'WsCleanup'])
 
-        load "jobs/dl4j/vars.groovy"
-        functions = load "jobs/dl4j/functions.groovy"
+          checkout scm
 
-        // send email about starting
-        functions.notifyStarted(currentBuild.displayName)
+          load "jobs/dl4j/vars.groovy"
+          functions = load "jobs/dl4j/functions.groovy"
 
-        // Remove .git folder from workspace
-        functions.rm()
+          // send email about starting
+          functions.notifyStarted(currentBuild.displayName)
 
-        final appsList = [
-                [platform      : "linux-x86_64",
-                 dockerImage   : "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
-                 dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro --tmpfs /tmp:size=4g",
-                 jenkinsStorage: "/srv/jenkins/storage",
-                 apps          : [
-                         [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
-                         [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"],
-                         [name: "datavec", loadFile: "${PDIR}/datavec/datavec-${PLATFORM_NAME}.groovy"],
-                         [name: "deeplearning4j", loadFile: "${PDIR}/deeplearning4j/deeplearning4j-${PLATFORM_NAME}.groovy"],
-                         [name: "arbiter", loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"],
-                         [name: "nd4s", loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"],
-                         [name: "gym-java-client", loadFile: "${PDIR}/gym-java-client/gym-java-client-${PLATFORM_NAME}.groovy"],
-                         [name: "rl4j", loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"],
-                         [name: "scalnet", loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"]
-                 ]
-                ],
-                [platform      : "linux-ppc64le",
-                 dockerImage   : "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le:latest",
-                 dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
-                 jenkinsStorage: "/srv/jenkins/storage",
-                 apps          : [[name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
-                                  [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
-                 ]
-                ],
-                [platform      : "android-arm",
-                 dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                 dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
-                 jenkinsStorage: "/srv/jenkins/storage",
-                 apps          : [
-                         [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
-                         [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
-                 ]
-                ],
-                [platform      : "android-x86",
-                 dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                 dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
-                 jenkinsStorage: "/srv/jenkins/storage",
-                 apps          : [
-                         [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
-                         [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
-                 ]
-                ],
-                [platform: "macosx-x86_64",
-                 apps    : [
-                         [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
-                         [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
-                 ]
-                ],
-                [platform: "windows-x86_64",
-                 apps    : [
-                         [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
-                         [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
-                 ]
-                ]
-        ]
+          // Remove .git folder from workspace
+          functions.rm()
 
-        for (i in appsList) {
-            if (PLATFORM_NAME == i.platform) {
-                for (app in i.apps) {
-                    // echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
-                    stage(app.name) {
-                        functions.def_docker()
-                        // functions.def_docker(i.platform, i.dockerImage, i.dockerParams, i.jenkinsStorage)
-                        load app.loadFile
-                    }
-                }
-            }
-        }
-    }
-    // send email about successful finishing
-    functions.notifySuccessful(currentBuild.displayName)
+          final appsList = [
+                  [platform      : "linux-x86_64",
+                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_367.57:/usr/local/nvidia:ro --tmpfs /tmp:size=4g",
+                   jenkinsStorage: "/srv/jenkins/storage",
+                   apps          : [
+                           [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
+                           [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"],
+                           [name: "datavec", loadFile: "${PDIR}/datavec/datavec-${PLATFORM_NAME}.groovy"],
+                           [name: "deeplearning4j", loadFile: "${PDIR}/deeplearning4j/deeplearning4j-${PLATFORM_NAME}.groovy"],
+                           [name: "arbiter", loadFile: "${PDIR}/arbiter/arbiter-${PLATFORM_NAME}.groovy"],
+                           [name: "nd4s", loadFile: "${PDIR}/nd4s/nd4s-${PLATFORM_NAME}.groovy"],
+                           [name: "gym-java-client", loadFile: "${PDIR}/gym-java-client/gym-java-client-${PLATFORM_NAME}.groovy"],
+                           [name: "rl4j", loadFile: "${PDIR}/rl4j/rl4j-${PLATFORM_NAME}.groovy"],
+                           [name: "scalnet", loadFile: "${PDIR}/scalnet/scalnet-${PLATFORM_NAME}.groovy"]
+                   ]
+                  ],
+                  [platform      : "linux-ppc64le",
+                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le:latest",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
+                   jenkinsStorage: "/srv/jenkins/storage",
+                   apps          : [[name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
+                                    [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
+                   ]
+                  ],
+                  [platform      : "android-arm",
+                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
+                   jenkinsStorage: "/srv/jenkins/storage",
+                   apps          : [
+                           [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
+                           [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
+                   ]
+                  ],
+                  [platform      : "android-x86",
+                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
+                   jenkinsStorage: "/srv/jenkins/storage",
+                   apps          : [
+                           [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
+                           [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
+                   ]
+                  ],
+                  [platform: "macosx-x86_64",
+                   apps    : [
+                           [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
+                           [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
+                   ]
+                  ],
+                  [platform: "windows-x86_64",
+                   apps    : [
+                           [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
+                           [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
+                   ]
+                  ]
+          ]
 
+          for (i in appsList) {
+              if (PLATFORM_NAME == i.platform) {
+                  for (app in i.apps) {
+                      // echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
+                      stage(app.name) {
+                          functions.def_docker()
+                          // functions.def_docker(i.platform, i.dockerImage, i.dockerParams, i.jenkinsStorage)
+                          load app.loadFile
+                      }
+                  }
+              }
+          }
+      }
+      // send email about successful finishing
+      functions.notifySuccessful(currentBuild.displayName)
+      }
     } catch (e) {
       currentBuild.result = "FAILED"
       notifyFailed()
