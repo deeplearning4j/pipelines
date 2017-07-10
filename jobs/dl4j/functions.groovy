@@ -306,7 +306,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
             zip dir: "${WORKSPACE}/libnd4j/blasbuild", zipFile: "${LIBPROJECT}-${version}-${platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
+                    sh("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -316,7 +316,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "sonatype":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
+                    sh("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -326,7 +326,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "bintray":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                    sh("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -336,7 +336,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "jfrog":
-                    sh("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
+                    sh("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -351,7 +351,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
             zip dir: "${WORKSPACE}\\libnd4j\\blasbuild", zipFile: "${LIBPROJECT}-${version}-${platform}.zip"
             switch (profile_type) {
                 case "nexus":
-                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
+                    bat("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -361,7 +361,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "sonatype":
-                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
+                    bat("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.sonatype.org/content/repositories/snapshots " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -371,7 +371,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "bintray":
-                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                    bat("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -381,7 +381,7 @@ def upload_libnd4j_snapshot_version_to_snapshot_repository(version, platform, pr
                             "-Dfile=${LIBPROJECT}-${version}-${platform}.zip")
                     break
                 case "jfrog":
-                    bat("mvn -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
+                    bat("mvn -U -B -s ${MAVEN_SETTINGS} deploy:deploy-file -Durl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                             "-DgroupId=org.nd4j " +
                             "-DartifactId=${LIBPROJECT} " +
                             "-Dversion=${version} " +
@@ -399,13 +399,13 @@ def get_libnd4j_artifacts_snapshot_ball(version, platform, profile_type) {
     switch (profile_type) {
         case "nexus":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
+                sh("mvn -U -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
                         "-Ddest=${LIBPROJECT}-${version}-${platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
+                bat("mvn -U -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8088/nexus/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
@@ -415,13 +415,13 @@ def get_libnd4j_artifacts_snapshot_ball(version, platform, profile_type) {
         case "sonatype":
 
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                sh("mvn -U -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
                         "-Ddest=${LIBPROJECT}-${version}-${platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
+                bat("mvn -U -B dependency:get -DrepoUrl=https://oss.sonatype.org/content/repositories/snapshots " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
@@ -430,13 +430,13 @@ def get_libnd4j_artifacts_snapshot_ball(version, platform, profile_type) {
             break
         case "bintray":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                sh("mvn -U -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
                         "-Ddest=${LIBPROJECT}-${version}-${platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
+                bat("mvn -U -B dependency:get -DrepoUrl=https://oss.jfrog.org/artifactory/oss-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
@@ -445,13 +445,13 @@ def get_libnd4j_artifacts_snapshot_ball(version, platform, profile_type) {
             break
         case "jfrog":
             if (isUnix()) {
-                sh("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
+                sh("mvn -U -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
                         "-Ddest=${LIBPROJECT}-${version}-${platform}.zip ")
             } else {
-                bat("mvn -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
+                bat("mvn -U -B dependency:get -DrepoUrl=http://master-jenkins.skymind.io:8081/artifactory/libs-snapshot-local " +
                         "-DgroupId=org.nd4j -DartifactId=${LIBPROJECT} -Dversion=${VERSION} -Dpackaging=zip " +
                         "-Dtransitive=false " +
                         "-Dclassifier=${platform} " +
@@ -475,7 +475,7 @@ def install_nd4j_native_to_local_maven_repository(version) {
     def listPlatformVersion = ["android-arm", "android-x86", "linux-ppc64le", "linux-x86_64", "macosx-x86_64", "windows-x86_64"]
     for (int i = 0; i < listPlatformVersion.size(); i++) {
         echo("[ INFO ] Try install nd4j-native version  : " + "nd4j-native-${version}-${listPlatformVersion[i]}.jar " + " - into local Maven repository")
-        sh("mvn -B install:install-file -Dfile=nd4j-native-${version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
+        sh("mvn -U -B install:install-file -Dfile=nd4j-native-${version}-${listPlatformVersion[i]}.jar -DgroupId=org.nd4j -DartifactId=nd4j-native -Dversion=${version} -Dpackaging=jar -Dclassifier=${listPlatformVersion[i]}")
     }
 }
 
@@ -714,9 +714,9 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
             for (int i = 0; i < classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + group_id + ":" +  artifact_id + ":" +version + ":" +packaging + ":" + classifier[i] )
                 if (isUnix()) {
-                    sh("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    sh("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 } else {
-                    bat("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    bat("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 }
             }
             break
@@ -725,9 +725,9 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
             for (int i = 0; i < classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + group_id + ":" +  artifact_id + ":" +version + ":" +packaging + ":" + classifier[i] )
                 if (isUnix()) {
-                    sh("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    sh("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 } else {
-                    bat("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    bat("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 }
             }
             break
@@ -736,9 +736,9 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
             for (int i = 0; i < classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + group_id + ":" +  artifact_id + ":" +version + ":" +packaging + ":" + classifier[i] )
                 if (isUnix()) {
-                    sh("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    sh("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 } else {
-                    bat("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    bat("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 }
             }
             break
@@ -747,9 +747,9 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
             for (int i = 0; i < classifier.size(); i++){
                 echo("[ INFO ] try to download  and install dependencies of given artifact: " + group_id + ":" +  artifact_id + ":" +version + ":" +packaging + ":" + classifier[i] )
                 if (isUnix()) {
-                    sh("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    sh("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 } else {
-                    bat("mvn -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
+                    bat("mvn -U -B dependency:get -DrepoUrl=${repo_url} -DgroupId=${group_id} -DartifactId=${artifact_id} -Dversion=${version} -Dpackaging=${packaging} -Dclassifier=${classifier[i]}")
                 }
             }
             break
