@@ -28,8 +28,8 @@ env.ND4S_PROJECT = "nd4s"
 env.RL4J_PROJECT = "rl4j"
 env.SCALNET_PROJECT = "scalnet"
 env.DATAVEC_PROJECT = "datavec"
-
-env.PROFILE_TYPE = env.PROFILE_TYPE ?: "jfrog"
+env.PROFILE_TYPE = env.PROFILE_TYPE ?: "nexus"
+env.CREATE_RPM = env.CREATE_RPM ?: "false"
 env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
 
 env.DOCKER_UBUNTU14_CUDA75_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda75:latest"
