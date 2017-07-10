@@ -1,6 +1,6 @@
 FROM nvidia/cuda:8.0-cudnn5-devel-centos6
 
-ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u121-b13/jdk-8u121-linux-x64.tar.gz \
+ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz \
         JAVA_HOME=/opt/java \
         PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH} \
         MAVEN_VERSION=3.3.9
@@ -11,7 +11,7 @@ RUN yum -y clean all && \
         yum clean all
 
 RUN mkdir -p /opt && \
-        curl -H "Cookie: oraclelicense=accept-securebackup-cookie" \
+        curl -j -k -L -H "Cookie: oraclelicense=accept-securebackup-cookie" \
         -fsSL "${JAVA_ARCH_DOWNLOAD_URL}" \
         | tar -xzC /opt && \
         mv /opt/jdk* /opt/java && \
