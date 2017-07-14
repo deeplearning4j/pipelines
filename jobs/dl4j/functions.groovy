@@ -282,6 +282,10 @@ def getGpg() {
                 cp ${GPG_SECRING} ${HOME}/.gnupg/
                 chmod 700 $HOME/.gnupg
                 chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
+                echo "allow-loopback-pinentry" >> $HOME/.gnupg/gpg-agent.conf
+                echo "pinentry-mode loopback" >> $HOME/.gnupg/gpg.conf
+                chmod 600 $HOME/.gnupg/gpg-agent.conf
+                chmod 600 $HOME/.gnupg/gpg.conf
                 gpg --list-keys
                 '''
         } else {
