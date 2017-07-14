@@ -24,6 +24,7 @@ stage("${PROJECT}-build") {
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 functions.getGpg()
                 sh '''
+                                export GPG_TTY=$(tty)
                                 gpg --list-keys
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 mvn -U -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.repo.local=/Users/admin/.m2/${PROFILE_TYPE}/repository -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}

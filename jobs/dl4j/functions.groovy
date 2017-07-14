@@ -276,6 +276,7 @@ def getGpg() {
         if (isUnix()) {
             sh("rm -rf ${HOME}/.gnupg/*.gpg")
             sh '''
+                export GPG_TTY=$(tty)
                 gpg --list-keys
                 cp ${GPG_PUBRING} ${HOME}/.gnupg/
                 cp ${GPG_SECRING} ${HOME}/.gnupg/
