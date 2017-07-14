@@ -19,7 +19,7 @@ stage("${SKIL_PROJECT}-build") {
                   RPM_PROFILE = ""
                 }
                 sh '''
-                mvn -U -B -s ${MAVEN_SETTINGS} ${RPM_PROFILE} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
+                mvn -U -B -s ${MAVEN_SETTINGS} ${RPM_PROFILE} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
                 curl -T skil-distro-parent/skildistro/target/skil-distro-${VERSION}-dist.tar.gz -uhuitseeker:e0208f45cc328d3980ab4162e6ae368fa458d1c9 https://api.bintray.com/content/skymindio/SKIL-archive/SKIL/1.1-SNAPSHOT/skil-distro-${VERSION}-dist-$(date +%Y-%m-%d).tar.gz
                 '''
                 if (env.CREATE_RPM.toBoolean()){

@@ -18,7 +18,7 @@ stage("${PROJECT}-build") {
                 functions.getGpg()
                 sh("gpg --list-keys")
                 sh("if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi")
-                sh('''mvn -U -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.repo.local=${HOME}/.m2/${PROFILE_TYPE}/repository -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform,!:nd4j-tests' ''')
+                sh('''mvn -U -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.repo.local=${HOME}/.m2/${PROFILE_TYPE}/repository -Djavacpp.platform=${PLATFORM_NAME} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -pl '!:nd4j-cuda-8.0,!:nd4j-cuda-8.0-platform,!:nd4j-tests' ''')
             }
         }
         // if (!isSnapshot) {
