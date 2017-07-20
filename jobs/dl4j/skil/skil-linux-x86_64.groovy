@@ -25,6 +25,7 @@ stage("${SKIL_PROJECT}-build") {
                 '''
                 if (env.CREATE_RPM.toBoolean()){
                 sh '''
+                curl -uhuitseeker:e0208f45cc328d3980ab4162e6ae368fa458d1c9  -H "Content-Type: application/json" -X DELETE https://api.bintray.com/packages/skymindio/rpm/skil-server/versions/1.1.0-SNAPSHOT
                 curl -uhuitseeker:e0208f45cc328d3980ab4162e6ae368fa458d1c9  -H "Content-Type: application/json" -X POST https://api.bintray.com/packages/skymindio/rpm/ --data '{ "name": "skil-server", "desc": "Running deep learning in production", "vcs_url": "https://api.bintray.com/content/skymindio/rpm//skil-server", "labels": "", "licenses": [], "custom-licenses": [ "skymindio/skil-eula" ] }'
                 '''
                 }
