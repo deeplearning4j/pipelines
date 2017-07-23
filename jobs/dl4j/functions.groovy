@@ -270,8 +270,8 @@ def tag(proj) {
 
 def getGpg() {
     withCredentials([
-            file(credentialsId: 'gpg-pub-key-test-1', variable: 'GPG_PUBRING'),
-            file(credentialsId: 'gpg-private-key-test-1', variable: 'GPG_SECRING'),
+            file(credentialsId: 'gpg-pub-key-jenkins', variable: 'GPG_PUBRING'),
+            file(credentialsId: 'gpg-private-key-jenkins', variable: 'GPG_SECRING'),
             usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')]) {
         if (isUnix()) {
             sh("rm -rf ${HOME}/.gnupg/*.gpg")
