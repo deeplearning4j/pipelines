@@ -25,9 +25,7 @@ stage("${SKIL_PROJECT}-build") {
                 '''
                 if (env.CREATE_RPM.toBoolean()){
                     dir("contrib"){
-                        sh '''
-                          XDEBUG=true ./push_to_bintray.sh huitseeker e0208f45cc328d3980ab4162e6ae368fa458d1c9 skymindio /home/huitseeker/DL4J/lagom-skil-api/skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/skil-server-* https://api.bintray.com/content/skymindio/rpm/
-                        '''
+                        sh("push_to_bintray.sh huitseeker e0208f45cc328d3980ab4162e6ae368fa458d1c9 skymindio /home/huitseeker/DL4J/lagom-skil-api/skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/skil-server-* https://api.bintray.com/content/skymindio/rpm/")
                     }
                 }
             }
