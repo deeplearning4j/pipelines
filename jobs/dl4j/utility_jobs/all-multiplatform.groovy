@@ -28,7 +28,7 @@ def notifyFailed() {
 env.PLATFORM_NAME = env.PLATFORM_NAME ?: "master"
 node(PLATFORM_NAME) {
   try {
-    timeout(time:5, unit:'HOURS') {
+    timeout(time:10, unit:'HOURS') {
 
       currentBuild.displayName = "#${currentBuild.number} ${PLATFORM_NAME}"
       ws(WORKSPACE + "_" + PLATFORM_NAME) {
