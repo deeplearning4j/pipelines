@@ -24,7 +24,7 @@ stage("${SKIL_PROJECT}-build") {
                 curl -T skil-distro-parent/skildistro/target/skil-distro-${VERSION}-dist.tar.gz -uhuitseeker:e0208f45cc328d3980ab4162e6ae368fa458d1c9 https://api.bintray.com/content/skymindio/SKIL-archive/SKIL/1.1-SNAPSHOT/skil-distro-${VERSION}-dist-$(date +%Y-%m-%d).tar.gz
                 '''
                 if (env.CREATE_RPM.toBoolean()){
-                    sh("./contrib/push_to_bintray.sh huitseeker e0208f45cc328d3980ab4162e6ae368fa458d1c9 skymindio /home/huitseeker/DL4J/lagom-skil-api/skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/skil-server-* https://api.bintray.com/content/skymindio/rpm/")
+                    sh("./contrib/push_to_bintray.sh huitseeker e0208f45cc328d3980ab4162e6ae368fa458d1c9 skymindio ./skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/skil-server-* https://api.bintray.com/content/skymindio/rpm/")
                 }
             }
         }
