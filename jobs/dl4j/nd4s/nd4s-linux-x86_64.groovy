@@ -49,7 +49,10 @@ stage("${ND4S_PROJECT}-build") {
 
         docker.image(dockerImage).inside(dockerParams) {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
+                functions.getGpg()
                 sh '''
+                  export GPG_TTY=$(tty)
+                  gpg --list-keys
                   cp -a ${WORKSPACE}/.ivy2 ${HOME}/
                   cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
                   sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} -Dnd4jVersion=${VERSION} +publishSigned
