@@ -25,8 +25,11 @@ stage("${SKIL_PROJECT}-build") {
                 '''
                 if (env.CREATE_RPM.toBoolean()){
                     sh'''
+                    ls ./skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64
                     shopt -s nullglob
-                    ./contrib/push_to_bintray.sh huitseeker e0208f45cc328d3980ab4162e6ae368fa458d1c9 skymindio ./skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/skil-server-*.rpm https://api.bintray.com/content/skymindio/rpm/
+                    list=( ./skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/skil-server-*.rpm )
+                    echo "${list[-1]}"
+                    ./contrib/push_to_bintray.sh huitseeker e0208f45cc328d3980ab4162e6ae368fa458d1c9 skymindio ${list[-1]} https://api.bintray.com/content/skymindio/rpm/
                     '''
                 }
             }
