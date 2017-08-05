@@ -122,7 +122,7 @@ def checktag(proj) {
     def check_tag = sh(returnStdout: true, script: "git tag -l ${proj}-${VERSION}")
     if (check_tag) {
         echo("Version exists: " + check_tag)
-        error("Failed to proceed with current version: " + check_tag)
+//        error("Failed to proceed with current version: " + check_tag)
     } else {
         echo("There is no tag with provided value: ${proj}-${VERSION}")
     }
