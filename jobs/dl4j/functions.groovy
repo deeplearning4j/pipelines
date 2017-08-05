@@ -80,7 +80,7 @@ def get_project_code(proj) {
             sh("git clone -b ${GIT_BRANCHNAME} --single-branch https://github.com/${ACCOUNT}/${proj}.git --depth=1")
         } else {
             checkout([$class                           : 'GitSCM',
-                      branches                         : [[name: "*/${GIT_BRANCHNAME}"]],
+                      branches                         : [[name: "*/${GIT_BRANCHNAME}"], [name: "refs/tags/${GIT_BRANCHNAME}"]],
                       doGenerateSubmoduleConfigurations: false,
                       extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
                                                           [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
@@ -94,7 +94,7 @@ def get_project_code(proj) {
         echo "Running on Windows"
         // git 'https://github.com/deeplearning4j/libnd4j.git'
         checkout([$class                           : 'GitSCM',
-                  branches                         : [[name: "*/${GIT_BRANCHNAME}"]],
+                  branches                         : [[name: "*/${GIT_BRANCHNAME}"], [name: "refs/tags/${GIT_BRANCHNAME}"]],
                   doGenerateSubmoduleConfigurations: false,
                   extensions                       : [[$class: 'RelativeTargetDirectory', relativeTargetDir: "${proj}"],
                                                       [$class: 'CloneOption', honorRefspec: true, noTags: isSnapshot, reference: '', shallow: true, timeout: 30]],
