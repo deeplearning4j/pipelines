@@ -16,7 +16,7 @@ node("${PLATFORM_NAME}") {
                 [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
                 [$class: "ParametersDefinitionProperty", parameterDefinitions:
                         [
-                                [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.8.1-SNAPSHOT", description: "Deeplearning component release version"],
+                                [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.9.1-SNAPSHOT", description: "Deeplearning component release version"],
                                 [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64", description: "Build project on architecture"],
                                 [$class: "StringParameterDefinition", name: "STAGE_REPO_ID", defaultValue: "", description: "Staging repository Id"],
                                 [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "master", description: "Default Git branch value"],

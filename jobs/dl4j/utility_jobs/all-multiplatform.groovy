@@ -1,6 +1,6 @@
 properties([[$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "42"]],
             [$class: "ParametersDefinitionProperty", parameterDefinitions: [
-                    [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.8.1-SNAPSHOT", description: "Deeplearning component release version"],
+                    [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.9.1-SNAPSHOT", description: "Deeplearning component release version"],
                     [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nandroid-arm\nandroid-x86\nlinux-ppc64le\nmacosx-x86_64\nwindows-x86_64", description: "Build project on architecture"],
                     [$class: "BooleanParameterDefinition", name: "SKIP_TEST", defaultValue: true, description: "Select to run tests during mvn execution"],
                     [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
