@@ -17,6 +17,7 @@ stage("${SCALNET_PROJECT}-build") {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             env.SCALA_VERSION = listScalaVersion[i]
 
+            sh("./change-scala-versions.sh ${SCALA_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 docker.image(dockerImage).inside(dockerParams) {
