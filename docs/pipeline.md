@@ -60,7 +60,7 @@ Job parameters:
     **default value:** linux-x86_64, linux-ppc64le, android-arm, android-x86, macosx-x86_64, windows-x86_64
 * VERSION:
     **desc:** Deeplearning component snapshot version
-    **default value:** 0.9.1-SNAPSHOT
+    **default value:** 0.9.2-SNAPSHOT
 * SKIP_TEST
     **desc:** Skip tests during mvn execution (ex: mvn clean deploy -Dmaven.test.skip=true)
     **default value:** ON

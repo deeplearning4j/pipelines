@@ -12,7 +12,7 @@
 //         parameterDefinitions: [
 //                 [$class: "StringParameterDefinition",
 //                     name: "VERSION",
-//                     defaultValue: "0.9.1-SNAPSHOT",
+//                     defaultValue: "0.9.2-SNAPSHOT",
 //                     description: "Deeplearning component release version"
 //                 ],
 //             [$class: "BooleanParameterDefinition",
