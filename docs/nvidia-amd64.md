@@ -26,8 +26,8 @@
   sudo pip install ansible
   sudo yum install docker -y
   sudo usermod -G docker ec2-user
-  wget -P /tmp http://us.download.nvidia.com/XFree86/Linux-x86_64/367.57/NVIDIA-Linux-x86_64-367.57.run
-  sudo bash /tmp/NVIDIA-Linux-x86_64-367.57.run -s
+  wget -P /tmp http://us.download.nvidia.com/XFree86/Linux-x86_64/375.26/NVIDIA-Linux-x86_64-375.26.run
+  sudo bash /tmp/NVIDIA-Linux-x86_64-375.26.run -s
  ```
 
 ### 2. Ansible plugin:
