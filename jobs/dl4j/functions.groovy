@@ -128,14 +128,12 @@ def checktag(proj) {
     }
 }
 
-def nvidia_docker_version = sh(returnStdout: true, script: "modinfo -F version nvidia").trim()
-
 def def_docker() {
     echo "Setting docker parameters and image for ${PLATFORM_NAME}"
     switch (PLATFORM_NAME) {
         case "linux-x86_64":
             def nvidia_docker_volume = sh(returnStdout: true, script: "docker volume ls -f DRIVER=nvidia-docker -q| tail -1").trim()
-            if (sh(returnStdout: true, script: "ls -A $(docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}) && true || false")) {
+            if (sh(returnStdout: true, script: "ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}` && true || false")) {
                 dockerParams = dockerParams_tmpfs_nvidia + " --volume="+ nvidia_docker_volume + ":/usr/local/nvidia:ro"
             } else {
                 sh("ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}`")
