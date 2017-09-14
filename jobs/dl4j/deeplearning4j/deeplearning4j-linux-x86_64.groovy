@@ -18,7 +18,7 @@ stage("build test resources on ${PLATFORM_NAME}") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         dir('dl4j-test-resources') {
             docker.image(dockerImage).inside(dockerParams) {
-                sh("mvn -U -B clean install")
+                sh("mvn -U -B -PtrimSnapshots clean install")
 
             }
         }
@@ -73,7 +73,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
                     sh '''
                 export GPG_TTY=$(tty)
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -U -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -Dnd4j.version=${VERSION} -Ddeeplearning4j.version=${VERSION} -Ddatavec.version=${VERSION} -Ddl4j-test-resources.version=${VERSION}
+                mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -Dnd4j.version=${VERSION} -Ddeeplearning4j.version=${VERSION} -Ddatavec.version=${VERSION} -Ddl4j-test-resources.version=${VERSION}
                 '''
                 }
             }
