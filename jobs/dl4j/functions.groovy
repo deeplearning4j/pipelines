@@ -63,15 +63,15 @@ Check console output at '${env.BUILD_URL}'""",
     )
 }
 
-// def notifyRepositoryStatus(stat) {
-//   emailext (
-//       subject: "Repository is ${stat}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-//       body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-//         <p>Staging repositoty - ${STAGE_REPO_ID} has been ${stat}</p>
-//         <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-//       recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-//     )
-// }
+def notifyRepositoryStatus(stat) {
+  emailext (
+      subject: "Repository is ${stat}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+      body: """<p>Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+        <p>Staging repositoty - ${STAGE_REPO_ID} has been ${stat}</p>
+        <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+      recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+    )
+}
 
 
 def get_project_code(proj) {
