@@ -145,13 +145,13 @@ def def_docker() {
 
         case "linux-ppc64le":
             dockerImage = "${DOCKER_CUDA_PPC}"
-            dockerParams = dockerParams
+            dockerParams = dockerParams_init
             sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE} ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case ["android-arm", "android-x86"]:
             dockerImage = "${DOCKER_ANDROID_IMAGE}"
-            dockerParams = dockerParams
+            dockerParams = dockerParams_init
             sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE} ${JENKINS_DOCKER_SBTDIR}")
             break
 

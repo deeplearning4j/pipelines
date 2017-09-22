@@ -72,7 +72,7 @@ node(PLATFORM_NAME) {
                   ],
                   [platform      : "android-arm",
                    dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                   dockerParams  : "",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
                    jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
@@ -81,7 +81,7 @@ node(PLATFORM_NAME) {
                   ],
                   [platform      : "android-x86",
                    dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                   dockerParams  : "",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
                    jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
