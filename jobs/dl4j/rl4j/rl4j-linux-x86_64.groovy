@@ -9,7 +9,7 @@ stage("${RL4J_PROJECT}-build") {
         functions.verset("${VERSION}", true)
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
 
-            docker.image(dockerImage).inside(dockerParams) {
+            docker.image(dockerImage).withRun(dockerParams) {
                 functions.getGpg()
                 sh '''
                 export GPG_TTY=$(tty)
