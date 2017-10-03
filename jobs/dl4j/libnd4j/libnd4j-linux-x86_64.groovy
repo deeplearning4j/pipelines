@@ -62,8 +62,7 @@ stage("${LIBPROJECT}-build") {
         }
 
         if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {
-          //docker.image(dockerImage).inside(dockerParams){
-            docker.image(dockerImage).inside(){
+            docker.image(dockerImage).inside(dockerParams){
                 functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
             }
         }
