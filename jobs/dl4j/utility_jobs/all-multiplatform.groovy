@@ -48,7 +48,7 @@ node(PLATFORM_NAME) {
           final appsList = [
                   [platform      : "linux-x86_64",
                    dockerImage   : "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
-                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:rw --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_375.26:/usr/local/nvidia:ro --tmpfs /tmp:size=4g",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:z --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_375.26:/usr/local/nvidia:ro --tmpfs /tmp:size=4g",
                    jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
@@ -64,7 +64,7 @@ node(PLATFORM_NAME) {
                   ],
                   [platform      : "linux-ppc64le",
                    dockerImage   : "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le:latest",
-                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:rw -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:rw",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z",
                    jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [[name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
                                     [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
@@ -72,7 +72,7 @@ node(PLATFORM_NAME) {
                   ],
                   [platform      : "android-arm",
                    dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                   dockerParams  : "",
+                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z",
                    jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
