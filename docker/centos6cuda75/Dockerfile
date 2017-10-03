@@ -1,6 +1,6 @@
 FROM nvidia/cuda:7.5-cudnn5-devel-centos6
 
-ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz \
+ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz \
         JAVA_HOME=/opt/java \
         PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH} \
         MAVEN_VERSION=3.3.9
