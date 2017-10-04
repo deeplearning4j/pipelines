@@ -67,13 +67,17 @@ where:
 - use **zensam/jenkins:v2.32.2** pre-configured Docker image of Jenkins (can be changed to **jenkins:2.32.2**)
 
 
+~~**`!!ATTENTION!!`**~~
+~~Do not upgrade **Docker Pipeline** plugin on Jenkins master from 1.9.1~~ ~~version. New version (at this time 1.10) has some bug which has negative~~ ~~influence to our builds. At least until the moment when this~~ ~~[bug](https://issues.jenkins-ci.org/browse/JENKINS-42322) is fixed.~~
+
 **`!!ATTENTION!!`**
-Do not upgrade **Docker Pipeline** plugin on Jenkins master from 1.9.1 version. New version (at this time 1.10) has some bug which has negative influence to our builds. At least until the moment when this [bug](https://issues.jenkins-ci.org/browse/JENKINS-42322) is fixed.
+Our current setup suffers from
+[bug](https://issues.jenkins-ci.org/browse/JENKINS-29239).
 
 ### **Nexus OSS**
 Nexus Repository is hosted on **linux-x86_64** as a docker container, start it with following command:
 
-**docker run -d --name nexus -p 8088:8081 -v  /srv/pv/nexus/sonatype-work:/sonatype-work sonatype/nexus:pro**
+**docker run -d --name nexus -p 8088:8081 -v  /srv/pv/nexus/sonatype-work:/sonatype-work sonatype/nexus:latest**
 
 where:
 - assign name of container - **nexus**
