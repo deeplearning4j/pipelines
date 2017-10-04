@@ -6,7 +6,7 @@ stage("${LIBPROJECT}-build") {
                     dir("stream0") {
                         sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
                         dir("${LIBPROJECT}") {
-                            docker.image(dockerImage).withRun(dockerParams) {
+                            docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     ./buildnativeoperations.sh -c cpu
@@ -25,7 +25,7 @@ stage("${LIBPROJECT}-build") {
                             if (PLATFORM_NAME == "linux-x86_64") {
                                 dockerImage = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
                             }
-                            docker.image(dockerImage).withRun(dockerParams) {
+                            docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     ./buildnativeoperations.sh -c cuda -v 7.5 ${BUILD_CUDA_PARAMS}
@@ -40,7 +40,7 @@ stage("${LIBPROJECT}-build") {
                     dir("stream2") {
                         sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
                         dir("${LIBPROJECT}") {
-                            docker.image(dockerImage).withRun(dockerParams) {
+                            docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     ./buildnativeoperations.sh -c cuda -v 8.0 ${BUILD_CUDA_PARAMS}
@@ -61,7 +61,7 @@ stage("${LIBPROJECT}-build") {
             unstash 'cuda80-blas'
 
             if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {
-                docker.image(dockerImage).withRun(dockerParams){
+                docker.image(dockerImage).inside(dockerParams){
                     functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
                 }
             }

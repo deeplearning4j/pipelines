@@ -1,5 +1,5 @@
 stage("${PROJECT}-Resolve-Dependencies") {
-    docker.image(dockerImage).withRun(dockerParams) {
+    docker.image(dockerImage).inside(dockerParams) {
         functions.resolve_dependencies_for_nd4j()
     }
 }
@@ -14,7 +14,7 @@ stage("${PROJECT}-build") {
         functions.verset("${VERSION}", true)
 
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-            docker.image(dockerImage).withRun(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams) {
                 functions.getGpg()
                 sh '''
                 export GPG_TTY=$(tty)

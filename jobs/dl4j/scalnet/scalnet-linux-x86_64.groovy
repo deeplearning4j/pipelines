@@ -20,7 +20,7 @@ stage("${SCALNET_PROJECT}-build") {
             sh("./change-scala-versions.sh ${SCALA_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).withRun(dockerParams) {
+                docker.image(dockerImage).inside(dockerParams) {
                     functions.getGpg()
                     sh '''
                 export GPG_TTY=$(tty)
