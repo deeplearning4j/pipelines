@@ -1,5 +1,5 @@
 stage("${PROJECT}-Resolve-Dependencies") {
-    docker.image(dockerImage).resueNode('true').inside(dockerParams) {
+    docker.image(dockerImage).reuseNode('true').inside(dockerParams) {
         functions.resolve_dependencies_for_nd4j()
     }
 }
@@ -24,7 +24,7 @@ stage("${PROJECT}-build") {
             sh(script: "./change-scala-versions.sh ${SCALA_VERSION}")
             sh(script: "./change-cuda-versions.sh ${CUDA_VERSION}")
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).resueNode('true').inside(dockerParams) {
+                docker.image(dockerImage).reuseNode('true').inside(dockerParams) {
                     functions.getGpg()
                     sh '''
                                 export GPG_TTY=$(tty)
