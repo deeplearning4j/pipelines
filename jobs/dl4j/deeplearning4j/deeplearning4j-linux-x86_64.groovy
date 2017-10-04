@@ -17,7 +17,7 @@ stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 stage("build test resources on ${PLATFORM_NAME}") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         dir('dl4j-test-resources') {
-            docker.image(dockerImage).reuseNode().inside(dockerParams) {
+            docker.image(dockerImage).resueNode('true').inside(dockerParams) {
                 sh("mvn -U -B -PtrimSnapshots clean install")
 
             }
@@ -68,7 +68,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).reuseNode().inside(dockerParams) {
+                docker.image(dockerImage).resueNode('true').inside(dockerParams) {
                     functions.getGpg()
                     sh '''
                 export GPG_TTY=$(tty)
