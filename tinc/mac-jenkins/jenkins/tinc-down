@@ -1,4 +1,1 @@
-#!/bin/sh
-# This file closes down the tap device.
-
 ifconfig $INTERFACE down
