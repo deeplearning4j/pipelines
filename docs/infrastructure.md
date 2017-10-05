@@ -126,7 +126,7 @@ Jenkins master-slave connection.
 Linux-ppc64le slave should be able to build two components:
 [libnd4j](https://github.com/deeplearning4j/libnd4j) and [nd4j](https://github.com/deeplearning4j/nd4j).
 
-**windows-x86_64**
+### **windows-x86_64**
 Labels: **windows-x86_64**
 
 Set of tools supposed to installed for Windows related builds for emulating some Linux behaviour on Windows OS family. As on the previous host only two components of project are to be built:
