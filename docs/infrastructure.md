@@ -121,7 +121,7 @@ This host also managed by Linux OS, difference only in hardware architecture, so
 </p>
 
 The process of docker image building is described above and the base image for the PPC platform is [ppc64le/ubuntu:14.04]
-(https://hub.docker.com/r/ppc64le/ubuntu). Unlike  **linux-x86_64**, CUDA 7.5 Toolkit and all necessary tools are installed during main docker image building according to [Dockerfile's instruction](/docker/ubuntu14-ppc64le/Dockerfile). This node requires only ssh and java sdk for
+(https://hub.docker.com/r/ppc64le/ubuntu). Unlike  **linux-x86_64**, CUDA 7.5 Toolkit and all necessary tools are installed during main docker image building according to [Dockerfile's instruction](/docker/ubuntu16-ppc64le/Dockerfile). This node requires only ssh and java sdk for
 Jenkins master-slave connection.
 Linux-ppc64le slave should be able to build two components:
 [libnd4j](https://github.com/deeplearning4j/libnd4j) and [nd4j](https://github.com/deeplearning4j/nd4j).
