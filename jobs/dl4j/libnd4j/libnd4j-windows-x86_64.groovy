@@ -14,18 +14,7 @@ stage("${LIBPROJECT}-build") {
                             }
                         }
                     },
-                    "Stream 2 Build CUDA 7.5": {
-                        dir("stream2") {
-                            functions.get_project_code("${LIBPROJECT}")
-                            dir("${LIBPROJECT}") {
-                                bat '''
-                    vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 7.5 %BUILD_CUDA_PARAMS%
-                    '''
-                                stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
-                            }
-                        }
-                    },
-                    "Stream 3 Build CUDA 8.0": {
+                    "Stream 2 Build CUDA 8.0": {
                         dir("stream3") {
                             functions.get_project_code("${LIBPROJECT}")
                             dir("${LIBPROJECT}") {
@@ -39,7 +28,6 @@ stage("${LIBPROJECT}-build") {
             )
             unstash 'cpu-blasbuild'
             unstash 'cpu-blas'
-            unstash 'cuda75-blasbuild'
             unstash 'cuda80-blasbuild'
             unstash 'libnd4j-include'
 
