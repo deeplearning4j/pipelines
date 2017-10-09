@@ -3,12 +3,6 @@ dockerParamsTest = "--device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/d
 
 images = [
     [
-        name: "centos6cuda75",
-        dockerNode: "linux-x86_64",
-        registry: dockerRegistry,
-        parentImage: "nvidia/cuda:7.5-cudnn5-devel-centos6"
-    ],
-    [
         name: "centos6cuda80",
         dockerNode: "linux-x86_64",
         registry: dockerRegistry,
