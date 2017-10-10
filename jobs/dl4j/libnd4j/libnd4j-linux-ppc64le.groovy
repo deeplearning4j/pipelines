@@ -36,8 +36,6 @@ stage("${LIBPROJECT}-build") {
         dir("libnd4j") {
             unstash 'cpu-blasbuild'
             unstash 'cpu-blas'
-            unstash 'cuda75-blasbuild'
-            unstash 'cuda75-blas'
             unstash 'cuda80-blasbuild'
             unstash 'cuda80-blas'
 
