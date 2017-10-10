@@ -63,7 +63,7 @@ node(PLATFORM_NAME) {
                    ]
                   ],
                   [platform      : "linux-ppc64le",
-                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/ubuntu14-ppc64le:latest",
+                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/ubuntu16-ppc64le:latest",
                    dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z",
                    jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [[name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],

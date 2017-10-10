@@ -16,17 +16,17 @@ node {
         def xname = image.name
         def xregistry = image.registry
         def parent = image.parentImage
-        echo image.dockerNode + " " + image.name
-        echo label + " " + xname
+        echo "${image.dockerNode} ${image.name}"
+        echo "${label} ${xname}"
         builders[xname] = {
             node(label) {
-                stage ("Build " + xname) {
+                stage ("Build ${xname}") {
                     unstash 'docker'
                     docker.image(parent).pull()
-                    docker.build (xregistry + "/" + xname,"docker/" + xname)
+                    docker.build ("${xregistry}/${xname}","docker/${name}")
                 }
-                stage ("Test " + xname) {
-                    docker.image(xregistry + "/" + xname).inside {
+                stage ("Test ${xname}") {
+                    docker.image("${xregistry}/${xname}").inside {
                         sh '''
                         java -version
                         mvn -version
@@ -37,9 +37,9 @@ node {
                         '''
                     }
                 }
-                stage ("Push " + xname) {
+                stage ("Push ${xname}") {
                     if ( PUSH_TO_REGISTRY.toBoolean() ) {
-                        withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: "https://" + xregistry]) {
+                        withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: "https://${xregistry}"]) {
                             docker.image(xregistry/xname).push 'latest'
                         }
                     } else {
