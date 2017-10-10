@@ -17,25 +17,6 @@ stage("${LIBPROJECT}-build") {
                         }
                     }
                 },
-                "Stream 1 ${LIBPROJECT}-BuildCuda-7.5-${PLATFORM_NAME}": {
-                    dir("stream1") {
-                        sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
-                        dir("${LIBPROJECT}") {
-                            // Hardcode here: override dockerImage as it make sense for linux-x86_64 only
-                            if (PLATFORM_NAME == "linux-x86_64") {
-                                dockerImage = "deeplearning4j-docker-registry.bintray.io/centos6cuda75:latest"
-                            }
-                            docker.image(dockerImage).inside(dockerParams) {
-                                sh '''
-                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    ./buildnativeoperations.sh -c cuda -v 7.5 ${BUILD_CUDA_PARAMS}
-                                    '''
-                                stash includes: 'blasbuild/cuda-7.5/blas/', name: 'cuda75-blasbuild'
-                                stash includes: 'blas/', name: 'cuda75-blas'
-                            }
-                        }
-                    }
-                },
                 "Stream 2 ${LIBPROJECT}-BuildCuda-8.0-${PLATFORM_NAME}": {
                     dir("stream2") {
                         sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
