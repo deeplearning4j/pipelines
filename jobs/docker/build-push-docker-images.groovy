@@ -23,7 +23,7 @@ node {
                 stage ("Build ${xname}") {
                     unstash 'docker'
                     docker.image(parent).pull()
-                    docker.build ("${xregistry}/${xname}","docker/${name}")
+                    docker.build ("${xregistry}/${xname}","docker/${xname}")
                 }
                 stage ("Test ${xname}") {
                     docker.image("${xregistry}/${xname}").inside {
