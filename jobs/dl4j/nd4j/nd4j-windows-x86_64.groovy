@@ -13,8 +13,7 @@ stage("${PROJECT}-build") {
         env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','')
         env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/') + "/" + "${LIBPROJECT}"
 
-        final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
-                          [cudaVersion: "8.0", scalaVersion: "2.11"]]
+        final nd4jlibs = [[cudaVersion: "8.0", scalaVersion: "2.11"]]
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION = lib.cudaVersion

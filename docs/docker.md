@@ -38,7 +38,7 @@ User jenkins in Dockerfile should have same id with your jenkins-slave user.
 
 ## Build images manually
 ```bash
-docker build docker/centos6cuda75
+docker build docker/centos6cuda80
 ```
 
 ## Jenkins Builds
