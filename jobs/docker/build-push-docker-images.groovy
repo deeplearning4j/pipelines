@@ -40,7 +40,7 @@ node {
                 stage ("Push ${xname}") {
                     if ( PUSH_TO_REGISTRY.toBoolean() ) {
                         withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: "https://${xregistry}"]) {
-                            docker.image(xregistry/xname).push 'latest'
+                            docker.image("${xregistry}/${xname}").push 'latest'
                         }
                     } else {
                         echo "Skipping push to registry"
