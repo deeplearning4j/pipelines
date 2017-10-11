@@ -10,7 +10,7 @@ RUN apt-get -qqy install build-essential python-software-properties software-pro
     dpkg -i /tmp/cuda-repo.deb && \
     rm -f /tmp/cuda-repo.deb && \
     apt-get -qqy update
-RUN apt-get install gcc g++ cuda openjdk-8-jdk cmake maven -qqy --no-install-recommends && \
+RUN apt-get install gcc g++ cuda openjdk-8-jdk-headless cmake maven -qqy --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 1 && \
