@@ -16,5 +16,10 @@ images = [
         name: "ubuntu16-ppc64le",
         dockerNode: "linux-ppc64le",
         registry: dockerRegistry
+    ],
+    [
+        name: "ubuntu16cuda90-ppc64le",
+        dockerNode: "linux-ppc64le",
+        registry: dockerRegistry
     ]
 ]
