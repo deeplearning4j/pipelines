@@ -8,6 +8,12 @@ images = [
         registry: dockerRegistry
     ],
     [
+        name: "centos6cuda90",
+        dockerNode: "linux-x86_64",
+        registry: dockerRegistry,
+        parentImage: "nvidia/cuda:9.0-cudnn7-devel-centos6"
+    ],
+    [
         name: "android",
         dockerNode: "linux-x86_64",
         registry: dockerRegistry
