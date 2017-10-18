@@ -3,7 +3,7 @@
 ## Pre requirements:
 1. Jenkins (2+ version) with Amazon EC2 (id: ec2), Docker Pipeline (id: docker-workflow) and Ansible (id: ansible) plugins.
 2. AWS credentials with preconfigured security group(s), keypair(s), etc.
-3. NVIDIA CUDA Toolkit 9 on Amazon Linux with accepted agreement for use.
+3. NVIDIA CUDA Toolkit 7.5 on Amazon Linux with accepted agreement for use.
 
 ## Configuration:
 
