@@ -1,11 +1,13 @@
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
-ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz \
+ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
+    JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163 \
 	JAVA_HOME=/opt/java \
 	PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH} \
 	MAVEN_VERSION=3.3.9
 
-RUN apt-get update && apt-get -y --no-install-recommends install curl ca-certificates software-properties-common git && \
+RUN apt-get update && \
+    apt-get -y --no-install-recommends install wget curl ca-certificates software-properties-common git && \
 	add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
 	apt-get update && \
 	apt-get install -y --no-install-recommends gcc-4.9 g++-4.9 && \
@@ -15,9 +17,11 @@ RUN apt-get update && apt-get -y --no-install-recommends install curl ca-certifi
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /opt && \
-	curl -H "Cookie: oraclelicense=accept-securebackup-cookie" \
-	-fsSL "${JAVA_ARCH_DOWNLOAD_URL}" \
-	| tar -xzC /opt && \
+	wget --no-cookies --no-check-certificate \
+	    --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+	    "${JAVA_ARCH_DOWNLOAD_URL}/${JAVA_PACKAGE_NAME}" && \
+    tar -xzf "${JAVA_PACKAGE_NAME}" -C /opt && \
+    rm "${JAVA_PACKAGE_NAME}" && \
 	mv /opt/jdk* /opt/java && \
 	update-alternatives --install /usr/bin/java java /opt/java/bin/java 100 && \
 	update-alternatives --install /usr/bin/javac javac /opt/java/bin/javac 100
