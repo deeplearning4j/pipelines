@@ -40,7 +40,7 @@ node {
                 stage ("Push ${xname}") {
                     if ( PUSH_TO_REGISTRY.toBoolean() ) {
                       withDockerRegistry([credentialsId: 'BintrayDockerRegistry', url: "https://${xregistry}"]) {
-                        docker.withRegistry("https://${xregistry}", "https://${xregistry}"){
+                        docker.withRegistry('BintrayDockerRegistry', "https://${xregistry}"){
                           docker.image("${xregistry}/${xname}").push 'latest'
                         }
                       }
