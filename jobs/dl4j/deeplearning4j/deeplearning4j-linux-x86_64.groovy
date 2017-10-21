@@ -51,15 +51,15 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
 
         functions.verset("${VERSION}", true)
 
-        def listScalaVersion = ["2.10", "2.11","2.11"]
-        def listCudaVersion = ["8.0","8.0", "8.0"]
-        def listSparkVersion = ["1", "1","2"]
+        def listScalaVersion = ["2.10", "2.11", "2.11"] * 2
+        def listCudaVersion = ["8.0"] * 3 + ["9.0"] * 3
+        def listSparkVersion = ["1", "1", "2"] * 2
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             env.SCALA_VERSION = listScalaVersion[i]
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            env.CUDA_VERSION = listCudaVersion[i];
+            env.CUDA_VERSION = listCudaVersion[i]
             echo "[ INFO ] ++ SET Spark Version to: " + listSparkVersion[i]
             env.SPARK_VERSION = listSparkVersion[i]
 
