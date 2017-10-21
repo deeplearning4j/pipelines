@@ -47,9 +47,6 @@ node(PLATFORM_NAME) {
 
           final appsList = [
                   [platform      : "linux-x86_64",
-                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest",
-                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z -v /srv/jenkins/storage/docker_ivy2:/home/jenkins/.ivy2:z --device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_375.26:/usr/local/nvidia:ro --tmpfs /tmp:size=4g",
-                   jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
                            [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"],
@@ -63,26 +60,17 @@ node(PLATFORM_NAME) {
                    ]
                   ],
                   [platform      : "linux-ppc64le",
-                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/ubuntu16-ppc64le:latest",
-                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z",
-                   jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [[name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
                                     [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
                    ]
                   ],
                   [platform      : "android-arm",
-                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                   dockerParams  : "-v ${WORKSPACE}:${WORKSPACE}:z -v /srv/jenkins/storage/docker_m2:/home/jenkins/.m2:z",
-                   jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
                            [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
                    ]
                   ],
                   [platform      : "android-x86",
-                   dockerImage   : "deeplearning4j-docker-registry.bintray.io/android:latest",
-                   dockerParams  : "",
-                   jenkinsStorage: "/srv/jenkins/storage",
                    apps          : [
                            [name: "libnd4j", loadFile: "${PDIR}/libnd4j/libnd4j-${PLATFORM_NAME}.groovy"],
                            [name: "nd4j", loadFile: "${PDIR}/nd4j/nd4j-${PLATFORM_NAME}.groovy"]
@@ -105,10 +93,8 @@ node(PLATFORM_NAME) {
           for (i in appsList) {
               if (PLATFORM_NAME == i.platform) {
                   for (app in i.apps) {
-                      // echo "building " + app.name + " loading file: " + app.loadFile + " docker params: " + i.dockerParams
                       stage(app.name) {
                           functions.def_docker()
-                          // functions.def_docker(i.platform, i.dockerImage, i.dockerParams, i.jenkinsStorage)
                           load app.loadFile
                       }
                   }
