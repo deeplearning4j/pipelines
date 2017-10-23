@@ -1,6 +1,7 @@
 FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu14.04
 
-ENV JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u121-b13/e9e7ea248e2c4826b92b3f075a80e441/jdk-8u121-linux-x64.tar.gz \
+ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
+    JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163 \
 	JAVA_HOME=/opt/java \
 	PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH} \
 	MAVEN_VERSION=3.3.9
@@ -15,9 +16,11 @@ RUN apt-get update && apt-get -y --no-install-recommends install curl ca-certifi
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /opt && \
-	curl -H "Cookie: oraclelicense=accept-securebackup-cookie" \
-	-fsSL "${JAVA_ARCH_DOWNLOAD_URL}" \
-	| tar -xzC /opt && \
+    wget --no-cookies --no-check-certificate \
+        --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+        "${JAVA_ARCH_DOWNLOAD_URL}/${JAVA_PACKAGE_NAME}" && \
+    tar -xzf "${JAVA_PACKAGE_NAME}" -C /opt && \
+    rm "${JAVA_PACKAGE_NAME}" && \
 	mv /opt/jdk* /opt/java && \
 	update-alternatives --install /usr/bin/java java /opt/java/bin/java 100 && \
 	update-alternatives --install /usr/bin/javac javac /opt/java/bin/javac 100
