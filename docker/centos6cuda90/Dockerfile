@@ -23,7 +23,7 @@ RUN mkdir -p /opt && \
 
 RUN mkdir -p /opt/maven && \
         curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz \
-    | tar -xzC /opt/maven --strip-components=1 && \
+        | tar -xzC /opt/maven --strip-components=1 && \
         ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 RUN mkdir -p /opt/sbt && \
