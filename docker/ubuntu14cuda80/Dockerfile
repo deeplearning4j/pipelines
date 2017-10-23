@@ -6,7 +6,8 @@ ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
 	PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH} \
 	MAVEN_VERSION=3.3.9
 
-RUN apt-get update && apt-get -y --no-install-recommends install curl ca-certificates software-properties-common git && \
+RUN apt-get update && \
+    apt-get -y --no-install-recommends install wget curl ca-certificates software-properties-common git && \
 	add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
 	apt-get update && \
 	apt-get install -y --no-install-recommends gcc-4.9 g++-4.9 && \
