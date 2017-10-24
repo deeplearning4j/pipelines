@@ -3,7 +3,7 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
     JAVA_ARCH_DOWNLOAD_URL=http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163 \
 	JAVA_HOME=/opt/java \
-	PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH} \
+	PATH=/opt/sbt/bin:${PATH} \
 	MAVEN_VERSION=3.3.9
 
 RUN apt-get update && \
