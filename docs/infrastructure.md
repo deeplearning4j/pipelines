@@ -137,7 +137,7 @@ The following tools are needed:
 - java sdk ([link](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
 - MSYS2 ([link](http://www.msys2.org))
 - CUDA 8.0 and 9.0 Toolkit ([link](https://developer.nvidia.com/cuda-downloads))
-- Microsoft Visual Studio Community 2013 ([link](https://www.visualstudio.com/en-us/news/releasenotes/vs2013-community-vs)) or Microsoft Visual Studio Community 2015 ([link](https://www.visualstudio.com/en-us/news/releasenotes/vs2015-archive))
+- Microsoft Visual Studio Community 2015 ([link](https://www.visualstudio.com/en-us/news/releasenotes/vs2015-archive))
 After tools installation system variables inside host must be modified.
 - Create new variable *MAVEN_HOME* and *M2_HOME* and set those value as a path to directory with Maven
 - Create new variable *JAVA_HOME* and set value as a path to java sdk
