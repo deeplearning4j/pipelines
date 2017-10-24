@@ -30,8 +30,4 @@ RUN mkdir -p /opt/sbt && \
 	curl -fsSL https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz \
 	| tar -xzC /opt/sbt --strip-components=1
 
-RUN mkdir -p /opt/cmake && \
-	curl -fsSL https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz \
-	| tar -xzC /opt/cmake --strip-components=1
-
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
