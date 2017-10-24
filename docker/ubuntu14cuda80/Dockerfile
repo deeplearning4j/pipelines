@@ -17,6 +17,7 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /opt && \
+    # Switch from fecth jdk with curl to wget, because of errors during the fetch
     wget --no-cookies --no-check-certificate \
         --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
         "${JAVA_ARCH_DOWNLOAD_URL}/${JAVA_PACKAGE_NAME}" && \
