@@ -8,11 +8,6 @@ ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
 
 RUN apt-get update && \
     apt-get -y --no-install-recommends install wget curl ca-certificates software-properties-common git && \
-	add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
-	apt-get update && \
-	apt-get install -y --no-install-recommends gcc-4.9 g++-4.9 && \
-	update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 50 && \
-	update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 50 && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
