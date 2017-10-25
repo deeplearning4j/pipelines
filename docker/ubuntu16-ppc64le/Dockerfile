@@ -19,9 +19,6 @@ RUN apt-get install gcc g++ cuda openjdk-8-jdk-headless cmake maven -qqy --no-in
     ln -s /usr/bin/gcc-5 /usr/bin/gcc && \
     ln -s /usr/bin/g++-5 /usr/bin/g++
 
-
-ENV MAVEN_VERSION=3.3.9
-
 # Set user jenkins to the image
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
