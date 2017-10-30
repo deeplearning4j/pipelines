@@ -31,6 +31,21 @@ stage("${LIBPROJECT}-build") {
                             }
                         }
                     }
+                },
+                "Stream 2 ${LIBPROJECT}-BuildCuda-9.0-${PLATFORM_NAME}": {
+                    dir("stream2") {
+                        sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+                        dir("${LIBPROJECT}") {
+                            docker.image(dockerImage).inside(dockerParams) {
+                                sh '''
+                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                ./buildnativeoperations.sh -c cuda -v 9.0 ${BUILD_CUDA_PARAMS}
+                                '''
+                                stash includes: 'blasbuild/cuda-9.0/blas/', name: 'cuda80-blasbuild'
+                                stash includes: 'blas/', name: 'cuda90-blas'
+                            }
+                        }
+                    }
                 }
         )
         dir("libnd4j") {
@@ -38,6 +53,8 @@ stage("${LIBPROJECT}-build") {
             unstash 'cpu-blas'
             unstash 'cuda80-blasbuild'
             unstash 'cuda80-blas'
+            unstash 'cuda90-blasbuild'
+            unstash 'cuda90-blas'
         }
 
         if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {

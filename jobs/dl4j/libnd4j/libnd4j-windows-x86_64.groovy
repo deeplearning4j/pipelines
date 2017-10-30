@@ -15,7 +15,7 @@ stage("${LIBPROJECT}-build") {
                         }
                     },
                     "Stream 2 Build CUDA 8.0": {
-                        dir("stream3") {
+                        dir("stream2") {
                             functions.get_project_code("${LIBPROJECT}")
                             dir("${LIBPROJECT}") {
                                 bat '''
@@ -24,11 +24,23 @@ stage("${LIBPROJECT}-build") {
                                 stash includes: 'blasbuild/', name: 'cuda80-blasbuild'
                             }
                         }
+                    },
+                    "Stream 3 Build CUDA 9.0": {
+                        dir("stream3") {
+                            functions.get_project_code("${LIBPROJECT}")
+                            dir("${LIBPROJECT}") {
+                                bat '''
+                    vcvars64.bat && bash buildnativeoperations.sh -c cuda -v 9.0 %BUILD_CUDA_PARAMS% && rmdir /s /q blasbuild\\cuda && mklink /J blasbuild\\cuda blasbuild\\cuda-9.0
+                    '''
+                                stash includes: 'blasbuild/', name: 'cuda90-blasbuild'
+                            }
+                        }
                     }
             )
             unstash 'cpu-blasbuild'
             unstash 'cpu-blas'
             unstash 'cuda80-blasbuild'
+            unstash 'cuda90-blasbuild'
             unstash 'libnd4j-include'
 
             if ( PUSH_LIBND4J_LOCALREPO.toBoolean() ) {

@@ -18,7 +18,7 @@ Corresponfing labels are assigned to all nodes. Also all nodes should be synchro
 Labels: **amd64**, **linux-x86_64**, **android-arm**, **android-x86**, **sshlocal**
 
 Necessary tools/hardware:
- - GPU with latest driver and compatible with CUDA 8.0 ([link](http://www.nvidia.com/Download/index.aspx))
+ - GPU with latest driver and compatible with CUDA 8.0 & 9.0 ([link](http://www.nvidia.com/Download/index.aspx))
  - GCC 4.9 or 5.x
  - java sdk ([link](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
  - CMake 3.2
@@ -40,12 +40,14 @@ Then fill out **Node name** and choose **Permanent Agent**
   <img src="/imgs/linux-slave.png"/>
 </p>
 
-Docker images for CUDA 8.0, Android-x86, Android-arm are built by the job
+Docker images for CUDA 8.0, CUDA 9.0, Android-x86, Android-arm are built by the job
 [BuildDockerImages](http://master-jenkins.skymind.io:8080/job/devel/job/service/job/BuildDockerImages).
 This job uses [script](/jobs/docker/build-push-docker-images.groovy):
 - Stage **Build** pulls base docker image (the base of our images) from DockerHub registry
 CUDA 8.0:
 (base image is [nvidia/cuda:8.0-cudnn5-devel-centos6](https://hub.docker.com/r/nvidia/cuda)),
+CUDA 9.0:
+(base image is [nvidia/cuda:9.0-cudnn7-devel-centos6](https://hub.docker.com/r/nvidia/cuda)),
 Android-x86_64 and Android-arm:
 (base image is [maven:latest](https://hub.docker.com/_/maven/)) - builds main images according [Dockerfiles](/docker) for each needed platforms.
 - Stage **Test** checks docker images by checking the version of necessary tools inside containers.
@@ -118,8 +120,8 @@ This host also managed by Linux OS, difference only in hardware architecture, so
   <img src="/imgs/linux-ppc-slave.png"/>
 </p>
 
-The process of docker image building is described above and the base image for the PPC platform is [ppc64le/ubuntu:14.04]
-(https://hub.docker.com/r/ppc64le/ubuntu). Unlike  **linux-x86_64**, CUDA 8 Toolkit and all necessary tools are installed during main docker image building according to [Dockerfile's instruction](/docker/ubuntu14-ppc64le/Dockerfile). This node requires only ssh and java sdk for
+The process of docker image building is described above and the base image for the PPC platform is [ppc64le/ubuntu:16.04]
+(https://hub.docker.com/r/ppc64le/ubuntu). Unlike  **linux-x86_64**, CUDA 8 or CUDA 9 Toolkit and all necessary tools are installed during main docker image building according to [CUDA 8.0 Dockerfile's instruction](/docker/ubuntu16-ppc64le/Dockerfile) or [CUDA 9.0 Dockerfile's instruction](/docker/ubuntu16cuda90-ppc64le/Dockerfile). This node requires only ssh and java sdk for
 Jenkins master-slave connection.
 Linux-ppc64le slave should be able to build two components:
 [libnd4j](https://github.com/deeplearning4j/libnd4j) and [nd4j](https://github.com/deeplearning4j/nd4j).
@@ -134,8 +136,8 @@ The following tools are needed:
 - Maven ([link](https://maven.apache.org))
 - java sdk ([link](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html))
 - MSYS2 ([link](http://www.msys2.org))
-- CUDA 8.0 Toolkit ([link](https://developer.nvidia.com/cuda-downloads))
-- Microsoft Visual Studio Community 2013 ([link](https://www.visualstudio.com/en-us/news/releasenotes/vs2013-community-vs))
+- CUDA 8.0 and 9.0 Toolkit ([link](https://developer.nvidia.com/cuda-downloads))
+- Microsoft Visual Studio Community 2015 ([link](https://www.visualstudio.com/en-us/news/releasenotes/vs2015-archive))
 After tools installation system variables inside host must be modified.
 - Create new variable *MAVEN_HOME* and *M2_HOME* and set those value as a path to directory with Maven
 - Create new variable *JAVA_HOME* and set value as a path to java sdk
