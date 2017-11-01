@@ -8,9 +8,9 @@ stage("${LIBPROJECT}-build") {
                         dir("${LIBPROJECT}") {
                             docker.image(dockerImage).inside(dockerParams) {
                                 sh '''
-                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    ./buildnativeoperations.sh -c cpu
-                                    '''
+                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                                ./buildnativeoperations.sh -c cpu
+                                '''
                                 stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
                                 stash includes: 'blas/', name: 'cpu-blas'
                             }
@@ -41,7 +41,7 @@ stage("${LIBPROJECT}-build") {
                                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                 ./buildnativeoperations.sh -c cuda -v 9.0 ${BUILD_CUDA_PARAMS}
                                 '''
-                                stash includes: 'blasbuild/cuda-9.0/blas/', name: 'cuda80-blasbuild'
+                                stash includes: 'blasbuild/cuda-9.0/blas/', name: 'cuda90-blasbuild'
                                 stash includes: 'blas/', name: 'cuda90-blas'
                             }
                         }
@@ -62,7 +62,6 @@ stage("${LIBPROJECT}-build") {
                 functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
             }
         }
-
     } else {
         echo "Skipping libnd4j build, using snapshot"
     }
