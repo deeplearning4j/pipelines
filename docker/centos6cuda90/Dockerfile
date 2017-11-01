@@ -12,6 +12,7 @@ RUN yum -y clean all && \
         yum clean all
 
 RUN mkdir -p /opt && \
+        # Switch from fecth jdk with curl to wget, because of errors during the fetch
         wget --no-cookies --no-check-certificate \
             --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
             "${JAVA_ARCH_DOWNLOAD_URL}/${JAVA_PACKAGE_NAME}" && \
@@ -23,7 +24,7 @@ RUN mkdir -p /opt && \
 
 RUN mkdir -p /opt/maven && \
         curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz \
-    | tar -xzC /opt/maven --strip-components=1 && \
+        | tar -xzC /opt/maven --strip-components=1 && \
         ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 RUN mkdir -p /opt/sbt && \
