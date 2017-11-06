@@ -35,16 +35,6 @@ RUN mkdir -p /opt/cmake && \
         curl -fsSL https://cmake.org/files/v3.8/cmake-3.8.0-Linux-x86_64.tar.gz \
         | tar -xzC /opt/cmake --strip-components=1
 
-#FROM maven:latest
-#
-#RUN apt-get update &&\
-#    apt-get install git g++ gcc make -y --force-yes --no-install-recommends && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-#
-#RUN mkdir -p /opt/cmake && \
-#    curl -fsSL https://cmake.org/files/v3.7/cmake-3.7.2-Linux-x86_64.tar.gz | tar -xzC /opt/cmake --strip-components=1
-
 ENV ANDROID_NDK_VERSION r13b
 ENV ANDROID_NDK_URL=http://dl.google.com/android/repository/android-ndk-$ANDROID_NDK_VERSION-linux-x86_64.zip \
     ANDROID_NDK_HOME=/opt/android-ndk-$ANDROID_NDK_VERSION \
