@@ -1,5 +1,4 @@
 node {
-
     stage ('Checkout') {
         checkout scm
         stash includes: 'docker/', name: 'docker'

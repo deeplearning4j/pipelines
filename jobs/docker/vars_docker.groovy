@@ -1,4 +1,4 @@
-dockerRegistry = "deeplearning4j-docker-registry.bintray.io"
+dockerRegistry = 'registry.hub.docker.com'
 dockerParamsTest = "--device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 --volume=nvidia_driver_375.26:/usr/local/nvidia:ro"
 
 images = [
