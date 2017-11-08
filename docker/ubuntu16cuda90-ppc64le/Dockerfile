@@ -11,9 +11,9 @@ RUN apt-get -qqy update && \
     dpkg -i /tmp/cuda-repo.deb && \
     rm -f /tmp/cuda-repo.deb
 
-RUN curl -fsSL https://cmake.org/files/v3.8/cmake-3.8.0.tar.gz \
+RUN curl -fsSL https://cmake.org/files/v3.9/cmake-3.9.0.tar.gz \
     | tar xz && \
-    cd cmake-3.8.0 && \
+    cd cmake-3.9.0 && \
     ./configure --prefix=/opt/cmake && \
     make && make install
 
