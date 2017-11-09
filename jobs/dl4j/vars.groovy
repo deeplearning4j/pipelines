@@ -32,15 +32,16 @@ env.PROFILE_TYPE = env.PROFILE_TYPE ?: "nexus"
 env.CREATE_RPM = env.CREATE_RPM ?: "false"
 env.PUSH_LIBND4J_LOCALREPO = env.PUSH_LIBND4J_LOCALREPO ?: "false"
 
-env.DOCKER_UBUNTU14_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu14cuda80:latest"
-env.DOCKER_UBUNTU16_CUDA90_AMD64 = "deeplearning4j-docker-registry.bintray.io/ubuntu16cuda90:latest"
-env.DOCKER_CENTOS6_CUDA80_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda80:latest"
-env.DOCKER_CENTOS6_CUDA90_AMD64 = "deeplearning4j-docker-registry.bintray.io/centos6cuda90:latest"
+env.DOCKER_ANDROID_IMAGE = "skymindops/pipelines:android"
+env.DOCKER_CENTOS6_CUDA80_AMD64 = "skymindops/pipelines:centos6cuda80"
+env.DOCKER_CENTOS6_CUDA90_AMD64 = "skymindops/pipelines:centos6cuda90"
 env.DOCKER_CENTOS7_CUDA80_AMD64 = "huitseeker/dl4j-centos7-dev-env:latest"
-env.DOCKER_CUDA_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu16-ppc64le:latest"
+env.DOCKER_UBUNTU14_CUDA80_AMD64 = "skymindops/pipelines:ubuntu14cuda80"
+env.DOCKER_UBUNTU16_CUDA90_AMD64 = "skymindops/pipelines:ubuntu16cuda90"
+env.DOCKER_UBUNTU16_CUDA80_PPC = "skymindops/pipelines:ubuntu16cuda80-ppc64le"
 /* Docker image for ppc64le architecture with CUDA 9.0 been disables, because of testing CUDA 8.0 at the moment */
-//env.DOCKER_CUDA_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu16cuda90-ppc64le:latest"
-env.DOCKER_ANDROID_IMAGE = "deeplearning4j-docker-registry.bintray.io/android:latest"
+//env.DOCKER_UBUNTU16_CUDA90_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu16cuda90-ppc64le:latest"
+
 env.JENKINS_DOCKER_M2DIR = "/srv/jenkins/storage/docker_m2"
 env.JENKINS_DOCKER_SBTDIR = "/srv/jenkins/storage/docker_ivy2"
 

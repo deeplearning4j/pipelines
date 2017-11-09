@@ -144,7 +144,7 @@ def def_docker() {
             break
 
         case "linux-ppc64le":
-            dockerImage = "${DOCKER_CUDA_PPC}"
+            dockerImage = "${DOCKER_UBUNTU16_CUDA80_PPC}"
             dockerParams = dockerParams_init
             sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE} ${JENKINS_DOCKER_SBTDIR}")
             break

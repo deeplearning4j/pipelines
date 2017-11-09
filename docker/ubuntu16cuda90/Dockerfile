@@ -6,7 +6,7 @@ ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
 	PATH=/opt/sbt/bin:/opt/cmake/bin:${PATH}
 
 RUN apt-get update && \
-    apt-get -y --no-install-recommends install wget curl ca-certificates software-properties-common git && \
+    apt-get -y --no-install-recommends install wget curl maven ca-certificates software-properties-common git && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
