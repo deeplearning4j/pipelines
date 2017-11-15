@@ -33,12 +33,21 @@ Map getDockerConfig(String streamName) {
             return [image: 'skymindops/pipelines:centos6cuda90', params: dockerParams]
             break
 
+        case ['linux-x86_64-cuda-9.1']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'skymindops/pipelines:centos6cuda91', params: dockerParams]
+            break
+
         case ['linux-ppc64le-cpu', 'linux-ppc64le-cuda-8.0']:
             return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le']
             break
 
         case ['linux-ppc64le-cuda-9.0']:
             return [image : 'skymindops/pipelines:ubuntu16cuda90-ppc64le']
+            break
+
+        case ['linux-ppc64le-cuda-9.1']:
+            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le']
             break
 
         case ~/^macosx-x86_64.*$/:
@@ -60,7 +69,6 @@ String getNvidiaDockerParams() {
             "&& true || false"
     String dockerInspectResult = sh(script: dockerInspectScript, returnStdout: true).trim()
     String dockerParamsTmpfsNvidia = [
-            "-v ${jenkinsDockerM2Mount}:/home/jenkins/.m2:z",
             "-v ${jenkinsDockerSbtFolder}:/home/jenkins/.ivy2:z",
             "--device=/dev/nvidiactl",
             "--device=/dev/nvidia-uvm",
@@ -71,26 +79,4 @@ String getNvidiaDockerParams() {
     return dockerInspectResult ?
             [dockerParamsTmpfsNvidia, "-v=" + nvidiaDockerVolume + ":/usr/local/nvidia:ro"].join(' ') :
             dockerParamsTmpfsNvidia
-}
-
-Map getNexusConfig(String mvnProfileActivationName) {
-    switch(mvnProfileActivationName) {
-        case 'nexus':
-            return [url: 'http://master-jenkins.skymind.io:8088/repository/snapshots', profileName: 'local-nexus']
-            break
-        case 'sonatype':
-            return [url: 'https://oss.sonatype.org/content/repositories/snapshots',
-                    profileName: 'sonatype-nexus-snapshots']
-            break
-        case 'bintray':
-            return [url: 'https://oss.jfrog.org/artifactory/oss-snapshot-local',
-                    profileName: 'bintray-deeplearning4j-maven']
-            break
-        case 'jfrog':
-            return [url: 'https://oss.jfrog.org/artifactory/oss-snapshot-local', profileName: 'local-jfrog']
-            break
-        default:
-            throw new IllegalArgumentException("Profile type is not supported.")
-            break
-    }
 }

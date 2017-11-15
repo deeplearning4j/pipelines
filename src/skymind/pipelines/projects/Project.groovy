@@ -47,8 +47,7 @@ abstract class Project implements Serializable {
                                 numToKeepStr: '10'
                         )
                 ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-                script.pipelineTriggers([script.snapshotDependencies()])
+                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false]
 //                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
 //                script.parameters([
                 //                        script.choice(
@@ -79,7 +78,7 @@ abstract class Project implements Serializable {
 
             notifications.sendEmail(script.currentBuild.currentResult)
 
-            script.cleanWs cleanWhenFailure: false, deleteDirs: true
+            script.cleanWs deleteDirs: true
         }
     }
 
@@ -128,16 +127,14 @@ abstract class Project implements Serializable {
             case 'build':
                 if (unixNode) {
                     return [
-                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi ;',
+                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U',
-                            '-P trimSnapshots',
+                            'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
+                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-Dmaven.repo.local=${HOME}/.m2/' + "${script.pipelineEnv.mvnProfileActivationName}" +
-                                    '/repository',
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
@@ -147,13 +144,15 @@ abstract class Project implements Serializable {
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             'mvn -U -B',
-                            "-s %MAVEN_SETTINGS%", // Workaround for windows paths in bash
-                            '-P trimSnapshots',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
+                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-Dmaven.repo.local=%TEMP%\\.m2\\' + "${script.pipelineEnv.mvnProfileActivationName}" +
-                                    '\\repository',
+                            /* Workaround for Windows which doesn't honour withMaven options */
+                            '-Dmaven.repo.local=' +
+                                    '.m2/' +
+                                    "${script.pipelineEnv.mvnProfileActivationName}" +
+                                    '/repository',
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
@@ -162,14 +161,12 @@ abstract class Project implements Serializable {
             case 'test':
                 if (unixNode) {
                     return [
-                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi ;',
+                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U',
                             '-P trimSnapshots',
                             'test',
-                            '-Dmaven.repo.local=${HOME}/.m2/' + "${script.pipelineEnv.mvnProfileActivationName}" +
-                                    '/repository',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
@@ -183,7 +180,10 @@ abstract class Project implements Serializable {
                             'test',
                             '-Dmaven.repo.local=%TEMP%\\.m2\\' + "${script.pipelineEnv.mvnProfileActivationName}" +
                                     '\\repository',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.repo.local=' +
+                                    '.m2/' +
+                                    "${script.pipelineEnv.mvnProfileActivationName}" +
+                                    '/repository',
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
@@ -194,7 +194,7 @@ abstract class Project implements Serializable {
         }
     }
 
-    protected Map getProjectObjectModel() {
+    protected getProjectObjectModel() {
         String pomFileName = 'pom.xml'
         Boolean pomExists = script.fileExists(pomFileName)
 

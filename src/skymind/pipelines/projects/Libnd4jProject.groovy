@@ -1,11 +1,8 @@
 package skymind.pipelines.projects
 
 class Libnd4jProject extends Project {
-    private final List artifacts = []
-    private final String projectGroupId = 'org.nd4j'
-    private final String projectVersion = script.env.PROJECT_VERSION ?: '0.9.2-SNAPSHOT'
-    private final List artifactNamesPattern = ['blas', 'blasbuild', 'include']
     private final String libnd4jTestsFilter
+    private final String lockableResourceName = "libnd4jTestAndBuild-${branchName}"
 
     /* Override default platforms */
     static {
@@ -18,17 +15,34 @@ class Libnd4jProject extends Project {
                  compillers: [],
                  name      : 'android-arm'],
 
+                /*
+                    FIXME: ppc64le slave is unstable at the moment,
+                    when number of parallel threads more than number of CPUs OOM-killer kills all Docker containers.
+                    Because of that CUDA couldn't be enabled at the moment.
+                 */
+//                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                 [backends  : ['cpu'],
                  compillers: [],
                  name      : 'linux-ppc64le'],
 
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
-                 compillers: [],
-                 name      : 'linux-x86_64'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
+                 cpuExtensions: ['avx2', 'avx512'],
+                 compillers   : [],
+                 name         : 'linux-x86_64'],
 
-//                        [backends  : ['cpu'],
-//                         compillers: [],
-//                         name      : 'macosx-x86_64'],
+                /*
+                    FIXME: Disable Mac builds at all, because of Mac slave instability.
+                 */
+//                [backends     : ['cpu'],
+                /*
+                    FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+                    at the same time for CUDA - Xcode 8 required,
+                    which means that we can't enable avx512 builds at the moment
+                 */
+//                 cpuExtensions: ['avx2', 'avx512'],
+//                 cpuExtensions: ['avx2'],
+//                 compillers   : [],
+//                 name         : 'macosx-x86_64'],
 
                 [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
                  compillers: [],
@@ -42,47 +56,13 @@ class Libnd4jProject extends Project {
         libnd4jTestsFilter = jobConfig?.getAt('libnd4jTestsFilter')
     }
 
-    @NonCPS
-    protected void setBuildParameters() {
-        super.setBuildParameters([
-                script.parameters([
-                        script.string(
-                        defaultValue: '0.9.2-SNAPSHOT',
-                        description: 'Libnd4j component version',
-                        name: 'PROJECT_VERSION'
-                ),
-//                [$class: 'com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition'],
-                        script.string(
-                        defaultValue: '',
-                        description: '''\
-                                CUDA build parameters that will be added to defaults (it doesn\'t apply for CPU builds).
-    
-                                Defauls:
-                                linux: -c cuda -v [8.0, 9.0]
-                                macosx: -c cuda -v [8.0, 9.0]
-                                windows: -c cuda -v [8.0, 9.0]
-                        '''.stripMargin().stripIndent(),
-                        name: 'CUDA_BUILD_PARAMETERS'
-                )
-            ])
-        ])
-    }
-
     void initPipeline() {
         script.node('master') {
             pipelineWrapper {
-                script.lock(resource: "libnd4jTestAndBuild-${branchName}", inversePrecedence: true) {
+                script.lock(resource: lockableResourceName, inversePrecedence: true) {
                     script.stage("Test and Build") {
                         script.milestone()
                         script.parallel buildStreams
-                    }
-                }
-
-                /* At the moment, we need to publish only master artifacts to local nexus */
-                if (branchName == 'master') {
-                    script.stage('Publish artifacts') {
-                        script.milestone()
-                        runPublish(artifacts)
                     }
                 }
             }
@@ -97,6 +77,7 @@ class Libnd4jProject extends Project {
             String platformName = platform.name
             List backends = platform.backends
             List compilers = platform.compilers
+            List cpuExtensions = platform.cpuExtensions
 
             for (List bckd : backends) {
                 String backend = bckd
@@ -118,34 +99,20 @@ class Libnd4jProject extends Project {
                             script.dir(streamName) {
                                 script.deleteDir()
 
-                                String mavenLocalRepositoryPath = script.pipelineEnv.jenkinsDockerM2Mount
+                                script.stage('Set up environment') {
+                                    script.dir(projectName) {
+                                        script.unstash 'sourceCode'
+                                    }
+                                }
 
                                 script.dir(projectName) {
-                                    script.unstash 'sourceCode'
-
+                                    /* Get docker container configuration */
                                     Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
 
                                     if (dockerConf) {
-                                        String createFoldersCommand = [
-                                                'mkdir -p',
-                                                script.pipelineEnv.jenkinsDockerSbtFolder,
-                                                mavenLocalRepositoryPath
-                                        ].findAll().join(' ')
-
-                                        script.sh createFoldersCommand
-
-                                        /* Mount point of required folders for Docker container.
-                                        Because by default Jenkins mounts current working folder in Docker container,
-                                        we need to add custom mount.
-                                        */
-                                        String mavenLocalRepositoryMount = "-v ${mavenLocalRepositoryPath}:/home/jenkins/.m2:z"
-//                                        String mavenLocalRepositoryMount = "-v ${mavenLocalRepositoryPath}:${mavenLocalRepositoryPath}:rw,z"
-
                                         String dockerImageName = dockerConf['image'] ?:
                                                 script.error('Docker image name is missing.')
-                                        String dockerImageParams = [
-                                                dockerConf?.params, mavenLocalRepositoryMount
-                                        ].findAll().join(' ')
+                                        String dockerImageParams = [dockerConf?.params].findAll().join(' ')
 
                                         script.docker.image(dockerImageName).inside(dockerImageParams) {
                                             script.stage('Test') {
@@ -157,7 +124,7 @@ class Libnd4jProject extends Project {
                                             }
 
                                             script.stage('Build') {
-                                                runBuild(platformName, backend)
+                                                runBuild(platformName, backend, cpuExtensions)
                                             }
                                         }
                                     } else {
@@ -169,7 +136,7 @@ class Libnd4jProject extends Project {
                                         }
 
                                         script.stage('Build') {
-                                            runBuild(platformName, backend)
+                                            runBuild(platformName, backend, cpuExtensions)
                                         }
                                     }
                                 }
@@ -191,9 +158,9 @@ class Libnd4jProject extends Project {
         String testCommand = [
                 "cd ${testFolderName}",
                 'cmake -G "Unix Makefiles"',
-                'make -j4',
+                'make -j2',
                 "layers_tests${separator}runtests --gtest_output=\"xml:cpu_test_results.xml\"" +
-                        /* Add posibility to provide addtional params to gtests */
+                        /* Add possibility to provide additional params to googletest */
                         (libnd4jTestsFilter ? ' ' + libnd4jTestsFilter : '')
         ].join(' && ')
 
@@ -202,7 +169,7 @@ class Libnd4jProject extends Project {
                 break
             case ['linux-x86_64', 'android-arm', 'android-x86']:
                 testCommand = """\
-                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable; fi
                     ${testCommand}
                 """.stripIndent()
                 break
@@ -224,127 +191,113 @@ class Libnd4jProject extends Project {
         if (script.fileExists("${testFolderName}")) {
             /* Run tests */
             script.echo "[INFO] Running tests on ${platform}, for ${backend} backend"
-            int testCommandExitCode = script."${shell}" script: "${testCommand}", returnStatus: true
+
+            script."${shell}" "${testCommand}"
 
             /* Archiving test results */
-            script.junit "**/${backend}_test_results.xml"
+            script.junit testResults: "**/${backend}_test_results.xml", allowEmptyResults: true
 
-            /* Check test results */
-            if (testCommandExitCode != 0) {
-                script.error "Test stage failed with exit code ${testCommandExitCode}."
-            }
-            else {
-                script.echo "[INFO] Finished to run tests on ${platform}, for ${backend} backend"
-            }
+            script.echo "[INFO] Finished to run tests on ${platform}, for ${backend} backend"
         } else {
             script.error "${testFolderName} was not found."
         }
     }
 
-    private void runBuild(String platform, String backend) {
-        /* Build libn4j project */
-        buildNativeOperations(platform, backend, script.env.CUDA_BUILD_PARAMETERS)
+    /**
+     * Build libn4j project
+     * All artifacts that been built not for master branch will be installed in local nexus repository
+     * If build is for master branch uploaded artifact name will have following format:
+     * <groupId>.<artifactId>-<version>-<classifier>
+     * Example: org.nd4j.libnd4j-1.0.0-SNAPSHOT-android-x86-cuda-8.0
+     *
+     * @param platform
+     * @param backend
+     */
+    private void runBuild(String platform, String backend, List cpuExtensions) {
+        String mvnCommand
 
-        String stashName = ["${projectName}", "${backend}", "${projectVersion}", "${platform}"].join('-')
-        String stashIncludes = artifactNamesPattern.collect({ it + '/**' }).join(',')
+        /* Build libnd4j for CPU backend */
+        if (backend == 'cpu') {
+            if (cpuExtensions) {
+                for (String item : cpuExtensions) {
+                    String cpuExtension = item
 
-        /* Stash artifacts for publishing */
-        script.stash name: "$stashName", includes: "$stashIncludes"
+                    mvnCommand = getMvnCommand('build', true, [
+                            "-Dlibnd4j.platform=${platform}",
+                            "-Dlibnd4j.extension=${cpuExtension}"
+                    ])
 
-        /* Collect artifact names */
-        artifacts.push([platform: "${platform}", backend: "${backend}", name: "${stashName}"])
-    }
+                    script.echo "[INFO] Building libnd4j ${backend} backend with ${cpuExtension} extension"
 
-    private runPublish(List artifacts) {
-        script.dir("publish") {
-            script.deleteDir()
-
-            for (Map arct : artifacts) {
-                Map artifact = arct
-                String artifactFileName = "${artifact.name}.zip"
-                String backendName = "${artifact.backend}"
-                String platformName = "${artifact.platform}"
-
-                script.dir("${artifact.name}") {
-                    script.unstash name: "${artifact.name}"
-                    script.zip zipFile: "${artifact.name}.zip", archive: false
-
-                    publishArtifact(artifactFileName, backendName, platformName)
+                    script.mvn "$mvnCommand"
                 }
             }
+
+            mvnCommand = getMvnCommand('build', false, [
+                    /* Part of workaround for propagation maven settings on windows platform */
+                    platform.contains('windows') ? '-s ${MAVEN_SETTINGS}' : '',
+                    "-Dlibnd4j.platform=${platform}"
+            ])
         }
+        /* Build libnd4j for CUDA backend */
+        else {
+            String cudaVersion = backend.tokenize('-')[1]
+
+            mvnCommand = getMvnCommand('build', false, [
+                    /* Part of workaround for propagation maven settings on windows platform */
+                    platform.contains('windows') ? '-s ${MAVEN_SETTINGS}' : '',
+                    "-Dlibnd4j.platform=${platform}",
+                    "-Dlibnd4j.cuda=${cudaVersion}",
+                    (branchName != 'master') ? "-Dlibnd4j.compute=30" : ''
+            ])
+        }
+
+        script.echo "[INFO] Building libnd4j ${backend} backend"
+
+        script.mvn "$mvnCommand"
     }
 
-    private buildNativeOperations(String platform, String backend, String cudaParams = '') {
+    protected String getMvnCommand(String stageName, Boolean isCpuWithExtension, List mvnArguments = []) {
         Boolean unixNode = script.isUnix()
-        String shell = unixNode ? 'sh' : 'bat'
-        String buildCommand = unixNode ?
-                ['if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable; fi ;',
-                 'bash buildnativeoperations.sh'].join(' ') :
-                ['vcvars64.bat', 'bash buildnativeoperations.sh'].join(' && ')
-        List buildOptions = []
+        String devtoolsetVersion = isCpuWithExtension ? '6' : '4'
 
-        switch (backend) {
-            case 'cpu':
-                buildOptions.push('-c cpu')
-                (platform in ['android-x86', 'android-arm']) ? buildOptions.push("-platform ${platform}") : ''
-                break
-            case 'cuda-8.0':
-                buildOptions.push('-c cuda -v 8.0')
-                /* Hardcode compute capability (-cc) to 30 for testing */
-                buildOptions.push('-cc 30')
-                break
-            case 'cuda-9.0':
-                buildOptions.push('-c cuda -v 9.0')
-                /* Hardcode compute capability (-cc) to 30 for testing */
-                buildOptions.push('-cc 30')
+        switch (stageName) {
+            case 'build':
+                if (unixNode) {
+                    return [
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
+                            /* Pipeline withMaven step requires this line if it runs in Docker container */
+                            'export PATH=$MVN_CMD_DIR:$PATH &&',
+                            /* Force to build in one threads */
+                            'export MAKEJ=1 &&',
+                            'mvn -U -B',
+                            'clean',
+                            branchName == 'master' ? 'deploy' : 'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                    ].plus(mvnArguments).findAll().join(' ')
+                } else {
+                    return [
+                            'vcvars64.bat',
+                            '&&',
+                            'bash -c',
+                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
+                            /* Force to build in one threads */
+                            'export MAKEJ=1 &&',
+                            'mvn -U -B',
+                            'clean',
+                            branchName == 'master' ? 'deploy' : 'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            /* Workaround for Windows which doesn't honour withMaven options */
+                            '-Dmaven.repo.local=' +
+                                    '.m2/' +
+                                    "${script.pipelineEnv.mvnProfileActivationName}" +
+                                    '/repository',
+                    ].plus(mvnArguments).findAll().join(' ') + '"'
+                }
                 break
             default:
-                throw new IllegalArgumentException('Backend is not supported.')
+                throw new IllegalArgumentException('Stage is not supported yet')
                 break
-        }
-
-        /* Append user-provided buildNativeOperations options */
-        buildOptions.push(cudaParams)
-
-        script.echo "[INFO] Running buildNativeOperations on ${platform}, for ${backend} backend"
-        script."$shell" script: "$buildCommand ${buildOptions.findAll().join(' ')}"
-        script.echo "[INFO] Finished to run buildNativeOperations on ${platform}, for ${backend} backend"
-    }
-
-    private publishArtifact(String artifactFileName, String backend, String platform) {
-        artifactFileName ?: script.error("artifactFileName argument can't be null.")
-        backend ?: script.error("backend argument can't be null.")
-        platform ?: script.error("platform argument can't be null.")
-
-        String shell = script.isUnix() ? 'sh' : 'bat'
-        String artifactId = [projectName, backend].join('-')
-        Map nexusConfig = script.pipelineEnv.getNexusConfig(script.pipelineEnv.mvnProfileActivationName)
-
-        script.withEnv(["PATH+MAVEN=${script.tool 'M339'}/bin"]) {
-            script.configFileProvider([
-                    script.configFile(fileId: "${script.pipelineEnv.mvnSettingsId}", variable: 'MAVEN_SETTINGS')
-            ]) {
-                /*
-                   Uploaded artifact name has following format: <groupId>.<artifactId>-<version>-<classifier>
-                   Example: org.nd4j.libnd4j-cuda-8.0-1.0.0-SNAPSHOT-android-x86
-                 */
-                String mvnCommand = [
-                        'mvn -U -B',
-                        "-s ${script.env.MAVEN_SETTINGS}",
-                        'deploy:deploy-file',
-                        "-Durl=${nexusConfig.url}",
-                        "-DgroupId=${projectGroupId}",
-                        "-DartifactId=${artifactId}",
-                        "-Dversion=${projectVersion}",
-                        '-Dpackaging=zip',
-                        "-DrepositoryId=${nexusConfig.profileName}",
-                        "-Dclassifier=${platform}",
-                        "-Dfile=${artifactFileName}"
-                ].join(' ')
-
-                script."${shell}" script: mvnCommand
-            }
         }
     }
 }

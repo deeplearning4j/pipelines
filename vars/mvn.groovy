@@ -7,14 +7,15 @@ def call(String command) {
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
             maven: 'maven-3.3.9',
+            mavenLocalRepo: ".m2/${pipelineEnv.mvnProfileActivationName}/repository",
             options: [
-                    artifactsPublisher(disabled: false),
-                    junitPublisher(disabled: false),
+                    artifactsPublisher(disabled: true),
+                    junitPublisher(disabled: true),
                     findbugsPublisher(disabled: true),
                     openTasksPublisher(disabled: true),
-                    dependenciesFingerprintPublisher(disabled: false),
+                    dependenciesFingerprintPublisher(disabled: true),
                     concordionPublisher(disabled: true),
-                    invokerPublisher(disabled: false),
+                    invokerPublisher(disabled: true),
                     jgivenPublisher(disabled: true)
             ]
     ) {
