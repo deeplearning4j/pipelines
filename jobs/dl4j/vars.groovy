@@ -68,3 +68,5 @@ env.SONAR_SERVER = "SonarQubeServer"
 // env.SONAR_SCANNER = "SS28"
 // env.SONAR_SCANNER = "SS29"
 env.SONAR_SCANNER = "SS30"
+// Test folder path
+env.TEST_CPU_FOLDER = 'tests_cpu'
