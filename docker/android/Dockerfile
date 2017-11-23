@@ -8,7 +8,7 @@ ENV JAVA_PACKAGE_NAME=jdk-8u131-linux-x64.tar.gz \
 
 RUN yum -y clean all && \
         yum -y install centos-release-scl-rh epel-release && \
-        yum -y install devtoolset-3-toolchain tar wget curl openssl ca-certificates git rpm-build && \
+        yum -y install devtoolset-3-toolchain devtoolset-3-libasan-devel tar wget curl openssl ca-certificates git rpm-build && \
         yum clean all
 
 RUN mkdir -p /opt && \
