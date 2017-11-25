@@ -75,14 +75,14 @@ if (CBUILD.toBoolean()) {
         unstash 'cuda90-blasbuild'
         unstash 'cuda90-blas'
 
+        if (PUSH_LIBND4J_LOCALREPO.toBoolean()) {
+            docker.image(dockerImage).inside(dockerParams){
+                functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
+            }
+        }
+
         // Archiving test results
         junit '**/cpu_test_results.xml'
-    }
-
-    if (PUSH_LIBND4J_LOCALREPO.toBoolean()) {
-        docker.image(dockerImage).inside(dockerParams){
-            functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
-        }
     }
 
     if (SONAR.toBoolean()) {
