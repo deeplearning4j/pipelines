@@ -133,18 +133,20 @@ def def_docker() {
     switch (PLATFORM_NAME) {
         case "linux-x86_64":
             def nvidia_docker_volume = sh(returnStdout: true, script: "docker volume ls -f DRIVER=nvidia-docker -q| tail -1").trim()
+
             if (sh(returnStdout: true, script: "ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}` && true || false")) {
                 dockerParams = dockerParams_tmpfs_nvidia + " --volume="+ nvidia_docker_volume + ":/usr/local/nvidia:ro"
             } else {
                 sh("ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidia_docker_volume}`")
                 dockerParams = dockerParams_tmpfs_nvidia
             }
-            dockerImage = "${DOCKER_CENTOS6_CUDA80_AMD64}"
+
+            dockerImages = [centos6cuda80: "${DOCKER_CENTOS6_CUDA80_AMD64}", centos6cuda90: "${DOCKER_CENTOS6_CUDA90_AMD64}"]
             sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE} ${JENKINS_DOCKER_SBTDIR}")
             break
 
         case "linux-ppc64le":
-            dockerImage = "${DOCKER_UBUNTU16_CUDA80_PPC}"
+            dockerImages = [ubuntu16cuda80: "${DOCKER_UBUNTU16_CUDA80_PPC}", ubuntu16cuda90: "${DOCKER_UBUNTU16_CUDA90_PPC}"]
             dockerParams = dockerParams_init
             sh ("mkdir -p ${JENKINS_DOCKER_M2DIR}/${PROFILE_TYPE} ${JENKINS_DOCKER_SBTDIR}")
             break

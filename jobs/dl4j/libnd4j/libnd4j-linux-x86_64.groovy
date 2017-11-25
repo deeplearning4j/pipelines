@@ -2,7 +2,12 @@ if (CBUILD.toBoolean()) {
     functions.get_project_code("${LIBPROJECT}")
 
     // Workaround to fetch the latest docker image
-    docker.image(dockerImage).pull()
+    for (imageName in dockerImages.values()) {
+        docker.image(imageName).pull()
+    }
+
+    // Workaround to store values from map in parallel step
+    String dockerImageName = ''
 
     parallel(
             "Stream 0 ${LIBPROJECT}-CPU-${PLATFORM_NAME}": {
@@ -10,7 +15,9 @@ if (CBUILD.toBoolean()) {
                     sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
                     dir("${LIBPROJECT}") {
-                        docker.image(dockerImage).inside(dockerParams) {
+                        dockerImageName = dockerImages.centos6cuda80
+
+                        docker.image(dockerImageName).inside(dockerParams) {
                             stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
                                 sh '''\
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -39,7 +46,9 @@ if (CBUILD.toBoolean()) {
                     sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
                     dir("${LIBPROJECT}") {
-                        docker.image(dockerImage).inside(dockerParams) {
+                        dockerImageName = dockerImages.centos6cuda80
+
+                        docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
                             stage("${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}") {
                                 sh '''\
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -58,7 +67,9 @@ if (CBUILD.toBoolean()) {
                     sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
                     dir("${LIBPROJECT}") {
-                        docker.image(dockerImage).inside(dockerParams) {
+                        dockerImageName = dockerImages.centos6cuda90
+
+                        docker.image(dockerImageName).inside(dockerParams) {
                             stage("${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}") {
                                 sh '''\
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
@@ -85,7 +96,9 @@ if (CBUILD.toBoolean()) {
         unstash 'cuda90-blas'
 
         if (PUSH_LIBND4J_LOCALREPO.toBoolean()) {
-            docker.image(dockerImage).inside(dockerParams) {
+            dockerImageName = dockerImages.centos6cuda80
+
+            docker.image(dockerImageName).inside(dockerParams) {
                 functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
             }
         }
