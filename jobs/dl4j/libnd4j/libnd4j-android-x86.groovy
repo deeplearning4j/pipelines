@@ -1,10 +1,10 @@
 if (CBUILD.toBoolean()) {
     functions.get_project_code("${LIBPROJECT}")
 
-    dir("${LIBPROJECT}") {
-        // Workaround to fetch the latest docker image
-        docker.image(dockerImage).pull()
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImage).pull()
 
+    dir("${LIBPROJECT}") {
         docker.image(dockerImage).inside(dockerParams) {
             stage("${LIBPROJECT}-test") {
                 sh '''\
