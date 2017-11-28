@@ -12,9 +12,16 @@ stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
+        /* Set LIBND4J_HOME environment with path to libn4j home folder */
+        env.LIBND4J_HOME = ["${WORKSPACE}", "${LIBPROJECT}"].join('/')
+        /*
+            Mount point of libn4j home folder for Docker container.
+            Because by default Jenkins mounts current working folder in Docker container, we need to add custom mount.
+         */
+        String libnd4jHomeMount = " -v ${LIBND4J_HOME}:${LIBND4J_HOME}:rw,z"
 
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-            docker.image(dockerImage).inside(dockerParams) {
+            docker.image(dockerImage).inside(dockerParams + libnd4jHomeMount) {
                 functions.getGpg()
                 sh '''
                 export GPG_TTY=$(tty)
