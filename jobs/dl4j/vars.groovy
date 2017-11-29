@@ -39,8 +39,7 @@ env.DOCKER_CENTOS7_CUDA80_AMD64 = "huitseeker/dl4j-centos7-dev-env:latest"
 env.DOCKER_UBUNTU14_CUDA80_AMD64 = "skymindops/pipelines:ubuntu14cuda80"
 env.DOCKER_UBUNTU16_CUDA90_AMD64 = "skymindops/pipelines:ubuntu16cuda90"
 env.DOCKER_UBUNTU16_CUDA80_PPC = "skymindops/pipelines:ubuntu16cuda80-ppc64le"
-/* Docker image for ppc64le architecture with CUDA 9.0 been disables, because of testing CUDA 8.0 at the moment */
-//env.DOCKER_UBUNTU16_CUDA90_PPC = "deeplearning4j-docker-registry.bintray.io/ubuntu16cuda90-ppc64le:latest"
+env.DOCKER_UBUNTU16_CUDA90_PPC = "skymindops/pipelines:ubuntu16cuda90-ppc64le"
 
 env.JENKINS_DOCKER_M2DIR = "/srv/jenkins/storage/docker_m2"
 env.JENKINS_DOCKER_SBTDIR = "/srv/jenkins/storage/docker_ivy2"
@@ -68,3 +67,5 @@ env.SONAR_SERVER = "SonarQubeServer"
 // env.SONAR_SCANNER = "SS28"
 // env.SONAR_SCANNER = "SS29"
 env.SONAR_SCANNER = "SS30"
+// Test folder path
+env.TEST_CPU_FOLDER = 'tests_cpu'
