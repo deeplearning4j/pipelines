@@ -20,7 +20,7 @@ if (CBUILD.toBoolean()) {
                             }
 
                             dir('tests_cpu\\layers_tests') {
-                                bat 'runtests --gtest_output="xml:cpu_test_results.xml"'
+                                bat 'runtests --gtest_output="xml:cpu_test_results.xml" --gtest_catch_exceptions=1 || exit 0'
                             }
 
                             stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
