@@ -7,14 +7,14 @@ if (CBUILD.toBoolean()) {
                     sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
                     dir("${LIBPROJECT}") {
-                        stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
-                            sh '''\
-                                cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
-                                ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml" || true
-                            '''.stripIndent()
-
-                            stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
-                        }
+//                        stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
+//                            sh '''\
+//                                cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
+//                                ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml" || true
+//                            '''.stripIndent()
+//
+//                            stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+//                        }
 
                         stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
                             // env.TRICK_NVCC = "YES"
