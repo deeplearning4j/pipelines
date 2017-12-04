@@ -83,7 +83,7 @@ if (CBUILD.toBoolean()) {
                     }
                 }
             },
-            failFast: true
+            failFast: false
     )
 
     dir("${LIBPROJECT}") {
