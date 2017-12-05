@@ -1,5 +1,8 @@
 stage("${RL4J_PROJECT}-checkout-sources") {
     functions.get_project_code("${RL4J_PROJECT}")
+
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
 }
 
 stage("${RL4J_PROJECT}-build") {
@@ -9,7 +12,7 @@ stage("${RL4J_PROJECT}-build") {
         functions.verset("${VERSION}", true)
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
 
-            docker.image(dockerImage).inside(dockerParams) {
+            docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
                 functions.getGpg()
                 sh '''
                 export GPG_TTY=$(tty)
