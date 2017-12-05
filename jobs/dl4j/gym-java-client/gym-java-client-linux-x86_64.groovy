@@ -1,5 +1,8 @@
 stage("${GYM_JAVA_CLIENT_PROJECT}-checkout-sources") {
     functions.get_project_code("${GYM_JAVA_CLIENT_PROJECT}")
+
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
 }
 
 stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
@@ -8,7 +11,7 @@ stage("${GYM_JAVA_CLIENT_PROJECT}-build") {
         functions.checktag("${GYM_JAVA_CLIENT_PROJECT}")
         functions.verset("${VERSION}", true)
         configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-            docker.image(dockerImage).inside(dockerParams) {
+            docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
                 functions.getGpg()
                 sh '''
                 export GPG_TTY=$(tty)
