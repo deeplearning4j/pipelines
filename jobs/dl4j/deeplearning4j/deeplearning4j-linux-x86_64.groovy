@@ -1,6 +1,10 @@
 stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 
     functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
+
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
+
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DEEPLEARNING4J_PROJECT}")
     }
@@ -68,7 +72,7 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).inside(dockerParams) {
+                docker.image(dockerImage).inside(dockerImages.centos6cuda80) {
                     functions.getGpg()
                     sh '''
                 export GPG_TTY=$(tty)
