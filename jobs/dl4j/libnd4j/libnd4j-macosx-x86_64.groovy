@@ -8,7 +8,13 @@ if (CBUILD.toBoolean()) {
 
                     dir("${LIBPROJECT}") {
                         stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
+                            /* export CC and CXX required for switching compiler from clang (default for Mac) to gcc */
                             sh '''\
+                                export CC=/usr/local/bin/gcc
+                                export CXX=/usr/local/bin/g++
+                                export CPP=/usr/local/bin/cpp
+                                export LD=/usr/local/bin/gcc
+
                                 cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
                                 ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml" || true
                             '''.stripIndent()
