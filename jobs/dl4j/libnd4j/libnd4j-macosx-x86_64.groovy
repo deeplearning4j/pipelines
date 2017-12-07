@@ -8,18 +8,27 @@ if (CBUILD.toBoolean()) {
 
                     dir("${LIBPROJECT}") {
                         stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
-                            /* export CC and CXX required for switching compiler from clang (default for Mac) to gcc */
-                            sh '''\
+                            // export CC and CXX required for switching compiler from clang (default for Mac) to gcc
+                            String shellCommand = '''\
                                 export CC=/usr/local/bin/gcc
                                 export CXX=/usr/local/bin/g++
                                 export CPP=/usr/local/bin/cpp
                                 export LD=/usr/local/bin/gcc
 
                                 cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
-                                ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml" || true
+                                ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml"
                             '''.stripIndent()
 
-                            stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+                            int exitCode = sh script: shellCommand, returnStatus: true
+
+                            // Check test results
+                            if (exitCode == 0) {
+                                // Archiving test results
+                                junit '**/cpu_test_results.xml'
+                                stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+                            } else {
+                                error "Test stage failed with exit code ${exitCode}."
+                            }
                         }
 
                         stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
@@ -83,9 +92,6 @@ if (CBUILD.toBoolean()) {
         if (PUSH_LIBND4J_LOCALREPO.toBoolean()) {
             functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
         }
-
-        // Archiving test results
-        junit '**/cpu_test_results.xml'
     }
 
     if (SONAR.toBoolean()) {
