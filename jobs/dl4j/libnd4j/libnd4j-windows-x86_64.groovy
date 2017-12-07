@@ -49,7 +49,9 @@ if (CBUILD.toBoolean()) {
                                     'mklink /J blasbuild\\cuda blasbuild\\cuda-8.0'
                             ].join(' && ')
 
-                            bat batCommand
+                            withEnv(["PATH+CUDA80=${CUDA_PATH_V8_0}\\bin"]) {
+                                bat batCommand
+                            }
 
                             stash includes: 'blasbuild/', name: 'cuda80-blasbuild'
                         }
@@ -69,7 +71,9 @@ if (CBUILD.toBoolean()) {
                                     'mklink /J blasbuild\\cuda blasbuild\\cuda-9.0'
                             ].join(' && ')
 
-                            bat batCommand
+                            withEnv(["PATH+CUDA90=${CUDA_PATH_V9_0}\\bin"]) {
+                                bat batCommand
+                            }
 
                             stash includes: 'blasbuild/', name: 'cuda90-blasbuild'
                         }
