@@ -13,17 +13,23 @@ if (CBUILD.toBoolean()) {
                             dir('tests_cpu') {
                                 String batCommand = [
                                         'cmake -G "Unix Makefiles"',
-                                        'make -j4'
+                                        'make -j4',
+                                        'layers_tests\\runtests ' +
+                                                '--gtest_output="xml:cpu_test_results.xml" ' +
+                                                '--gtest_catch_exceptions=1'
                                 ].join(' && ')
 
-                                bat batCommand
-                            }
+                                int exitCode = bat script: batCommand, returnStatus: true
 
-                            dir('tests_cpu\\layers_tests') {
-                                bat 'runtests --gtest_output="xml:cpu_test_results.xml" --gtest_catch_exceptions=1 || exit 0'
+                                // Check test results
+                                if (exitCode == 0) {
+                                    // Archiving test results
+                                    junit '**/cpu_test_results.xml'
+                                    stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+                                } else {
+                                    error "Test stage failed with exit code ${exitCode}."
+                                }
                             }
-
-                            stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
                         }
 
                         stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
@@ -49,9 +55,7 @@ if (CBUILD.toBoolean()) {
                                     'mklink /J blasbuild\\cuda blasbuild\\cuda-8.0'
                             ].join(' && ')
 
-                            withEnv(["PATH+CUDA80=${CUDA_PATH_V8_0}\\bin"]) {
-                                bat batCommand
-                            }
+                            bat batCommand
 
                             stash includes: 'blasbuild/', name: 'cuda80-blasbuild'
                         }
@@ -71,9 +75,7 @@ if (CBUILD.toBoolean()) {
                                     'mklink /J blasbuild\\cuda blasbuild\\cuda-9.0'
                             ].join(' && ')
 
-                            withEnv(["PATH+CUDA90=${CUDA_PATH_V9_0}\\bin"]) {
-                                bat batCommand
-                            }
+                            bat batCommand
 
                             stash includes: 'blasbuild/', name: 'cuda90-blasbuild'
                         }
@@ -94,9 +96,6 @@ if (CBUILD.toBoolean()) {
         if (PUSH_LIBND4J_LOCALREPO.toBoolean()) {
             functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
         }
-
-        // Archiving test results
-        junit '**/cpu_test_results.xml'
     }
 
     if (SONAR.toBoolean()) {
