@@ -27,9 +27,11 @@ stage("${DATAVEC_PROJECT}-build") {
 
 //        def listVersion = ["2.10", "2.11"]
 
-        final listVersion = [[sparkVersion: "1", scalaVersion: "2.11"],
-                             [sparkVersion: "2", scalaVersion: "2.11"],
-                             [sparkVersion: "1", scalaVersion: "2.10"]]
+        final listVersion = [
+                [sparkVersion: "1", scalaVersion: "2.10"],
+                [sparkVersion: "1", scalaVersion: "2.11"],
+                [sparkVersion: "2", scalaVersion: "2.11"]
+        ]
 
         for ( lib in listVersion) {
             echo "[ INFO ] ++ SET Scala Version to: " + lib.scalaVersion
