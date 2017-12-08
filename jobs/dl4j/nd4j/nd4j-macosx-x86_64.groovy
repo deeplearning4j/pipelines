@@ -11,7 +11,12 @@ stage("${PROJECT}-build") {
         functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
 
-        final nd4jlibs = [[cudaVersion: "8.0", scalaVersion: "2.11"], [cudaVersion: "9.0", scalaVersion: "2.11"]]
+        final nd4jlibs = [
+                [cudaVersion: "8.0", scalaVersion: "2.10"],
+                [cudaVersion: "8.0", scalaVersion: "2.11"],
+                [cudaVersion: "9.0", scalaVersion: "2.10"],
+                [cudaVersion: "9.0", scalaVersion: "2.11"]
+        ]
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION = lib.cudaVersion
