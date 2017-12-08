@@ -25,7 +25,12 @@ stage("${PROJECT}-build") {
          */
         String libnd4jHomeMount = " -v ${LIBND4J_HOME}:${LIBND4J_HOME}:rw,z"
 
-        final nd4jlibs = [[cudaVersion: "8.0", scalaVersion: "2.11"], [cudaVersion: "9.0", scalaVersion: "2.11"]]
+        final nd4jlibs = [
+                [cudaVersion: "8.0", scalaVersion: "2.10"],
+                [cudaVersion: "8.0", scalaVersion: "2.11"],
+                [cudaVersion: "9.0", scalaVersion: "2.10"],
+                [cudaVersion: "9.0", scalaVersion: "2.11"]
+        ]
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION=lib.cudaVersion
