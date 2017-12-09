@@ -10,6 +10,8 @@ stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
+        /* Set LIBND4J_HOME environment with path to libn4j home folder */
+        env.LIBND4J_HOME = ["${WORKSPACE}", "${LIBPROJECT}"].join('/')
 
         final nd4jlibs = [
                 [cudaVersion: "8.0", scalaVersion: "2.10"],
