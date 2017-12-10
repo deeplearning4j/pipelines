@@ -40,8 +40,8 @@ if (CBUILD.toBoolean()) {
                             stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
                                 sh './buildnativeoperations.sh -c cpu'
 
-                                stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
-                                stash includes: 'blas/', name: 'cpu-blas'
+                                stash includes: 'blasbuild/cpu/blas/**', name: 'cpu-blasbuild'
+                                stash includes: 'blas/**', name: 'cpu-blas'
                             }
                         }
                     }
@@ -58,8 +58,8 @@ if (CBUILD.toBoolean()) {
                             stage("${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}") {
                                 sh './buildnativeoperations.sh -c cuda -v 8.0 ${BUILD_CUDA_PARAMS}'
 
-                                stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
-                                stash includes: 'blas/', name: 'cuda80-blas'
+                                stash includes: 'blasbuild/cuda-8.0/blas/**', name: 'cuda80-blasbuild'
+                                stash includes: 'blas/**', name: 'cuda80-blas'
                             }
                         }
                     }
@@ -76,8 +76,8 @@ if (CBUILD.toBoolean()) {
                             stage("${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}") {
                                 sh './buildnativeoperations.sh -c cuda -v 9.0 ${BUILD_CUDA_PARAMS}'
 
-                                stash includes: 'blasbuild/cuda-9.0/blas/', name: 'cuda90-blasbuild'
-                                stash includes: 'blas/', name: 'cuda90-blas'
+                                stash includes: 'blasbuild/cuda-9.0/blas/**', name: 'cuda90-blasbuild'
+                                stash includes: 'blas/**', name: 'cuda90-blas'
                             }
                         }
                     }
