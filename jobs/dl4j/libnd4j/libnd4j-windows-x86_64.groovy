@@ -35,9 +35,9 @@ if (CBUILD.toBoolean()) {
                         stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
                             bat 'bash buildnativeoperations.sh -c cpu'
 
-                            stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
-                            stash includes: 'blas/', name: 'cpu-blas'
-                            stash includes: 'include/', name: 'libnd4j-include'
+                            stash includes: 'blasbuild/cpu/blas/**', name: 'cpu-blasbuild'
+                            stash includes: 'blas/**', name: 'cpu-blas'
+                            stash includes: 'include/**', name: 'libnd4j-include'
                         }
                     }
                 }
@@ -57,7 +57,7 @@ if (CBUILD.toBoolean()) {
 
                             bat batCommand
 
-                            stash includes: 'blasbuild/', name: 'cuda80-blasbuild'
+                            stash includes: 'blasbuild/**', name: 'cuda80-blasbuild'
                         }
                     }
                 }
@@ -77,7 +77,7 @@ if (CBUILD.toBoolean()) {
 
                             bat batCommand
 
-                            stash includes: 'blasbuild/', name: 'cuda90-blasbuild'
+                            stash includes: 'blasbuild/**', name: 'cuda90-blasbuild'
                         }
                     }
                 }
