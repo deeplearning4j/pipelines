@@ -1,5 +1,8 @@
 stage("${DATAVEC_PROJECT}-checkout-sources") {
     functions.get_project_code("${DATAVEC_PROJECT}")
+
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
 }
 
 stage("${DATAVEC_PROJECT}-build") {
@@ -24,9 +27,11 @@ stage("${DATAVEC_PROJECT}-build") {
 
 //        def listVersion = ["2.10", "2.11"]
 
-        final listVersion = [[sparkVersion: "1", scalaVersion: "2.11"],
-                             [sparkVersion: "2", scalaVersion: "2.11"],
-                             [sparkVersion: "1", scalaVersion: "2.10"]]
+        final listVersion = [
+                [sparkVersion: "1", scalaVersion: "2.10"],
+                [sparkVersion: "1", scalaVersion: "2.11"],
+                [sparkVersion: "2", scalaVersion: "2.11"]
+        ]
 
         for ( lib in listVersion) {
             echo "[ INFO ] ++ SET Scala Version to: " + lib.scalaVersion
@@ -37,7 +42,7 @@ stage("${DATAVEC_PROJECT}-build") {
 
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).inside(dockerParams) {
+                docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
                     functions.getGpg()
                     sh '''
                     export GPG_TTY=$(tty)

@@ -19,13 +19,22 @@ if (CBUILD.toBoolean()) {
 
                         docker.image(dockerImageName).inside(dockerParams) {
                             stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
-                                sh '''\
+                                String shellCommand = '''\
                                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                                     cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
-                                    ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml" || true
+                                    ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml"
                                 '''.stripIndent()
 
-                                stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+                                int exitCode = sh script: shellCommand, returnStatus: true
+
+                                // Check test results
+                                if (exitCode == 0) {
+                                    // Archiving test results
+                                    junit '**/cpu_test_results.xml'
+                                    stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+                                } else {
+                                    error "Test stage failed with exit code ${exitCode}."
+                                }
                             }
 
                             stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
@@ -34,8 +43,8 @@ if (CBUILD.toBoolean()) {
                                     ./buildnativeoperations.sh -c cpu
                                 '''.stripIndent()
 
-                                stash includes: 'blasbuild/cpu/blas/', name: 'cpu-blasbuild'
-                                stash includes: 'blas/', name: 'cpu-blas'
+                                stash includes: 'blasbuild/cpu/blas/**', name: 'cpu-blasbuild'
+                                stash includes: 'blas/**', name: 'cpu-blas'
                             }
                         }
                     }
@@ -55,8 +64,8 @@ if (CBUILD.toBoolean()) {
                                     ./buildnativeoperations.sh -c cuda -v 8.0 ${BUILD_CUDA_PARAMS}
                                 '''.stripIndent()
 
-                                stash includes: 'blasbuild/cuda-8.0/blas/', name: 'cuda80-blasbuild'
-                                stash includes: 'blas/', name: 'cuda80-blas'
+                                stash includes: 'blasbuild/cuda-8.0/blas/**', name: 'cuda80-blasbuild'
+                                stash includes: 'blas/**', name: 'cuda80-blas'
                             }
                         }
                     }
@@ -76,14 +85,14 @@ if (CBUILD.toBoolean()) {
                                     ./buildnativeoperations.sh -c cuda -v 9.0 ${BUILD_CUDA_PARAMS}
                                 '''.stripIndent()
 
-                                stash includes: 'blasbuild/cuda-9.0/blas/', name: 'cuda90-blasbuild'
-                                stash includes: 'blas/', name: 'cuda90-blas'
+                                stash includes: 'blasbuild/cuda-9.0/blas/**', name: 'cuda90-blasbuild'
+                                stash includes: 'blas/**', name: 'cuda90-blas'
                             }
                         }
                     }
                 }
             },
-            failFast: true
+            failFast: false
     )
 
     dir("${LIBPROJECT}") {
@@ -102,9 +111,6 @@ if (CBUILD.toBoolean()) {
                 functions.upload_libnd4j_snapshot_version_to_snapshot_repository(VERSION, PLATFORM_NAME, PROFILE_TYPE)
             }
         }
-
-        // Archiving test results
-        junit '**/cpu_test_results.xml'
     }
 
     if (SONAR.toBoolean()) {

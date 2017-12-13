@@ -25,7 +25,12 @@ stage("${PROJECT}-build") {
          */
         String libnd4jHomeMount = " -v ${LIBND4J_HOME}:${LIBND4J_HOME}:rw,z"
 
-        final nd4jlibs = [[cudaVersion: "8.0", scalaVersion: "2.11"], [cudaVersion: "9.0", scalaVersion: "2.11"]]
+        final nd4jlibs = [
+                [cudaVersion: "8.0", scalaVersion: "2.10"],
+                [cudaVersion: "8.0", scalaVersion: "2.11"],
+                [cudaVersion: "9.0", scalaVersion: "2.10"],
+                [cudaVersion: "9.0", scalaVersion: "2.11"]
+        ]
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION=lib.cudaVersion
@@ -44,7 +49,7 @@ stage("${PROJECT}-build") {
                 }
             }
             echo "[ INFO ] ++ Building nd4j with cuda " + CUDA_VERSION + " and scala " + SCALA_VERSION
-            sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
+            sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -sf ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -sf ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
             sh(script: "./change-scala-versions.sh ${SCALA_VERSION}")
             sh(script: "./change-cuda-versions.sh ${CUDA_VERSION}")
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {

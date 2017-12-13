@@ -1,4 +1,7 @@
 stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
+
     // if (!isSnapshot) {
     if (PARENT_JOB.length() > 0) {
         echo "Copying nd4j artifacts from userContent"
@@ -12,11 +15,11 @@ stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
             println(ND4J_NATIVE_COUNT)
             sleep unit: "MINUTES", time: 1
         }
-        docker.image(dockerImage).inside(dockerParams) {
+        docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
             functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
         }
     } else {
-        docker.image(dockerImage).inside(dockerParams) {
+        docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
             functions.nd4s_install_snapshot_dependencies_to_maven2_local_repository("org.nd4j", "nd4j-native", "${VERSION}", "jar", ["linux-x86_64","android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"], "${PROFILE_TYPE}")
         }
     }
@@ -47,7 +50,7 @@ stage("${ND4S_PROJECT}-build") {
             sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.bintray")
         }
 
-        docker.image(dockerImage).inside(dockerParams) {
+        docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
                 functions.getGpg()
                 sh '''
