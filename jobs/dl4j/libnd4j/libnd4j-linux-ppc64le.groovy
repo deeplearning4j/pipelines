@@ -9,82 +9,89 @@ if (CBUILD.toBoolean()) {
     // Workaround to store values from map in parallel step
     String dockerImageName = ''
 
-    parallel(
-            "Stream 0 ${LIBPROJECT}-CPU-${PLATFORM_NAME}": {
-                dir("stream0") {
-                    sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+//  Commented out logic to run builds in parallel, because of issue with luck of memory on the slave machine.
+//    parallel(
+//            "Stream 0 ${LIBPROJECT}-CPU-${PLATFORM_NAME}": {
+    stage("Stream 0 ${LIBPROJECT}-CPU-${PLATFORM_NAME}") {
+        dir("stream0") {
+            sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                    dir("${LIBPROJECT}") {
-                        dockerImageName = dockerImages.ubuntu16cuda80
+            dir("${LIBPROJECT}") {
+                dockerImageName = dockerImages.ubuntu16cuda80
 
-                        docker.image(dockerImageName).inside(dockerParams) {
-                            stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
-                                String shellCommand = '''\
-                                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                    cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
-                                    ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml"
-                                '''.stripIndent()
+                docker.image(dockerImageName).inside(dockerParams) {
+                    stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-test") {
+                        String shellCommand = '''\
+                            cd ./tests_cpu && cmake -G "Unix Makefiles" && make -j4 && \
+                            ./layers_tests/runtests --gtest_output="xml:cpu_test_results.xml"
+                        '''.stripIndent()
 
-                                int exitCode = sh script: shellCommand, returnStatus: true
+                        int exitCode = sh script: shellCommand, returnStatus: true
 
-                                // Check test results
-                                if (exitCode == 0) {
-                                    // Archiving test results
-                                    junit '**/cpu_test_results.xml'
-                                    stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
-                                } else {
-                                    error "Test stage failed with exit code ${exitCode}."
-                                }
-                            }
-
-                            stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
-                                sh './buildnativeoperations.sh -c cpu'
-
-                                stash includes: 'blasbuild/cpu/blas/**', name: 'cpu-blasbuild'
-                                stash includes: 'blas/**', name: 'cpu-blas'
-                            }
+                        // Check test results
+                        if (exitCode == 0) {
+                            // Archiving test results
+                            junit '**/cpu_test_results.xml'
+                            stash includes: '**/cpu_test_results.xml', name: 'cpu-test-results'
+                        } else {
+                            error "Test stage failed with exit code ${exitCode}."
                         }
                     }
-                }
-            },
-            "Stream 1 ${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}": {
-                dir("stream1") {
-                    sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                    dir("${LIBPROJECT}") {
-                        dockerImageName = dockerImages.ubuntu16cuda80
+                    stage("${LIBPROJECT}-CPU-${PLATFORM_NAME}-build") {
+                        sh './buildnativeoperations.sh -c cpu'
 
-                        docker.image(dockerImageName).inside(dockerParams) {
-                            stage("${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}") {
-                                sh './buildnativeoperations.sh -c cuda -v 8.0 ${BUILD_CUDA_PARAMS}'
-
-                                stash includes: 'blasbuild/cuda-8.0/blas/**', name: 'cuda80-blasbuild'
-                                stash includes: 'blas/**', name: 'cuda80-blas'
-                            }
-                        }
+                        stash includes: 'blasbuild/cpu/blas/**', name: 'cpu-blasbuild'
+                        stash includes: 'blas/**', name: 'cpu-blas'
                     }
                 }
-            },
-            "Stream 2 ${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}": {
-                dir("stream2") {
-                    sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+            }
+        }
 
-                    dir("${LIBPROJECT}") {
-                        dockerImageName = dockerImages.ubuntu16cuda90
+    }
+//            },
+//            "Stream 1 ${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}": {
+    stage("Stream 1 ${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}") {
+        dir("stream1") {
+            sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
 
-                        docker.image(dockerImageName).inside(dockerParams) {
-                            stage("${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}") {
-                                sh './buildnativeoperations.sh -c cuda -v 9.0 ${BUILD_CUDA_PARAMS}'
+            dir("${LIBPROJECT}") {
+                dockerImageName = dockerImages.ubuntu16cuda80
 
-                                stash includes: 'blasbuild/cuda-9.0/blas/**', name: 'cuda90-blasbuild'
-                                stash includes: 'blas/**', name: 'cuda90-blas'
-                            }
-                        }
+                docker.image(dockerImageName).inside(dockerParams) {
+                    stage("${LIBPROJECT}-CUDA-8.0-${PLATFORM_NAME}") {
+                        sh './buildnativeoperations.sh -c cuda -v 8.0 ${BUILD_CUDA_PARAMS}'
+
+                        stash includes: 'blasbuild/cuda-8.0/blas/**', name: 'cuda80-blasbuild'
+                        stash includes: 'blas/**', name: 'cuda80-blas'
                     }
                 }
-            },
-            failFast: false
-    )
+            }
+        }
+    }
+//            },
+//            "Stream 2 ${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}": {
+    stage("Stream 2 ${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}") {
+        dir("stream2") {
+            sh("cp -a ${WORKSPACE}/${LIBPROJECT} ./")
+
+            dir("${LIBPROJECT}") {
+                dockerImageName = dockerImages.ubuntu16cuda90
+
+                docker.image(dockerImageName).inside(dockerParams) {
+                    stage("${LIBPROJECT}-CUDA-9.0-${PLATFORM_NAME}") {
+                        sh './buildnativeoperations.sh -c cuda -v 9.0 ${BUILD_CUDA_PARAMS}'
+
+                        stash includes: 'blasbuild/cuda-9.0/blas/**', name: 'cuda90-blasbuild'
+                        stash includes: 'blas/**', name: 'cuda90-blas'
+                    }
+                }
+            }
+        }
+    }
+//            },
+//            failFast: false
+//    )
 
     dir("${LIBPROJECT}") {
         unstash 'cpu-blasbuild'
