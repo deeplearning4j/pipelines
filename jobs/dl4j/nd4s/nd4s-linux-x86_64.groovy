@@ -6,15 +6,29 @@ stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
     if (PARENT_JOB.length() > 0) {
         echo "Copying nd4j artifacts from userContent"
         int ND4J_NATIVE_COUNT = 0
-        while (ND4J_NATIVE_COUNT < 6) {
-            sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
 
-            functions.copy_nd4j_native_from_user_content()
+        timeout(30) {
+            waitUntil {
+                sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
 
-            ND4J_NATIVE_COUNT = sh(script: 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l', returnStdout: true).trim().toInteger()
-            println(ND4J_NATIVE_COUNT)
-            sleep unit: "MINUTES", time: 1
+                functions.copy_nd4j_native_from_user_content()
+
+                String checkNumberOfArtifactsScript = 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l'
+
+                ND4J_NATIVE_COUNT = sh(script: checkNumberOfArtifactsScript, returnStdout: true).trim().toInteger()
+
+                echo("${ND4J_NATIVE_COUNT}")
+
+                /*
+                    This statement checks if we have required number of artifacts,
+                    if not waitUtil step will slow down the delay between attempts.
+
+                    Total timeout set to 30 minutes.
+                 */
+                return (ND4J_NATIVE_COUNT == 6)
+            }
         }
+
         docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
             functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
         }
