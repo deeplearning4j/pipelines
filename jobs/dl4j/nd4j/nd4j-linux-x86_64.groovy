@@ -46,6 +46,7 @@ stage("${PROJECT}-build") {
                         break
                     default:
                         error('CUDA version is not supported.')
+                        break
                 }
             }
             echo "[ INFO ] ++ Building nd4j with cuda " + CUDA_VERSION + " and scala " + SCALA_VERSION

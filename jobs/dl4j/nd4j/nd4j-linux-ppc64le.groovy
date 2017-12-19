@@ -39,13 +39,14 @@ stage("${PROJECT}-build") {
             Closure dockerImageName = { cudaVersion ->
                 switch (cudaVersion) {
                     case '8.0':
-                        return dockerImages.centos6cuda80
+                        return dockerImages.ubuntu16cuda80
                         break
                     case '9.0':
-                        return dockerImages.centos6cuda90
+                        return dockerImages.ubuntu16cuda90
                         break
                     default:
                         error('CUDA version is not supported.')
+                        break
                 }
             }
             echo "[ INFO ] ++ Building nd4j with cuda " + CUDA_VERSION + " and scala " + SCALA_VERSION
@@ -60,7 +61,7 @@ stage("${PROJECT}-build") {
                         gpg --list-keys
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
                         mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
-                    '''
+                    '''.stripIndent()
                 }
             }
         }
