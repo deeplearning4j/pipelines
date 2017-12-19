@@ -7,7 +7,7 @@ stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
         echo "Copying nd4j artifacts from userContent"
         int ND4J_NATIVE_COUNT = 0
 
-        timeout(30) {
+        timeout(time:15, unit:'HOURS') {
             waitUntil {
                 sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
 
