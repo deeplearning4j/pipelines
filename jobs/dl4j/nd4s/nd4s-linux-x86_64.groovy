@@ -52,7 +52,8 @@ stage("${ND4S_PROJECT}-build") {
             Mount point of ivy2 folder for Docker container.
             Because by default Jenkins mounts current working folder in Docker container, we need to add custom mount.
          */
-        String ivy2Mount = " -v ${IVY_HOME}:${IVY_HOME}:rw,z"
+        env.IVY_DOCKER_FOLDER = '/tmp/.ivy2'
+        String ivy2Mount = " -v ${IVY_HOME}:${IVY_DOCKER_FOLDER}:rw,z"
 
         functions.checktag("${ND4S_PROJECT}")
 //        sh ("sed -i 's/version := \".*\",/version := \"${VERSION}\",/' build.sbt")
@@ -78,10 +79,10 @@ stage("${ND4S_PROJECT}-build") {
                 sh '''\
                     export GPG_TTY=$(tty)
                     gpg --list-keys
-                    cp -a ${IVY_HOME} ${HOME}/
-                    cp ${IVY_HOME}/.${PROFILE_TYPE} ${IVY_HOME}/.credentials
+                    cp -a ${IVY_DOCKER_FOLDER} ${HOME}/
+                    cp ${HOME}/.${PROFILE_TYPE} ${HOME}/.credentials
                     sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} -Dnd4jVersion=${VERSION} +publishSigned
-                    find ${IVY_HOME} ${HOME}/.ivy2 -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
+                    find ${HOME}/.ivy2 -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
                 '''.stripIndent()
             }
         }
