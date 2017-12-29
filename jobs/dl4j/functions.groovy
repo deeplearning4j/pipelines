@@ -765,4 +765,18 @@ def nd4s_install_snapshot_dependencies_to_maven2_local_repository( group_id, art
     }
 }
 
+def fetchAndBuildProtobuf(String protobufVersion) {
+    String packageName = "protobuf"
+    String archiveName = "${packageName}-cpp-${protobufVersion}.tar.gz"
+
+    sh """\
+        curl --retry 10 -L https://github.com/google/protobuf/releases/download/v${protobufVersion}/${archiveName} -o ${archiveName} && \
+        tar --totals -xf ${archiveName}
+        
+        echo "Starting protobuf build..."
+        cd ${packageName}-${protobufVersion}/ && ./configure && make -j2
+        if [ \$? -eq 0 ]; then echo "Protobuf build finished"; fi
+    """.stripIndent()
+}
+
 return this;

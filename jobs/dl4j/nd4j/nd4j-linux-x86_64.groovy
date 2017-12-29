@@ -56,11 +56,18 @@ stage("${PROJECT}-build") {
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 docker.image(dockerImageName("${CUDA_VERSION}")).inside(dockerParams + libnd4jHomeMount) {
                     functions.getGpg()
+
+                    /* Workaround for protobuf */
+                    env.PROTOBUF_VERSION = '3.5.1'
+                    functions.fetchAndBuildProtobuf("${PROTOBUF_VERSION}")
+
                     sh '''\
                         export GPG_TTY=$(tty)
                         gpg --list-keys
                         if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                        mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
+                        
+
+                        mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -DprotocCommand=protobuf-$PROTOBUF_VERSION/src/protoc
                     '''.stripIndent()
                 }
             }
