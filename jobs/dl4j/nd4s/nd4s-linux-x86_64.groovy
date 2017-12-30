@@ -52,23 +52,24 @@ stage("${ND4S_PROJECT}-build") {
             Mount point of ivy2 folder for Docker container.
             Because by default Jenkins mounts current working folder in Docker container, we need to add custom mount.
          */
-        String ivy2Mount = " -v ${IVY_HOME}:${IVY_HOME}:rw,z"
+        env.IVY_DOCKER_FOLDER = '/tmp/.ivy2'
+        String ivy2Mount = " -v ${IVY_HOME}:${IVY_DOCKER_FOLDER}:rw,z"
 
         functions.checktag("${ND4S_PROJECT}")
 //        sh ("sed -i 's/version := \".*\",/version := \"${VERSION}\",/' build.sbt")
 //        sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${ND4J_VERSION}\",/' build.sbt")
         sh("test -d ${ivy2Home} || mkdir ${ivy2Home}")
         configFileProvider([configFile(fileId: "sbt-local-nexus-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.nexus")
+            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.nexus")
         }
         configFileProvider([configFile(fileId: "sbt-local-jfrog-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.jfrog")
+            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.jfrog")
         }
         configFileProvider([configFile(fileId: "sbt-oss-sonatype-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.sonatype")
+            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.sonatype")
         }
         configFileProvider([configFile(fileId: "sbt-oss-bintray-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.bintray")
+            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.bintray")
         }
 
         docker.image(dockerImages.centos6cuda80).inside(dockerParams + ivy2Mount) {
@@ -78,10 +79,10 @@ stage("${ND4S_PROJECT}-build") {
                 sh '''\
                     export GPG_TTY=$(tty)
                     gpg --list-keys
-                    cp -a ${IVY_HOME} ${HOME}/
-                    cp ${IVY_HOME}/.${PROFILE_TYPE} ${IVY_HOME}/.credentials
+                    cp -a ${IVY_DOCKER_FOLDER} ${HOME}/
+                    cp ${HOME}/.${PROFILE_TYPE} ${HOME}/.credentials
                     sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} -Dnd4jVersion=${VERSION} +publishSigned
-                    find ${WORKSPACE}/.ivy2 ${IVY_HOME} -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
+                    find ${HOME}/.ivy2 -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
                 '''.stripIndent()
             }
         }
