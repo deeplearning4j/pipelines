@@ -58,18 +58,18 @@ stage("${ND4S_PROJECT}-build") {
         functions.checktag("${ND4S_PROJECT}")
 //        sh ("sed -i 's/version := \".*\",/version := \"${VERSION}\",/' build.sbt")
 //        sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${ND4J_VERSION}\",/' build.sbt")
-        sh("test -d ${ivy2Home} || mkdir ${ivy2Home}")
+        sh("test -d ${IVY_HOME} || mkdir ${IVY_HOME}")
         configFileProvider([configFile(fileId: "sbt-local-nexus-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.nexus")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.nexus")
         }
         configFileProvider([configFile(fileId: "sbt-local-jfrog-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.jfrog")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.jfrog")
         }
         configFileProvider([configFile(fileId: "sbt-oss-sonatype-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.sonatype")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.sonatype")
         }
         configFileProvider([configFile(fileId: "sbt-oss-bintray-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${ivy2Home}/.bintray")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.bintray")
         }
 
         docker.image(dockerImages.centos6cuda80).inside(dockerParams + ivy2Mount) {
