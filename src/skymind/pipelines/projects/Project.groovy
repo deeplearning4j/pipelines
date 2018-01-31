@@ -7,10 +7,9 @@ abstract class Project implements Serializable {
     protected notifications
     protected String projectVersion
     protected final String projectName
-    protected List platforms
+    protected static List platforms = [[backends: [], compillers: [], name: 'linux-x86_64']]
     protected final List scalaVersions = ['2.10', '2.11']
     protected final String branchName
-    protected final String libnd4jTestsFilter
 
     /**
      * Project class constructor
@@ -21,18 +20,14 @@ abstract class Project implements Serializable {
      */
     Project(script, String projectName, Map jobConfig) {
         this.script = script
-        /* Configure job build parameters */
-        setBuildParameters()
         this.projectName = projectName
+        branchName = this.script.env.BRANCH_NAME
         /* Default platforms will be used if developer didn't redefine them in Jenkins file */
-        platforms = jobConfig?.getAt('platforms') ?: [[backends  : [],
-                                                       compillers: [],
-                                                       name      : 'linux-x86_64']]
+        platforms = jobConfig?.getAt('platforms') ?: platforms
         /* Get instance of NotificationHelper class for sending notifications about run status */
         notifications = new NotificationHelper(script)
-
-        branchName = this.script.env.BRANCH_NAME
-        libnd4jTestsFilter = jobConfig?.getAt('libnd4jTestsFilter')
+        /* Configure job build parameters */
+        setBuildParameters()
     }
 
     abstract void initPipeline()
@@ -114,8 +109,7 @@ abstract class Project implements Serializable {
         if (project in ['libnd4j', 'nd4j']) {
             script.checkout script.scm
             script.stash name: 'sourceCode', useDefaultExcludes: false
-        }
-        else {
+        } else {
             script.dir(projectName) {
                 script.checkout script.scm
             }
@@ -141,8 +135,7 @@ abstract class Project implements Serializable {
                                     '/repository',
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ')
-                }
-                else {
+                } else {
                     return [
                             'vcvars64.bat',
                             '&&',
@@ -174,8 +167,7 @@ abstract class Project implements Serializable {
                                     '/repository',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                     ].plus(mvnArguments).findAll().join(' ')
-                }
-                else {
+                } else {
                     return [
                             'vcvars64.bat',
                             '&&',

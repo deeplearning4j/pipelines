@@ -1,13 +1,45 @@
 package skymind.pipelines.projects
 
-import groovy.transform.InheritConstructors
-
-@InheritConstructors
 class Libnd4jProject extends Project {
     private final List artifacts = []
     private final String projectGroupId = 'org.nd4j'
     private final String projectVersion = script.env.PROJECT_VERSION ?: '0.9.2-SNAPSHOT'
     private final List artifactNamesPattern = ['blas', 'blasbuild', 'include']
+    private final String libnd4jTestsFilter
+
+    static {
+        platforms = [
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'android-x86'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'android-arm'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'linux-ppc64le'],
+
+                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                 compillers: [],
+                 name      : 'linux-x86_64'],
+
+//                        [backends  : ['cpu'],
+//                         compillers: [],
+//                         name      : 'macosx-x86_64'],
+
+                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                 compillers: [],
+                 name      : 'windows-x86_64']
+        ]
+    }
+
+    Libnd4jProject(script, String projectName, Map jobConfig) {
+        super(script, projectName, jobConfig)
+        /* Get filters for Google tests, provided by developer in Jenkinsfile */
+        libnd4jTestsFilter = jobConfig?.getAt('libnd4jTestsFilter')
+    }
 
     @NonCPS
     protected void setBuildParameters() {
@@ -36,31 +68,6 @@ class Libnd4jProject extends Project {
     }
 
     void initPipeline() {
-        platforms = [
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'android-x86'],
-
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'android-arm'],
-
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'linux-ppc64le'],
-
-                        [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
-                         compillers: [],
-                         name      : 'linux-x86_64'],
-
-//                        [backends  : ['cpu'],
-//                         compillers: [],
-//                         name      : 'macosx-x86_64'],
-
-                        [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
-                         compillers: [],
-                         name      : 'windows-x86_64']
-                ]
         script.node('master') {
             pipelineWrapper {
                 script.lock(resource: "libnd4jTestAndBuild-${branchName}", inversePrecedence: true) {
