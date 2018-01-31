@@ -18,32 +18,6 @@ class ProjectFactory implements Serializable {
                 new Libnd4jProject(script, projectName, jobConfig).initPipeline()
                 break
             case 'nd4j':
-                jobConfig = jobConfig?.getAt('platforms') ?: [platforms: [
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'android-x86'],
-
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'android-arm'],
-
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'linux-ppc64le'],
-
-                        [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
-                         compillers: [],
-
-                         name      : 'linux-x86_64'],
-
-                        [backends  : ['cpu'],
-                         compillers: [],
-                         name      : 'macosx-x86_64'],
-
-                        [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
-                         compillers: [],
-                         name      : 'windows-x86_64']
-                ]]
                 new Nd4jProject(script, projectName, jobConfig).initPipeline()
                 break
             case 'nd4s':

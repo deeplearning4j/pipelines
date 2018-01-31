@@ -8,13 +8,41 @@ class Nd4jProject extends Project {
     private String projectGroupId
     private final String nd4jDependencyName = 'libnd4j'
 
+    /* Overwrite default platforms */
+    static {
+        platforms = [
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'android-x86'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'android-arm'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'linux-ppc64le'],
+
+                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                 compillers: [],
+                 name      : 'linux-x86_64'],
+
+//                        [backends  : ['cpu'],
+//                         compillers: [],
+//                         name      : 'macosx-x86_64'],
+
+                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                 compillers: [],
+                 name      : 'windows-x86_64']
+        ]
+    }
+
     void initPipeline() {
         script.node('master') {
             pipelineWrapper {
                 script.milestone()
                 script.stage("Test and Build") {
                     script.parallel buildStreams
-//                    buildStreams
                 }
             }
         }
@@ -37,7 +65,6 @@ class Nd4jProject extends Project {
 
                 /* Create stream body */
                 streams["$streamName"] = {
-//                script.stage("$streamName") {
                     script.node(platformName) {
                         Boolean isUnix = script.isUnix()
                         String separator = isUnix ? '/' : '\\'

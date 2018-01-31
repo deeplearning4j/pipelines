@@ -7,6 +7,7 @@ class Libnd4jProject extends Project {
     private final List artifactNamesPattern = ['blas', 'blasbuild', 'include']
     private final String libnd4jTestsFilter
 
+    /* Overwrite default platforms */
     static {
         platforms = [
                 [backends  : ['cpu'],
