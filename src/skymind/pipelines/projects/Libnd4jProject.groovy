@@ -267,7 +267,7 @@ class Libnd4jProject extends Project {
 
                 script.dir("${artifact.name}") {
                     script.unstash name: "${artifact.name}"
-                    script.zip zipFile: "${artifact.name}.zip", archive: true
+                    script.zip zipFile: "${artifact.name}.zip", archive: false
 
                     publishArtifact(artifactFileName, backendName, platformName)
                 }
