@@ -37,10 +37,10 @@ abstract class Project implements Serializable {
         script.properties([
                 script.buildDiscarder(
                         script.logRotator(
-                                artifactDaysToKeepStr: '7',
-                                artifactNumToKeepStr: '21',
-                                daysToKeepStr: '7',
-                                numToKeepStr: '42'
+                                artifactDaysToKeepStr: '3',
+                                artifactNumToKeepStr: '5',
+                                daysToKeepStr: '3',
+                                numToKeepStr: '10'
                         )
                 ),
                 [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false]
