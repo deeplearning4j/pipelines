@@ -141,7 +141,7 @@ abstract class Project implements Serializable {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U',
+                            'mvn -U -B',
                             "-s %MAVEN_SETTINGS%", // Workaround for windows paths in bash
                             '-P trimSnapshots',
                             'clean',
