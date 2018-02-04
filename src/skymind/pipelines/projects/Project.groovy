@@ -47,7 +47,8 @@ abstract class Project implements Serializable {
                                 numToKeepStr: '10'
                         )
                 ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false]
+                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
+                script.pipelineTriggers([script.snapshotDependencies()])
 //                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
 //                script.parameters([
                 //                        script.choice(
