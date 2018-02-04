@@ -8,9 +8,9 @@ class Nd4jProject extends Project {
     private String projectGroupId
     private final String nd4jDependencyName = 'libnd4j'
 
-    /* Overwrite default platforms */
+    /* Override default platforms */
     static {
-        platforms = [
+        defaultPlatforms = [
                 [backends  : ['cpu'],
                  compillers: [],
                  name      : 'android-x86'],

@@ -5,11 +5,15 @@ import skymind.pipelines.helper.NotificationHelper
 abstract class Project implements Serializable {
     protected script
     protected notifications
+    protected platforms
     protected String projectVersion
-    protected final String projectName
-    protected static List platforms = [[backends: [], compillers: [], name: 'linux-x86_64']]
-    protected final List scalaVersions = ['2.10', '2.11']
     protected final String branchName
+    protected final String projectName
+    protected final List scalaVersions = ['2.10', '2.11']
+    /* Default platforms for most of the projects */
+    protected static List defaultPlatforms = [
+            [backends: [], compillers: [], name: 'linux-x86_64']
+    ]
 
     /**
      * Project class constructor
@@ -23,7 +27,7 @@ abstract class Project implements Serializable {
         this.projectName = projectName
         branchName = this.script.env.BRANCH_NAME
         /* Default platforms will be used if developer didn't redefine them in Jenkins file */
-        platforms = jobConfig?.getAt('platforms') ?: platforms
+        platforms = jobConfig?.getAt('platforms') ?: defaultPlatforms
         /* Get instance of NotificationHelper class for sending notifications about run status */
         notifications = new NotificationHelper(script)
         /* Configure job build parameters */
