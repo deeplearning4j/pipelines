@@ -16,7 +16,7 @@ RUN apt-get -qqy update && \
     add-apt-repository ppa:openjdk-r/ppa -y && \
     add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
     apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/7fa2af80.pub && \
-    curl -fsSL http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/cuda-repo-ubuntu1604_8.0.61-1_ppc64el.deb -o /tmp/cuda-repo.deb && \
+    curl -fsSL http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/cuda-repo-ubuntu1604_9.1.85-1_ppc64el.deb -o /tmp/cuda-repo.deb && \
     dpkg -i /tmp/cuda-repo.deb && \
     rm -f /tmp/cuda-repo.deb
 

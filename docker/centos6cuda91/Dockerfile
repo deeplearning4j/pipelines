@@ -1,16 +1,26 @@
-FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:9.1-cudnn7-devel-centos6
 
-RUN apt-get update && \
-    apt-get -y --no-install-recommends install \
+RUN yum -y clean all && \
+    yum -y install \
+        centos-release-scl-rh \
+        epel-release \
+        && \
+    yum -y install \
+        devtoolset-3-toolchain \
+        devtoolset-3-libasan-devel \
+        devtoolset-4-toolchain \
+        devtoolset-4-libasan-devel \
+        devtoolset-6-toolchain \
+        devtoolset-6-libasan-devel \
+        tar \
         wget \
         curl \
-        maven \
+        openssl \
         ca-certificates \
-        software-properties-common \
         git \
+        rpm-build \
         && \
-	apt-get clean && \
-	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    yum clean all
 
 ENV JAVA_PACKAGE_VERSION 8u131
 ENV JAVA_PACKAGE_NAME jdk-${JAVA_PACKAGE_VERSION}-linux-x64.tar.gz
@@ -26,13 +36,20 @@ RUN mkdir -p /opt && \
     rm ${JAVA_PACKAGE_NAME} && \
     mv /opt/jdk* ${JAVA_HOME} && \
     update-alternatives --install /usr/bin/java java ${JAVA_HOME}/bin/java 100 && \
-    update-alternatives --set java ${JAVA_HOME}/bin/java && \
-    update-alternatives --install /usr/bin/javac javac ${JAVA_HOME}/bin/javac 100 && \
-    update-alternatives --set javac ${JAVA_HOME}/bin/javac
+    update-alternatives --install /usr/bin/javac javac ${JAVA_HOME}/bin/javac 100
+
+ENV MAVEN_PACKAGE_VERSION 3.3.9
+ENV MAVEN_PACKAGE_NAME apache-maven-${MAVEN_PACKAGE_VERSION}-bin.tar.gz
+ENV MAVEN_DOWNLOAD_URL http://apache.osuosl.org/maven/maven-3/${MAVEN_PACKAGE_VERSION}/binaries/${MAVEN_PACKAGE_NAME}
+
+RUN mkdir -p /opt/maven && \
+    curl -fsSL ${MAVEN_DOWNLOAD_URL} \
+    | tar -xzC /opt/maven --strip-components=1 && \
+    ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 RUN mkdir -p /opt/sbt && \
-	curl -fsSL https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz \
-	| tar -xzC /opt/sbt --strip-components=1
+    curl -fsSL https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz \
+    | tar -xzC /opt/sbt --strip-components=1
 
 RUN mkdir -p /opt/cmake && \
     curl -fsSL https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz \
