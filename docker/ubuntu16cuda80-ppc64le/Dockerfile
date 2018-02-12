@@ -63,7 +63,7 @@ RUN apt-get -qqy update && \
     ln -s /usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java /etc/alternatives/java && \
     ln -s /usr/bin/gcc-5 /usr/bin/gcc && \
     ln -s /usr/bin/g++-5 /usr/bin/g++ && \
-    ln -s ${CMAKE_HOME}/bin/* /usr/local/bin
+    ln -s ${CMAKE_HOME}/bin/* /usr/local/bin && \
     ln -s ${PROTOBUF_HOME}/bin/* /usr/local/bin
 
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
