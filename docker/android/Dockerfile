@@ -48,17 +48,19 @@ RUN mkdir -p /opt/maven && \
         ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 RUN mkdir -p /opt/sbt && \
-        curl -fsSL "https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz" \
+        curl -fsSL https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz \
         | tar -xzC /opt/sbt --strip-components=1
 
 RUN mkdir -p /opt/cmake && \
-        curl -fsSL "https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz" \
+        curl -fsSL https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz \
         | tar -xzC /opt/cmake --strip-components=1
 
 ENV ANDROID_NDK_PACKAGE_VERSION r16b
 ENV ANDROID_NDK_PACKAGE_NAME android-ndk-${ANDROID_NDK_PACKAGE_VERSION}-linux-x86_64.zip
 ENV ANDROID_NDK_DOWNLOAD_URL http://dl.google.com/android/repository/${ANDROID_NDK_PACKAGE_NAME}
 ENV ANDROID_NDK_HOME /opt/android-ndk-${ANDROID_NDK_PACKAGE_VERSION}
+# This environment variable required for buildnativeoperations.sh script execution
+ENV ANDROID_NDK=${ANDROID_NDK_HOME}
 
 RUN mkdir -p /opt && \
     wget --no-cookies --no-check-certificate "${ANDROID_NDK_DOWNLOAD_URL}" && \
