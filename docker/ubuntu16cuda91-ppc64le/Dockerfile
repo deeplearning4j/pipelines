@@ -48,11 +48,12 @@ RUN curl -fsSL ${PROTOBUF_DOWNLOAD_URL} \
     cd .. && \
     rm -r protobuf-${PROTOBUF_PACKAGE_VERSION}
 
+ENV CUDA_VERSION 9-1
 RUN apt-get -qqy update && \
     apt-get -qqy install --no-install-recommends \
         gcc \
         g++ \
-        cuda \
+        cuda-${CUDA_VERSION} \
         openjdk-8-jdk-headless \
         maven \
         && \
@@ -67,6 +68,9 @@ RUN apt-get -qqy update && \
     ln -s ${PROTOBUF_HOME}/bin/* /usr/local/bin
 
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
+
+ENV PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} \
+    LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 USER jenkins
 
