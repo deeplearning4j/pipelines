@@ -46,6 +46,7 @@ class Libnd4jProject extends Project {
 //                 name         : 'macosx-x86_64'],
 
                 [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                 cpuExtensions: ['avx2'],
                  compillers: [],
                  name      : 'windows-x86_64']
         ]
