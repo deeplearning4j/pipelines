@@ -129,7 +129,6 @@ class Nd4jProject extends Project {
     private void runBuild(String platform, String backend, List cpuExtensions) {
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
-        String cudaVersion = backend.tokenize('-')[1]
 
         script.isVersionReleased(projectName, projectVersion)
         script.setProjectVersion(projectVersion, true)
@@ -193,11 +192,21 @@ class Nd4jProject extends Project {
             }
             /* Nd4j build with libn4j CUDA backend */
             else {
+                String cudaVersion = backend.tokenize('-')[1]
+
+                script.echo "[INFO] Setting CUDA version to: $cudaVersion"
+
+                String updateCudaCommand = [
+                        (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
+                        (unixNode ? "./change-cuda-versions.sh $cudaVersion" :
+                                "\"./change-cuda-versions.sh $cudaVersion\"")
+                ].join(' ')
+
+                script."$shell" updateCudaCommand
+
                 mvnCommand = getMvnCommand("build", false, [
-                        '-P libnd4j-assembly',
-                        "-Dcuda.version=${cudaVersion}",
                         (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
-                        (cudaVersion == '8.0') ? "-Dcudnn.version=6.0" : "-Dcudnn.version=7.0",
+                        '-P libnd4j-assembly',
                         (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : ''
                 ])
 
