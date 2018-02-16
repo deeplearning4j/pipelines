@@ -169,7 +169,7 @@ class Libnd4jProject extends Project {
                 break
             case ['linux-x86_64', 'android-arm', 'android-x86']:
                 testCommand = """\
-                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable; fi
+                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable; fi
                     ${testCommand}
                 """.stripIndent()
                 break
