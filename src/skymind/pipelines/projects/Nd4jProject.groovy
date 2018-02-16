@@ -26,7 +26,7 @@ class Nd4jProject extends Project {
                     FIXME: Disable CUDA 9.1 build because of mismatching dependencies version.
                  */
 //                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0'],
                  cpuExtensions: ['avx2', 'avx512'],
                  compillers   : [],
                  name         : 'linux-x86_64'],
@@ -39,10 +39,10 @@ class Nd4jProject extends Project {
 //                 compillers   : [],
 //                 name         : 'macosx-x86_64'],
 
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0'],
                  cpuExtensions: ['avx2'],
-                 compillers: [],
-                 name      : 'windows-x86_64']
+                 compillers   : [],
+                 name         : 'windows-x86_64']
         ]
     }
 
@@ -139,94 +139,104 @@ class Nd4jProject extends Project {
     }
 
     private void runBuild(String platform, String backend, List cpuExtensions) {
+        String mvnCommand
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
+        String updateScalaCommand = { version ->
+            [
+                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
+                    (unixNode ? "./change-scala-versions.sh $version" :
+                            "\"./change-scala-versions.sh $version\"")
+            ].findAll().join(' ')
+        }
 
         script.isVersionReleased(projectName, projectVersion)
         script.setProjectVersion(projectVersion, true)
 
-        for (String sclVer : scalaVersions) {
-            String scalaVersion = sclVer
-            String mvnCommand
+        if (backend == 'cpu') {
+            /* Nd4j build with libn4j CPU backend and specific extension */
+            if (cpuExtensions) {
+                for (String item : cpuExtensions) {
+                    String cpuExtension = item
+                    String scalaVersion = (cpuExtensions == 'avx2') ? '2.10' : '2.11'
+
+                    script.echo "[INFO] Setting Scala version to: $scalaVersion"
+
+                    script."$shell" "$updateScalaCommand"
+
+                    mvnCommand = getMvnCommand("build", true, [
+                            '-P libnd4j-assembly',
+                            "-Djavacpp.extension=${cpuExtension}",
+                            (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ?
+                                    '-DprotocCommand=protoc' :
+                                    '',
+                            '-pl ' +
+                                    '\'' +
+                                    '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
+                                    '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
+                                    '!nd4j-backends/nd4j-tests' +
+                                    '\''
+                    ])
+
+                    script.echo "[INFO] Building nd4j ${backend} backend with " +
+                            "Scala ${scalaVersion} versions and ${cpuExtension} extension"
+
+                    script.mvn "$mvnCommand"
+                }
+            }
+
+            /* Workaround to set scala version */
+            String scalaVersion = (platform in ['android-arm']) ? '2.10' : '2.11'
 
             script.echo "[INFO] Setting Scala version to: $scalaVersion"
+            script."$shell" updateScalaCommand(scalaVersion)
 
-            String updateScalaCommand = [
-                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
-                    (unixNode ? "./change-scala-versions.sh $scalaVersion" :
-                            "\"./change-scala-versions.sh $scalaVersion\"")
-            ].findAll().join(' ')
+            /* Nd4j build with libn4j CPU backend */
+            mvnCommand = getMvnCommand("build", false, [
+                    '-P libnd4j-assembly',
+                    (platform in ['android-x86', 'android-arm']) ? "-Djavacpp.platform=${platform}" : '',
+                    (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
+                    (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : '',
+                    '-pl ' +
+                            '\'' +
+                            '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
+                            '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
+                            '!nd4j-backends/nd4j-tests' +
+                            '\''
+            ])
 
-            script."$shell" "$updateScalaCommand"
-
-            if (backend == 'cpu') {
-                /* Nd4j build with libn4j CPU backend and specific extension */
-                if (cpuExtensions) {
-                    for (String item : cpuExtensions) {
-                        String cpuExtension = item
-
-                        mvnCommand = getMvnCommand("build", true, [
-                                '-P libnd4j-assembly',
-                                "-Djavacpp.extension=${cpuExtension}",
-                                (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ?
-                                        '-DprotocCommand=protoc' :
-                                        '',
-                                '-pl ' +
-                                        '\'' +
-                                        '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
-                                        '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
-                                        '!nd4j-backends/nd4j-tests' +
-                                        '\''
-                        ])
-
-                        script.echo "[INFO] Building nd4j ${backend} backend with " +
-                                "Scala ${scalaVersion} versions and ${cpuExtension} extension"
-
-                        script.mvn "$mvnCommand"
-                    }
-                }
-
-                /* Nd4j build with libn4j CPU backend */
-                mvnCommand = getMvnCommand("build", false, [
-                        '-P libnd4j-assembly',
-                        (platform in ['android-x86', 'android-arm']) ? "-Djavacpp.platform=${platform}" : '',
-                        (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
-                        (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : '',
-                        '-pl ' +
-                                '\'' +
-                                '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
-                                '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
-                                '!nd4j-backends/nd4j-tests' +
-                                '\''
-                ])
-
-                script.echo "[INFO] Building nd4j ${backend} backend with Scala ${scalaVersion} versions"
-            }
-            /* Nd4j build with libn4j CUDA backend */
-            else {
-                String cudaVersion = backend.tokenize('-')[1]
-
-                script.echo "[INFO] Setting CUDA version to: $cudaVersion"
-
-                String updateCudaCommand = [
-                        (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
-                        (unixNode ? "./change-cuda-versions.sh $cudaVersion" :
-                                "\"./change-cuda-versions.sh $cudaVersion\"")
-                ].join(' ')
-
-                script."$shell" updateCudaCommand
-
-                mvnCommand = getMvnCommand("build", false, [
-                        (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
-                        '-P libnd4j-assembly',
-                        (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : ''
-                ])
-
-                script.echo "[INFO] Building nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
-            }
-
-            script.mvn "$mvnCommand"
+            script.echo "[INFO] Building nd4j ${backend} backend with Scala ${scalaVersion} versions"
         }
+        /* Nd4j build with libn4j CUDA backend */
+        else {
+            String cudaVersion = backend.tokenize('-')[1]
+
+            script.echo "[INFO] Setting CUDA version to: $cudaVersion"
+
+            String updateCudaCommand = [
+                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
+                    (unixNode ? "./change-cuda-versions.sh $cudaVersion" :
+                            "\"./change-cuda-versions.sh $cudaVersion\"")
+            ].join(' ')
+
+            script."$shell" updateCudaCommand
+
+            /* Workaround to set scala version */
+            String scalaVersion = (backend.contains('8.0')) ? '2.10' : '2.11'
+
+            script.echo "[INFO] Setting Scala version to: $scalaVersion"
+            script."$shell" updateScalaCommand(scalaVersion)
+
+            mvnCommand = getMvnCommand("build", false, [
+                    (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
+                    '-P libnd4j-assembly',
+                    (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : ''
+            ])
+
+            script.echo "[INFO] Building nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
+        }
+
+        script.mvn "$mvnCommand"
     }
 
     protected String getMvnCommand(String stageName, Boolean isCpuWithExtension, List mvnArguments = []) {
