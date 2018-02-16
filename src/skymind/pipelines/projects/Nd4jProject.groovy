@@ -5,7 +5,6 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class Nd4jProject extends Project {
     private final String lockableResourceName = "nd4jTestAndBuild-${branchName}"
-    private String mavenLocalRepositoryPath
 
     /* Override default platforms */
     static {
@@ -18,28 +17,37 @@ class Nd4jProject extends Project {
                  compillers: [],
                  name      : 'android-arm'],
 
+                /*
+                    FIXME: ppc64le slave is unstable at the moment,
+                    when number of parallel threads more than number of CPUs OOM-killer kills all Docker containers.
+                    Because of that CUDA couldn't be enabled at the moment.
+                 */
+//                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                 [backends  : ['cpu'],
                  compillers: [],
                  name      : 'linux-ppc64le'],
 
-                /*
-                    FIXME: Disable CUDA 9.1 build because of mismatching dependencies version.
-                 */
-//                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                  cpuExtensions: ['avx2', 'avx512'],
                  compillers   : [],
                  name         : 'linux-x86_64'],
 
                 /*
-                    FIXME: Disable Mac builds at all, because of Mac slave instability.
+                    FIXME: Disable CUDA builds for Mac, because of Mac slave instability.
                  */
-//                [backends     : ['cpu'],
-//                 cpuExtensions: ['avx2'],
-//                 compillers   : [],
-//                 name         : 'macosx-x86_64'],
+//                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
+                [backends     : ['cpu'],
+                 /*
+                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+                     at the same time for CUDA - Xcode 8 required,
+                     which means that we can't enable avx512 builds at the moment
+                  */
+//                 cpuExtensions: ['avx2', 'avx512'],
+                 cpuExtensions: ['avx2'],
+                 compillers   : [],
+                 name         : 'macosx-x86_64'],
 
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                  cpuExtensions: ['avx2'],
                  compillers   : [],
                  name         : 'windows-x86_64']
@@ -82,50 +90,38 @@ class Nd4jProject extends Project {
                         String separator = isUnix ? '/' : '\\'
                         String wsFolderName = 'workspace' +
                                 separator +
-                                [projectName, script.env.BRANCH_NAME].join('_').replaceAll('/', '_')
-                        mavenLocalRepositoryPath = "${wsFolderName}/${script.pipelineEnv.localRepositoryPath}"
+                                [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
                         /* Redefine default workspace to fix Windows path length limitation */
                         script.ws(wsFolderName) {
-                            script.dir(streamName) {
+                            script.stage('Set up environment') {
                                 script.deleteDir()
 
-                                script.stage('Set up environment') {
-                                    script.dir(projectName) {
-                                        script.unstash 'sourceCode'
-
-                                        def pom = projectObjectModel
-                                        projectVersion = pom?.version
-                                    }
-                                }
-
                                 script.dir(projectName) {
-                                    /* Get docker container configuration */
-                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
-                                    /*
-                                        Mount point of required folders for Docker container.
-                                        Because by default Jenkins mounts current working folder in Docker container,
-                                        we need to add custom mount.
-                                    */
-                                    String mavenLocalRepositoryMount = "-v ${mavenLocalRepositoryPath}:" +
-                                            "/home/jenkins/${script.pipelineEnv.localRepositoryPath}:z"
+                                    script.unstash 'sourceCode'
 
-                                    if (dockerConf) {
-                                        String dockerImageName = dockerConf['image'] ?:
-                                                script.error('Docker image name is missing.')
-                                        String dockerImageParams = [
-                                                dockerConf?.params, mavenLocalRepositoryMount
-                                        ].findAll().join(' ')
+                                    def pom = projectObjectModel
+                                    projectVersion = pom?.version
+                                }
+                            }
 
-                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
-                                            script.stage('Build') {
-                                                runBuild(platformName, backend, cpuExtensions)
-                                            }
-                                        }
-                                    } else {
+                            script.dir(projectName) {
+                                /* Get docker container configuration */
+                                Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+
+                                if (dockerConf) {
+                                    String dockerImageName = dockerConf['image'] ?:
+                                            script.error('Docker image name is missing.')
+                                    String dockerImageParams = [dockerConf?.params].findAll().join(' ')
+
+                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
                                         script.stage('Build') {
                                             runBuild(platformName, backend, cpuExtensions)
                                         }
+                                    }
+                                } else {
+                                    script.stage('Build') {
+                                        runBuild(platformName, backend, cpuExtensions)
                                     }
                                 }
                             }
@@ -142,13 +138,26 @@ class Nd4jProject extends Project {
         String mvnCommand
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
-        String updateScalaCommand = { version ->
-            [
+        Closure updateScalaCommand = { String version ->
+            return [
                     (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
                     (unixNode ? "./change-scala-versions.sh $version" :
                             "\"./change-scala-versions.sh $version\"")
-            ].findAll().join(' ')
+            ].join(' ')
         }
+        Closure updateCudaCommand = { String version ->
+            return [
+                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
+                    (unixNode ? "./change-cuda-versions.sh $version" :
+                            "\"./change-cuda-versions.sh $version\"")
+            ].join(' ')
+        }
+        String mavenExcludesForCpu = '-pl ' +
+                '\'' +
+                '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
+                '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
+                '!nd4j-backends/nd4j-tests' +
+                '\''
 
         script.isVersionReleased(projectName, projectVersion)
         script.setProjectVersion(projectVersion, true)
@@ -158,24 +167,22 @@ class Nd4jProject extends Project {
             if (cpuExtensions) {
                 for (String item : cpuExtensions) {
                     String cpuExtension = item
-                    String scalaVersion = (cpuExtensions == 'avx2') ? '2.10' : '2.11'
+                    String scalaVersion = (cpuExtension == 'avx2') ? '2.10' : '2.11'
 
                     script.echo "[INFO] Setting Scala version to: $scalaVersion"
 
-                    script."$shell" "$updateScalaCommand"
+                    script."$shell" script: updateScalaCommand(scalaVersion)
 
                     mvnCommand = getMvnCommand("build", true, [
                             '-P libnd4j-assembly',
                             "-Djavacpp.extension=${cpuExtension}",
-                            (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ?
+                            (platform.contains('linux') || platform.contains('android')) ?
                                     '-DprotocCommand=protoc' :
                                     '',
-                            '-pl ' +
-                                    '\'' +
-                                    '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
-                                    '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
-                                    '!nd4j-backends/nd4j-tests' +
-                                    '\''
+                            (platform.contains('macosx')) ?
+                                    "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                                    '',
+                            mavenExcludesForCpu
                     ])
 
                     script.echo "[INFO] Building nd4j ${backend} backend with " +
@@ -183,29 +190,33 @@ class Nd4jProject extends Project {
 
                     script.mvn "$mvnCommand"
                 }
+            } else {
+                /* Workaround to set scala version */
+                String scalaVersion = (platform in ['android-arm']) ? '2.10' : '2.11'
+
+                script.echo "[INFO] Setting Scala version to: $scalaVersion"
+
+                script."$shell" script: updateScalaCommand(scalaVersion)
+
+                /* Nd4j build with libn4j CPU backend */
+                mvnCommand = getMvnCommand("build", false, [
+                        '-P libnd4j-assembly',
+                        (platform in ['android-x86', 'android-arm']) ?
+                                "-Djavacpp.platform=${platform}" :
+                                '',
+                        (platform.contains('linux') || platform.contains('android')) ?
+                                '-DprotocCommand=protoc' :
+                                '',
+                        (platform.contains('macosx')) ?
+                                "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                                '',
+                        mavenExcludesForCpu
+                ])
+
+                script.echo "[INFO] Building nd4j ${backend} backend with Scala ${scalaVersion} versions"
+
+                script.mvn "$mvnCommand"
             }
-
-            /* Workaround to set scala version */
-            String scalaVersion = (platform in ['android-arm']) ? '2.10' : '2.11'
-
-            script.echo "[INFO] Setting Scala version to: $scalaVersion"
-            script."$shell" updateScalaCommand(scalaVersion)
-
-            /* Nd4j build with libn4j CPU backend */
-            mvnCommand = getMvnCommand("build", false, [
-                    '-P libnd4j-assembly',
-                    (platform in ['android-x86', 'android-arm']) ? "-Djavacpp.platform=${platform}" : '',
-                    (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
-                    (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : '',
-                    '-pl ' +
-                            '\'' +
-                            '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
-                            '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
-                            '!nd4j-backends/nd4j-tests' +
-                            '\''
-            ])
-
-            script.echo "[INFO] Building nd4j ${backend} backend with Scala ${scalaVersion} versions"
         }
         /* Nd4j build with libn4j CUDA backend */
         else {
@@ -213,30 +224,29 @@ class Nd4jProject extends Project {
 
             script.echo "[INFO] Setting CUDA version to: $cudaVersion"
 
-            String updateCudaCommand = [
-                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
-                    (unixNode ? "./change-cuda-versions.sh $cudaVersion" :
-                            "\"./change-cuda-versions.sh $cudaVersion\"")
-            ].join(' ')
-
-            script."$shell" updateCudaCommand
+            script."$shell" script: updateCudaCommand(cudaVersion)
 
             /* Workaround to set scala version */
             String scalaVersion = (backend.contains('8.0')) ? '2.10' : '2.11'
 
             script.echo "[INFO] Setting Scala version to: $scalaVersion"
-            script."$shell" updateScalaCommand(scalaVersion)
+
+            script."$shell" script: updateScalaCommand(scalaVersion)
 
             mvnCommand = getMvnCommand("build", false, [
-                    (platform.contains('windows')) ? '-s ${MAVEN_SETTINGS}' : '',
                     '-P libnd4j-assembly',
-                    (platform in ['linux-x86_64', 'android-arm', 'android-x86']) ? '-DprotocCommand=protoc' : ''
+                    (platform.contains('linux')) ?
+                            '-DprotocCommand=protoc' :
+                            '',
+                    (platform.contains('macosx')) ?
+                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                            ''
             ])
 
             script.echo "[INFO] Building nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
-        }
 
-        script.mvn "$mvnCommand"
+            script.mvn "$mvnCommand"
+        }
     }
 
     protected String getMvnCommand(String stageName, Boolean isCpuWithExtension, List mvnArguments = []) {
@@ -250,7 +260,7 @@ class Nd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U -B',
+                            'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
                             '-P trimSnapshots',
@@ -268,9 +278,12 @@ class Nd4jProject extends Project {
                             branchName == 'master' ? 'deploy' : 'install',
                             '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
-                            "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}",
-                            '-Dmaven.test.skip=true'
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}"
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break

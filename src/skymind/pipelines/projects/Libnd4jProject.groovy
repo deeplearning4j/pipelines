@@ -3,7 +3,6 @@ package skymind.pipelines.projects
 class Libnd4jProject extends Project {
     private final String libnd4jTestsFilter
     private final String lockableResourceName = "libnd4jTestAndBuild-${branchName}"
-    private String mavenLocalRepositoryPath
 
     /* Override default platforms */
     static {
@@ -32,20 +31,21 @@ class Libnd4jProject extends Project {
                  name         : 'linux-x86_64'],
 
                 /*
-                    FIXME: Disable Mac builds at all, because of Mac slave instability.
+                    FIXME: Disable CUDA builds for Mac, because of Mac slave instability.
                  */
-//                [backends     : ['cpu'],
+//                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
+                [backends     : ['cpu'],
                 /*
                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
                     at the same time for CUDA - Xcode 8 required,
                     which means that we can't enable avx512 builds at the moment
                  */
 //                 cpuExtensions: ['avx2', 'avx512'],
-//                 cpuExtensions: ['avx2'],
-//                 compillers   : [],
-//                 name         : 'macosx-x86_64'],
+                 cpuExtensions: ['avx2'],
+                 compillers   : [],
+                 name         : 'macosx-x86_64'],
 
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0'],
+                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                  cpuExtensions: ['avx2'],
                  compillers: [],
                  name      : 'windows-x86_64']
@@ -94,51 +94,35 @@ class Libnd4jProject extends Project {
                         String separator = isUnix ? '/' : '\\'
                         String wsFolderName = 'workspace' +
                                 separator +
-                                [projectName, script.env.BRANCH_NAME].join('_').replaceAll('/', '_')
-                        mavenLocalRepositoryPath = "${wsFolderName}/${script.pipelineEnv.localRepositoryPath}"
+                                [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
                         /* Redefine default workspace to fix Windows path length limitation */
                         script.ws(wsFolderName) {
-                            script.dir(streamName) {
+                            script.stage('Set up environment') {
                                 script.deleteDir()
 
-                                script.stage('Set up environment') {
-                                    script.dir(projectName) {
-                                        script.unstash 'sourceCode'
-                                    }
-                                }
+//                                if (platformName.contains('linux') || platformName.contains('android')) {
+//                                    String createFoldersCommand = "mkdir -p " +
+//                                            "${script.pipelineEnv.localRepositoryPath}"
+//
+//                                    script.sh script: createFoldersCommand
+//                                }
 
                                 script.dir(projectName) {
-                                    /* Get docker container configuration */
-                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
-                                    /*
-                                        Mount point of required folders for Docker container.
-                                        Because by default Jenkins mounts current working folder in Docker container,
-                                        we need to add custom mount.
-                                    */
-                                    String mavenLocalRepositoryMount = "-v ${mavenLocalRepositoryPath}:" +
-                                            "/home/jenkins/${script.pipelineEnv.localRepositoryPath}:z"
+                                    script.unstash 'sourceCode'
+                                }
+                            }
 
-                                    if (dockerConf) {
-                                        String dockerImageName = dockerConf['image'] ?:
-                                                script.error('Docker image name is missing.')
-                                        String dockerImageParams = [
-                                                dockerConf?.params, mavenLocalRepositoryMount
-                                        ].findAll().join(' ')
+                            script.dir(projectName) {
+                                /* Get docker container configuration */
+                                Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
 
-                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
-                                            script.stage('Test') {
-                                                /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                if (backend == 'cpu') {
-                                                    runtTests(platformName, backend)
-                                                }
-                                            }
+                                if (dockerConf) {
+                                    String dockerImageName = dockerConf['image'] ?:
+                                            script.error('Docker image name is missing.')
+                                    String dockerImageParams = [dockerConf?.params].findAll().join(' ')
 
-                                            script.stage('Build') {
-                                                runBuild(platformName, backend, cpuExtensions)
-                                            }
-                                        }
-                                    } else {
+                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
                                         script.stage('Test') {
                                             /* Run tests only for CPU backend, while CUDA tests are under development */
                                             if (backend == 'cpu') {
@@ -149,6 +133,17 @@ class Libnd4jProject extends Project {
                                         script.stage('Build') {
                                             runBuild(platformName, backend, cpuExtensions)
                                         }
+                                    }
+                                } else {
+                                    script.stage('Test') {
+                                        /* Run tests only for CPU backend, while CUDA tests are under development */
+                                        if (backend == 'cpu') {
+                                            runtTests(platformName, backend)
+                                        }
+                                    }
+
+                                    script.stage('Build') {
+                                        runBuild(platformName, backend, cpuExtensions)
                                     }
                                 }
                             }
@@ -223,6 +218,7 @@ class Libnd4jProject extends Project {
      *
      * @param platform
      * @param backend
+     * @param cpuExtensions
      */
     private void runBuild(String platform, String backend, List cpuExtensions) {
         String mvnCommand
@@ -235,37 +231,46 @@ class Libnd4jProject extends Project {
 
                     mvnCommand = getMvnCommand('build', true, [
                             "-Dlibnd4j.platform=${platform}",
-                            "-Dlibnd4j.extension=${cpuExtension}"
+                            "-Dlibnd4j.extension=${cpuExtension}",
+                            (platform.contains('macosx')) ?
+                                    "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                                    ''
                     ])
 
                     script.echo "[INFO] Building libnd4j ${backend} backend with ${cpuExtension} extension"
 
                     script.mvn "$mvnCommand"
                 }
-            }
+            } else {
+                mvnCommand = getMvnCommand('build', false, [
+                        "-Dlibnd4j.platform=${platform}",
+                        (platform.contains('macosx')) ?
+                                "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                                ''
+                ])
 
-            mvnCommand = getMvnCommand('build', false, [
-                    /* Part of workaround for propagation maven settings on windows platform */
-                    platform.contains('windows') ? '-s ${MAVEN_SETTINGS}' : '',
-                    "-Dlibnd4j.platform=${platform}"
-            ])
+                script.echo "[INFO] Building libnd4j ${backend} backend"
+
+                script.mvn "$mvnCommand"
+            }
         }
         /* Build libnd4j for CUDA backend */
         else {
             String cudaVersion = backend.tokenize('-')[1]
 
             mvnCommand = getMvnCommand('build', false, [
-                    /* Part of workaround for propagation maven settings on windows platform */
-                    platform.contains('windows') ? '-s ${MAVEN_SETTINGS}' : '',
                     "-Dlibnd4j.platform=${platform}",
                     "-Dlibnd4j.cuda=${cudaVersion}",
-                    (branchName != 'master') ? "-Dlibnd4j.compute=30" : ''
+                    (branchName != 'master') ? "-Dlibnd4j.compute=30" : '',
+                    (platform.contains('macosx')) ?
+                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                            ''
             ])
+
+            script.echo "[INFO] Building libnd4j ${backend} backend"
+
+            script.mvn "$mvnCommand"
         }
-
-        script.echo "[INFO] Building libnd4j ${backend} backend"
-
-        script.mvn "$mvnCommand"
     }
 
     protected String getMvnCommand(String stageName, Boolean isCpuWithExtension, List mvnArguments = []) {
@@ -279,12 +284,12 @@ class Libnd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            /* Force to build in one threads */
-                            'export MAKEJ=1 &&',
-                            'mvn -U -B',
+                            /* Force to build in two threads */
+                            'export MAKEJ=2 &&',
+                            'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}"
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -292,14 +297,17 @@ class Libnd4jProject extends Project {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            /* Force to build in one threads */
-                            'export MAKEJ=1 &&',
+                            /* Force to build in two threads */
+                            'export MAKEJ=2 &&',
                             'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
-                            "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}"
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}"
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
