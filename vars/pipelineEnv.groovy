@@ -9,9 +9,8 @@ import groovy.transform.Field
 @Field String jenkinsDockerSbtFolder = '/srv/jenkins/storage/docker_ivy2'
 /* Temporary set local nexus as primary nexus storage */
 @Field String mvnProfileActivationName = env.MAVEN_PROFILE_ACTIVATION_NAME ?: 'nexus'
-//        error('MAVEN_PROFILE_ACTIVATION_NAME build parameter was not provided')
 @Field String jenkinsDockerM2Mount = jenkinsDockerM2Folder + '/' + mvnProfileActivationName
-@Field String localRepositoryPath = "localRepository/${mvnProfileActivationName}"
+@Field String localRepositoryPath = ".m2/${mvnProfileActivationName}/repository"
 @Field String mvnSettingsId = 'global_mvn_settings_xml'
 @Field List buildDisplayName = []
 

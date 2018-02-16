@@ -7,7 +7,7 @@ def call(String command) {
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
             maven: 'maven-3.3.9',
-            mavenLocalRepo: ".m2/${pipelineEnv.mvnProfileActivationName}/repository",
+            mavenLocalRepo: "${pipelineEnv.localRepositoryPath}",
             options: [
                     artifactsPublisher(disabled: true),
                     junitPublisher(disabled: true),

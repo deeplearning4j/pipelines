@@ -5,6 +5,7 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class Nd4jProject extends Project {
     private final String lockableResourceName = "nd4jTestAndBuild-${branchName}"
+    private String mavenLocalRepositoryPath
 
     /* Override default platforms */
     static {
@@ -81,6 +82,7 @@ class Nd4jProject extends Project {
                         String wsFolderName = 'workspace' +
                                 separator +
                                 [projectName, script.env.BRANCH_NAME].join('_').replaceAll('/', '_')
+                        mavenLocalRepositoryPath = "${wsFolderName}/${script.pipelineEnv.localRepositoryPath}"
 
                         /* Redefine default workspace to fix Windows path length limitation */
                         script.ws(wsFolderName) {
@@ -99,11 +101,20 @@ class Nd4jProject extends Project {
                                 script.dir(projectName) {
                                     /* Get docker container configuration */
                                     Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+                                    /*
+                                        Mount point of required folders for Docker container.
+                                        Because by default Jenkins mounts current working folder in Docker container,
+                                        we need to add custom mount.
+                                    */
+                                    String mavenLocalRepositoryMount = "-v ${mavenLocalRepositoryPath}:" +
+                                            "/home/jenkins/${script.pipelineEnv.localRepositoryPath}:z"
 
                                     if (dockerConf) {
                                         String dockerImageName = dockerConf['image'] ?:
                                                 script.error('Docker image name is missing.')
-                                        String dockerImageParams = [dockerConf?.params].findAll().join(' ')
+                                        String dockerImageParams = [
+                                                dockerConf?.params, mavenLocalRepositoryMount
+                                        ].findAll().join(' ')
 
                                         script.docker.image(dockerImageName).inside(dockerImageParams) {
                                             script.stage('Build') {
@@ -247,10 +258,7 @@ class Nd4jProject extends Project {
                             '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
-                            '-Dmaven.repo.local=' +
-                                    '.m2/' +
-                                    "${script.pipelineEnv.mvnProfileActivationName}" +
-                                    '/repository',
+                            "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}",
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
