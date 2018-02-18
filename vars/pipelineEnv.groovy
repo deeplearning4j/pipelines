@@ -22,7 +22,11 @@ Map getDockerConfig(String streamName) {
             return [image : 'skymindops/pipelines:android']
             break
 
-        case ['linux-x86_64', 'linux-x86_64-cpu', 'linux-x86_64-cuda-8.0']:
+        case ['linux-x86_64', 'linux-x86_64-cpu']:
+            return [image : 'skymindops/pipelines:centos6cuda80']
+            break
+
+        case ['linux-x86_64-cuda-8.0']:
             String dockerParams = nvidiaDockerParams()
             return [image: 'skymindops/pipelines:centos6cuda80', params: dockerParams]
             break

@@ -90,18 +90,17 @@ abstract class Project implements Serializable {
                 pipelineWrapper {
                     script.pipelineEnv.buildDisplayName.push(platformName)
 
-                    String createFoldersScript = "mkdir -p " +
-                            "${script.pipelineEnv.jenkinsDockerM2Folder}/" +
-                            "${script.pipelineEnv.mvnProfileActivationName} " +
-                            "${script.pipelineEnv.jenkinsDockerSbtFolder}"
-
-                    script.sh script: createFoldersScript
+//                    String createFoldersScript = "mkdir -p " +
+//                            "${script.pipelineEnv.jenkinsDockerM2Folder}/" +
+//                            "${script.pipelineEnv.mvnProfileActivationName} " +
+//                            "${script.pipelineEnv.jenkinsDockerSbtFolder}"
+//
+//                    script.sh script: createFoldersScript
 
                     Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-                    String dockerImageName = dockerConf?.getAt('image') ?:
-                            script.error("Docker image name is missing.")
-                    String dockerImageParams = dockerConf?.getAt('params') ?:
-                            script.error("Docker container parameters are missing.")
+                    String dockerImageName = dockerConf['image'] ?:
+                            script.error('Docker image name is missing.')
+                    String dockerImageParams = dockerConf?.'params'
 
                     stagesToRun(dockerImageName, dockerImageParams)
                 }
@@ -110,6 +109,7 @@ abstract class Project implements Serializable {
     }
 
     protected void checkoutScm(String project) {
+        /* FIXME: Workaround for libnd4j, nd4j checkout */
         if (project in ['libnd4j', 'nd4j']) {
             script.checkout script.scm
             script.stash name: 'sourceCode', useDefaultExcludes: false
@@ -130,7 +130,7 @@ abstract class Project implements Serializable {
                             'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U -B',
+                            'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
                             '-P trimSnapshots',
@@ -148,9 +148,12 @@ abstract class Project implements Serializable {
                             branchName == 'master' ? 'deploy' : 'install',
                             '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
-                            "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}",
-                            '-Dmaven.test.skip=true'
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}"
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break

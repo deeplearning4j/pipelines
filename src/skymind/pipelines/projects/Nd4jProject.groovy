@@ -112,7 +112,7 @@ class Nd4jProject extends Project {
                                 if (dockerConf) {
                                     String dockerImageName = dockerConf['image'] ?:
                                             script.error('Docker image name is missing.')
-                                    String dockerImageParams = [dockerConf?.params].findAll().join(' ')
+                                    String dockerImageParams = dockerConf?.params
 
                                     script.docker.image(dockerImageName).inside(dockerImageParams) {
                                         script.stage('Build') {

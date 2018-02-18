@@ -14,7 +14,6 @@ class Deeplearning4jProject extends Project {
 
     private void runBuildTests(String dockerImageName, String dockerImageParams) {
         String dl4jTestResourcesGitFolderName = 'dl4j-test-resources'
-
         String dl4jTestResourcesGitUrl = 'https://github.com/deeplearning4j/dl4j-test-resources.git'
 
         script.checkout([
@@ -34,7 +33,7 @@ class Deeplearning4jProject extends Project {
 
         script.dir(dl4jTestResourcesGitFolderName) {
             script.docker.image(dockerImageName).inside(dockerImageParams) {
-                script.mvn 'mvn -U clean install'
+                script.mvn 'export PATH=$MVN_CMD_DIR:$PATH && mvn -U clean install'
             }
         }
     }
