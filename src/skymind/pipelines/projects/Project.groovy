@@ -44,10 +44,12 @@ abstract class Project implements Serializable {
                                 artifactDaysToKeepStr: '3',
                                 artifactNumToKeepStr: '5',
                                 daysToKeepStr: '3',
-                                numToKeepStr: '10'
+                                numToKeepStr: '5'
                         )
                 ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false]
+                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
+                /* Workaround to disable branch indexing */
+                script.pipelineTriggers([])
 //                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
 //                script.parameters([
                 //                        script.choice(
