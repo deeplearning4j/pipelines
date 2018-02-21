@@ -177,7 +177,7 @@ abstract class Project implements Serializable {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U',
+                            'mvn -U -B',
                             'test',
                             '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
