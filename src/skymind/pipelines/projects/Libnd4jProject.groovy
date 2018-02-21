@@ -30,11 +30,7 @@ class Libnd4jProject extends Project {
                  compillers   : [],
                  name         : 'linux-x86_64'],
 
-                /*
-                    FIXME: Disable CUDA builds for Mac, because of Mac slave instability.
-                 */
-//                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                [backends     : ['cpu'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                 /*
                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
                     at the same time for CUDA - Xcode 8 required,
@@ -182,10 +178,8 @@ class Libnd4jProject extends Project {
             case ['macosx-x86_64']:
                 /* export CC, CXX, CPP, LD required for switching compiler from clang (default for Mac) to gcc */
                 testCommand = """\
-                    export CC=/usr/local/bin/gcc
-                    export CXX=/usr/local/bin/g++
-                    export CPP=/usr/local/bin/cpp
-                    export LD=/usr/local/bin/gcc
+                    export CC=\$(ls -1 /usr/local/bin/gcc-? | head -n 1)
+                    export CXX=\$(ls -1 /usr/local/bin/g++-? | head -n 1)
                     ${testCommand}
                 """.stripIndent()
                 break
