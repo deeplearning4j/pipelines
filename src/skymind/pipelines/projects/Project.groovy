@@ -95,9 +95,11 @@ abstract class Project implements Serializable {
                     }
 
                     script.stage('Update project version') {
-                        projectVersion = projectObjectModel?.version
-                        script.isVersionReleased(projectName, projectVersion)
-                        script.setProjectVersion(projectVersion, true)
+                        script.dir(projectName) {
+                            projectVersion = projectObjectModel?.version
+                            script.isVersionReleased(projectName, projectVersion)
+                            script.setProjectVersion(projectVersion, true)
+                        }
                     }
 
                     script.pipelineEnv.buildDisplayName.push(platformName)
