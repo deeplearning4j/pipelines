@@ -103,9 +103,12 @@ class Libnd4jProject extends Project {
 //
 //                                    script.sh script: createFoldersCommand
 //                                }
+                            }
 
+                            script.stage('Checkout') {
                                 script.dir(projectName) {
-                                    script.unstash 'sourceCode'
+//                                    script.milestone()
+                                    checkoutScm(projectName)
                                 }
                             }
 

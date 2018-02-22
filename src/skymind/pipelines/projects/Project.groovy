@@ -63,10 +63,10 @@ abstract class Project implements Serializable {
 
     protected void pipelineWrapper(Closure pipelineBody) {
         try {
-            script.stage('Checkout') {
-                script.milestone()
-                checkoutScm(projectName)
-            }
+//            script.stage('Checkout') {
+//                script.milestone()
+//                checkoutScm(projectName)
+//            }
 
             pipelineBody()
         }
@@ -114,7 +114,7 @@ abstract class Project implements Serializable {
         /* FIXME: Workaround for libnd4j, nd4j checkout */
         if (project in ['libnd4j', 'nd4j']) {
             script.checkout script.scm
-            script.stash name: 'sourceCode', useDefaultExcludes: false
+//            script.stash name: 'sourceCode', useDefaultExcludes: false
         } else {
             script.dir(projectName) {
                 script.checkout script.scm
