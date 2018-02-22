@@ -94,21 +94,13 @@ class Libnd4jProject extends Project {
 
                         /* Redefine default workspace to fix Windows path length limitation */
                         script.ws(wsFolderName) {
-                            script.stage('Set up environment') {
+                            script.stage('Checkout') {
                                 script.deleteDir()
 
-//                                if (platformName.contains('linux') || platformName.contains('android')) {
-//                                    String createFoldersCommand = "mkdir -p " +
-//                                            "${script.pipelineEnv.localRepositoryPath}"
-//
-//                                    script.sh script: createFoldersCommand
-//                                }
-                            }
-
-                            script.stage('Checkout') {
-                                script.dir(projectName) {
 //                                    script.milestone()
-                                    checkoutScm(projectName)
+
+                                script.dir(projectName) {
+                                    script.checkout script.scm
                                 }
                             }
 

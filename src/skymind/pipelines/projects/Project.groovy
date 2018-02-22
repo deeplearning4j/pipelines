@@ -90,6 +90,13 @@ abstract class Project implements Serializable {
             String platformName = platform.name
             script.node(platformName) {
                 pipelineWrapper {
+                    script.stage('Checkout') {
+                        script.milestone()
+                        script.dir(projectName) {
+                            script.checkout script.scm
+                        }
+                    }
+
                     script.pipelineEnv.buildDisplayName.push(platformName)
 
 //                    String createFoldersScript = "mkdir -p " +
@@ -110,17 +117,17 @@ abstract class Project implements Serializable {
         }
     }
 
-    protected void checkoutScm(String project) {
-        /* FIXME: Workaround for libnd4j, nd4j checkout */
-        if (project in ['libnd4j', 'nd4j']) {
-            script.checkout script.scm
-//            script.stash name: 'sourceCode', useDefaultExcludes: false
-        } else {
-            script.dir(projectName) {
-                script.checkout script.scm
-            }
-        }
-    }
+//    protected void checkoutScm(String project) {
+//        /* FIXME: Workaround for libnd4j, nd4j checkout */
+//        if (project in ['libnd4j', 'nd4j']) {
+//            script.checkout script.scm
+////            script.stash name: 'sourceCode', useDefaultExcludes: false
+//        } else {
+//            script.dir(projectName) {
+//                script.checkout script.scm
+//            }
+//        }
+//    }
 
     protected String getMvnCommand(String stageName, List mvnArguments = []) {
         Boolean unixNode = script.isUnix()

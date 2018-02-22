@@ -94,15 +94,17 @@ class Nd4jProject extends Project {
 
                         /* Redefine default workspace to fix Windows path length limitation */
                         script.ws(wsFolderName) {
-                            script.stage('Set up environment') {
+                            script.stage('Checkout') {
                                 script.deleteDir()
 
+//                                    script.milestone()
                                 script.dir(projectName) {
-                                    script.unstash 'sourceCode'
-
-                                    def pom = projectObjectModel
-                                    projectVersion = pom?.version
+                                    script.checkout script.scm
                                 }
+                            }
+
+                            script.stage('Get project version from pom.xml') {
+                                projectVersion = projectObjectModel?.version
                             }
 
                             script.dir(projectName) {
