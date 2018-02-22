@@ -155,7 +155,7 @@ class Libnd4jProject extends Project {
         String testCommand = [
                 "cd ${testFolderName}",
                 'cmake -G "Unix Makefiles"',
-                'make -j2',
+                'make -j3',
                 "layers_tests${separator}runtests --gtest_output=\"xml:cpu_test_results.xml\"" +
                         /* Add possibility to provide additional params to googletest */
                         (libnd4jTestsFilter ? ' ' + libnd4jTestsFilter : '')
@@ -274,7 +274,7 @@ class Libnd4jProject extends Project {
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             /* Force to build in two threads */
-                            'export MAKEJ=2 &&',
+                            'export MAKEJ=3 &&',
                             'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
@@ -287,7 +287,7 @@ class Libnd4jProject extends Project {
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             /* Force to build in two threads */
-                            'export MAKEJ=2 &&',
+                            'export MAKEJ=3 &&',
                             'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
