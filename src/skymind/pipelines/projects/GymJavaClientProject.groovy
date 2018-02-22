@@ -14,10 +14,6 @@ class GymJavaClientProject extends Project {
     private void runBuild(String dockerImageName, String dockerImageParams) {
         script.dir(projectName) {
             script.docker.image(dockerImageName).inside(dockerImageParams) {
-                projectVersion = projectObjectModel?.version
-
-                script.isVersionReleased(projectName, projectVersion)
-                script.setProjectVersion(projectVersion, true)
                 script.mvn getMvnCommand('build')
             }
         }

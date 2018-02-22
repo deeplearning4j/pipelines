@@ -19,7 +19,6 @@ class Nd4sProject extends Project {
 
     private void runBuild(String dockerImageName, String dockerImageParams) {
         script.dir(projectName) {
-            projectVersion = projectObjectModel?.version
             String ivyHome = "${script.env.WORKSPACE}/.ivy2"
             /*
                 Mount point of ivy2 folder for Docker container.

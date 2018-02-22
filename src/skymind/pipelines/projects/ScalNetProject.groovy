@@ -4,6 +4,8 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class ScalNetProject extends Project {
+    private final List scalaVersions = ['2.10', '2.11']
+
     void initPipeline() {
         allocateBuildNode { dockerImageName, dockerImageParams ->
             script.stage('Build') { runBuild(dockerImageName, dockerImageParams) }
@@ -14,12 +16,8 @@ class ScalNetProject extends Project {
     private void runBuild(String dockerImageName, String dockerImageParams) {
         script.dir(projectName) {
             script.docker.image(dockerImageName).inside(dockerImageParams) {
-                projectVersion = projectObjectModel?.version
-
-                script.isVersionReleased(projectName, projectVersion)
                 script.sh "sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet<\\/artifactId>/' " +
                         "pom.xml"
-                script.setProjectVersion(projectVersion, true)
                 script.sh "sed -i '0,/<artifactId>.*<\\/artifactId>/s//<artifactId>scalnet_" +
                         '${scala.binary.version}' + "<\\/artifactId>/' pom.xml"
 

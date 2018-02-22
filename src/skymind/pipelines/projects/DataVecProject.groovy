@@ -14,11 +14,6 @@ class DataVecProject extends Project {
     private void runBuild(String dockerImageName, String dockerImageParams) {
         script.dir(projectName) {
             script.docker.image(dockerImageName).inside(dockerImageParams) {
-                projectVersion = projectObjectModel?.version
-
-                script.isVersionReleased(projectName, projectVersion)
-                script.setProjectVersion(projectVersion, true)
-
                 List dependencyMappings = [
                         [sparkVersion: "1", scalaVersion: "2.10"],
                         [sparkVersion: "1", scalaVersion: "2.11"],

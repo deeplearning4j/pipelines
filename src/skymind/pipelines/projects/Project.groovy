@@ -9,7 +9,6 @@ abstract class Project implements Serializable {
     protected String projectVersion
     protected final String branchName
     protected final String projectName
-    protected final List scalaVersions = ['2.10', '2.11']
     /* Default platforms for most of the projects */
     protected static List defaultPlatforms = [
             [backends: [], compillers: [], name: 'linux-x86_64']
@@ -63,11 +62,6 @@ abstract class Project implements Serializable {
 
     protected void pipelineWrapper(Closure pipelineBody) {
         try {
-//            script.stage('Checkout') {
-//                script.milestone()
-//                checkoutScm(projectName)
-//            }
-
             pipelineBody()
         }
         catch (error) {
@@ -91,10 +85,19 @@ abstract class Project implements Serializable {
             script.node(platformName) {
                 pipelineWrapper {
                     script.stage('Checkout') {
+                        script.deleteDir()
+
                         script.milestone()
+
                         script.dir(projectName) {
                             script.checkout script.scm
                         }
+                    }
+
+                    script.stage('Update project version') {
+                        projectVersion = projectObjectModel?.version
+                        script.isVersionReleased(projectName, projectVersion)
+                        script.setProjectVersion(projectVersion, true)
                     }
 
                     script.pipelineEnv.buildDisplayName.push(platformName)
@@ -116,18 +119,6 @@ abstract class Project implements Serializable {
             }
         }
     }
-
-//    protected void checkoutScm(String project) {
-//        /* FIXME: Workaround for libnd4j, nd4j checkout */
-//        if (project in ['libnd4j', 'nd4j']) {
-//            script.checkout script.scm
-////            script.stash name: 'sourceCode', useDefaultExcludes: false
-//        } else {
-//            script.dir(projectName) {
-//                script.checkout script.scm
-//            }
-//        }
-//    }
 
     protected String getMvnCommand(String stageName, List mvnArguments = []) {
         Boolean unixNode = script.isUnix()
