@@ -12,7 +12,7 @@ def call(String version, Boolean allowSnapshots) {
     ].join(' ')
 
     withEnv( ["PATH+MAVEN=${mvnHome}/bin"] ) {
-        echo "[INFO] Updating project version"
+        echo "[INFO] Updating project version to ${version}"
         "$shell" "$mvnCommand"
     }
 }
