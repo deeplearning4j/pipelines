@@ -31,6 +31,8 @@ abstract class Project implements Serializable {
         notifications = new NotificationHelper(script)
         /* Configure job build parameters */
         setBuildParameters()
+        /* Terminate older builds */
+        terminateOlderBuilds(this.script.env.JOB_NAME, this.script.env.BUILD_NUMBER.toInteger())
     }
 
     abstract void initPipeline()
@@ -197,5 +199,17 @@ abstract class Project implements Serializable {
         Boolean pomExists = script.fileExists(pomFileName)
 
         return (pomExists) ? script.readMavenPom() : script.error('pom.xml file not found')
+    }
+
+    @NonCPS
+    protected terminateOlderBuilds(String jobName, int buildsNumber) {
+        def currentJob = Jenkins.instance.getItemByFullName(jobName)
+
+        for (def build : currentJob.builds) {
+            if (build.isBuilding() && build.number.toInteger() != buildsNumber) {
+                build.doStop()
+                script.echo "[WARNING] Build number ${build.number} was terminated because of current(latest) run."
+            }
+        }
     }
 }
