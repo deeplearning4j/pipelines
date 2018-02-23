@@ -32,6 +32,22 @@ class Nd4jProject extends Project {
                  compillers   : [],
                  name         : 'linux-x86_64'],
 
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-arm'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-arm64'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-x86'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-x86_64'],
+
                 /*
                     FIXME: Disable CUDA builds for Mac, because of Mac slave instability.
                  */
@@ -194,7 +210,7 @@ class Nd4jProject extends Project {
                 }
             } else {
                 /* Workaround to set scala version */
-                String scalaVersion = (platform in ['android-arm']) ? '2.10' : '2.11'
+                String scalaVersion = (platform in ['android-arm', 'ios-arm', 'ios-x86']) ? '2.10' : '2.11'
 
                 script.echo "[INFO] Setting Scala version to: $scalaVersion"
 
@@ -208,6 +224,9 @@ class Nd4jProject extends Project {
                                 '',
                         (platform.contains('linux') || platform.contains('android')) ?
                                 '-DprotocCommand=protoc' :
+                                '',
+                        (platform.contains('ios')) ?
+                                "-Dmaven.javadoc.skip=true -Djavacpp.platform.compiler=clang++" :
                                 '',
                         (platform.contains('macosx')) ?
                                 "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :

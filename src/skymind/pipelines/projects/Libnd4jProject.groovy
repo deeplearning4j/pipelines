@@ -30,21 +30,37 @@ class Libnd4jProject extends Project {
                  compillers   : [],
                  name         : 'linux-x86_64'],
 
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-arm'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-arm64'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-x86'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'ios-x86_64'],
+
                 [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                /*
-                    FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                    at the same time for CUDA - Xcode 8 required,
-                    which means that we can't enable avx512 builds at the moment
-                 */
+                 /*
+                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+                     at the same time for CUDA - Xcode 8 required,
+                     which means that we can't enable avx512 builds at the moment
+                  */
 //                 cpuExtensions: ['avx2', 'avx512'],
                  cpuExtensions: ['avx2'],
                  compillers   : [],
                  name         : 'macosx-x86_64'],
 
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                  cpuExtensions: ['avx2'],
-                 compillers: [],
-                 name      : 'windows-x86_64']
+                 compillers   : [],
+                 name         : 'windows-x86_64']
         ]
     }
 
@@ -157,7 +173,7 @@ class Libnd4jProject extends Project {
                 'cmake -G "Unix Makefiles"',
                 'make -j3',
                 "layers_tests${separator}runtests --gtest_output=\"xml:cpu_test_results.xml\"" +
-                        /* Add possibility to provide additional params to googletest */
+                        /* Add possibility to provide additional params to Google Tests */
                         (libnd4jTestsFilter ? ' ' + libnd4jTestsFilter : '')
         ].join(' && ')
 
