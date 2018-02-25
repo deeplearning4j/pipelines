@@ -53,6 +53,7 @@ Map getDockerConfig(String streamName) {
             return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le']
             break
 
+        case ~/^ios.*$/:
         case ~/^macosx-x86_64.*$/:
         case ~/^windows-x86_64.*$/:
             /* Platforms that don't use docker */
