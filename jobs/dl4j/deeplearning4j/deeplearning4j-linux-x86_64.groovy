@@ -1,6 +1,10 @@
 stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 
     functions.get_project_code("${DEEPLEARNING4J_PROJECT}")
+
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
+
     dir("${DEEPLEARNING4J_PROJECT}") {
         functions.checktag("${DEEPLEARNING4J_PROJECT}")
     }
@@ -17,8 +21,8 @@ stage("${DEEPLEARNING4J_PROJECT}-checkout-sources") {
 stage("build test resources on ${PLATFORM_NAME}") {
     configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
         dir('dl4j-test-resources') {
-            docker.image(dockerImage).inside(dockerParams) {
-                sh("mvn -B clean install")
+            docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
+                sh("mvn -U -B -PtrimSnapshots clean install")
 
             }
         }
@@ -51,15 +55,15 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
 
         functions.verset("${VERSION}", true)
 
-        def listScalaVersion = ["2.10", "2.11","2.11"]
-        def listCudaVersion = ["7.5", "8.0","8.0"]
-        def listSparkVersion = ["1", "1","2"]
+        def listScalaVersion = ["2.10", "2.11", "2.11", "2.10", "2.11", "2.11"]
+        def listCudaVersion = ["8.0", "8.0", "8.0", "9.0", "9.0", "9.0"]
+        def listSparkVersion = ["1", "1", "2", "1", "1", "2"]
 
         for (int i = 0; i < listScalaVersion.size(); i++) {
             echo "[ INFO ] ++ SET Scala Version to: " + listScalaVersion[i]
             env.SCALA_VERSION = listScalaVersion[i]
             echo "[ INFO ] ++ SET Cuda Version to: " + listCudaVersion[i]
-            env.CUDA_VERSION = listCudaVersion[i];
+            env.CUDA_VERSION = listCudaVersion[i]
             echo "[ INFO ] ++ SET Spark Version to: " + listSparkVersion[i]
             env.SPARK_VERSION = listSparkVersion[i]
 
@@ -68,11 +72,12 @@ stage("${DEEPLEARNING4J_PROJECT}-build") {
             sh("./change-spark-versions.sh ${SPARK_VERSION}")
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).inside(dockerParams) {
+                docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
                     functions.getGpg()
                     sh '''
+                export GPG_TTY=$(tty)
                 if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -Dnd4j.version=${VERSION} -Ddeeplearning4j.version=${VERSION} -Ddatavec.version=${VERSION} -Ddl4j-test-resources.version=${VERSION}
+                mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST} -Dnd4j.version=${VERSION} -Ddeeplearning4j.version=${VERSION} -Ddatavec.version=${VERSION} -Ddl4j-test-resources.version=${VERSION}
                 '''
                 }
             }

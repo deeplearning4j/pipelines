@@ -13,8 +13,12 @@ stage("${PROJECT}-build") {
         env.WORKSPACE_BASH = "/" + WORKSPACE.replace('\\','/').replaceFirst(':','')
         env.LIBND4J_HOME = "/" + WORKSPACE.replace('\\','/') + "/" + "${LIBPROJECT}"
 
-        final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
-                          [cudaVersion: "8.0", scalaVersion: "2.11"]]
+        final nd4jlibs = [
+                [cudaVersion: "8.0", scalaVersion: "2.10"],
+                [cudaVersion: "8.0", scalaVersion: "2.11"],
+                [cudaVersion: "9.0", scalaVersion: "2.10"],
+                [cudaVersion: "9.0", scalaVersion: "2.11"]
+        ]
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION = lib.cudaVersion
@@ -30,7 +34,7 @@ stage("${PROJECT}-build") {
                 bat (
                         'vcvars64.bat' +
                                 '&&' +
-                                'bash -c "export PATH=$PATH:/c/msys64/mingw64/bin && mvn -B -s %WORKSPACE_BASH%/settings.xml clean deploy -Dmaven.repo.local=%TEMP%\\.m2\\%PROFILE_TYPE% -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
+                                'bash -c "export PATH=$PATH:/c/msys64/mingw64/bin && mvn -U -B -PtrimSnapshots -s %WORKSPACE_BASH%/settings.xml clean deploy -Dmaven.repo.local=%TEMP%\\.m2\\%PROFILE_TYPE% -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=%PROFILE_TYPE% -DstagingRepositoryId=%STAGE_REPO_ID% -Dgpg.useagent=false -DperformRelease=%GpgVAR% -Dmaven.test.skip=%SKIP_TEST% -Denv.LIBND4J_HOME=%LIBND4J_HOME%'
                 )
 
             }

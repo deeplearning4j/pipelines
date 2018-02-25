@@ -3,7 +3,7 @@ def notifyFailed() {
       subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
       Check console output at '${env.BUILD_URL}'""",
-      to: "samuel@skymind.io"
+      to: "${MAIL_RECIPIENT}"
     )
 }
 
@@ -16,14 +16,14 @@ node("${PLATFORM_NAME}") {
                 [$class: "BuildDiscarderProperty", strategy: [$class: "LogRotator", artifactDaysToKeepStr: "", artifactNumToKeepStr: "", daysToKeepStr: "", numToKeepStr: "10"]],
                 [$class: "ParametersDefinitionProperty", parameterDefinitions:
                         [
-                                [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.8.1-SNAPSHOT", description: "Deeplearning component release version"],
+                                [$class: "StringParameterDefinition", name: "VERSION", defaultValue: "0.9.2-SNAPSHOT", description: "Deeplearning component release version"],
                                 [$class: "ChoiceParameterDefinition", name: "PLATFORM_NAME", choices: "linux-x86_64\nandroid-arm\nandroid-x86\nlinux-ppc64le\nmacosx-x86_64\nwindows-x86_64", description: "Build project on architecture"],
                                 [$class: "BooleanParameterDefinition", name: "SONAR", defaultValue: false, description: "Select to check code with SonarQube"],
                                 [$class: "StringParameterDefinition", name: "GIT_BRANCHNAME", defaultValue: "master", description: "Default Git branch value"],
                                 [$class: "CredentialsParameterDefinition", name: "GITCREDID", required: false, defaultValue: "github-private-deeplearning4j-id-1", description: "Credentials to be used for cloning, pushing and tagging deeplearning4j repositories"],
                                 [$class: "ChoiceParameterDefinition", name: "PROFILE_TYPE", choices: "nexus\nsonatype\njfrog\nbintray", description: "Profile type"],
                                 [$class: "BooleanParameterDefinition", name: "PUSH_LIBND4J_LOCALREPO", defaultValue: false, description: "Select to push libnd4j to choosen staging repo"],
-                                [$class: "StringParameterDefinition", name: "BUILD_CUDA_PARAMS", defaultValue: "", description: "Pass build cuda parameters here if you want APPEND default ones (it doesn't apply for CPU builds)\nDefauls:\nlinux: -c cuda -v [7.5,8.0]\nmacosx: -c cuda\nwindows: -c cuda -v [7.5,8.0]\n"]
+                                [$class: "StringParameterDefinition", name: "BUILD_CUDA_PARAMS", defaultValue: "", description: "Pass build cuda parameters here if you want APPEND default ones (it doesn't apply for CPU builds)\nDefauls:\nlinux: -c cuda -v [8.0,9.0]\nmacosx: -c cuda\nwindows: -c cuda -v [8.0,9.0]\n"]
                         ]
                 ]
         ])

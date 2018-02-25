@@ -12,7 +12,7 @@
 //         parameterDefinitions: [
 //                 [$class: "StringParameterDefinition",
 //                     name: "VERSION",
-//                     defaultValue: "0.8.1-SNAPSHOT",
+//                     defaultValue: "0.9.2-SNAPSHOT",
 //                     description: "Deeplearning component release version"
 //                 ],
 //             [$class: "BooleanParameterDefinition",
@@ -49,7 +49,7 @@
                 // [$class: "StringParameterDefinition",
                 //     name: "BUILD_CUDA_PARAMS",
                 //     defaultValue: "",
-                //     description: "Append default parameters for buildnativeoperations.sh, defaults:\nlinux: -c cuda -v 7.5; -c cuda -v 8.0\nwindows: -c cuda -v 7.5; -c cuda -v 8.0\nmacosx: -c cuda\nIt doesn't apply for CPU builds!!!"
+                //     description: "Append default parameters for buildnativeoperations.sh, defaults:\nlinux: -c cuda -v 8.0; -c cuda -v 9.0\nwindows: -c cuda -v 8.0; -c cuda -v 9.0\nmacosx: -c cuda\nIt doesn't apply for CPU builds!!!"
                 // ]
 //         ]
 //     ]
@@ -74,7 +74,7 @@ def notifyFailed() {
       subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':
       Check console output at '${env.BUILD_URL}'""",
-      to: "samuel@skymind.io"
+      to: "${MAIL_RECIPIENT}"
     )
 }
 

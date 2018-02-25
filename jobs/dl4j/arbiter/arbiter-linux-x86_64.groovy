@@ -1,5 +1,8 @@
 stage("${ARBITER_PROJECT}-checkout-sources") {
     functions.get_project_code("${ARBITER_PROJECT}")
+
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
 }
 
 stage("${ARBITER_PROJECT}-build") {
@@ -15,10 +18,11 @@ stage("${ARBITER_PROJECT}-build") {
             sh "./change-scala-versions.sh ${SCALA_VERSION}"
 
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
-                docker.image(dockerImage).inside(dockerParams) {
+                docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
                     functions.getGpg()
                     sh '''
-                      mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
+                      export GPG_TTY=$(tty)
+                      mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
                       '''
                 }
             }

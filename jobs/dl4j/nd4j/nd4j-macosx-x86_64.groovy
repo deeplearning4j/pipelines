@@ -10,24 +10,31 @@ stage("${PROJECT}-build") {
     dir("${PROJECT}") {
         functions.checktag("${PROJECT}")
         functions.verset("${VERSION}", true)
+        /* Set LIBND4J_HOME environment with path to libn4j home folder */
+        env.LIBND4J_HOME = ["${WORKSPACE}", "${LIBPROJECT}"].join('/')
 
-        final nd4jlibs = [[cudaVersion: "7.5", scalaVersion: "2.10"],
-                          [cudaVersion: "8.0", scalaVersion: "2.11"]]
+        final nd4jlibs = [
+                [cudaVersion: "8.0", scalaVersion: "2.10"],
+                [cudaVersion: "8.0", scalaVersion: "2.11"],
+                [cudaVersion: "9.0", scalaVersion: "2.10"],
+                [cudaVersion: "9.0", scalaVersion: "2.11"]
+        ]
 
         for (lib in nd4jlibs) {
             env.CUDA_VERSION = lib.cudaVersion
             env.SCALA_VERSION = lib.scalaVersion
             echo "[ INFO ] ++ Building nd4j with cuda " + CUDA_VERSION + " and scala " + SCALA_VERSION
-            sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -s ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
+            sh("if [ -L ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ] ; then rm -f ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda && ln -sf ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; else  ln -sf ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda-${CUDA_VERSION} ${WORKSPACE}/${LIBPROJECT}/blasbuild/cuda ; fi")
             sh(script: "./change-scala-versions.sh ${SCALA_VERSION}")
             sh(script: "./change-cuda-versions.sh ${CUDA_VERSION}")
             configFileProvider([configFile(fileId: settings_xml, variable: 'MAVEN_SETTINGS')]) {
                 functions.getGpg()
-                sh '''
-                                gpg --list-keys
-                                if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
-                                mvn -B -s ${MAVEN_SETTINGS} clean deploy -Dmaven.repo.local=${HOME}/.m2/${PROFILE_TYPE}/repository -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
-                                '''
+                sh '''\
+                    export GPG_TTY=$(tty)
+                    gpg --list-keys
+                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable ; fi
+                    mvn -U -B -PtrimSnapshots -s ${MAVEN_SETTINGS} clean deploy -Dmaven.repo.local=/Users/admin/.m2/${PROFILE_TYPE}/repository -Dscala.binary.version=${SCALA_VERSION} -Dlocal.software.repository=${PROFILE_TYPE} -DstagingRepositoryId=${STAGE_REPO_ID} -Dgpg.useagent=false -DperformRelease=${GpgVAR} -Dmaven.test.skip=${SKIP_TEST}
+                '''.stripIndent()
             }
         }
 

@@ -1,23 +1,40 @@
 stage("${ND4S_PROJECT}-Platform-Builds-Wait") {
+    // Workaround to fetch the latest docker image
+    docker.image(dockerImages.centos6cuda80).pull()
+
     // if (!isSnapshot) {
     if (PARENT_JOB.length() > 0) {
         echo "Copying nd4j artifacts from userContent"
         int ND4J_NATIVE_COUNT = 0
-        while (ND4J_NATIVE_COUNT < 6) {
-            sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
 
-            functions.copy_nd4j_native_from_user_content()
+        timeout(time: 15, unit: 'HOURS') {
+            waitUntil {
+                sh("rm -rf ${WORKSPACE}/nd4j-native-${VERSION}*")
 
-            ND4J_NATIVE_COUNT = sh(script: 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l', returnStdout: true).trim().toInteger()
-            println(ND4J_NATIVE_COUNT)
-            sleep unit: "MINUTES", time: 1
+                functions.copy_nd4j_native_from_user_content()
+
+                String checkNumberOfArtifactsScript = 'ls -la ${WORKSPACE}/nd4j-native-${VERSION}* | wc -l'
+
+                ND4J_NATIVE_COUNT = sh(script: checkNumberOfArtifactsScript, returnStdout: true).trim().toInteger()
+
+                echo("${ND4J_NATIVE_COUNT}")
+
+                /*
+                    This statement checks if we have required number of artifacts,
+                    if not waitUtil step will slow down the delay between attempts.
+
+                    Total timeout set to 30 minutes.
+                 */
+                return (ND4J_NATIVE_COUNT == 6)
+            }
         }
-        docker.image(dockerImage).inside(dockerParams) {
+
+        docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
             functions.install_nd4j_native_to_local_maven_repository("${VERSION}")
         }
     } else {
-        docker.image(dockerImage).inside(dockerParams) {
-            functions.nd4s_install_snapshot_dependencies_to_maven2_local_repository("org.nd4j", "nd4j-native", "${VERSION}", "jar", ["linux-x86_64","android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"], "${PROFILE_TYPE}")
+        docker.image(dockerImages.centos6cuda80).inside(dockerParams) {
+            functions.nd4s_install_snapshot_dependencies_to_maven2_local_repository("org.nd4j", "nd4j-native", "${VERSION}", "jar", ["linux-x86_64", "android-arm", "android-x86", "linux-ppc64le", "macosx-x86_64", "windows-x86_64"], "${PROFILE_TYPE}")
         }
     }
 }
@@ -30,31 +47,43 @@ stage("${ND4S_PROJECT}-checkout-sources") {
 stage("${ND4S_PROJECT}-build") {
     echo "Building ${ND4S_PROJECT} version ${VERSION}"
     dir("${ND4S_PROJECT}") {
+        env.IVY_HOME = "${WORKSPACE}/.ivy2"
+        /*
+            Mount point of ivy2 folder for Docker container.
+            Because by default Jenkins mounts current working folder in Docker container, we need to add custom mount.
+         */
+        env.IVY_DOCKER_FOLDER = '/tmp/.ivy2'
+        String ivy2Mount = " -v ${IVY_HOME}:${IVY_DOCKER_FOLDER}:rw,z"
+
         functions.checktag("${ND4S_PROJECT}")
 //        sh ("sed -i 's/version := \".*\",/version := \"${VERSION}\",/' build.sbt")
 //        sh ("sed -i 's/nd4jVersion := \".*\",/nd4jVersion := \"${ND4J_VERSION}\",/' build.sbt")
-        sh("test -d ${WORKSPACE}/.ivy2 || mkdir ${WORKSPACE}/.ivy2")
+        sh("test -d ${IVY_HOME} || mkdir ${IVY_HOME}")
         configFileProvider([configFile(fileId: "sbt-local-nexus-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.nexus")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.nexus")
         }
         configFileProvider([configFile(fileId: "sbt-local-jfrog-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.jfrog")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.jfrog")
         }
         configFileProvider([configFile(fileId: "sbt-oss-sonatype-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.sonatype")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.sonatype")
         }
         configFileProvider([configFile(fileId: "sbt-oss-bintray-id-1", variable: 'SBT_CREDENTIALS')]) {
-            sh("cp ${SBT_CREDENTIALS}  ${WORKSPACE}/.ivy2/.bintray")
+            sh("cp ${SBT_CREDENTIALS}  ${IVY_HOME}/.bintray")
         }
 
-        docker.image(dockerImage).inside(dockerParams) {
+        docker.image(dockerImages.centos6cuda80).inside(dockerParams + ivy2Mount) {
             wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-                sh '''
-                  cp -a ${WORKSPACE}/.ivy2 ${HOME}/
-                  cp ${HOME}/.ivy2/.${PROFILE_TYPE} ${HOME}/.ivy2/.credentials
-                  sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} -Dnd4jVersion=${VERSION} +publish
-                  find ${WORKSPACE}/.ivy2 ${HOME}/.ivy2  -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
-                  '''
+                functions.getGpg()
+
+                sh '''\
+                    export GPG_TTY=$(tty)
+                    gpg --list-keys
+                    cp -a ${IVY_DOCKER_FOLDER} ${HOME}/
+                    cp ${HOME}/.${PROFILE_TYPE} ${HOME}/.credentials
+                    sbt -DrepoType=${PROFILE_TYPE} -DstageRepoId=${STAGE_REPO_ID} -DcurrentVersion=${VERSION} -Dnd4jVersion=${VERSION} +publishSigned
+                    find ${HOME}/.ivy2 -type f -name  ".credentials"  -delete -o -name ".nexus"  -delete -o -name ".jfrog" -delete -o -name ".sonatype" -delete -o -name ".bintray" -delete;
+                '''.stripIndent()
             }
         }
 

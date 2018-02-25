@@ -1,0 +1,13 @@
+Address = 74.80.245.123
+Port = 655
+Subnet = 10.9.7.2/32
+
+
+-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEAxqfcsk+YOJgkF+NumssWQHuJQZZuCPYFY7V/BWFRqY2dYI3eyVeT
+hH3NQPOoUDqyxmxF6CPGGNmbuiHikYpTKn91CggnG1fepXe+1iB6i2yYE/hKyhZf
+clbyd6mPiYi7kF7ixWw3yMu79vzzDbIgyjqJdww2Bx9yTTEZeW8Fxu57nyaYZwe/
+JHaePzaGnOgeZPRtc+FNpVV71k3bX3Wl1hsco+dJc8dLh9rNeKHs1osdmy0ExiJ6
+Ou109xel8fca1bHfl57j6LL+PyFd9buXJXqOPbmZF/zRbvZwG9oTS8ARy6LlAYPO
+eFcb76yRBKY6ah53lrQgLGT7ceQX4KySnwIDAQAB
+-----END RSA PUBLIC KEY-----
