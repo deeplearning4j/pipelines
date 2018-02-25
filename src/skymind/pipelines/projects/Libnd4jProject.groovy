@@ -178,6 +178,7 @@ class Libnd4jProject extends Project {
         ].join(' && ')
 
         switch (platform) {
+            case ~/^ios.*$/:
             case ['linux-ppc64le', 'windows-x86_64']:
                 break
             case ['linux-x86_64', 'android-arm', 'android-x86']:
