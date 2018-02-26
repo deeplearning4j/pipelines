@@ -120,7 +120,9 @@ class Nd4jProject extends Project {
                             }
 
                             script.stage('Get project version from pom.xml') {
-                                projectVersion = projectObjectModel?.version
+                                script.dir(projectName) {
+                                    projectVersion = projectObjectModel?.version
+                                }
                             }
 
                             script.dir(projectName) {
