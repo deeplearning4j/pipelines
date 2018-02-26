@@ -175,6 +175,11 @@ class Nd4jProject extends Project {
                 '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
                 '!nd4j-backends/nd4j-tests' +
                 '\''
+        String mavenExcludesForCuda = '-pl ' +
+                '\'' +
+                '!nd4j-backends/nd4j-backend-impls/nd4j-native,' +
+                '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform' +
+                '\''
 
         script.isVersionReleased(projectName, projectVersion)
         script.setProjectVersion(projectVersion, true)
@@ -258,7 +263,8 @@ class Nd4jProject extends Project {
                             '',
                     (platform.contains('macosx')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                            ''
+                            '',
+                    mavenExcludesForCuda
             ])
 
             script.echo "[INFO] Building nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
