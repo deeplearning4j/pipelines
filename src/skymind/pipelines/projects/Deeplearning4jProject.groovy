@@ -43,11 +43,9 @@ class Deeplearning4jProject extends Project {
             script.docker.image(dockerImageName).inside(dockerImageParams) {
                 List dependencyMappings = [
                         [sparkVersion: "1", scalaVersion: "2.10", cudaVersion: "8.0"],
-                        [sparkVersion: "1", scalaVersion: "2.11", cudaVersion: "8.0"],
-                        [sparkVersion: "2", scalaVersion: "2.11", cudaVersion: "8.0"],
-                        [sparkVersion: "1", scalaVersion: "2.10", cudaVersion: "9.0"],
                         [sparkVersion: "1", scalaVersion: "2.11", cudaVersion: "9.0"],
-                        [sparkVersion: "2", scalaVersion: "2.11", cudaVersion: "9.0"]
+                        [sparkVersion: "2", scalaVersion: "2.11", cudaVersion: "9.0"],
+                        [sparkVersion: "2", scalaVersion: "2.11", cudaVersion: "9.1"]
                 ]
 
                 for (Map mapping : dependencyMappings) {
