@@ -11,11 +11,19 @@ class Nd4jProject extends Project {
         defaultPlatforms = [
                 [backends  : ['cpu'],
                  compillers: [],
+                 name      : 'android-arm'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'android-arm64'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
                  name      : 'android-x86'],
 
                 [backends  : ['cpu'],
                  compillers: [],
-                 name      : 'android-arm'],
+                 name      : 'android-x86_64'],
 
                 /*
                     FIXME: ppc64le slave is unstable at the moment,
@@ -34,25 +42,14 @@ class Nd4jProject extends Project {
 
                 [backends  : ['cpu'],
                  compillers: [],
-                 name      : 'ios-arm'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
                  name      : 'ios-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-x86'],
 
                 [backends  : ['cpu'],
                  compillers: [],
                  name      : 'ios-x86_64'],
 
-                /*
-                    FIXME: Disable CUDA builds for Mac, because of Mac slave instability.
-                 */
-//                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                [backends     : ['cpu'],
+
+                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                  /*
                      FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
                      at the same time for CUDA - Xcode 8 required,

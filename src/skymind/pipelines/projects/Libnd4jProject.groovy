@@ -9,11 +9,19 @@ class Libnd4jProject extends Project {
         defaultPlatforms = [
                 [backends  : ['cpu'],
                  compillers: [],
+                 name      : 'android-arm'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
+                 name      : 'android-arm64'],
+
+                [backends  : ['cpu'],
+                 compillers: [],
                  name      : 'android-x86'],
 
                 [backends  : ['cpu'],
                  compillers: [],
-                 name      : 'android-arm'],
+                 name      : 'android-x86_64'],
 
                 /*
                     FIXME: ppc64le slave is unstable at the moment,
@@ -32,15 +40,7 @@ class Libnd4jProject extends Project {
 
                 [backends  : ['cpu'],
                  compillers: [],
-                 name      : 'ios-arm'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
                  name      : 'ios-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-x86'],
 
                 [backends  : ['cpu'],
                  compillers: [],
