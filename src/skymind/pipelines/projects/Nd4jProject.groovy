@@ -281,7 +281,6 @@ class Nd4jProject extends Project {
                             'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
-                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
                             '-P libnd4j-assembly'
@@ -295,7 +294,6 @@ class Nd4jProject extends Project {
                             'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
-                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */

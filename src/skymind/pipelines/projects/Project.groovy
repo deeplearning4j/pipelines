@@ -137,7 +137,6 @@ abstract class Project implements Serializable {
                             'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
-                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ')
@@ -150,7 +149,6 @@ abstract class Project implements Serializable {
                             'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
-                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
@@ -170,7 +168,6 @@ abstract class Project implements Serializable {
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U',
                             'test',
-                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
@@ -181,7 +178,6 @@ abstract class Project implements Serializable {
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             'mvn -U -B',
                             'test',
-                            '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
                             "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}",
