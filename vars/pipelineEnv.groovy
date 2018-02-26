@@ -18,7 +18,7 @@ Map getDockerConfig(String streamName) {
     streamName ?: error("streamName argument can't be null.")
 
     switch (streamName) {
-        case ['android-arm-cpu', 'android-x86-cpu']:
+        case ~/^android.*$/:
             return [image : 'skymindops/pipelines:android']
             break
 

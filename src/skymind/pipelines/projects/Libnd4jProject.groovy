@@ -181,7 +181,8 @@ class Libnd4jProject extends Project {
             case ~/^ios.*$/:
             case ['linux-ppc64le', 'windows-x86_64']:
                 break
-            case ['linux-x86_64', 'android-arm', 'android-x86']:
+            case ~/^android.*$/:
+            case ['linux-x86_64']:
                 testCommand = """\
                     if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable; fi
                     ${testCommand}

@@ -191,7 +191,6 @@ class Nd4jProject extends Project {
                     script."$shell" script: updateScalaCommand(scalaVersion)
 
                     mvnCommand = getMvnCommand("build", true, [
-                            '-P libnd4j-assembly',
                             "-Djavacpp.extension=${cpuExtension}",
                             (platform.contains('linux') || platform.contains('android')) ?
                                     '-DprotocCommand=protoc' :
@@ -209,7 +208,9 @@ class Nd4jProject extends Project {
                 }
             } else {
                 /* Workaround to set scala version */
-                String scalaVersion = (platform in ['android-arm', 'ios-arm', 'ios-x86']) ? '2.10' : '2.11'
+                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm', 'ios-x86', 'ios-arm64']) ?
+                        '2.10' :
+                        '2.11'
 
                 script.echo "[INFO] Setting Scala version to: $scalaVersion"
 
@@ -217,15 +218,13 @@ class Nd4jProject extends Project {
 
                 /* Nd4j build with libn4j CPU backend */
                 mvnCommand = getMvnCommand("build", false, [
-                        '-P libnd4j-assembly',
-                        (platform in ['android-x86', 'android-arm']) ?
-                                "-Djavacpp.platform=${platform}" :
-                                '',
+                        "-Djavacpp.platform=${platform}",
                         (platform.contains('linux') || platform.contains('android')) ?
                                 '-DprotocCommand=protoc' :
                                 '',
+                        "-Dmaven.javadoc.skip=true",
                         (platform.contains('ios')) ?
-                                "-Dmaven.javadoc.skip=true -Djavacpp.platform.compiler=clang++" :
+                                '-Djavacpp.platform.compiler=clang++' :
                                 '',
                         (platform.contains('macosx')) ?
                                 "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
@@ -254,7 +253,6 @@ class Nd4jProject extends Project {
             script."$shell" script: updateScalaCommand(scalaVersion)
 
             mvnCommand = getMvnCommand("build", false, [
-                    '-P libnd4j-assembly',
                     (platform.contains('linux')) ?
                             '-DprotocCommand=protoc' :
                             '',
@@ -285,7 +283,8 @@ class Nd4jProject extends Project {
                             branchName == 'master' ? 'deploy' : 'install',
                             '-P trimSnapshots',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-Dmaven.test.skip=true'
+                            '-Dmaven.test.skip=true',
+                            '-P libnd4j-assembly'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -303,7 +302,8 @@ class Nd4jProject extends Project {
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
-                                    "${script.pipelineEnv.localRepositoryPath}"
+                                    "${script.pipelineEnv.localRepositoryPath}",
+                            '-P libnd4j-assembly'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
