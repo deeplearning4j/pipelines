@@ -178,7 +178,6 @@ class Libnd4jProject extends Project {
         ].join(' && ')
 
         switch (platform) {
-            case ~/^ios.*$/:
             case ['linux-ppc64le', 'windows-x86_64']:
                 break
             case ~/^android.*$/:
@@ -188,6 +187,7 @@ class Libnd4jProject extends Project {
                     ${testCommand}
                 """.stripIndent()
                 break
+            case ~/^ios.*$/:
             case ['macosx-x86_64']:
                 /* export CC, CXX, CPP, LD required for switching compiler from clang (default for Mac) to gcc */
                 testCommand = """\
