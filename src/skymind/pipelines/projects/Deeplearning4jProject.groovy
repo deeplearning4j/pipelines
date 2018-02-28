@@ -62,10 +62,7 @@ class Deeplearning4jProject extends Project {
                     script.echo "[INFO] Setting Spark version to: $sparkVersion"
                     script.sh "./change-spark-versions.sh $sparkVersion"
 
-                    script.mvn getMvnCommand('build', ["-Dnd4j.version=${projectVersion}",
-                                                       "-Ddeeplearning4j.version=${projectVersion}",
-                                                       "-Ddatavec.version=${projectVersion}",
-                                                       "-Ddl4j-test-resources.version=${projectVersion}"])
+                    script.mvn getMvnCommand('build')
                 }
             }
         }
