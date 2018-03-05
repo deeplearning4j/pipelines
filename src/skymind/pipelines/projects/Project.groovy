@@ -121,8 +121,6 @@ abstract class Project implements Serializable {
                     script.stage('Checkout') {
                         script.deleteDir()
 
-                        script.milestone()
-
                         script.dir(projectName) {
                             script.checkout script.scm
                         }

@@ -2,7 +2,6 @@ package skymind.pipelines.projects
 
 class Libnd4jProject extends Project {
     private final String libnd4jTestsFilter
-    private final String lockableResourceName = "libnd4jTestAndBuild-${branchName}"
 
     static {
         /* Override default platforms */
@@ -76,11 +75,8 @@ class Libnd4jProject extends Project {
     void initPipeline() {
         script.node('master') {
             pipelineWrapper {
-                script.lock(resource: lockableResourceName, inversePrecedence: true) {
-                    script.stage("Test and Build") {
-                        script.milestone()
-                        script.parallel buildStreams
-                    }
+                script.stage("Test and Build") {
+                    script.parallel buildStreams
                 }
             }
         }
@@ -115,8 +111,6 @@ class Libnd4jProject extends Project {
                         script.ws(wsFolderName) {
                             script.stage('Checkout') {
                                 script.deleteDir()
-
-//                                    script.milestone()
 
                                 script.dir(projectName) {
                                     script.checkout script.scm

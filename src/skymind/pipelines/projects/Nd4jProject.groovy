@@ -4,8 +4,6 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class Nd4jProject extends Project {
-    private final String lockableResourceName = "nd4jTestAndBuild-${branchName}"
-
     /* Override default platforms */
     static {
         defaultPlatforms = [
@@ -70,11 +68,8 @@ class Nd4jProject extends Project {
     void initPipeline() {
         script.node('master') {
             pipelineWrapper {
-                script.lock(resource: lockableResourceName, inversePrecedence: true) {
-                    script.stage("Test and Build") {
-                        script.milestone()
-                        script.parallel buildStreams
-                    }
+                script.stage("Test and Build") {
+                    script.parallel buildStreams
                 }
             }
         }
@@ -110,7 +105,6 @@ class Nd4jProject extends Project {
                             script.stage('Checkout') {
                                 script.deleteDir()
 
-//                                    script.milestone()
                                 script.dir(projectName) {
                                     script.checkout script.scm
                                 }
