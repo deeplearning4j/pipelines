@@ -13,6 +13,9 @@ abstract class Project implements Serializable {
     protected static List defaultPlatforms = [
             [backends: [], compillers: [], name: 'linux-x86_64']
     ]
+    /* Default job properties */
+    protected final List jobSpecificProperties = []
+    protected static String gitterEndpointUrl = ''
 
     /**
      * Project class constructor
@@ -30,7 +33,7 @@ abstract class Project implements Serializable {
         /* Get instance of NotificationHelper class for sending notifications about run status */
         notifications = new NotificationHelper(script)
         /* Configure job build parameters */
-        setBuildParameters()
+        setBuildParameters(jobSpecificProperties)
         /* Terminate older builds */
         terminateOlderBuilds(this.script.env.JOB_NAME, this.script.env.BUILD_NUMBER.toInteger())
     }
@@ -38,8 +41,8 @@ abstract class Project implements Serializable {
     abstract void initPipeline()
 
     @NonCPS
-    protected void setBuildParameters(List buildParameters = []) {
-        script.properties([
+    protected void setBuildParameters(List jobSpecificProperties) {
+        List commonJobProperties = [
                 script.buildDiscarder(
                         script.logRotator(
                                 artifactDaysToKeepStr: '3',
@@ -51,15 +54,44 @@ abstract class Project implements Serializable {
                 [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
                 /* Workaround to disable branch indexing */
                 script.pipelineTriggers([])
-//                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
 //                script.parameters([
-                //                        script.choice(
-                //                                choices: ['nexus', 'sonatype', 'jfrog', 'bintray'].join('\n'),
-                //                                description: 'Maven profile names list',
-                //                                name: 'MAVEN_PROFILE_ACTIVATION_NAME'
-                //                        )
-//                ].plus(buildParameters))
-        ].plus(buildParameters))
+//                        script.choice(
+//                                choices: ['nexus', 'sonatype', 'jfrog', 'bintray'].join('\n'),
+//                                description: 'Maven profile names list',
+//                                name: 'MAVEN_PROFILE_ACTIVATION_NAME'
+//                        )
+//                ])
+        ]
+
+        if (script.env.JOB_BASE_NAME == 'master') {
+            commonJobProperties.push(
+                    [
+                            $class   : 'HudsonNotificationProperty',
+                            endpoints: [
+                                    /* Gitter endpoint url for dev_channel room */
+                                    [
+                                            retries: 5,
+                                            urlInfo: [
+                                                    urlOrId: 'https://webhooks.gitter.im/e/d74b592f0914132e59ba',
+                                                    urlType: 'PUBLIC'
+                                            ]
+                                    ],
+                                    /* If job specific Gitter endpoint url provided that add it to the list */
+                                    (gitterEndpointUrl) ?
+                                            [
+                                                    retries: 5,
+                                                    urlInfo: [
+                                                            urlOrId: gitterEndpointUrl,
+                                                            urlType: 'PUBLIC'
+                                                    ]
+                                            ] :
+                                            null
+                            ].findAll()
+                    ]
+            )
+        }
+
+        script.properties(commonJobProperties + jobSpecificProperties)
     }
 
     protected void pipelineWrapper(Closure pipelineBody) {
@@ -159,7 +191,7 @@ abstract class Project implements Serializable {
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
-            /* TODO: Currently not in use */
+        /* TODO: Currently not in use */
             case 'test':
                 if (unixNode) {
                     return [

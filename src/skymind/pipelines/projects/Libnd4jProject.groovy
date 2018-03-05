@@ -4,8 +4,8 @@ class Libnd4jProject extends Project {
     private final String libnd4jTestsFilter
     private final String lockableResourceName = "libnd4jTestAndBuild-${branchName}"
 
-    /* Override default platforms */
     static {
+        /* Override default platforms */
         defaultPlatforms = [
                 [backends  : ['cpu'],
                  compillers: [],
@@ -62,6 +62,9 @@ class Libnd4jProject extends Project {
                  compillers   : [],
                  name         : 'windows-x86_64']
         ]
+
+        /* Gitter endpoint url for devlibnd4j room */
+        gitterEndpointUrl = 'https://webhooks.gitter.im/e/97334c78c3f82c5ad21e'
     }
 
     Libnd4jProject(script, String projectName, Map jobConfig) {
