@@ -2,7 +2,6 @@ package skymind.pipelines.projects
 
 class Libnd4jProject extends Project {
     private final String libnd4jTestsFilter
-    private final String lockableResourceName = "libnd4jTestAndBuild-${branchName}"
 
     static {
         /* Override default platforms */
@@ -76,11 +75,8 @@ class Libnd4jProject extends Project {
     void initPipeline() {
         script.node('master') {
             pipelineWrapper {
-                script.lock(resource: lockableResourceName, inversePrecedence: true) {
-                    script.stage("Test and Build") {
-                        script.milestone()
-                        script.parallel buildStreams
-                    }
+                script.stage("Test and Build") {
+                    script.parallel buildStreams
                 }
             }
         }
@@ -105,34 +101,45 @@ class Libnd4jProject extends Project {
                 /* Create stream body */
                 streams["$streamName"] = {
                     script.node(platformName) {
-                        Boolean isUnix = script.isUnix()
-                        String separator = isUnix ? '/' : '\\'
-                        String wsFolderName = 'workspace' +
-                                separator +
-                                [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+                        try {
+                            Boolean isUnix = script.isUnix()
+                            String separator = isUnix ? '/' : '\\'
+                            String wsFolderName = 'workspace' +
+                                    separator +
+                                    [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
-                        /* Redefine default workspace to fix Windows path length limitation */
-                        script.ws(wsFolderName) {
-                            script.stage('Checkout') {
-                                script.deleteDir()
+                            /* Redefine default workspace to fix Windows path length limitation */
+                            script.ws(wsFolderName) {
+                                script.stage('Checkout') {
+                                    script.deleteDir()
 
-//                                    script.milestone()
+                                    script.dir(projectName) {
+                                        script.checkout script.scm
+                                    }
+                                }
 
                                 script.dir(projectName) {
-                                    script.checkout script.scm
-                                }
-                            }
+                                    /* Get docker container configuration */
+                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
 
-                            script.dir(projectName) {
-                                /* Get docker container configuration */
-                                Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+                                    if (dockerConf) {
+                                        String dockerImageName = dockerConf['image'] ?:
+                                                script.error('Docker image name is missing.')
+                                        String dockerImageParams = dockerConf?.params
 
-                                if (dockerConf) {
-                                    String dockerImageName = dockerConf['image'] ?:
-                                            script.error('Docker image name is missing.')
-                                    String dockerImageParams = dockerConf?.params
+                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            script.stage('Test') {
+                                                /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                if (backend == 'cpu') {
+                                                    runtTests(platformName, backend)
+                                                }
+                                            }
 
-                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            script.stage('Build') {
+                                                runBuild(platformName, backend, cpuExtensions)
+                                            }
+                                        }
+                                    } else {
                                         script.stage('Test') {
                                             /* Run tests only for CPU backend, while CUDA tests are under development */
                                             if (backend == 'cpu') {
@@ -144,19 +151,11 @@ class Libnd4jProject extends Project {
                                             runBuild(platformName, backend, cpuExtensions)
                                         }
                                     }
-                                } else {
-                                    script.stage('Test') {
-                                        /* Run tests only for CPU backend, while CUDA tests are under development */
-                                        if (backend == 'cpu') {
-                                            runtTests(platformName, backend)
-                                        }
-                                    }
-
-                                    script.stage('Build') {
-                                        runBuild(platformName, backend, cpuExtensions)
-                                    }
                                 }
                             }
+                        }
+                        finally {
+                            script.cleanWs deleteDirs: true
                         }
                     }
                 }
