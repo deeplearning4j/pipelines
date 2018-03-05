@@ -128,20 +128,32 @@ class Nd4jProject extends Project {
 
                                         script.docker.image(dockerImageName).inside(dockerImageParams) {
                                             script.stage('Build') {
-                                                runBuild(platformName, backend, cpuExtensions)
+                                                runStageLogic('build', platformName, backend, cpuExtensions)
                                             }
 
                                             script.stage('Test') {
-                                                runTests(platformName, backend, cpuExtensions)
+                                                runStageLogic('test', platformName, backend, cpuExtensions)
+                                            }
+
+                                            if (branchName == 'master') {
+                                                script.stage('Deploy') {
+                                                    runStageLogic('deploy', platformName, backend, cpuExtensions)
+                                                }
                                             }
                                         }
                                     } else {
                                         script.stage('Build') {
-                                            runBuild(platformName, backend, cpuExtensions)
+                                            runStageLogic('build', platformName, backend, cpuExtensions)
                                         }
 
                                         script.stage('Test') {
-                                            runTests(platformName, backend, cpuExtensions)
+                                            runStageLogic('test', platformName, backend, cpuExtensions)
+                                        }
+
+                                        if (branchName == 'master') {
+                                            script.stage('Deploy') {
+                                                runStageLogic('deploy', platformName, backend, cpuExtensions)
+                                            }
                                         }
                                     }
                                 }
@@ -158,7 +170,7 @@ class Nd4jProject extends Project {
         streams
     }
 
-    private void runBuild(String platform, String backend, List cpuExtensions) {
+    private void runStageLogic(String stageName, String platform, String backend, List cpuExtensions) {
         String mvnCommand
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
@@ -202,7 +214,7 @@ class Nd4jProject extends Project {
 
                     script."$shell" script: updateScalaCommand(scalaVersion)
 
-                    mvnCommand = getMvnCommand("build", true, [
+                    mvnCommand = getMvnCommand(stageName, true, [
                             "-Djavacpp.extension=${cpuExtension}",
                             (platform.contains('linux') || platform.contains('android')) ?
                                     '-DprotocCommand=protoc' :
@@ -213,7 +225,7 @@ class Nd4jProject extends Project {
                             mavenExcludesForCpu
                     ])
 
-                    script.echo "[INFO] Building nd4j ${backend} backend with " +
+                    script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
                             "Scala ${scalaVersion} versions and ${cpuExtension} extension"
 
                     script.mvn "$mvnCommand"
@@ -229,7 +241,7 @@ class Nd4jProject extends Project {
                 script."$shell" script: updateScalaCommand(scalaVersion)
 
                 /* Nd4j build with libn4j CPU backend */
-                mvnCommand = getMvnCommand("build", false, [
+                mvnCommand = getMvnCommand(stageName, false, [
                         "-Djavacpp.platform=${platform}",
                         (platform.contains('linux') || platform.contains('android')) ?
                                 '-DprotocCommand=protoc' :
@@ -244,7 +256,7 @@ class Nd4jProject extends Project {
                         mavenExcludesForCpu
                 ])
 
-                script.echo "[INFO] Building nd4j ${backend} backend with Scala ${scalaVersion} versions"
+                script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with Scala ${scalaVersion} versions"
 
                 script.mvn "$mvnCommand"
             }
@@ -264,7 +276,7 @@ class Nd4jProject extends Project {
 
             script."$shell" script: updateScalaCommand(scalaVersion)
 
-            mvnCommand = getMvnCommand("build", false, [
+            mvnCommand = getMvnCommand(stageName, false, [
                     (platform.contains('linux')) ?
                             '-DprotocCommand=protoc' :
                             '',
@@ -274,129 +286,7 @@ class Nd4jProject extends Project {
                     mavenExcludesForCuda
             ])
 
-            script.echo "[INFO] Building nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
-
-            script.mvn "$mvnCommand"
-        }
-    }
-
-    private void runTests(String platform, String backend, List cpuExtensions) {
-        String mvnCommand
-        Boolean unixNode = script.isUnix()
-        String shell = unixNode ? 'sh' : 'bat'
-        Closure updateScalaCommand = { String version ->
-            return [
-                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
-                    (unixNode ? "./change-scala-versions.sh $version" :
-                            "\"./change-scala-versions.sh $version\"")
-            ].join(' ')
-        }
-        Closure updateCudaCommand = { String version ->
-            return [
-                    (unixNode ? 'bash' : "\"C:\\Program Files\\Git\\bin\\bash.exe\" -c"),
-                    (unixNode ? "./change-cuda-versions.sh $version" :
-                            "\"./change-cuda-versions.sh $version\"")
-            ].join(' ')
-        }
-        String mavenExcludesForCpu = '-pl ' +
-                '\'' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
-                '!nd4j-backends/nd4j-tests' +
-                '\''
-        String mavenExcludesForCuda = '-pl ' +
-                '\'' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native,' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform' +
-                '\''
-
-        script.isVersionReleased(projectName, projectVersion)
-        script.setProjectVersion(projectVersion, true)
-
-        if (backend == 'cpu') {
-            /* Nd4j build with libn4j CPU backend and specific extension */
-            if (cpuExtensions) {
-                for (String item : cpuExtensions) {
-                    String cpuExtension = item
-                    String scalaVersion = (cpuExtension == 'avx2') ? '2.10' : '2.11'
-
-                    script.echo "[INFO] Setting Scala version to: $scalaVersion"
-
-                    script."$shell" script: updateScalaCommand(scalaVersion)
-
-                    mvnCommand = getMvnCommand('test', true, [
-                            "-Djavacpp.extension=${cpuExtension}",
-                            (platform.contains('linux') || platform.contains('android')) ?
-                                    '-DprotocCommand=protoc' :
-                                    '',
-                            (platform.contains('macosx')) ?
-                                    "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                                    '',
-                            mavenExcludesForCpu
-                    ])
-
-                    script.echo "[INFO] Testing nd4j ${backend} backend with " +
-                            "Scala ${scalaVersion} versions and ${cpuExtension} extension"
-
-                    script.mvn "$mvnCommand"
-                }
-            } else {
-                /* Workaround to set scala version */
-                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm', 'ios-x86', 'ios-arm64']) ?
-                        '2.10' :
-                        '2.11'
-
-                script.echo "[INFO] Setting Scala version to: $scalaVersion"
-
-                script."$shell" script: updateScalaCommand(scalaVersion)
-
-                /* Nd4j build with libn4j CPU backend */
-                mvnCommand = getMvnCommand('test', false, [
-                        "-Djavacpp.platform=${platform}",
-                        (platform.contains('linux') || platform.contains('android')) ?
-                                '-DprotocCommand=protoc' :
-                                '',
-                        "-Dmaven.javadoc.skip=true",
-                        (platform.contains('ios')) ?
-                                '-Djavacpp.platform.compiler=clang++' :
-                                '',
-                        (platform.contains('macosx')) ?
-                                "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                                '',
-                        mavenExcludesForCpu
-                ])
-
-                script.echo "[INFO] Testing nd4j ${backend} backend with Scala ${scalaVersion} versions"
-
-                script.mvn "$mvnCommand"
-            }
-        }
-        /* Nd4j build with libn4j CUDA backend */
-        else {
-            String cudaVersion = backend.tokenize('-')[1]
-
-            script.echo "[INFO] Setting CUDA version to: $cudaVersion"
-
-            script."$shell" script: updateCudaCommand(cudaVersion)
-
-            /* Workaround to set scala version */
-            String scalaVersion = (backend.contains('8.0')) ? '2.10' : '2.11'
-
-            script.echo "[INFO] Setting Scala version to: $scalaVersion"
-
-            script."$shell" script: updateScalaCommand(scalaVersion)
-
-            mvnCommand = getMvnCommand('test', false, [
-                    (platform.contains('linux')) ?
-                            '-DprotocCommand=protoc' :
-                            '',
-                    (platform.contains('macosx')) ?
-                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                            '',
-                    mavenExcludesForCuda
-            ])
-
-            script.echo "[INFO] Testing nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
+            script.echo "[INFO] ${stageName.capitalize()}ing nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
 
             script.mvn "$mvnCommand"
         }
@@ -415,7 +305,7 @@ class Nd4jProject extends Project {
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U -B',
                             'clean',
-                            branchName == 'master' ? 'deploy' : 'install',
+                            'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
                             '-P libnd4j-assembly'
@@ -428,7 +318,7 @@ class Nd4jProject extends Project {
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             'mvn -U -B',
                             'clean',
-                            branchName == 'master' ? 'deploy' : 'install',
+                            'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
@@ -460,6 +350,39 @@ class Nd4jProject extends Project {
                             'mvn -U -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            /* Workaround for Windows which doesn't honour withMaven options */
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}",
+                            '-P libnd4j-assembly'
+                    ].plus(mvnArguments).findAll().join(' ') + '"'
+                }
+                break
+            case 'deploy':
+                if (unixNode) {
+                    return [
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
+                            /* Pipeline withMaven step requires this line if it runs in Docker container */
+                            'export PATH=$MVN_CMD_DIR:$PATH &&',
+                            'mvn -U -B',
+                            'clean',
+                            'deploy',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
+                            '-P libnd4j-assembly'
+                    ].plus(mvnArguments).findAll().join(' ')
+                } else {
+                    return [
+                            'vcvars64.bat',
+                            '&&',
+                            'bash -c',
+                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
+                            'mvn -U -B',
+                            'clean',
+                            'deploy',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
