@@ -94,38 +94,48 @@ class Nd4jProject extends Project {
                 /* Create stream body */
                 streams["$streamName"] = {
                     script.node(platformName) {
-                        Boolean isUnix = script.isUnix()
-                        String separator = isUnix ? '/' : '\\'
-                        String wsFolderName = 'workspace' +
-                                separator +
-                                [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+                        try {
+                            Boolean isUnix = script.isUnix()
+                            String separator = isUnix ? '/' : '\\'
+                            String wsFolderName = 'workspace' +
+                                    separator +
+                                    [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
-                        /* Redefine default workspace to fix Windows path length limitation */
-                        script.ws(wsFolderName) {
-                            script.stage('Checkout') {
-                                script.deleteDir()
+                            /* Redefine default workspace to fix Windows path length limitation */
+                            script.ws(wsFolderName) {
+                                script.stage('Checkout') {
+                                    script.deleteDir()
+
+                                    script.dir(projectName) {
+                                        script.checkout script.scm
+                                    }
+                                }
+
+                                script.stage('Get project version from pom.xml') {
+                                    script.dir(projectName) {
+                                        projectVersion = projectObjectModel?.version
+                                    }
+                                }
 
                                 script.dir(projectName) {
-                                    script.checkout script.scm
-                                }
-                            }
+                                    /* Get docker container configuration */
+                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
 
-                            script.stage('Get project version from pom.xml') {
-                                script.dir(projectName) {
-                                    projectVersion = projectObjectModel?.version
-                                }
-                            }
+                                    if (dockerConf) {
+                                        String dockerImageName = dockerConf['image'] ?:
+                                                script.error('Docker image name is missing.')
+                                        String dockerImageParams = dockerConf?.params
 
-                            script.dir(projectName) {
-                                /* Get docker container configuration */
-                                Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            script.stage('Build') {
+                                                runBuild(platformName, backend, cpuExtensions)
+                                            }
 
-                                if (dockerConf) {
-                                    String dockerImageName = dockerConf['image'] ?:
-                                            script.error('Docker image name is missing.')
-                                    String dockerImageParams = dockerConf?.params
-
-                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            script.stage('Test') {
+                                                runTests(platformName, backend, cpuExtensions)
+                                            }
+                                        }
+                                    } else {
                                         script.stage('Build') {
                                             runBuild(platformName, backend, cpuExtensions)
                                         }
@@ -134,16 +144,11 @@ class Nd4jProject extends Project {
                                             runTests(platformName, backend, cpuExtensions)
                                         }
                                     }
-                                } else {
-                                    script.stage('Build') {
-                                        runBuild(platformName, backend, cpuExtensions)
-                                    }
-
-                                    script.stage('Test') {
-                                        runTests(platformName, backend, cpuExtensions)
-                                    }
                                 }
                             }
+                        }
+                        finally {
+                            script.cleanWs deleteDirs: true
                         }
                     }
                 }
