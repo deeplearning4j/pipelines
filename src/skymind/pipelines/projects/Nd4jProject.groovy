@@ -163,7 +163,7 @@ class Nd4jProject extends Project {
                             }
                         }
                         finally {
-                            script.cleanWs deleteDirs: true
+                            script.deleteDir()
                         }
                     }
                 }

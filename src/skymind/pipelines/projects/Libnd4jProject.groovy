@@ -159,7 +159,7 @@ class Libnd4jProject extends Project {
                             }
                         }
                         finally {
-                            script.cleanWs deleteDirs: true
+                            script.deleteDir()
                         }
                     }
                 }
