@@ -34,7 +34,8 @@ class Nd4jProject extends Project {
                  name      : 'linux-ppc64le'],
 
                 [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 cpuExtensions: ['avx2', 'avx512'],
+                 /* Empty element was added to build for CPU without extension */
+                 cpuExtensions: ['', 'avx2', 'avx512'],
                  compillers   : [],
                  name         : 'linux-x86_64'],
 
@@ -46,7 +47,6 @@ class Nd4jProject extends Project {
                  compillers: [],
                  name      : 'ios-x86_64'],
 
-
                 [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
                  /*
                      FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
@@ -54,12 +54,14 @@ class Nd4jProject extends Project {
                      which means that we can't enable avx512 builds at the moment
                   */
 //                 cpuExtensions: ['avx2', 'avx512'],
-                 cpuExtensions: ['avx2'],
+                 /* Empty element was added to build for CPU without extension */
+                 cpuExtensions: ['', 'avx2'],
                  compillers   : [],
                  name         : 'macosx-x86_64'],
 
                 [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 cpuExtensions: ['avx2'],
+                 /* Empty element was added to build for CPU without extension */
+                 cpuExtensions: ['', 'avx2'],
                  compillers   : [],
                  name         : 'windows-x86_64']
         ]
@@ -83,7 +85,8 @@ class Nd4jProject extends Project {
             String platformName = platform.name
             List backends = platform.backends
             List compilers = platform.compilers
-            List cpuExtensions = platform.cpuExtensions
+            /* List with empty element was added to build for CPU without extension */
+            List cpuExtensions = platform.cpuExtensions ?: ['']
 
             for (List bckd : backends) {
                 String backend = bckd
@@ -205,34 +208,10 @@ class Nd4jProject extends Project {
 
         if (backend == 'cpu') {
             /* Nd4j build with libn4j CPU backend and specific extension */
-            if (cpuExtensions) {
-                for (String item : cpuExtensions) {
-                    String cpuExtension = item
-                    String scalaVersion = (cpuExtension == 'avx2') ? '2.10' : '2.11'
-
-                    script.echo "[INFO] Setting Scala version to: $scalaVersion"
-
-                    script."$shell" script: updateScalaCommand(scalaVersion)
-
-                    mvnCommand = getMvnCommand(stageName, true, [
-                            "-Djavacpp.extension=${cpuExtension}",
-                            (platform.contains('linux') || platform.contains('android')) ?
-                                    '-DprotocCommand=protoc' :
-                                    '',
-                            (platform.contains('macosx')) ?
-                                    "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                                    '',
-                            mavenExcludesForCpu
-                    ])
-
-                    script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
-                            "Scala ${scalaVersion} versions and ${cpuExtension} extension"
-
-                    script.mvn "$mvnCommand"
-                }
-            } else {
+            for (String item : cpuExtensions) {
+                String cpuExtension = item
                 /* Workaround to set scala version */
-                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm', 'ios-x86', 'ios-arm64']) ?
+                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm64'] || !cpuExtension) ?
                         '2.10' :
                         '2.11'
 
@@ -240,13 +219,15 @@ class Nd4jProject extends Project {
 
                 script."$shell" script: updateScalaCommand(scalaVersion)
 
-                /* Nd4j build with libn4j CPU backend */
-                mvnCommand = getMvnCommand(stageName, false, [
+                mvnCommand = getMvnCommand(stageName, true, [
                         "-Djavacpp.platform=${platform}",
+                        (cpuExtension) ? "-Djavacpp.extension=${cpuExtension}" : '',
                         (platform.contains('linux') || platform.contains('android')) ?
                                 '-DprotocCommand=protoc' :
                                 '',
-                        "-Dmaven.javadoc.skip=true",
+                        (!(platform.contains('linux') || platform.contains('windows'))) ?
+                                "-Dmaven.javadoc.skip=true" :
+                                '',
                         (platform.contains('ios')) ?
                                 '-Djavacpp.platform.compiler=clang++' :
                                 '',
@@ -256,7 +237,8 @@ class Nd4jProject extends Project {
                         mavenExcludesForCpu
                 ])
 
-                script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with Scala ${scalaVersion} versions"
+                script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
+                        "Scala ${scalaVersion} versions and ${cpuExtension} extension"
 
                 script.mvn "$mvnCommand"
             }
