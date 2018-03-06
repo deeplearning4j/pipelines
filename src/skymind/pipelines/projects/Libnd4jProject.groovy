@@ -177,7 +177,7 @@ class Libnd4jProject extends Project {
         String testCommand = [
                 "cd ${testFolderName}",
                 'cmake -G "Unix Makefiles"',
-                'make -j3',
+                'make -j5',
                 "layers_tests${separator}runtests --gtest_output=\"xml:cpu_test_results.xml\"" +
                         /* Add possibility to provide additional params to Google Tests */
                         (libnd4jTestsFilter ? ' ' + libnd4jTestsFilter : '')
@@ -284,8 +284,8 @@ class Libnd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            /* Force to build in two threads */
-                            'export MAKEJ=3 &&',
+                            /* Force to build in three threads */
+//                            'export MAKEJ=3 &&',
                             'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
@@ -297,8 +297,8 @@ class Libnd4jProject extends Project {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            /* Force to build in two threads */
-                            'export MAKEJ=3 &&',
+                            /* Force to build in three threads */
+//                            'export MAKEJ=3 &&',
                             'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
