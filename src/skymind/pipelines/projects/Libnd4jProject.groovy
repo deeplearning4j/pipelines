@@ -100,7 +100,7 @@ class Libnd4jProject extends Project {
                 String backend = bckd
                 String streamName = ["${platformName}", "${backend}"].findAll().join('-')
                 /* Set add steam to build name */
-                script.pipelineEnv.buildDisplayName.push("${streamName}")
+//                script.pipelineEnv.buildDisplayName.push("${streamName}")
 
                 /* Create stream body */
                 streams["$streamName"] = {

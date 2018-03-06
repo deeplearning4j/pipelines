@@ -12,7 +12,7 @@ import groovy.transform.Field
 @Field String jenkinsDockerM2Mount = jenkinsDockerM2Folder + '/' + mvnProfileActivationName
 @Field String localRepositoryPath = ".m2/${mvnProfileActivationName}/repository"
 @Field String mvnSettingsId = 'global_mvn_settings_xml'
-@Field List buildDisplayName = []
+//@Field List buildDisplayName = []
 
 Map getDockerConfig(String streamName) {
     streamName ?: error("streamName argument can't be null.")

@@ -103,8 +103,8 @@ abstract class Project implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
-            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
-                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
+//            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
+//                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
 
             notifications.sendEmail(script.currentBuild.currentResult)
 
@@ -134,7 +134,7 @@ abstract class Project implements Serializable {
 //                        }
 //                    }
 
-                    script.pipelineEnv.buildDisplayName.push(platformName)
+//                    script.pipelineEnv.buildDisplayName.push(platformName)
 
 //                    String createFoldersScript = "mkdir -p " +
 //                            "${script.pipelineEnv.jenkinsDockerM2Folder}/" +
