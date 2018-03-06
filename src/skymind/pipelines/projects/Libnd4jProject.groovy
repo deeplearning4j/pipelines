@@ -33,7 +33,8 @@ class Libnd4jProject extends Project {
                  name      : 'linux-ppc64le'],
 
                 [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 cpuExtensions: ['avx2', 'avx512'],
+                 /* Empty element was added to build for CPU without extension */
+                 cpuExtensions: ['', 'avx2', 'avx512'],
                  compillers   : [],
                  name         : 'linux-x86_64'],
 
@@ -51,13 +52,15 @@ class Libnd4jProject extends Project {
                      at the same time for CUDA - Xcode 8 required,
                      which means that we can't enable avx512 builds at the moment
                   */
-//                 cpuExtensions: ['avx2', 'avx512'],
-                 cpuExtensions: ['avx2'],
+//                 cpuExtensions: ['', 'avx2', 'avx512'],
+                 /* Empty element was added to build for CPU without extension */
+                 cpuExtensions: ['', 'avx2'],
                  compillers   : [],
                  name         : 'macosx-x86_64'],
 
                 [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 cpuExtensions: ['avx2'],
+                 /* Empty element was added to build for CPU without extension */
+                 cpuExtensions: ['', 'avx2'],
                  compillers   : [],
                  name         : 'windows-x86_64']
         ]
@@ -90,7 +93,8 @@ class Libnd4jProject extends Project {
             String platformName = platform.name
             List backends = platform.backends
             List compilers = platform.compilers
-            List cpuExtensions = platform.cpuExtensions
+            /* List with empty element was added to build for CPU without extension */
+            List cpuExtensions = platform.cpuExtensions ?: ['']
 
             for (List bckd : backends) {
                 String backend = bckd
@@ -234,31 +238,18 @@ class Libnd4jProject extends Project {
 
         /* Build libnd4j for CPU backend */
         if (backend == 'cpu') {
-            if (cpuExtensions) {
-                for (String item : cpuExtensions) {
-                    String cpuExtension = item
+            for (String item : cpuExtensions) {
+                String cpuExtension = item
 
-                    mvnCommand = getMvnCommand('build', true, [
-                            "-Dlibnd4j.platform=${platform}",
-                            "-Dlibnd4j.extension=${cpuExtension}",
-                            (platform.contains('macosx')) ?
-                                    "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                                    ''
-                    ])
-
-                    script.echo "[INFO] Building libnd4j ${backend} backend with ${cpuExtension} extension"
-
-                    script.mvn "$mvnCommand"
-                }
-            } else {
-                mvnCommand = getMvnCommand('build', false, [
+                mvnCommand = getMvnCommand('build', true, [
                         "-Dlibnd4j.platform=${platform}",
+                        (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
                         (platform.contains('macosx')) ?
                                 "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                                 ''
                 ])
 
-                script.echo "[INFO] Building libnd4j ${backend} backend"
+                script.echo "[INFO] Building libnd4j ${backend} backend with ${cpuExtension} extension"
 
                 script.mvn "$mvnCommand"
             }
