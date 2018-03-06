@@ -114,11 +114,11 @@ class Nd4jProject extends Project {
                                     }
                                 }
 
-                                script.stage('Get project version from pom.xml') {
-                                    script.dir(projectName) {
-                                        projectVersion = projectObjectModel?.version
-                                    }
-                                }
+//                                script.stage('Get project version from pom.xml') {
+//                                    script.dir(projectName) {
+//                                        projectVersion = projectObjectModel?.version
+//                                    }
+//                                }
 
                                 script.dir(projectName) {
                                     /* Get docker container configuration */
@@ -203,8 +203,8 @@ class Nd4jProject extends Project {
                 '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform' +
                 '\''
 
-        script.isVersionReleased(projectName, projectVersion)
-        script.setProjectVersion(projectVersion, true)
+//        script.isVersionReleased(projectName, projectVersion)
+//        script.setProjectVersion(projectVersion, true)
 
         if (backend == 'cpu') {
             /* Nd4j build with libn4j CPU backend and specific extension */
