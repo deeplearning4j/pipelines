@@ -217,7 +217,7 @@ class Nd4jProject extends Project {
             for (String item : cpuExtensions) {
                 String cpuExtension = item
                 /* Workaround to set scala version */
-                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm64'] || !cpuExtension) ?
+                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm64']) ?
                         '2.10' :
                         '2.11'
 
