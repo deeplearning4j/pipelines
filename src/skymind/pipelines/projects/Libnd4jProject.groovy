@@ -244,7 +244,7 @@ class Libnd4jProject extends Project {
                 mvnCommand = getMvnCommand('build', true, [
                         "-Dlibnd4j.platform=${platform}",
                         (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
-                        (platform.contains('macosx')) ?
+                        (platform.contains('macosx') || platform.contains('ios')) ?
                                 "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                                 ''
                 ])
@@ -262,7 +262,7 @@ class Libnd4jProject extends Project {
                     "-Dlibnd4j.platform=${platform}",
                     "-Dlibnd4j.cuda=${cudaVersion}",
                     (branchName != 'master') ? "-Dlibnd4j.compute=30" : '',
-                    (platform.contains('macosx')) ?
+                    (platform.contains('macosx') || platform.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             ''
             ])

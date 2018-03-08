@@ -234,10 +234,12 @@ class Nd4jProject extends Project {
                         (!(platform.contains('linux') || platform.contains('windows'))) ?
                                 "-Dmaven.javadoc.skip=true" :
                                 '',
-                        (platform.contains('ios')) ?
-                                '-Djavacpp.platform.compiler=clang++' :
-                                '',
-                        (platform.contains('macosx')) ?
+                        (platform.contains('ios')) ? '-Djavacpp.platform.compiler=clang++' : '',
+                        (platform == 'ios-arm64') ?
+                                '-Djavacpp.platform.sysroot=$(xcrun --sdk iphoneos --show-sdk-path)' : '',
+                        (platform == 'ios-x86_64') ?
+                                '-Djavacpp.platform.sysroot=$(xcrun --sdk iphonesimulator --show-sdk-path)' : '',
+                        (platform.contains('macosx') || platform.contains('ios')) ?
                                 "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                                 '',
                         mavenExcludesForCpu
@@ -268,7 +270,7 @@ class Nd4jProject extends Project {
                     (platform.contains('linux')) ?
                             '-DprotocCommand=protoc' :
                             '',
-                    (platform.contains('macosx')) ?
+                    (platform.contains('macosx') || platform.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             '',
                     mavenExcludesForCuda
