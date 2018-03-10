@@ -4,7 +4,7 @@ import skymind.pipelines.helper.NotificationHelper
 
 abstract class Project implements Serializable {
     protected script
-    protected notifications
+//    protected notifications
     protected platforms
     protected String projectVersion
     protected final String branchName
@@ -30,8 +30,8 @@ abstract class Project implements Serializable {
         branchName = this.script.env.BRANCH_NAME
         /* Default platforms will be used if developer didn't redefine them in Jenkins file */
         platforms = jobConfig?.getAt('platforms') ?: defaultPlatforms
-        /* Get instance of NotificationHelper class for sending notifications about run status */
-        notifications = new NotificationHelper(script)
+//        /* Get instance of NotificationHelper class for sending notifications about run status */
+//        notifications = new NotificationHelper(script)
         /* Configure job build parameters */
         setBuildParameters(jobSpecificProperties)
         /* Terminate older builds */
@@ -105,10 +105,10 @@ abstract class Project implements Serializable {
         finally {
 //            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
 //                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
+//            notifications.sendEmail(script.currentBuild.currentResult)
 
-            notifications.sendEmail(script.currentBuild.currentResult)
-
-            script.cleanWs deleteDirs: true
+            /* Get instance of NotificationHelper class for sending notifications about run status */
+            new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
         }
     }
 
@@ -118,13 +118,14 @@ abstract class Project implements Serializable {
             String platformName = platform.name
             script.node(platformName) {
                 pipelineWrapper {
-                    script.stage('Checkout') {
-                        script.deleteDir()
+                    try {
+                        script.stage('Checkout') {
+                            script.deleteDir()
 
-                        script.dir(projectName) {
-                            script.checkout script.scm
+                            script.dir(projectName) {
+                                script.checkout script.scm
+                            }
                         }
-                    }
 
 //                    script.stage('Update project version') {
 //                        script.dir(projectName) {
@@ -143,12 +144,16 @@ abstract class Project implements Serializable {
 //
 //                    script.sh script: createFoldersScript
 
-                    Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-                    String dockerImageName = dockerConf['image'] ?:
-                            script.error('Docker image name is missing.')
-                    String dockerImageParams = dockerConf?.'params'
+                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
+                        String dockerImageName = dockerConf['image'] ?:
+                                script.error('Docker image name is missing.')
+                        String dockerImageParams = dockerConf?.'params'
 
-                    stagesToRun(dockerImageName, dockerImageParams)
+                        stagesToRun(dockerImageName, dockerImageParams)
+                    }
+                    finally {
+                        script.cleanWs deleteDirs: true
+                    }
                 }
             }
         }
