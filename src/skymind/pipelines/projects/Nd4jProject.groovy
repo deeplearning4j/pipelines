@@ -199,6 +199,7 @@ class Nd4jProject extends Project {
         }
         String mavenExcludesForCpu = '-pl ' +
                 '\'' +
+                ((platform.contains('ios')) ? '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform,' : '') +
                 '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
                 '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
                 '!nd4j-backends/nd4j-tests' +
@@ -206,7 +207,8 @@ class Nd4jProject extends Project {
         String mavenExcludesForCuda = '-pl ' +
                 '\'' +
                 '!nd4j-backends/nd4j-backend-impls/nd4j-native,' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform' +
+                '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform,' +
+                '!nd4j-backends/nd4j-tests' +
                 '\''
 
 //        script.isVersionReleased(projectName, projectVersion)
