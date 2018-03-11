@@ -76,11 +76,9 @@ class Libnd4jProject extends Project {
     }
 
     void initPipeline() {
-        script.node('master') {
-            pipelineWrapper {
-                script.stage("Test and Build") {
-                    script.parallel buildStreams
-                }
+        pipelineWrapper {
+            script.stage("Test and Build") {
+                script.parallel buildStreams
             }
         }
     }
@@ -105,15 +103,15 @@ class Libnd4jProject extends Project {
                 /* Create stream body */
                 streams["$streamName"] = {
                     script.node(platformName) {
-                        try {
-                            Boolean isUnix = script.isUnix()
-                            String separator = isUnix ? '/' : '\\'
-                            String wsFolderName = 'workspace' +
-                                    separator +
-                                    [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+                        Boolean isUnix = script.isUnix()
+                        String separator = isUnix ? '/' : '\\'
+                        String wsFolderName = 'workspace' +
+                                separator +
+                                [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
-                            /* Redefine default workspace to fix Windows path length limitation */
-                            script.ws(wsFolderName) {
+                        /* Redefine default workspace to fix Windows path length limitation */
+                        script.ws(wsFolderName) {
+                            try {
                                 script.stage('Checkout') {
                                     script.deleteDir()
 
@@ -157,9 +155,10 @@ class Libnd4jProject extends Project {
                                     }
                                 }
                             }
-                        }
-                        finally {
-                            script.deleteDir()
+                            finally {
+                                /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
+                                script.deleteDir()
+                            }
                         }
                     }
                 }
