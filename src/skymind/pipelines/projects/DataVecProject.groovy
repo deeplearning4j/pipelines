@@ -7,7 +7,7 @@ class DataVecProject extends Project {
     void initPipeline() {
         allocateBuildNode { dockerImageName, dockerImageParams ->
             script.stage('Build') { runBuild(dockerImageName, dockerImageParams) }
-//            script.stage('Test') { runTests(dockerImageName, dockerImageParams) }
+            script.stage('Test') { runTests(dockerImageName, dockerImageParams) }
         }
     }
 
