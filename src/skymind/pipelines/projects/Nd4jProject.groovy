@@ -243,7 +243,7 @@ class Nd4jProject extends Project {
                         (platform.contains('macosx') || platform.contains('ios')) ?
                                 "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                                 '',
-                        mavenExcludesForCpu
+                        (stageName != 'test') ? mavenExcludesForCpu : '-pl \'nd4j-backends/nd4j-backend-impls/nd4j-native\''
                 ])
 
                 script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
@@ -274,7 +274,7 @@ class Nd4jProject extends Project {
                     (platform.contains('macosx') || platform.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             '',
-                    mavenExcludesForCuda
+                    (stageName != 'test') ? mavenExcludesForCuda : '-pl \'nd4j-backends/nd4j-backend-impls/nd4j-cuda\''
             ])
 
             script.echo "[INFO] ${stageName.capitalize()}ing nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
