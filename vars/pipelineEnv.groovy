@@ -77,7 +77,8 @@ String getNvidiaDockerParams() {
             "--device=/dev/nvidiactl",
             "--device=/dev/nvidia-uvm",
             "--device=/dev/nvidia0",
-            "--tmpfs /tmp:size=8g"
+            "--tmpfs /tmp:size=8g",
+            '--shm-size=4g'
     ].join(' ')
 
     return dockerInspectResult ?
