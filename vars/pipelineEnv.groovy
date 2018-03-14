@@ -22,8 +22,12 @@ Map getDockerConfig(String streamName) {
             return [image : 'skymindops/pipelines:android']
             break
 
-        case ['linux-x86_64', 'linux-x86_64-cpu']:
+        case ['linux-x86_64']:
             return [image : 'skymindops/pipelines:centos6cuda80']
+            break
+
+        case ['linux-x86_64-cpu']:
+            return [image : 'skymindops/pipelines:centos6cuda80', params: '--shm-size=4g --tmpfs /tmp:size=4g']
             break
 
         case ['linux-x86_64-cuda-8.0']:
@@ -41,7 +45,11 @@ Map getDockerConfig(String streamName) {
             return [image: 'skymindops/pipelines:centos6cuda91', params: dockerParams]
             break
 
-        case ['linux-ppc64le-cpu', 'linux-ppc64le-cuda-8.0']:
+        case ['linux-ppc64le-cpu']:
+            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=4g --tmpfs /tmp:size=4g']
+            break
+
+        case ['linux-ppc64le-cuda-8.0']:
             return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le']
             break
 

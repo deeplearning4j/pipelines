@@ -133,7 +133,12 @@ class Nd4jProject extends Project {
                                             }
 
                                             script.stage('Test') {
-                                                runStageLogic('test', platformName, backend, cpuExtensions)
+                                                if (platformName.contains('macosx') && backend.contains('cuda')) {
+                                                    script.echo "Skipping tests for ${backend} on ${platformName}, " +
+                                                            "because of missing GPU..."
+                                                } else {
+                                                    runStageLogic('test', platformName, backend, cpuExtensions)
+                                                }
                                             }
 
                                             if (branchName == 'master') {
@@ -148,7 +153,12 @@ class Nd4jProject extends Project {
                                         }
 
                                         script.stage('Test') {
-                                            runStageLogic('test', platformName, backend, cpuExtensions)
+                                            if (platformName.contains('macosx') && backend.contains('cuda')) {
+                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+                                                        "because of missing GPU..."
+                                            } else {
+                                                runStageLogic('test', platformName, backend, cpuExtensions)
+                                            }
                                         }
 
                                         if (branchName == 'master') {
