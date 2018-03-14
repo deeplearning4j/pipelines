@@ -131,16 +131,12 @@ class Nd4jProject extends Project {
                                             script.stage('Build') {
                                                 runStageLogic('build', platformName, backend, cpuExtensions)
                                             }
-                                        }
 
-                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
                                             script.stage('Test') {
                                                 runStageLogic('test', platformName, backend, cpuExtensions)
                                             }
-                                        }
 
-                                        if (branchName == 'master') {
-                                            script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            if (branchName == 'master') {
                                                 script.stage('Deploy') {
                                                     runStageLogic('deploy', platformName, backend, cpuExtensions)
                                                 }
