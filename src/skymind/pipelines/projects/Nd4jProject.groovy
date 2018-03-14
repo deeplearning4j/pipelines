@@ -321,7 +321,7 @@ class Nd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U -B',
+                            'mvn -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-P libnd4j-assembly'
@@ -332,7 +332,7 @@ class Nd4jProject extends Project {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U -B',
+                            'mvn -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
@@ -350,7 +350,7 @@ class Nd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U -B',
+                            'mvn -B',
                             'deploy',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
@@ -362,7 +362,7 @@ class Nd4jProject extends Project {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U -B',
+                            'mvn -B',
                             'deploy',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
