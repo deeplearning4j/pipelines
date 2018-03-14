@@ -133,13 +133,13 @@ class Nd4jProject extends Project {
                                             }
                                         }
 
-//                                        dockerImageParams = (backend.contains('cuda')) ? '--shm-size=4g' : ''
-//
-//                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
-//                                            script.stage('Test') {
-//                                                runStageLogic('test', platformName, backend, cpuExtensions)
-//                                            }
-//                                        }
+                                        dockerImageParams = (backend.contains('cuda')) ? '--shm-size=4g' : ''
+
+                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            script.stage('Test') {
+                                                runStageLogic('test', platformName, backend, cpuExtensions)
+                                            }
+                                        }
 
                                         if (branchName == 'master') {
                                             script.docker.image(dockerImageName).inside(dockerImageParams) {
@@ -153,9 +153,9 @@ class Nd4jProject extends Project {
                                             runStageLogic('build', platformName, backend, cpuExtensions)
                                         }
 
-//                                        script.stage('Test') {
-//                                            runStageLogic('test', platformName, backend, cpuExtensions)
-//                                        }
+                                        script.stage('Test') {
+                                            runStageLogic('test', platformName, backend, cpuExtensions)
+                                        }
 
                                         if (branchName == 'master') {
                                             script.stage('Deploy') {
