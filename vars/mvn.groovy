@@ -9,7 +9,7 @@ def call(String command) {
             maven: 'maven-3.3.9',
             options: [
                     artifactsPublisher(disabled: true),
-                    junitPublisher(disabled: true),
+                    junitPublisher(disabled: false),
                     findbugsPublisher(disabled: true),
                     openTasksPublisher(disabled: true),
                     dependenciesFingerprintPublisher(disabled: true),
