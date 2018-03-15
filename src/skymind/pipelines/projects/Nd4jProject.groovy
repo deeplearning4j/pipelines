@@ -227,39 +227,50 @@ class Nd4jProject extends Project {
             /* Nd4j build with libn4j CPU backend and specific extension */
             for (String item : cpuExtensions) {
                 String cpuExtension = item
-                /* Workaround to set scala version */
-                String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm64']) ?
-                        '2.10' :
-                        '2.11'
+                /* Workaround to exclude test for cpu extensions that are not supported by Jenkins agents */
+                if (stageName == 'test' && platform.contains('macosx') && cpuExtension != '') {
+                    script.echo "Skipping tests for ${backend} on ${platform} with ${cpuExtension}, " +
+                            "because of lack of extension support on Jenkins agent..."
+                } else if (stageName == 'test' && platform.contains('linux-x86_64') && cpuExtension == 'avx512') {
+                    script.echo "Skipping tests for ${backend} on ${platform} with ${cpuExtension}, " +
+                            "because of lack of extension support on Jenkins agent..."
+                } else {
+                    /* Workaround to set scala version */
+                    String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm64']) ?
+                            '2.10' :
+                            '2.11'
 
-                script.echo "[INFO] Setting Scala version to: $scalaVersion"
+                    script.echo "[INFO] Setting Scala version to: $scalaVersion"
 
-                script."$shell" script: updateScalaCommand(scalaVersion)
+                    script."$shell" script: updateScalaCommand(scalaVersion)
 
-                mvnCommand = getMvnCommand(stageName, true, [
-                        "-Djavacpp.platform=${platform}",
-                        (cpuExtension) ? "-Djavacpp.extension=${cpuExtension}" : '',
-                        (platform.contains('linux') || platform.contains('android')) ?
-                                '-DprotocCommand=protoc' :
-                                '',
-                        (!(platform.contains('linux') || platform.contains('windows'))) ?
-                                "-Dmaven.javadoc.skip=true" :
-                                '',
-                        (platform.contains('ios')) ? '-Djavacpp.platform.compiler=clang++' : '',
-                        (platform == 'ios-arm64') ?
-                                '-Djavacpp.platform.sysroot=$(xcrun --sdk iphoneos --show-sdk-path)' : '',
-                        (platform == 'ios-x86_64') ?
-                                '-Djavacpp.platform.sysroot=$(xcrun --sdk iphonesimulator --show-sdk-path)' : '',
-                        (platform.contains('macosx') || platform.contains('ios')) ?
-                                "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                                '',
-                        (stageName != 'test') ? mavenExcludesForCpu : '-pl \'nd4j-backends/nd4j-backend-impls/nd4j-native\''
-                ])
+                    mvnCommand = getMvnCommand(stageName, true, [
+                            "-Djavacpp.platform=${platform}",
+                            (cpuExtension) ? "-Djavacpp.extension=${cpuExtension}" : '',
+                            (platform.contains('linux') || platform.contains('android')) ?
+                                    '-DprotocCommand=protoc' :
+                                    '',
+                            (!(platform.contains('linux') || platform.contains('windows'))) ?
+                                    "-Dmaven.javadoc.skip=true" :
+                                    '',
+                            (platform.contains('ios')) ? '-Djavacpp.platform.compiler=clang++' : '',
+                            (platform == 'ios-arm64') ?
+                                    '-Djavacpp.platform.sysroot=$(xcrun --sdk iphoneos --show-sdk-path)' : '',
+                            (platform == 'ios-x86_64') ?
+                                    '-Djavacpp.platform.sysroot=$(xcrun --sdk iphonesimulator --show-sdk-path)' : '',
+                            (platform.contains('macosx') || platform.contains('ios')) ?
+                                    "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                                    '',
+                            (stageName != 'test') ?
+                                    mavenExcludesForCpu :
+                                    '-pl \'nd4j-backends/nd4j-backend-impls/nd4j-native\''
+                    ])
 
-                script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
-                        "Scala ${scalaVersion} versions and ${cpuExtension} extension"
+                    script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
+                            "Scala ${scalaVersion} versions and ${cpuExtension} extension"
 
-                script.mvn "$mvnCommand"
+                    script.mvn "$mvnCommand"
+                }
             }
         }
         /* Nd4j build with libn4j CUDA backend */
