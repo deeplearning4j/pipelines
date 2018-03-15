@@ -132,11 +132,14 @@ class Nd4jProject extends Project {
                                                 runStageLogic('build', platformName, backend, cpuExtensions)
                                             }
 
-                                            script.stage('Test') {
-                                                if (platformName.contains('macosx') && backend.contains('cuda')) {
-                                                    script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                            "because of missing GPU..."
-                                                } else {
+                                            if (platformName.contains('macosx') && backend.contains('cuda')) {
+                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+                                                        "because of lack of GPU..."
+                                            } else if (platformName.contains('ios') || platformName.contains('android')) {
+                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+                                                        "because of lack of target device..."
+                                            } else {
+                                                script.stage('Test') {
                                                     runStageLogic('test', platformName, backend, cpuExtensions)
                                                 }
                                             }
@@ -152,11 +155,14 @@ class Nd4jProject extends Project {
                                             runStageLogic('build', platformName, backend, cpuExtensions)
                                         }
 
-                                        script.stage('Test') {
-                                            if (platformName.contains('macosx') && backend.contains('cuda')) {
-                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                        "because of missing GPU..."
-                                            } else {
+                                        if (platformName.contains('macosx') && backend.contains('cuda')) {
+                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
+                                                    "because of lack of GPU..."
+                                        } else if (platformName.contains('ios') || platformName.contains('android')) {
+                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
+                                                    "because of lack of target device..."
+                                        } else {
+                                            script.stage('Test') {
                                                 runStageLogic('test', platformName, backend, cpuExtensions)
                                             }
                                         }
