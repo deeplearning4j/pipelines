@@ -97,7 +97,7 @@ class Libnd4jProject extends Project {
             for (List bckd : backends) {
                 String backend = bckd
                 String streamName = ["${platformName}", "${backend}"].findAll().join('-')
-                /* Set add steam to build name */
+                /* Add steam to build name */
 //                script.pipelineEnv.buildDisplayName.push("${streamName}")
 
                 /* Create stream body */
@@ -240,7 +240,7 @@ class Libnd4jProject extends Project {
             for (String item : cpuExtensions) {
                 String cpuExtension = item
 
-                mvnCommand = getMvnCommand('build', true, [
+                mvnCommand = getMvnCommand('build', (cpuExtension != ''), [
                         "-Dlibnd4j.platform=${platform}",
                         (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
                         (platform.contains('macosx') || platform.contains('ios')) ?
