@@ -448,7 +448,8 @@ class Nd4jProject extends Project {
                             'mvn -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-P libnd4j-assembly'
+                            '-P libnd4j-assembly',
+                            '-P testresources'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -464,7 +465,8 @@ class Nd4jProject extends Project {
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
                                     "${script.pipelineEnv.localRepositoryPath}",
-                            '-P libnd4j-assembly'
+                            '-P libnd4j-assembly',
+                            '-P testresources'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
