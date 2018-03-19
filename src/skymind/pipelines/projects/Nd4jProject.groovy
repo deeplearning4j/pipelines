@@ -148,6 +148,10 @@ class Nd4jProject extends Project {
                                                         script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
                                                                 "because of lack of extension support on Jenkins agent..."
                                                     } else {
+                                                        script.stage('Build Test Resources') {
+                                                            buildTestResources(platformName)
+                                                        }
+
                                                         script.stage('Test') {
                                                             runStageLogic('test', platformName, backend, cpuExtension)
                                                         }
@@ -175,6 +179,10 @@ class Nd4jProject extends Project {
                                                     script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
                                                             "because of lack of extension support on Jenkins agent..."
                                                 } else {
+                                                    script.stage('Build Test Resources') {
+                                                        buildTestResources(platformName)
+                                                    }
+
                                                     script.stage('Test') {
                                                         runStageLogic('test', platformName, backend, cpuExtension)
                                                     }
@@ -248,6 +256,10 @@ class Nd4jProject extends Project {
                                                             "because of lack of GPU..."
                                                 }
                                                 else {
+                                                    script.stage('Build Test Resources') {
+                                                        buildTestResources(platformName)
+                                                    }
+
                                                     script.stage('Test') {
                                                         runStageLogic('test', platformName, backend)
                                                     }
@@ -270,6 +282,10 @@ class Nd4jProject extends Project {
                                                         "because of lack of GPU..."
                                             }
                                             else {
+                                                script.stage('Build Test Resources') {
+                                                    buildTestResources(platformName)
+                                                }
+
                                                 script.stage('Test') {
                                                     runStageLogic('test', platformName, backend)
                                                 }
@@ -501,9 +517,70 @@ class Nd4jProject extends Project {
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
+            case 'build-test-resources':
+                if (unixNode) {
+                    return [
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
+                            /* Pipeline withMaven step requires this line if it runs in Docker container */
+                            'export PATH=$MVN_CMD_DIR:$PATH &&',
+                            'mvn -B',
+                            'clean',
+                            'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}"
+                    ].plus(mvnArguments).findAll().join(' ')
+                } else {
+                    return [
+                            'vcvars64.bat',
+                            '&&',
+                            'bash -c',
+                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
+                            'mvn -B',
+                            'clean',
+                            'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            /* Workaround for Windows which doesn't honour withMaven options */
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}"
+                    ].plus(mvnArguments).findAll().join(' ') + '"'
+                }
+                break
             default:
                 throw new IllegalArgumentException('Stage is not supported yet')
                 break
+        }
+    }
+
+    private void buildTestResources(platform) {
+        String dl4jTestResourcesGitFolderName = 'dl4j-test-resources'
+        String dl4jTestResourcesGitUrl = 'https://github.com/deeplearning4j/dl4j-test-resources.git'
+
+        script.checkout([
+                $class                           : 'GitSCM',
+                branches                         : [[name: '*/master']],
+                doGenerateSubmoduleConfigurations: false,
+                extensions                       : [[$class           : 'RelativeTargetDirectory',
+                                                     relativeTargetDir: "$dl4jTestResourcesGitFolderName"],
+                                                    [$class      : 'CloneOption',
+                                                     honorRefspec: true,
+                                                     noTags      : true,
+                                                     reference   : '',
+                                                     shallow     : true]],
+                submoduleCfg                     : [],
+                userRemoteConfigs                : [[url: "$dl4jTestResourcesGitUrl"]]
+        ])
+
+        script.dir(dl4jTestResourcesGitFolderName) {
+            String mvnCommand = getMvnCommand('build-test-resources', false, [
+                    (platform.contains('macosx') || platform.contains('ios')) ?
+                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                            ''
+            ])
+
+            script.mvn "$mvnCommand"
+
+            script.deleteDir()
         }
     }
 }
