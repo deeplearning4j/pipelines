@@ -26,7 +26,7 @@ Map getDockerConfig(String streamName) {
             return [image : 'skymindops/pipelines:centos6cuda80']
             break
 
-        case ['linux-x86_64-cpu']:
+        case ['linux-x86_64-cpu', 'linux-x86_64-cpu-avx2', 'linux-x86_64-cpu-avx512']:
             return [image : 'skymindops/pipelines:centos6cuda80', params: '--shm-size=4g --tmpfs /tmp:size=4g']
             break
 
