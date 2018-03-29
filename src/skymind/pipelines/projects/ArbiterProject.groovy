@@ -8,30 +8,34 @@ class ArbiterProject extends Project {
 
     void initPipeline() {
         allocateBuildNode { dockerImageName, dockerImageParams ->
-            script.stage('Build') { runBuild(dockerImageName, dockerImageParams) }
-            script.timeout(15) {
-                script.stage('Test') { runTests(dockerImageName, dockerImageParams) }
-            }
-        }
-    }
+            script.dir(projectName) {
+                script.docker.image(dockerImageName).inside(dockerImageParams) {
+                    script.stage('Build') {
+                        runBuild()
+                    }
 
-    private void runBuild(String dockerImageName, String dockerImageParams) {
-        script.dir(projectName) {
-            script.docker.image(dockerImageName).inside(dockerImageParams) {
-                for (String scalaVersion : scalaVersions) {
-                    script.echo "[INFO] Setting Scala version to: $scalaVersion"
-                    script.sh "./change-scala-versions.sh $scalaVersion"
-                    script.mvn getMvnCommand('build')
+                    script.stage('Test') {
+                        /* FIXME: Timeout requested by Alex Black because of flappy tests behavior */
+                        script.timeout(15) {
+                            runTests()
+                        }
+                    }
+
+                    if (branchName == 'master') {
+                        script.stage('Deploy') {
+                            runDeploy()
+                        }
+                    }
                 }
             }
         }
     }
 
-    private void runTests(String dockerImageName, String dockerImageParams) {
-        script.dir(projectName) {
-            script.docker.image(dockerImageName).inside(dockerImageParams) {
-                script.mvn getMvnCommand('test')
-            }
+    protected void runBuild() {
+        for (String scalaVersion : scalaVersions) {
+            script.echo "[INFO] Setting Scala version to: $scalaVersion"
+            script.sh "./change-scala-versions.sh $scalaVersion"
+            script.mvn getMvnCommand('build')
         }
     }
 }

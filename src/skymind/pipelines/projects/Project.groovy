@@ -6,7 +6,6 @@ abstract class Project implements Serializable {
     protected script
 //    protected notifications
     protected platforms
-    protected String projectVersion
     protected final String branchName
     protected final String projectName
     /* Default platforms for most of the projects */
@@ -106,6 +105,7 @@ abstract class Project implements Serializable {
 //            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
 //                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
 //            notifications.sendEmail(script.currentBuild.currentResult)
+            script.cleanWs deleteDirs: true
 
             /* Get instance of NotificationHelper class for sending notifications about run status */
             new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
@@ -118,14 +118,13 @@ abstract class Project implements Serializable {
             String platformName = platform.name
             script.node(platformName) {
                 pipelineWrapper {
-                    try {
-                        script.stage('Checkout') {
-                            script.deleteDir()
+                    script.stage('Checkout') {
+                        script.deleteDir()
 
-                            script.dir(projectName) {
-                                script.checkout script.scm
-                            }
+                        script.dir(projectName) {
+                            script.checkout script.scm
                         }
+                    }
 
 //                    script.stage('Update project version') {
 //                        script.dir(projectName) {
@@ -144,16 +143,12 @@ abstract class Project implements Serializable {
 //
 //                    script.sh script: createFoldersScript
 
-                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-                        String dockerImageName = dockerConf['image'] ?:
-                                script.error('Docker image name is missing.')
-                        String dockerImageParams = dockerConf?.'params'
+                    Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
+                    String dockerImageName = dockerConf['image'] ?:
+                            script.error('Docker image name is missing.')
+                    String dockerImageParams = dockerConf?.'params'
 
-                        stagesToRun(dockerImageName, dockerImageParams)
-                    }
-                    finally {
-                        script.cleanWs deleteDirs: true
-                    }
+                    stagesToRun(dockerImageName, dockerImageParams)
                 }
             }
         }
@@ -169,9 +164,9 @@ abstract class Project implements Serializable {
                             'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U',
+                            'mvn -U -B',
                             'clean',
-                            branchName == 'master' ? 'deploy' : 'install',
+                            'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ')
@@ -183,7 +178,7 @@ abstract class Project implements Serializable {
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             'mvn -U -B',
                             'clean',
-                            branchName == 'master' ? 'deploy' : 'install',
+                            'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
@@ -194,14 +189,13 @@ abstract class Project implements Serializable {
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
-        /* TODO: Currently not in use */
             case 'test':
                 if (unixNode) {
                     return [
                             'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U',
+                            'mvn -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                     ].plus(mvnArguments).findAll().join(' ')
@@ -211,7 +205,7 @@ abstract class Project implements Serializable {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U -B',
+                            'mvn -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
@@ -219,9 +213,111 @@ abstract class Project implements Serializable {
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
+            case 'deploy':
+                if (unixNode) {
+                    return [
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable; fi;",
+                            /* Pipeline withMaven step requires this line if it runs in Docker container */
+                            'export PATH=$MVN_CMD_DIR:$PATH &&',
+                            'mvn -B',
+                            'deploy',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true'
+                    ].plus(mvnArguments).findAll().join(' ')
+                } else {
+                    return [
+                            'vcvars64.bat',
+                            '&&',
+                            'bash -c',
+                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
+                            'mvn -B',
+                            'deploy',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
+                            /* Workaround for Windows which doesn't honour withMaven options */
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}",
+                    ].plus(mvnArguments).findAll().join(' ') + '"'
+                }
+                break
+            case 'build-test-resources':
+                if (unixNode) {
+                    return [
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable; fi;",
+                            /* Pipeline withMaven step requires this line if it runs in Docker container */
+                            'export PATH=$MVN_CMD_DIR:$PATH &&',
+                            'mvn -U -B',
+                            'clean',
+                            'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}"
+                    ].plus(mvnArguments).findAll().join(' ')
+                } else {
+                    return [
+                            'vcvars64.bat',
+                            '&&',
+                            'bash -c',
+                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
+                            'mvn -U -B',
+                            'clean',
+                            'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            /* Workaround for Windows which doesn't honour withMaven options */
+                            '-s ${MAVEN_SETTINGS}',
+                            "-Dmaven.repo.local=" +
+                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
+                                    "${script.pipelineEnv.localRepositoryPath}"
+                    ].plus(mvnArguments).findAll().join(' ') + '"'
+                }
+                break
             default:
                 throw new IllegalArgumentException('Stage is not supported yet')
                 break
+        }
+    }
+
+    protected void runBuild() {
+        script.mvn getMvnCommand('build')
+    }
+
+    protected void runTests() {
+        script.mvn getMvnCommand('test')
+    }
+
+    protected void runDeploy() {
+        script.mvn getMvnCommand('deploy')
+    }
+
+    protected void runBuildTestResources(String platform = 'linux-x86_64') {
+        String dl4jTestResourcesGitFolderName = 'dl4j-test-resources'
+        String dl4jTestResourcesGitUrl = 'https://github.com/deeplearning4j/dl4j-test-resources.git'
+
+        script.checkout([
+                $class                           : 'GitSCM',
+                branches                         : [[name: '*/master']],
+                doGenerateSubmoduleConfigurations: false,
+                extensions                       : [[$class           : 'RelativeTargetDirectory',
+                                                     relativeTargetDir: "$dl4jTestResourcesGitFolderName"],
+                                                    [$class      : 'CloneOption',
+                                                     honorRefspec: true,
+                                                     noTags      : true,
+                                                     reference   : '',
+                                                     shallow     : true]],
+                submoduleCfg                     : [],
+                userRemoteConfigs                : [[url: "$dl4jTestResourcesGitUrl"]]
+        ])
+
+        script.dir(dl4jTestResourcesGitFolderName) {
+            String mvnCommand = getMvnCommand('build-test-resources', [
+                    (platform.contains('macosx') || platform.contains('ios')) ?
+                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                            ''
+            ])
+
+            script.mvn "$mvnCommand"
+
+            script.deleteDir()
         }
     }
 
