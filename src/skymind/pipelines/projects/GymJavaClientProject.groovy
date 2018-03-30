@@ -6,23 +6,22 @@ import groovy.transform.InheritConstructors
 class GymJavaClientProject extends Project {
     void initPipeline() {
         allocateBuildNode { dockerImageName, dockerImageParams ->
-            script.stage('Build') { runBuild(dockerImageName, dockerImageParams) }
-            script.stage('Test') { runTests(dockerImageName, dockerImageParams) }
-        }
-    }
+            script.dir(projectName) {
+                script.docker.image(dockerImageName).inside(dockerImageParams) {
+                    script.stage('Build') {
+                        runBuild()
+                    }
 
-    private void runBuild(String dockerImageName, String dockerImageParams) {
-        script.dir(projectName) {
-            script.docker.image(dockerImageName).inside(dockerImageParams) {
-                script.mvn getMvnCommand('build')
-            }
-        }
-    }
+                    script.stage('Test') {
+                        runTests()
+                    }
 
-    private void runTests(String dockerImageName, String dockerImageParams) {
-        script.dir(projectName) {
-            script.docker.image(dockerImageName).inside(dockerImageParams) {
-                script.mvn getMvnCommand('test')
+                    if (branchName == 'master') {
+                        script.stage('Deploy') {
+                            runDeploy()
+                        }
+                    }
+                }
             }
         }
     }
