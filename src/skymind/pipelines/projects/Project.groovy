@@ -105,7 +105,6 @@ abstract class Project implements Serializable {
 //            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
 //                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
 //            notifications.sendEmail(script.currentBuild.currentResult)
-            script.cleanWs deleteDirs: true
 
             /* Get instance of NotificationHelper class for sending notifications about run status */
             new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
@@ -118,13 +117,14 @@ abstract class Project implements Serializable {
             String platformName = platform.name
             script.node(platformName) {
                 pipelineWrapper {
-                    script.stage('Checkout') {
-                        script.deleteDir()
+                    try {
+                        script.stage('Checkout') {
+                            script.deleteDir()
 
-                        script.dir(projectName) {
-                            script.checkout script.scm
+                            script.dir(projectName) {
+                                script.checkout script.scm
+                            }
                         }
-                    }
 
 //                    script.stage('Update project version') {
 //                        script.dir(projectName) {
@@ -143,12 +143,16 @@ abstract class Project implements Serializable {
 //
 //                    script.sh script: createFoldersScript
 
-                    Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-                    String dockerImageName = dockerConf['image'] ?:
-                            script.error('Docker image name is missing.')
-                    String dockerImageParams = dockerConf?.'params'
+                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
+                        String dockerImageName = dockerConf['image'] ?:
+                                script.error('Docker image name is missing.')
+                        String dockerImageParams = dockerConf?.'params'
 
-                    stagesToRun(dockerImageName, dockerImageParams)
+                        stagesToRun(dockerImageName, dockerImageParams)
+                    }
+                    finally {
+                        script.cleanWs deleteDirs: true
+                    }
                 }
             }
         }
