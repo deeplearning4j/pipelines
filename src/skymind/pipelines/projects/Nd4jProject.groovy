@@ -69,6 +69,12 @@ class Nd4jProject extends Project {
 
     void initPipeline() {
         pipelineWrapper {
+            if (branchName.contains(releaseBranchPattern)) {
+                script.stage("Perform Release") {
+                    getReleaseParameters()
+                }
+            }
+
             script.stage("Test and Build") {
                 script.parallel buildStreams
             }
@@ -133,6 +139,12 @@ class Nd4jProject extends Project {
                                                 String dockerImageParams = dockerConf?.params
 
                                                 script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                                    if (branchName.contains(releaseBranchPattern)) {
+                                                        script.stage("Prepare for Release") {
+                                                            setupEnvForRelease()
+                                                        }
+                                                    }
+
                                                     script.stage('Build') {
                                                         runStageLogic('build', platformName, backend, cpuExtension)
                                                     }
@@ -158,19 +170,27 @@ class Nd4jProject extends Project {
                                                                 runStageLogic('test', platformName, backend, cpuExtension)
                                                             }
                                                         }
+                                                    }
 
+                                                    if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
                                                         script.stage('Deploy') {
                                                             runStageLogic('deploy', platformName, backend, cpuExtension)
                                                         }
                                                     }
                                                 }
                                             } else {
+                                                if (branchName.contains(releaseBranchPattern)) {
+                                                    script.stage("Prepare for Release") {
+                                                        setupEnvForRelease()
+                                                    }
+                                                }
+
                                                 script.stage('Build') {
                                                     runStageLogic('build', platformName, backend, cpuExtension)
                                                 }
 
                                                 /* FIXME: ATM test are running only for master branch */
-                                                if (branchName == 'master') {
+                                                if (branchName == 'master' && !branchName.contains(releaseBranchPattern)) {
                                                     /* Workaround to exclude test for cpu/cpu extensions that are not supported by Jenkins agents */
                                                     if (platformName.contains('ios') || platformName.contains('android')) {
                                                         script.echo "Skipping tests for ${backend} on ${platformName}, " +
@@ -190,7 +210,9 @@ class Nd4jProject extends Project {
                                                             runStageLogic('test', platformName, backend, cpuExtension)
                                                         }
                                                     }
+                                                }
 
+                                                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
                                                     script.stage('Deploy') {
                                                         runStageLogic('deploy', platformName, backend, cpuExtension)
                                                     }
@@ -247,6 +269,12 @@ class Nd4jProject extends Project {
                                             String dockerImageParams = dockerConf?.params
 
                                             script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                                if (branchName.contains(releaseBranchPattern)) {
+                                                    script.stage("Prepare for Release") {
+                                                        setupEnvForRelease()
+                                                    }
+                                                }
+
                                                 script.stage('Build') {
                                                     runStageLogic('build', platformName, backend)
                                                 }
@@ -266,13 +294,21 @@ class Nd4jProject extends Project {
                                                             runStageLogic('test', platformName, backend)
                                                         }
                                                     }
+                                                }
 
+                                                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
                                                     script.stage('Deploy') {
                                                         runStageLogic('deploy', platformName, backend)
                                                     }
                                                 }
                                             }
                                         } else {
+                                            if (branchName.contains(releaseBranchPattern)) {
+                                                script.stage("Prepare for Release") {
+                                                    setupEnvForRelease()
+                                                }
+                                            }
+
                                             script.stage('Build') {
                                                 runStageLogic('build', platformName, backend)
                                             }
@@ -292,8 +328,10 @@ class Nd4jProject extends Project {
                                                         runStageLogic('test', platformName, backend)
                                                     }
                                                 }
+                                            }
 
-                                                script.stage('Deploy') {
+                                            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                                                script.stage("Deploy") {
                                                     runStageLogic('deploy', platformName, backend)
                                                 }
                                             }
@@ -348,6 +386,10 @@ class Nd4jProject extends Project {
 
 //        script.isVersionReleased(projectName, projectVersion)
 //        script.setProjectVersion(projectVersion, true)
+//        if (branchName.contains(releaseBranchPattern)) {
+//            updateGitCredentials()
+//            script.setProjectVersion(releaseVersion, true)
+//        }
 
         /* Nd4j build with libn4j CPU backend and/or specific extension */
         if (backend == 'cpu') {
@@ -357,7 +399,6 @@ class Nd4jProject extends Project {
                     '2.11'
 
             script.echo "[INFO] Setting Scala version to: $scalaVersion"
-
             script."$shell" script: updateScalaCommand(scalaVersion)
 
             mvnCommand = getMvnCommand(stageName, (cpuExtension != ''), [
@@ -366,9 +407,9 @@ class Nd4jProject extends Project {
                     (platform.contains('linux') || platform.contains('android')) ?
                             '-DprotocCommand=protoc' :
                             '',
-                    (!(platform.contains('linux') || platform.contains('windows'))) ?
-                            "-Dmaven.javadoc.skip=true" :
-                            '',
+//                    (!(platform.contains('linux') || platform.contains('windows'))) ?
+//                            "-Dmaven.javadoc.skip=true" :
+//                            '',
                     (platform.contains('ios')) ? '-Djavacpp.platform.compiler=clang++' : '',
                     (platform == 'ios-arm64') ?
                             '-Djavacpp.platform.sysroot=$(xcrun --sdk iphoneos --show-sdk-path)' : '',
@@ -392,14 +433,12 @@ class Nd4jProject extends Project {
             String cudaVersion = backend.tokenize('-')[1]
 
             script.echo "[INFO] Setting CUDA version to: $cudaVersion"
-
             script."$shell" script: updateCudaCommand(cudaVersion)
 
             /* Workaround to set scala version */
             String scalaVersion = (backend.contains('8.0')) ? '2.10' : '2.11'
 
             script.echo "[INFO] Setting Scala version to: $scalaVersion"
-
             script."$shell" script: updateScalaCommand(scalaVersion)
 
             mvnCommand = getMvnCommand(stageName, false, [
@@ -434,7 +473,10 @@ class Nd4jProject extends Project {
                             'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-Dmaven.test.skip=true',
-                            '-P libnd4j-assembly'
+                            '-P libnd4j-assembly',
+                            (releaseApproved) ? "-P staging" : '',
+                            '-P native-snapshots',
+                            '-P uberjar'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -452,7 +494,10 @@ class Nd4jProject extends Project {
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
                                     "${script.pipelineEnv.localRepositoryPath}",
-                            '-P libnd4j-assembly'
+                            '-P libnd4j-assembly',
+                            (releaseApproved) ? "-P staging" : '',
+                            '-P native-snapshots',
+                            '-P uberjar'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
@@ -468,7 +513,10 @@ class Nd4jProject extends Project {
                             '-Dmaven.test.failure.ignore=true',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             '-P libnd4j-assembly',
-                            '-P testresources'
+                            '-P testresources',
+                            (releaseApproved) ? "-P staging" : '',
+                            '-P native-snapshots',
+                            '-P uberjar'
                     ].plus(mvnArguments).findAll().join(' ') + ' || true'
                 } else {
                     return [
@@ -487,7 +535,10 @@ class Nd4jProject extends Project {
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
                                     "${script.pipelineEnv.localRepositoryPath}",
                             '-P libnd4j-assembly',
-                            '-P testresources'
+                            '-P testresources',
+                            (releaseApproved) ? "-P staging" : '',
+                            '-P native-snapshots',
+                            '-P uberjar'
                     ].plus(mvnArguments).findAll().join(' ') + ' || true"'
                 }
                 break
@@ -500,8 +551,13 @@ class Nd4jProject extends Project {
                             'mvn -B',
                             'deploy',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
+                            (releaseApproved) ? "-DperformRelease" : '',
+                            (releaseApproved) ? "-P staging" : '',
                             '-Dmaven.test.skip=true',
-                            '-P libnd4j-assembly'
+                            '-P libnd4j-assembly',
+                            '-P native-snapshots',
+                            '-P uberjar'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -512,13 +568,18 @@ class Nd4jProject extends Project {
                             'mvn -B',
                             'deploy',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
+                            (releaseApproved) ? "-DperformRelease" : '',
+                            (releaseApproved) ? "-P staging" : '',
                             '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
                                     "${script.pipelineEnv.localRepositoryPath}",
-                            '-P libnd4j-assembly'
+                            '-P libnd4j-assembly',
+                            '-P native-snapshots',
+                            '-P uberjar'
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break

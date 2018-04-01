@@ -77,6 +77,12 @@ class Libnd4jProject extends Project {
 
     void initPipeline() {
         pipelineWrapper {
+            if (branchName.contains(releaseBranchPattern)) {
+                script.stage("Perform Release") {
+                    getReleaseParameters()
+                }
+            }
+
             script.stage("Test and Build") {
                 script.parallel buildStreams
             }
@@ -130,27 +136,43 @@ class Libnd4jProject extends Project {
                                         String dockerImageParams = dockerConf?.params
 
                                         script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            if (branchName.contains(releaseBranchPattern)) {
+                                                script.stage("Prepare for Release") {
+                                                    setupEnvForRelease()
+                                                }
+                                            }
+
+                                            if (!branchName.contains(releaseBranchPattern)) {
+                                                script.stage('Test') {
+                                                    /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                    if (backend == 'cpu') {
+                                                        runtTests(platformName, backend)
+                                                    }
+                                                }
+                                            }
+
+                                            script.stage('Build') {
+                                                runStageLogic('build', platformName, backend, cpuExtensions)
+                                            }
+                                        }
+                                    } else {
+                                        if (branchName.contains(releaseBranchPattern)) {
+                                            script.stage("Prepare for Release") {
+                                                setupEnvForRelease()
+                                            }
+                                        }
+
+                                        if (!branchName.contains(releaseBranchPattern)) {
                                             script.stage('Test') {
                                                 /* Run tests only for CPU backend, while CUDA tests are under development */
                                                 if (backend == 'cpu') {
                                                     runtTests(platformName, backend)
                                                 }
                                             }
-
-                                            script.stage('Build') {
-                                                runBuild(platformName, backend, cpuExtensions)
-                                            }
-                                        }
-                                    } else {
-                                        script.stage('Test') {
-                                            /* Run tests only for CPU backend, while CUDA tests are under development */
-                                            if (backend == 'cpu') {
-                                                runtTests(platformName, backend)
-                                            }
                                         }
 
                                         script.stage('Build') {
-                                            runBuild(platformName, backend, cpuExtensions)
+                                            runStageLogic('build', platformName, backend, cpuExtensions)
                                         }
                                     }
                                 }
@@ -232,7 +254,7 @@ class Libnd4jProject extends Project {
      * @param backend
      * @param cpuExtensions
      */
-    private void runBuild(String platform, String backend, List cpuExtensions) {
+    private void runStageLogic(String stageName, String platform, String backend, List cpuExtensions) {
         String mvnCommand
 
         /* Build libnd4j for CPU backend */
@@ -240,7 +262,7 @@ class Libnd4jProject extends Project {
             for (String item : cpuExtensions) {
                 String cpuExtension = item
 
-                mvnCommand = getMvnCommand('build', (cpuExtension != ''), [
+                mvnCommand = getMvnCommand(stageName, (cpuExtension != ''), [
                         "-Dlibnd4j.platform=${platform}",
                         (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
                         (platform.contains('macosx') || platform.contains('ios')) ?
@@ -248,7 +270,7 @@ class Libnd4jProject extends Project {
                                 ''
                 ])
 
-                script.echo "[INFO] Building libnd4j ${backend} backend with ${cpuExtension} extension"
+                script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend with ${cpuExtension} extension"
 
                 script.mvn "$mvnCommand"
             }
@@ -257,16 +279,16 @@ class Libnd4jProject extends Project {
         else {
             String cudaVersion = backend.tokenize('-')[1]
 
-            mvnCommand = getMvnCommand('build', false, [
+            mvnCommand = getMvnCommand(stageName, false, [
                     "-Dlibnd4j.platform=${platform}",
                     "-Dlibnd4j.cuda=${cudaVersion}",
-                    (branchName != 'master') ? "-Dlibnd4j.compute=30" : '',
+                    (branchName != 'master' && !branchName.contains(releaseBranchPattern)) ? "-Dlibnd4j.compute=30" : '',
                     (platform.contains('macosx') || platform.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             ''
             ])
 
-            script.echo "[INFO] Building libnd4j ${backend} backend"
+            script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend"
 
             script.mvn "$mvnCommand"
         }
@@ -283,13 +305,14 @@ class Libnd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            /* Force to build in three threads */
-//                            'export MAKEJ=3 &&',
                             'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8\' &&',
-                            'mvn -U',
+                            'mvn -U -B',
                             'clean',
-                            branchName == 'master' ? 'deploy' : 'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}"
+                            (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
+                            (releaseApproved) ? "-DperformRelease" : '',
+                            (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -297,13 +320,14 @@ class Libnd4jProject extends Project {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            /* Force to build in three threads */
-//                            'export MAKEJ=3 &&',
                             'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G\' &&',
                             'mvn -U -B',
                             'clean',
-                            branchName == 'master' ? 'deploy' : 'install',
+                            (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
+                            (releaseApproved) ? "-DperformRelease" : '',
+                            (releaseApproved) ? "-P staging" : '',
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +

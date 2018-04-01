@@ -10,20 +10,34 @@ class ArbiterProject extends Project {
         allocateBuildNode { dockerImageName, dockerImageParams ->
             script.dir(projectName) {
                 script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    script.stage('Build') {
-                        runBuild()
-                    }
+                    if (branchName.contains(releaseBranchPattern)) {
+                        script.stage("Perform Release") {
+                            getReleaseParameters()
+                        }
 
-                    script.stage('Test') {
-                        /* FIXME: Timeout requested by Alex Black because of flappy tests behavior */
-                        script.timeout(15) {
-                            runTests()
+                        script.stage("Prepare for Release") {
+                            setupEnvForRelease()
                         }
                     }
 
-                    if (branchName == 'master') {
-                        script.stage('Deploy') {
-                            runDeploy()
+                    for (String scalaVersion : scalaVersions) {
+                        script.stage("Build | Scala ${scalaVersion}") {
+                            runBuild(scalaVersion)
+                        }
+
+                        if (!branchName.contains(releaseBranchPattern)) {
+                            script.stage("Test | Scala ${scalaVersion}") {
+                                /* FIXME: Timeout requested by Alex Black because of flappy tests behavior */
+                                script.timeout(15) {
+                                    runTests()
+                                }
+                            }
+                        }
+
+                        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                            script.stage("Deploy | Scala ${scalaVersion}") {
+                                runDeploy()
+                            }
                         }
                     }
                 }
@@ -31,11 +45,29 @@ class ArbiterProject extends Project {
         }
     }
 
-    protected void runBuild() {
-        for (String scalaVersion : scalaVersions) {
-            script.echo "[INFO] Setting Scala version to: $scalaVersion"
-            script.sh "./change-scala-versions.sh $scalaVersion"
-            script.mvn getMvnCommand('build')
+    protected void runBuild(String scalaVersion) {
+        script.echo "[INFO] Setting Scala version to: $scalaVersion"
+        script.sh "./change-scala-versions.sh $scalaVersion"
+
+        script.mvn getMvnCommand('build')
+    }
+
+    protected void updateVersions(String version) {
+        if (script.isUnix()) {
+            script.sh """
+                sed -i "s/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>$version<\\/nd4j.version>/" pom.xml
+                sed -i "s/<datavec.version>.*<\\/datavec.version>/<datavec.version>$version<\\/datavec.version>/" pom.xml
+                sed -i "s/<dl4j.version>.*<\\/dl4j.version>/<dl4j.version>$version<\\/dl4j.version>/" pom.xml
+                # mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$version
+            """.stripIndent()
+        }
+        else {
+            script.bat """
+                bash -c 'sed -i "s/<nd4j.version>.*<\\\\/nd4j.version>/<nd4j.version>$version<\\\\/nd4j.version>/" pom.xml'
+                bash -c 'sed -i "s/<datavec.version>.*<\\\\/datavec.version>/<datavec.version>$version<\\\\/datavec.version>/" pom.xml'
+                bash -c 'sed -i "s/<dl4j.version>.*<\\\\/dl4j.version>/<dl4j.version>$version<\\\\/dl4j.version>/" pom.xml'
+                bash -c 'mvn versions:set -DallowSnapshots=true -DgenerateBackupPoms=false -DnewVersion=$version'
+            """.stripIndent()
         }
     }
 }

@@ -23,7 +23,8 @@ Map getDockerConfig(String streamName) {
             break
 
         case ['linux-x86_64', 'linux-x86_64-generic']:
-            return [image : 'skymindops/pipelines:centos6cuda80']
+            /* FIXME: -e HOME is workaround for setting docker user HOME inside container */
+            return [image : 'skymindops/pipelines:centos6cuda80', params: '-e HOME=']
             break
 
         case ['linux-x86_64-cpu', 'linux-x86_64-cpu-avx2', 'linux-x86_64-cpu-avx512']:

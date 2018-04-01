@@ -15,6 +15,10 @@ abstract class Project implements Serializable {
     /* Default job properties */
     protected final List jobSpecificProperties = []
     protected static String gitterEndpointUrl = ''
+    protected boolean releaseApproved = false
+    protected static String releaseBranchPattern = 'release'
+    protected static String releaseVersion
+    protected static String snapshotVersion
 
     /**
      * Project class constructor
@@ -172,7 +176,8 @@ abstract class Project implements Serializable {
                             'clean',
                             'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-Dmaven.test.skip=true'
+                            '-Dmaven.test.skip=true',
+                            (releaseApproved) ? "-P staging" : '',
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -189,7 +194,8 @@ abstract class Project implements Serializable {
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
-                                    "${script.pipelineEnv.localRepositoryPath}"
+                                    "${script.pipelineEnv.localRepositoryPath}",
+                            (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
@@ -202,6 +208,7 @@ abstract class Project implements Serializable {
                             'mvn -B',
                             'test',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -214,6 +221,7 @@ abstract class Project implements Serializable {
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
                             "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}",
+                            (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
@@ -226,6 +234,9 @@ abstract class Project implements Serializable {
                             'mvn -B',
                             'deploy',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
+                            (releaseApproved) ? "-DperformRelease" : '',
+                            (releaseApproved) ? "-P staging" : '',
                             '-Dmaven.test.skip=true'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
@@ -237,6 +248,9 @@ abstract class Project implements Serializable {
                             'mvn -B',
                             'deploy',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
+                            (releaseApproved) ? "-DperformRelease" : '',
+                            (releaseApproved) ? "-P staging" : '',
                             '-Dmaven.test.skip=true',
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
@@ -255,7 +269,8 @@ abstract class Project implements Serializable {
                             'mvn -U -B',
                             'clean',
                             'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}"
+                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
@@ -271,7 +286,8 @@ abstract class Project implements Serializable {
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
-                                    "${script.pipelineEnv.localRepositoryPath}"
+                                    "${script.pipelineEnv.localRepositoryPath}",
+                            (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ') + '"'
                 }
                 break
@@ -287,6 +303,44 @@ abstract class Project implements Serializable {
 
     protected void runTests() {
         script.mvn getMvnCommand('test')
+    }
+
+    protected void getReleaseParameters() {
+        def userInput
+
+        script.timeout(time:1, unit:'HOURS') {
+            userInput = script.input message: 'Perform release?',
+                    parameters: [
+                            script.string(defaultValue: '', description: 'Release version', name: 'releaseVersion'),
+                            script.string(defaultValue: '', description: 'Snapshot version', name: 'snapshotVersion'),
+                            script.string(defaultValue: '', description: 'Staging repository ID', name: 'stagingRepository'),
+                    ],
+                    submitter: 'sshepel, saudet, agibsonccc',
+                    submitterParameter: 'approvedBy'
+        }
+
+        if (!userInput) {
+            script.error "[ERROR] Missing user-provided values."
+        }
+
+        if (checkStagingRepoFormat(userInput.stagingRepository)) {
+            releaseApproved = (userInput.approvedBy) ? true : script.error("[ERROR] Can't get approver ID.")
+            releaseVersion = userInput.releaseVersion
+            snapshotVersion = userInput.snapshotVersion
+            script.env.STAGING_REPOSITORY = userInput.stagingRepository
+        }
+        else {
+            script.error "[ERROR] Provided staging repository ID ${script.env.STAGING_REPOSITORY} is not valid."
+        }
+    }
+
+    protected void setupEnvForRelease() {
+        if (releaseApproved) {
+            populateGpgKeys()
+            updateGitCredentials()
+            updateVersions(releaseVersion)
+            script.setProjectVersion(releaseVersion, true)
+        }
     }
 
     protected void runDeploy() {
@@ -330,6 +384,64 @@ abstract class Project implements Serializable {
         Boolean pomExists = script.fileExists(pomFileName)
 
         return (pomExists) ? script.readMavenPom() : script.error('pom.xml file not found')
+    }
+
+    protected boolean checkStagingRepoFormat(String stagingRepoId) {
+        stagingRepoId =~ /\w+-\d+/
+    }
+
+    protected void updateVersions(String version) {
+    }
+
+    protected void populateGpgKeys() {
+        script.withCredentials([
+                script.file(credentialsId: 'gpg-pub-key-jenkins', variable: 'GPG_PUBRING'),
+                script.file(credentialsId: 'gpg-private-key-jenkins', variable: 'GPG_SECRING'),
+                script.usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')
+        ]) {
+            if (script.isUnix()) {
+                script.sh '''
+                    export GPG_TTY=$(tty)
+                    rm -rf ${HOME}/.gnupg/*.gpg
+                    gpg --list-keys
+                    # workaround for mac (maybe not required)
+                    # if [ $(gpg --list-keys | echo $?) == 0 ]; then
+                        cp ${GPG_PUBRING} ${HOME}/.gnupg/
+                        cp ${GPG_SECRING} ${HOME}/.gnupg/
+                        chmod 700 $HOME/.gnupg
+                        chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg
+                        gpg --list-keys
+                    # fi
+                '''.stripIndent()
+            }
+            else {
+                script.bat '''
+                    bash -c "rm -rf ${HOME}/.gnupg/*.gpg"
+                    bash -c "gpg --list-keys"
+                    bash -c "cp ${GPG_PUBRING} ${HOME}/.gnupg/"
+                    bash -c "cp ${GPG_SECRING} ${HOME}/.gnupg/"
+                    bash -c "chmod 700 $HOME/.gnupg"
+                    bash -c "chmod 600 $HOME/.gnupg/secring.gpg $HOME/.gnupg/pubring.gpg"
+                    bash -c "gpg --list-keys"
+                    bash -c "gpg.exe --list-keys"
+                '''.stripIndent()
+            }
+        }
+    }
+
+    protected void updateGitCredentials() {
+        if (script.isUnix()) {
+            script.sh """
+                git config user.email 'jenkins@skymind.io'
+                git config user.name 'Jenkins CI (Skymind)'
+            """.stripIndent()
+        }
+        else {
+            script.bat """
+                bash -c 'git config user.email "jenkins@skymind.io"'
+                bash -c 'git config user.name "Jenkins"'
+            """.stripIndent()
+        }
     }
 
     @NonCPS
