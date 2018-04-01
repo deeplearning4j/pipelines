@@ -12,11 +12,11 @@ class Deeplearning4jProject extends Project {
                         runBuild()
                     }
 
-                    script.stage('Build Test Resources') {
-                        runBuildTestResources()
-                    }
-
                     if (branchName == 'master') {
+                        script.stage('Build Test Resources') {
+                            runBuildTestResources()
+                        }
+
                         script.stage('Test') {
                             runTests()
                         }
