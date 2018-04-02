@@ -84,8 +84,9 @@ class Deeplearning4jProject extends Project {
             script.sh "./change-spark-versions.sh $sparkVersion"
 
             script.mvn getMvnCommand('test', [
-                    testProfile
-            ])
+                    testProfile,
+                    '-Dmaven.test.failure.ignore=true'
+            ]) + ' || true'
         }
     }
 }
