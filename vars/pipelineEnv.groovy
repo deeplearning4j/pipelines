@@ -22,7 +22,7 @@ Map getDockerConfig(String streamName) {
             return [image : 'skymindops/pipelines:android']
             break
 
-        case ['linux-x86_64']:
+        case ['linux-x86_64', 'linux-x86_64-generic']:
             return [image : 'skymindops/pipelines:centos6cuda80']
             break
 

@@ -4,6 +4,13 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class Deeplearning4jProject extends Project {
+    static {
+        /* Override default platforms */
+        defaultPlatforms = [
+                [backends: [], compillers: [], name: 'linux-x86_64']
+        ]
+    }
+
     void initPipeline() {
         allocateBuildNode { dockerImageName, dockerImageParams ->
             script.dir(projectName) {

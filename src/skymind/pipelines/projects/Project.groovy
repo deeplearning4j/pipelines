@@ -10,7 +10,7 @@ abstract class Project implements Serializable {
     protected final String projectName
     /* Default platforms for most of the projects */
     protected static List defaultPlatforms = [
-            [backends: [], compillers: [], name: 'linux-x86_64']
+            [backends: [], compillers: [], name: 'linux-x86_64-generic']
     ]
     /* Default job properties */
     protected final List jobSpecificProperties = []
