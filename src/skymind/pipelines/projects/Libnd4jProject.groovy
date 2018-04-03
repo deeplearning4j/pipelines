@@ -285,7 +285,7 @@ class Libnd4jProject extends Project {
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             /* Force to build in three threads */
 //                            'export MAKEJ=3 &&',
-                            'export MAVEN_OPTS="-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G" &&',
+                            'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8\' &&',
                             'mvn -U',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
@@ -299,7 +299,7 @@ class Libnd4jProject extends Project {
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             /* Force to build in three threads */
 //                            'export MAKEJ=3 &&',
-                            'export MAVEN_OPTS="-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G" &&',
+                            'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G\' &&',
                             'mvn -U -B',
                             'clean',
                             branchName == 'master' ? 'deploy' : 'install',
