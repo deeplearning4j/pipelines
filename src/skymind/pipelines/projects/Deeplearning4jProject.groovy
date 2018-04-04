@@ -20,13 +20,13 @@ class Deeplearning4jProject extends Project {
                     }
 
                     if (branchName == 'master') {
-                        script.stage('Build Test Resources') {
-                            runBuildTestResources()
-                        }
-
-                        script.stage('Test') {
-                            runTests()
-                        }
+//                        script.stage('Build Test Resources') {
+//                            runBuildTestResources()
+//                        }
+//
+//                        script.stage('Test') {
+//                            runTests()
+//                        }
 
                         script.stage('Deploy') {
                             runDeploy()
