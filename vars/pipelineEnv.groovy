@@ -47,19 +47,19 @@ Map getDockerConfig(String streamName) {
             break
 
         case ['linux-ppc64le-cpu']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=4g --tmpfs /tmp:size=4g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ['linux-ppc64le-cuda-8.0']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le']
+            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ['linux-ppc64le-cuda-9.0']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda90-ppc64le']
+            return [image : 'skymindops/pipelines:ubuntu16cuda90-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ['linux-ppc64le-cuda-9.1']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le']
+            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ~/^ios.*$/:
@@ -87,7 +87,7 @@ String getNvidiaDockerParams() {
             "--device=/dev/nvidia-uvm",
             "--device=/dev/nvidia0",
             "--tmpfs /tmp:size=8g",
-            '--shm-size=4g'
+            '--shm-size=8g'
     ].join(' ')
 
     return dockerInspectResult ?
