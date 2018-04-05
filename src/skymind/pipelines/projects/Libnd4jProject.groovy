@@ -305,7 +305,7 @@ class Libnd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8\' &&',
+                            'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G\' &&',
                             'mvn -U -B',
                             'clean',
                             (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
