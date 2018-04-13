@@ -5,33 +5,31 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class GymJavaClientProject extends Project {
     void initPipeline() {
-        allocateBuildNode { dockerImageName, dockerImageParams ->
+        allocateBuildNode {
             script.dir(projectName) {
-                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    if (branchName.contains(releaseBranchPattern)) {
-                        script.stage("Perform Release") {
-                            getReleaseParameters()
-                        }
-
-                        script.stage("Prepare for Release") {
-                            setupEnvForRelease()
-                        }
+                if (branchName.contains(releaseBranchPattern)) {
+                    script.stage("Perform Release") {
+                        getReleaseParameters()
                     }
 
-                    script.stage('Build') {
-                        runBuild()
+                    script.stage("Prepare for Release") {
+                        setupEnvForRelease()
                     }
+                }
 
-                    if (!branchName.contains(releaseBranchPattern)) {
-                        script.stage('Test') {
-                            runTests()
-                        }
+                script.stage('Build') {
+                    runBuild()
+                }
+
+                if (!branchName.contains(releaseBranchPattern)) {
+                    script.stage('Test') {
+                        runTests()
                     }
+                }
 
-                    if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                        script.stage('Deploy') {
-                            runDeploy()
-                        }
+                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                    script.stage('Deploy') {
+                        runDeploy()
                     }
                 }
             }

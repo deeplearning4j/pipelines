@@ -100,12 +100,11 @@ class Libnd4jProject extends Project {
                 if (backend == 'cpu') {
                     for (String cpuExt : cpuExtensions) {
                         String cpuExtension = cpuExt
-
                         String streamName = ["${platformName}", "${backend}", "${cpuExtension}"].findAll().join('-')
 
                         /* Create stream body */
                         streams["$streamName"] = {
-                            script.node(platformName) {
+                            script.node(streamName) {
                                 Boolean isUnix = script.isUnix()
                                 String separator = isUnix ? '/' : '\\'
                                 String wsFolderName = 'workspace' +
@@ -124,53 +123,23 @@ class Libnd4jProject extends Project {
                                         }
 
                                         script.dir(projectName) {
-                                            /* Get docker container configuration */
-                                            Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+                                            if (branchName.contains(releaseBranchPattern)) {
+                                                script.stage("Prepare for Release") {
+                                                    setupEnvForRelease()
+                                                }
+                                            }
 
-                                            if (dockerConf) {
-                                                String dockerImageName = dockerConf['image'] ?:
-                                                        script.error('Docker image name is missing.')
-                                                String dockerImageParams = dockerConf?.params
-
-                                                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                                                    if (branchName.contains(releaseBranchPattern)) {
-                                                        script.stage("Prepare for Release") {
-                                                            setupEnvForRelease()
-                                                        }
-                                                    }
-
-                                                    if (!branchName.contains(releaseBranchPattern)) {
-                                                        script.stage('Test') {
-                                                            /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                            if (backend == 'cpu') {
-                                                                runtTests(platformName, backend)
-                                                            }
-                                                        }
-                                                    }
-
-                                                    script.stage('Build') {
-                                                        runStageLogic('build', platformName, backend, cpuExtension)
+                                            if (!branchName.contains(releaseBranchPattern)) {
+                                                script.stage('Test') {
+                                                    /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                    if (backend == 'cpu') {
+                                                        runtTests(platformName, backend)
                                                     }
                                                 }
-                                            } else {
-                                                if (branchName.contains(releaseBranchPattern)) {
-                                                    script.stage("Prepare for Release") {
-                                                        setupEnvForRelease()
-                                                    }
-                                                }
+                                            }
 
-                                                if (!branchName.contains(releaseBranchPattern)) {
-                                                    script.stage('Test') {
-                                                        /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                        if (backend == 'cpu') {
-                                                            runtTests(platformName, backend)
-                                                        }
-                                                    }
-                                                }
-
-                                                script.stage('Build') {
-                                                    runStageLogic('build', platformName, backend, cpuExtension)
-                                                }
+                                            script.stage('Build') {
+                                                runStageLogic('build', platformName, backend, cpuExtension)
                                             }
                                         }
                                     }
@@ -188,7 +157,7 @@ class Libnd4jProject extends Project {
 
                     /* Create stream body */
                     streams["$streamName"] = {
-                        script.node(platformName) {
+                        script.node(streamName) {
                             Boolean isUnix = script.isUnix()
                             String separator = isUnix ? '/' : '\\'
                             String wsFolderName = 'workspace' +
@@ -333,7 +302,7 @@ class Libnd4jProject extends Project {
      *
      * @param platform
      * @param backend
-     * @param cpuExtensions
+     * @param cpuExtension
      */
     private void runStageLogic(String stageName, String platform, String backend, String cpuExtension = '') {
         String mvnCommand
@@ -381,7 +350,7 @@ class Libnd4jProject extends Project {
                     return [
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
-                            'export PATH=$MVN_CMD_DIR:$PATH &&',
+                            (isCpuWithExtension) ? 'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
                             'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G\' &&',
                             'mvn -U -B',
                             'clean',

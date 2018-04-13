@@ -7,37 +7,35 @@ class ArbiterProject extends Project {
     private final List scalaVersions = ['2.10', '2.11']
 
     void initPipeline() {
-        allocateBuildNode { dockerImageName, dockerImageParams ->
+        allocateBuildNode {
             script.dir(projectName) {
-                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    if (branchName.contains(releaseBranchPattern)) {
-                        script.stage("Perform Release") {
-                            getReleaseParameters()
-                        }
+                if (branchName.contains(releaseBranchPattern)) {
+                    script.stage("Perform Release") {
+                        getReleaseParameters()
+                    }
 
-                        script.stage("Prepare for Release") {
-                            setupEnvForRelease()
+                    script.stage("Prepare for Release") {
+                        setupEnvForRelease()
+                    }
+                }
+
+                for (String scalaVersion : scalaVersions) {
+                    script.stage("Build | Scala ${scalaVersion}") {
+                        runBuild(scalaVersion)
+                    }
+
+                    if (!branchName.contains(releaseBranchPattern)) {
+                        script.stage("Test | Scala ${scalaVersion}") {
+                            /* FIXME: Timeout requested by Alex Black because of flappy tests behavior */
+                            script.timeout(15) {
+                                runTests()
+                            }
                         }
                     }
 
-                    for (String scalaVersion : scalaVersions) {
-                        script.stage("Build | Scala ${scalaVersion}") {
-                            runBuild(scalaVersion)
-                        }
-
-                        if (!branchName.contains(releaseBranchPattern)) {
-                            script.stage("Test | Scala ${scalaVersion}") {
-                                /* FIXME: Timeout requested by Alex Black because of flappy tests behavior */
-                                script.timeout(15) {
-                                    runTests()
-                                }
-                            }
-                        }
-
-                        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                            script.stage("Deploy | Scala ${scalaVersion}") {
-                                runDeploy()
-                            }
+                    if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                        script.stage("Deploy | Scala ${scalaVersion}") {
+                            runDeploy()
                         }
                     }
                 }
