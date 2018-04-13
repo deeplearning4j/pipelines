@@ -102,40 +102,146 @@ class Libnd4jProject extends Project {
 
             for (List bckd : backends) {
                 String backend = bckd
-                String streamName = ["${platformName}", "${backend}"].findAll().join('-')
-                /* Add steam to build name */
-//                script.pipelineEnv.buildDisplayName.push("${streamName}")
 
-                /* Create stream body */
-                streams["$streamName"] = {
-                    script.node(platformName) {
-                        Boolean isUnix = script.isUnix()
-                        String separator = isUnix ? '/' : '\\'
-                        String wsFolderName = 'workspace' +
-                                separator +
-                                [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+                if (backend == 'cpu') {
+                    for (String cpuExt : cpuExtensions) {
+                        String cpuExtension = cpuExt
 
-                        /* Redefine default workspace to fix Windows path length limitation */
-                        script.ws(wsFolderName) {
-                            try {
-                                script.stage('Checkout') {
-                                    script.deleteDir()
+                        String streamName = ["${platformName}", "${backend}", "${cpuExtension}"].findAll().join('-')
 
-                                    script.dir(projectName) {
-                                        script.checkout script.scm
+                        /* Create stream body */
+                        streams["$streamName"] = {
+                            script.node(platformName) {
+                                Boolean isUnix = script.isUnix()
+                                String separator = isUnix ? '/' : '\\'
+                                String wsFolderName = 'workspace' +
+                                        separator +
+                                        [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+
+                                /* Redefine default workspace to fix Windows path length limitation */
+                                script.ws(wsFolderName) {
+                                    try {
+                                        script.stage('Checkout') {
+                                            script.deleteDir()
+
+                                            script.dir(projectName) {
+                                                script.checkout script.scm
+                                            }
+                                        }
+
+                                        script.dir(projectName) {
+                                            /* Get docker container configuration */
+                                            Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+
+                                            if (dockerConf) {
+                                                String dockerImageName = dockerConf['image'] ?:
+                                                        script.error('Docker image name is missing.')
+                                                String dockerImageParams = dockerConf?.params
+
+                                                script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                                    if (branchName.contains(releaseBranchPattern)) {
+                                                        script.stage("Prepare for Release") {
+                                                            setupEnvForRelease()
+                                                        }
+                                                    }
+
+                                                    if (!branchName.contains(releaseBranchPattern)) {
+                                                        script.stage('Test') {
+                                                            /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                            if (backend == 'cpu') {
+                                                                runtTests(platformName, backend)
+                                                            }
+                                                        }
+                                                    }
+
+                                                    script.stage('Build') {
+                                                        runStageLogic('build', platformName, backend, cpuExtension)
+                                                    }
+                                                }
+                                            } else {
+                                                if (branchName.contains(releaseBranchPattern)) {
+                                                    script.stage("Prepare for Release") {
+                                                        setupEnvForRelease()
+                                                    }
+                                                }
+
+                                                if (!branchName.contains(releaseBranchPattern)) {
+                                                    script.stage('Test') {
+                                                        /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                        if (backend == 'cpu') {
+                                                            runtTests(platformName, backend)
+                                                        }
+                                                    }
+                                                }
+
+                                                script.stage('Build') {
+                                                    runStageLogic('build', platformName, backend, cpuExtension)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    finally {
+                                        /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
+                                        script.deleteDir()
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+                else {
+                    String streamName = ["${platformName}", "${backend}"].findAll().join('-')
 
-                                script.dir(projectName) {
-                                    /* Get docker container configuration */
-                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+                    /* Create stream body */
+                    streams["$streamName"] = {
+                        script.node(platformName) {
+                            Boolean isUnix = script.isUnix()
+                            String separator = isUnix ? '/' : '\\'
+                            String wsFolderName = 'workspace' +
+                                    separator +
+                                    [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
-                                    if (dockerConf) {
-                                        String dockerImageName = dockerConf['image'] ?:
-                                                script.error('Docker image name is missing.')
-                                        String dockerImageParams = dockerConf?.params
+                            /* Redefine default workspace to fix Windows path length limitation */
+                            script.ws(wsFolderName) {
+                                try {
+                                    script.stage('Checkout') {
+                                        script.deleteDir()
 
-                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                        script.dir(projectName) {
+                                            script.checkout script.scm
+                                        }
+                                    }
+
+                                    script.dir(projectName) {
+                                        /* Get docker container configuration */
+                                        Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+
+                                        if (dockerConf) {
+                                            String dockerImageName = dockerConf['image'] ?:
+                                                    script.error('Docker image name is missing.')
+                                            String dockerImageParams = dockerConf?.params
+
+                                            script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                                if (branchName.contains(releaseBranchPattern)) {
+                                                    script.stage("Prepare for Release") {
+                                                        setupEnvForRelease()
+                                                    }
+                                                }
+
+                                                if (!branchName.contains(releaseBranchPattern)) {
+                                                    script.stage('Test') {
+                                                        /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                        if (backend == 'cpu') {
+                                                            runtTests(platformName, backend)
+                                                        }
+                                                    }
+                                                }
+
+                                                script.stage('Build') {
+                                                    runStageLogic('build', platformName, backend)
+                                                }
+                                            }
+                                        } else {
                                             if (branchName.contains(releaseBranchPattern)) {
                                                 script.stage("Prepare for Release") {
                                                     setupEnvForRelease()
@@ -152,34 +258,15 @@ class Libnd4jProject extends Project {
                                             }
 
                                             script.stage('Build') {
-                                                runStageLogic('build', platformName, backend, cpuExtensions)
+                                                runStageLogic('build', platformName, backend)
                                             }
-                                        }
-                                    } else {
-                                        if (branchName.contains(releaseBranchPattern)) {
-                                            script.stage("Prepare for Release") {
-                                                setupEnvForRelease()
-                                            }
-                                        }
-
-                                        if (!branchName.contains(releaseBranchPattern)) {
-                                            script.stage('Test') {
-                                                /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                if (backend == 'cpu') {
-                                                    runtTests(platformName, backend)
-                                                }
-                                            }
-                                        }
-
-                                        script.stage('Build') {
-                                            runStageLogic('build', platformName, backend, cpuExtensions)
                                         }
                                     }
                                 }
-                            }
-                            finally {
-                                /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
-                                script.deleteDir()
+                                finally {
+                                    /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
+                                    script.deleteDir()
+                                }
                             }
                         }
                     }
@@ -254,26 +341,22 @@ class Libnd4jProject extends Project {
      * @param backend
      * @param cpuExtensions
      */
-    private void runStageLogic(String stageName, String platform, String backend, List cpuExtensions) {
+    private void runStageLogic(String stageName, String platform, String backend, String cpuExtension = '') {
         String mvnCommand
 
         /* Build libnd4j for CPU backend */
         if (backend == 'cpu') {
-            for (String item : cpuExtensions) {
-                String cpuExtension = item
+            mvnCommand = getMvnCommand(stageName, (cpuExtension != ''), [
+                    "-Dlibnd4j.platform=${platform}",
+                    (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
+                    (platform.contains('macosx') || platform.contains('ios')) ?
+                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
+                            ''
+            ])
 
-                mvnCommand = getMvnCommand(stageName, (cpuExtension != ''), [
-                        "-Dlibnd4j.platform=${platform}",
-                        (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
-                        (platform.contains('macosx') || platform.contains('ios')) ?
-                                "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                                ''
-                ])
+            script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend with ${cpuExtension} extension"
 
-                script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend with ${cpuExtension} extension"
-
-                script.mvn "$mvnCommand"
-            }
+            script.mvn "$mvnCommand"
         }
         /* Build libnd4j for CUDA backend */
         else {
