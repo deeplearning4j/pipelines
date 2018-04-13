@@ -47,7 +47,7 @@ Map getDockerConfig(String streamName) {
             break
 
         case ['linux-ppc64le-cpu']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=16g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=4g --tmpfs /tmp:size=4g']
             break
 
         case ['linux-ppc64le-cuda-8.0']:

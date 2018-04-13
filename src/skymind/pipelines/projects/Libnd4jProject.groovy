@@ -27,8 +27,8 @@ class Libnd4jProject extends Project {
                     when number of parallel threads more than number of CPUs OOM-killer kills all Docker containers.
                     Because of that CUDA couldn't be enabled at the moment.
                  */
-//                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                [backends  : ['cpu'],
+                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
+//                [backends  : ['cpu'],
                  compillers: [],
                  name      : 'linux-ppc64le'],
 
