@@ -37,28 +37,28 @@ class Deeplearning4jProject extends Project {
                                 script.error('Docker image name is missing.')
                         String dockerImageParams = dockerConf?.'params'
 
-                        script.docker.image(dockerImageName).inside(dockerImageParams) {
+                        script.dir(projectName) {
+                            script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                if (branchName.contains(releaseBranchPattern)) {
+                                    script.stage("Perform Release") {
+                                        getReleaseParameters()
+                                    }
 
-                            if (branchName.contains(releaseBranchPattern)) {
-                                script.stage("Perform Release") {
-                                    getReleaseParameters()
+                                    script.stage("Prepare for Release") {
+                                        setupEnvForRelease()
+                                    }
                                 }
 
-                                script.stage("Prepare for Release") {
-                                    setupEnvForRelease()
-                                }
-                            }
+                                for (Map mapping : dependencyMappings) {
+                                    String cudaVersion = mapping.cudaVersion
+                                    String scalaVersion = mapping.scalaVersion
+                                    String sparkVersion = mapping.sparkVersion
 
-                            for (Map mapping : dependencyMappings) {
-                                String cudaVersion = mapping.cudaVersion
-                                String scalaVersion = mapping.scalaVersion
-                                String sparkVersion = mapping.sparkVersion
+                                    script.stage("Build | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                                        runBuild(cudaVersion, scalaVersion, sparkVersion)
+                                    }
 
-                                script.stage("Build | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                                    runBuild(cudaVersion, scalaVersion, sparkVersion)
-                                }
-
-                                if (branchName == 'master' || !branchName.contains(releaseBranchPattern)) {
+                                    if (branchName == 'master' || !branchName.contains(releaseBranchPattern)) {
 //                            script.stage('Build Test Resources') {
 //                                runBuildTestResources()
 //                            }
@@ -66,11 +66,12 @@ class Deeplearning4jProject extends Project {
 //                            script.stage("Test | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
 //                                runTests(cudaVersion)
 //                            }
-                                }
+                                    }
 
-                                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                                    script.stage("Deploy | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                                        runDeploy()
+                                    if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                                        script.stage("Deploy | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                                            runDeploy()
+                                        }
                                     }
                                 }
                             }
