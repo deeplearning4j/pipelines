@@ -22,13 +22,7 @@ class Libnd4jProject extends Project {
                  compillers: [],
                  name      : 'android-x86_64'],
 
-                /*
-                    FIXME: ppc64le slave is unstable at the moment,
-                    when number of parallel threads more than number of CPUs OOM-killer kills all Docker containers.
-                    Because of that CUDA couldn't be enabled at the moment.
-                 */
                 [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-//                [backends  : ['cpu'],
                  compillers: [],
                  name      : 'linux-ppc64le'],
 
