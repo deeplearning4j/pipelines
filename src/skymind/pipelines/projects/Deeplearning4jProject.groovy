@@ -18,29 +18,47 @@ class Deeplearning4jProject extends Project {
     }
 
     void initPipeline() {
-        allocateBuildNode { dockerImageName, dockerImageParams ->
-            script.dir(projectName) {
-                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    if (branchName.contains(releaseBranchPattern)) {
-                        script.stage("Perform Release") {
-                            getReleaseParameters()
+        for (Map pltm : platforms) {
+            Map platform = pltm
+            String platformName = platform.name
+            script.node(platformName) {
+                pipelineWrapper {
+                    try {
+                        script.stage('Checkout') {
+                            script.deleteDir()
+
+                            script.dir(projectName) {
+                                script.checkout script.scm
+                            }
                         }
 
-                        script.stage("Prepare for Release") {
-                            setupEnvForRelease()
-                        }
-                    }
+                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
+                        String dockerImageName = dockerConf['image'] ?:
+                                script.error('Docker image name is missing.')
+                        String dockerImageParams = dockerConf?.'params'
 
-                    for (Map mapping : dependencyMappings) {
-                        String cudaVersion = mapping.cudaVersion
-                        String scalaVersion = mapping.scalaVersion
-                        String sparkVersion = mapping.sparkVersion
+                        script.docker.image(dockerImageName).inside(dockerImageParams) {
 
-                        script.stage("Build | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                            runBuild(cudaVersion, scalaVersion, sparkVersion)
-                        }
+                            if (branchName.contains(releaseBranchPattern)) {
+                                script.stage("Perform Release") {
+                                    getReleaseParameters()
+                                }
 
-                        if (branchName == 'master' || !branchName.contains(releaseBranchPattern)) {
+                                script.stage("Prepare for Release") {
+                                    setupEnvForRelease()
+                                }
+                            }
+
+                            for (Map mapping : dependencyMappings) {
+                                String cudaVersion = mapping.cudaVersion
+                                String scalaVersion = mapping.scalaVersion
+                                String sparkVersion = mapping.sparkVersion
+
+                                script.stage("Build | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                                    runBuild(cudaVersion, scalaVersion, sparkVersion)
+                                }
+
+                                if (branchName == 'master' || !branchName.contains(releaseBranchPattern)) {
 //                            script.stage('Build Test Resources') {
 //                                runBuildTestResources()
 //                            }
@@ -48,13 +66,18 @@ class Deeplearning4jProject extends Project {
 //                            script.stage("Test | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
 //                                runTests(cudaVersion)
 //                            }
-                        }
+                                }
 
-                        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                            script.stage("Deploy | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                                runDeploy()
+                                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                                    script.stage("Deploy | CUDA ${cudaVersion} | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                                        runDeploy()
+                                    }
+                                }
                             }
                         }
+                    }
+                    finally {
+                        script.cleanWs deleteDirs: true
                     }
                 }
             }

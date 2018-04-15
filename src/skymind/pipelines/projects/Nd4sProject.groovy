@@ -7,16 +7,15 @@ class Nd4sProject extends Project {
     private String projectVersion = '0.9.2-SNAPSHOT'
 
     void initPipeline() {
-        allocateBuildNode { dockerImageName, dockerImageParams ->
+        allocateBuildNode {
             script.dir(projectName) {
-                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    script.stage('Get nd4j artifacts') {
-                        getNd4jArtifacts()
-                    }
+                script.stage('Get nd4j artifacts') {
+                    getNd4jArtifacts()
+                }
 
-                    script.stage('Build') {
-                        runBuild()
-                    }
+                script.stage('Build') {
+                    runBuild()
+                }
 
 //                    script.stage('Test') {
 //                        runTests()
@@ -27,7 +26,6 @@ class Nd4sProject extends Project {
 //                            runDeploy()
 //                        }
 //                    }
-                }
             }
         }
     }

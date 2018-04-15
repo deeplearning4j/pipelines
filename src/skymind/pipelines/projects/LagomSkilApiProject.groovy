@@ -5,21 +5,19 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class LagomSkilApiProject extends Project {
     void initPipeline() {
-        allocateBuildNode { dockerImageName, dockerImageParams ->
+        allocateBuildNode {
             script.dir(projectName) {
-                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    script.stage('Build') {
-                        runBuild()
-                    }
+                script.stage('Build') {
+                    runBuild()
+                }
 
-                    script.stage('Test') {
-                        runTests()
-                    }
+                script.stage('Test') {
+                    runTests()
+                }
 
-                    if (branchName == 'master') {
-                        script.stage('Deploy') {
-                            runDeploy()
-                        }
+                if (branchName == 'master') {
+                    script.stage('Deploy') {
+                        runDeploy()
                     }
                 }
             }

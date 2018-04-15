@@ -147,12 +147,13 @@ abstract class Project implements Serializable {
 //
 //                    script.sh script: createFoldersScript
 
-                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-                        String dockerImageName = dockerConf['image'] ?:
-                                script.error('Docker image name is missing.')
-                        String dockerImageParams = dockerConf?.'params'
+//                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
+//                        String dockerImageName = dockerConf['image'] ?:
+//                                script.error('Docker image name is missing.')
+//                        String dockerImageParams = dockerConf?.'params'
 
-                        stagesToRun(dockerImageName, dockerImageParams)
+//                        stagesToRun(dockerImageName, dockerImageParams)
+                        stagesToRun()
                     }
                     finally {
                         script.cleanWs deleteDirs: true
