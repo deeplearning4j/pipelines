@@ -4,7 +4,6 @@ import skymind.pipelines.helper.NotificationHelper
 
 abstract class Project implements Serializable {
     protected script
-//    protected notifications
     protected platforms
     protected final String branchName
     protected final String projectName
@@ -31,8 +30,6 @@ abstract class Project implements Serializable {
         branchName = this.script.env.BRANCH_NAME
         /* Default platforms will be used if developer didn't redefine them in Jenkins file */
         platforms = jobConfig?.getAt('platforms') ?: defaultPlatforms
-//        /* Get instance of NotificationHelper class for sending notifications about run status */
-//        notifications = new NotificationHelper(script)
         /* Configure job build parameters */
         setBuildParameters(jobSpecificProperties)
         /* Terminate older builds */
@@ -53,15 +50,7 @@ abstract class Project implements Serializable {
                         )
                 ),
                 [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-                /* Workaround to disable branch indexing */
-                script.pipelineTriggers([])
-//                script.parameters([
-//                        script.choice(
-//                                choices: ['nexus', 'sonatype', 'jfrog', 'bintray'].join('\n'),
-//                                description: 'Maven profile names list',
-//                                name: 'MAVEN_PROFILE_ACTIVATION_NAME'
-//                        )
-//                ])
+                script.pipelineTriggers([script.cron('@midnight')])
         ]
 
         if (script.env.JOB_BASE_NAME == 'master') {
@@ -104,10 +93,6 @@ abstract class Project implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
-//            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
-//                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
-//            notifications.sendEmail(script.currentBuild.currentResult)
-
             /* Get instance of NotificationHelper class for sending notifications about run status */
             new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
         }
@@ -117,6 +102,7 @@ abstract class Project implements Serializable {
         for (Map pltm : platforms) {
             Map platform = pltm
             String platformName = platform.name
+
             script.node(platformName) {
                 pipelineWrapper {
                     try {
@@ -128,29 +114,6 @@ abstract class Project implements Serializable {
                             }
                         }
 
-//                    script.stage('Update project version') {
-//                        script.dir(projectName) {
-//                            projectVersion = projectObjectModel?.version
-////                            script.isVersionReleased(projectName, projectVersion)
-////                            script.setProjectVersion(projectVersion, true)
-//                        }
-//                    }
-
-//                    script.pipelineEnv.buildDisplayName.push(platformName)
-
-//                    String createFoldersScript = "mkdir -p " +
-//                            "${script.pipelineEnv.jenkinsDockerM2Folder}/" +
-//                            "${script.pipelineEnv.mvnProfileActivationName} " +
-//                            "${script.pipelineEnv.jenkinsDockerSbtFolder}"
-//
-//                    script.sh script: createFoldersScript
-
-//                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-//                        String dockerImageName = dockerConf['image'] ?:
-//                                script.error('Docker image name is missing.')
-//                        String dockerImageParams = dockerConf?.'params'
-
-//                        stagesToRun(dockerImageName, dockerImageParams)
                         stagesToRun()
                     }
                     finally {
@@ -389,8 +352,7 @@ abstract class Project implements Serializable {
         stagingRepoId =~ /\w+-\d+/
     }
 
-    protected void updateVersions(String version) {
-    }
+    protected void updateVersions(String version) {}
 
     protected void populateGpgKeys() {
         script.withCredentials([
