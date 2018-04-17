@@ -6,57 +6,45 @@ class Libnd4jProject extends Project {
     static {
         /* Override default platforms */
         defaultPlatforms = [
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-arm'],
+                [name: 'android-arm', backend: 'cpu'],
+                [name: 'android-arm64', backend: 'cpu'],
+                [name: 'android-x86', backend: 'cpu'],
+                [name: 'android-x86_64', backend: 'cpu'],
 
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-arm64'],
+                [name: 'ios-arm64', backend: 'cpu'],
+                [name: 'ios-x86_64', backend: 'cpu'],
 
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-x86'],
+                [name: 'linux-ppc64le', backend: 'cpu'],
+                [name: 'linux-ppc64le', backend: 'cuda-8.0'],
+                [name: 'linux-ppc64le', backend: 'cuda-9.0'],
+                [name: 'linux-ppc64le', backend: 'cuda-9.1'],
 
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-x86_64'],
+                [name: 'linux-x86_64', backend: 'cpu'],
+                [name: 'linux-x86_64', backend: 'cpu', cpuExtension: 'avx2'],
+                [name: 'linux-x86_64', backend: 'cpu', cpuExtension: 'avx512'],
+                [name: 'linux-x86_64', backend: 'cuda-8.0'],
+                [name: 'linux-x86_64', backend: 'cuda-9.0'],
+                [name: 'linux-x86_64', backend: 'cuda-9.1'],
 
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 compillers: [],
-                 name      : 'linux-ppc64le'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2', 'avx512'],
-                 compillers   : [],
-                 name         : 'linux-x86_64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-x86_64'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /*
+                [name: 'macosx-x86_64', backend: 'cpu'],
+                [name: 'macosx-x86_64', backend: 'cpu', cpuExtension: 'avx2'],
+                /*
                      FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
                      at the same time for CUDA - Xcode 8 required,
                      which means that we can't enable avx512 builds at the moment
                   */
-//                 cpuExtensions: ['', 'avx2', 'avx512'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2'],
-                 compillers   : [],
-                 name         : 'macosx-x86_64'],
+//                [name: 'macosx-x86_64', backend: 'cpu', cpuExtension: 'avx512'],
+                [name: 'macosx-x86_64', backend: 'cuda-8.0'],
+                [name: 'macosx-x86_64', backend: 'cuda-9.0'],
+                [name: 'macosx-x86_64', backend: 'cuda-9.1'],
 
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2'],
-                 compillers   : [],
-                 name         : 'windows-x86_64']
+                [name: 'windows-x86_64', backend: 'cpu'],
+                [name: 'windows-x86_64', backend: 'cpu', cpuExtension: 'avx2'],
+                /* FIXME: avx512 */
+//                [name: 'windows-x86_64', backend: 'cpu', cpuExtension: 'avx512'],
+                [name: 'windows-x86_64', backend: 'cuda-8.0'],
+                [name: 'windows-x86_64', backend: 'cuda-9.0'],
+                [name: 'windows-x86_64', backend: 'cuda-9.1']
         ]
 
         /* Gitter endpoint url for devlibnd4j room */
@@ -151,8 +139,7 @@ class Libnd4jProject extends Project {
                             }
                         }
                     }
-                }
-                else {
+                } else {
                     String streamName = ["${platformName}", "${backend}"].findAll().join('-')
 
                     /* Create stream body */

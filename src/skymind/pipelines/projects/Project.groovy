@@ -9,9 +9,7 @@ abstract class Project implements Serializable {
     protected final String branchName
     protected final String projectName
     /* Default platforms for most of the projects */
-    protected static List defaultPlatforms = [
-            [backends: [], compillers: [], name: 'linux-x86_64-generic']
-    ]
+    protected static List defaultPlatforms = [[name: 'linux-x86_64-generic']]
     /* Default job properties */
     protected final List jobSpecificProperties = []
     protected static String gitterEndpointUrl = ''

@@ -12,9 +12,7 @@ class Deeplearning4jProject extends Project {
 
     static {
         /* Override default platforms */
-        defaultPlatforms = [
-                [backends: [], compillers: [], name: 'linux-x86_64']
-        ]
+        defaultPlatforms = [[name: 'linux-x86_64']]
     }
 
     void initPipeline() {
