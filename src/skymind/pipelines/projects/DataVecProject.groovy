@@ -11,37 +11,35 @@ class DataVecProject extends Project {
     ]
 
     void initPipeline() {
-        allocateBuildNode { dockerImageName, dockerImageParams ->
+        allocateBuildNode {
             script.dir(projectName) {
-                script.docker.image(dockerImageName).inside(dockerImageParams) {
-                    if (branchName.contains(releaseBranchPattern)) {
-                        script.stage("Perform Release") {
-                            getReleaseParameters()
-                        }
+                if (branchName.contains(releaseBranchPattern)) {
+                    script.stage("Perform Release") {
+                        getReleaseParameters()
+                    }
 
-                        script.stage("Prepare for Release") {
-                            setupEnvForRelease()
+                    script.stage("Prepare for Release") {
+                        setupEnvForRelease()
+                    }
+                }
+
+                for (Map mapping : dependencyMappings) {
+                    String scalaVersion = mapping.scalaVersion
+                    String sparkVersion = mapping.sparkVersion
+
+                    script.stage("Build | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                        runBuild(scalaVersion, sparkVersion)
+                    }
+
+                    if (!branchName.contains(releaseBranchPattern)) {
+                        script.stage("Test | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                            runTests()
                         }
                     }
 
-                    for (Map mapping : dependencyMappings) {
-                        String scalaVersion = mapping.scalaVersion
-                        String sparkVersion = mapping.sparkVersion
-
-                        script.stage("Build | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                            runBuild(scalaVersion, sparkVersion)
-                        }
-
-                        if (!branchName.contains(releaseBranchPattern)) {
-                            script.stage("Test | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                                runTests()
-                            }
-                        }
-
-                        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                            script.stage("Deploy | Scala ${scalaVersion} | Spark ${sparkVersion}") {
-                                runDeploy()
-                            }
+                    if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                        script.stage("Deploy | Scala ${scalaVersion} | Spark ${sparkVersion}") {
+                            runDeploy()
                         }
                     }
                 }
