@@ -49,8 +49,7 @@ abstract class Project implements Serializable {
                                 numToKeepStr: '5'
                         )
                 ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-                script.pipelineTriggers([script.cron('@midnight')])
+                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false]
         ]
 
         if (script.env.JOB_BASE_NAME == 'master') {
@@ -79,6 +78,8 @@ abstract class Project implements Serializable {
                             ].findAll()
                     ]
             )
+
+            commonJobProperties.push(script.pipelineTriggers([script.cron('@midnight')]))
         }
 
         script.properties(commonJobProperties + jobSpecificProperties)
