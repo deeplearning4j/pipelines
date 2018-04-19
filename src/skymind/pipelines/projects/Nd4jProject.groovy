@@ -117,32 +117,32 @@ class Nd4jProject extends Project {
                                         }
 
                                         if (branchName == 'master' && !branchName.contains(releaseBranchPattern)) {
-                                            /* Workaround to exclude test for backends that are not supported by Jenkins agents */
-                                            if (platformName.contains('ios') || platformName.contains('android')) {
-                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                        "because of lack of target device..."
-                                            }
-                                            else if (platformName.contains('macosx') && cpuExtension != '') {
-                                                script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
-                                                        "because of lack of extension support on Jenkins agent..."
-                                            }
-                                            else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
-                                                script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
-                                                        "because of lack of extension support on Jenkins agent..."
-                                            }
-                                            else if (platformName.contains('macosx') && backend.contains('cuda')) {
-                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                        "because of lack of GPU..."
-                                            }
-                                            else {
-                                                script.stage('Build Test Resources') {
-                                                    runBuildTestResources(platformName)
-                                                }
-
-                                                script.stage('Test') {
-                                                    runStageLogic('test', platformName, backend, cpuExtension, scalaVersion)
-                                                }
-                                            }
+//                                            /* Workaround to exclude test for backends that are not supported by Jenkins agents */
+//                                            if (platformName.contains('ios') || platformName.contains('android')) {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                        "because of lack of target device..."
+//                                            }
+//                                            else if (platformName.contains('macosx') && cpuExtension != '') {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                        "because of lack of extension support on Jenkins agent..."
+//                                            }
+//                                            else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                        "because of lack of extension support on Jenkins agent..."
+//                                            }
+//                                            else if (platformName.contains('macosx') && backend.contains('cuda')) {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                        "because of lack of GPU..."
+//                                            }
+//                                            else {
+//                                                script.stage('Build Test Resources') {
+//                                                    runBuildTestResources(platformName)
+//                                                }
+//
+//                                                script.stage('Test') {
+//                                                    runStageLogic('test', platformName, backend, cpuExtension, scalaVersion)
+//                                                }
+//                                            }
                                         }
 
                                         if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
@@ -163,32 +163,32 @@ class Nd4jProject extends Project {
                                     }
 
                                     if (branchName == 'master' && !branchName.contains(releaseBranchPattern)) {
-                                        /* Workaround to exclude test for backends that are not supported by Jenkins agents */
-                                        if (platformName.contains('ios') || platformName.contains('android')) {
-                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                    "because of lack of target device..."
-                                        }
-                                        else if (platformName.contains('macosx') && cpuExtension != '') {
-                                            script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
-                                                    "because of lack of extension support on Jenkins agent..."
-                                        }
-                                        else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
-                                            script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
-                                                    "because of lack of extension support on Jenkins agent..."
-                                        }
-                                        else if (platformName.contains('macosx') && backend.contains('cuda')) {
-                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                    "because of lack of GPU..."
-                                        }
-                                        else {
-                                            script.stage('Build Test Resources') {
-                                                runBuildTestResources(platformName)
-                                            }
-
-                                            script.stage('Test') {
-                                                runStageLogic('test', platformName, backend, cpuExtension, scalaVersion)
-                                            }
-                                        }
+//                                        /* Workaround to exclude test for backends that are not supported by Jenkins agents */
+//                                        if (platformName.contains('ios') || platformName.contains('android')) {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                    "because of lack of target device..."
+//                                        }
+//                                        else if (platformName.contains('macosx') && cpuExtension != '') {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                    "because of lack of extension support on Jenkins agent..."
+//                                        }
+//                                        else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                    "because of lack of extension support on Jenkins agent..."
+//                                        }
+//                                        else if (platformName.contains('macosx') && backend.contains('cuda')) {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                    "because of lack of GPU..."
+//                                        }
+//                                        else {
+//                                            script.stage('Build Test Resources') {
+//                                                runBuildTestResources(platformName)
+//                                            }
+//
+//                                            script.stage('Test') {
+//                                                runStageLogic('test', platformName, backend, cpuExtension, scalaVersion)
+//                                            }
+//                                        }
                                     }
 
                                     if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
