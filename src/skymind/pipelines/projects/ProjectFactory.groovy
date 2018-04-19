@@ -26,8 +26,10 @@ class ProjectFactory implements Serializable {
             case 'DataVec':
                 new DataVecProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'deeplearning4j-monotest':
             case 'deeplearning4j':
-                new Deeplearning4jProject(script, projectName, jobConfig).initPipeline()
+//                new Deeplearning4jProject(script, projectName, jobConfig).initPipeline()
+                new DeeplearningMonoRepoProject(script, jobConfig).initPipeline()
                 break
             case 'Arbiter':
                 new ArbiterProject(script, projectName, jobConfig).initPipeline()
