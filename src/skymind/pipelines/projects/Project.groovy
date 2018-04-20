@@ -53,30 +53,27 @@ abstract class Project implements Serializable {
         ]
 
         if (script.env.JOB_BASE_NAME == 'master') {
-            commonJobProperties.push(
+            List notificationEndpoints = [
+                    /* Gitter endpoint url for dev_channel room */
                     [
-                            $class   : 'HudsonNotificationProperty',
-                            endpoints: [
-                                    /* Gitter endpoint url for dev_channel room */
-                                    [
-                                            retries: 5,
-                                            urlInfo: [
-                                                    urlOrId: 'https://webhooks.gitter.im/e/d74b592f0914132e59ba',
-                                                    urlType: 'PUBLIC'
-                                            ]
-                                    ],
-                                    /* If job specific Gitter endpoint url provided that add it to the list */
-                                    (gitterEndpointUrl) ?
-                                            [
-                                                    retries: 5,
-                                                    urlInfo: [
-                                                            urlOrId: gitterEndpointUrl,
-                                                            urlType: 'PUBLIC'
-                                                    ]
-                                            ] :
-                                            null
-                            ].findAll()
-                    ]
+                            retries: 5,
+                            urlInfo: [
+                                    urlOrId: 'https://webhooks.gitter.im/e/d74b592f0914132e59ba',
+                                    urlType: 'PUBLIC'
+                            ]
+                    ],
+                    /* If job specific Gitter endpoint url provided that add it to the list */
+                    (gitterEndpointUrl) ? [
+                            retries: 5,
+                            urlInfo: [
+                                    urlOrId: gitterEndpointUrl,
+                                    urlType: 'PUBLIC'
+                            ]
+                    ] : null
+            ].findAll()
+
+            commonJobProperties.push(
+                    [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints]
             )
 
             commonJobProperties.push(script.pipelineTriggers([script.cron('@midnight')]))
@@ -271,7 +268,7 @@ abstract class Project implements Serializable {
     protected void getReleaseParameters() {
         def userInput
 
-        script.timeout(time:1, unit:'HOURS') {
+        script.timeout(time: 1, unit: 'HOURS') {
             userInput = script.input message: 'Perform release?',
                     parameters: [
                             script.string(defaultValue: '', description: 'Release version', name: 'releaseVersion'),
@@ -291,8 +288,7 @@ abstract class Project implements Serializable {
             releaseVersion = userInput.releaseVersion
             snapshotVersion = userInput.snapshotVersion
             script.env.STAGING_REPOSITORY = userInput.stagingRepository
-        }
-        else {
+        } else {
             script.error "[ERROR] Provided staging repository ID ${script.env.STAGING_REPOSITORY} is not valid."
         }
     }
@@ -375,8 +371,7 @@ abstract class Project implements Serializable {
                         gpg --list-keys
                     # fi
                 '''.stripIndent()
-            }
-            else {
+            } else {
                 script.bat '''
                     bash -c "rm -rf ${HOME}/.gnupg/*.gpg"
                     bash -c "gpg --list-keys"
@@ -397,8 +392,7 @@ abstract class Project implements Serializable {
                 git config user.email 'jenkins@skymind.io'
                 git config user.name 'Jenkins CI (Skymind)'
             """.stripIndent()
-        }
-        else {
+        } else {
             script.bat """
                 bash -c 'git config user.email "jenkins@skymind.io"'
                 bash -c 'git config user.name "Jenkins"'
