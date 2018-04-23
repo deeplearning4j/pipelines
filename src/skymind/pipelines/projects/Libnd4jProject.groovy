@@ -4,49 +4,6 @@ class Libnd4jProject extends Project {
     private final String libnd4jTestsFilter
 
     static {
-        /* Override default platforms */
-        defaultPlatforms = [
-                [name: 'android-arm', backend: 'cpu'],
-                [name: 'android-arm64', backend: 'cpu'],
-                [name: 'android-x86', backend: 'cpu'],
-                [name: 'android-x86_64', backend: 'cpu'],
-
-                [name: 'ios-arm64', backend: 'cpu'],
-                [name: 'ios-x86_64', backend: 'cpu'],
-
-                [name: 'linux-ppc64le', backend: 'cpu'],
-                [name: 'linux-ppc64le', backend: 'cuda-8.0'],
-                [name: 'linux-ppc64le', backend: 'cuda-9.0'],
-                [name: 'linux-ppc64le', backend: 'cuda-9.1'],
-
-                [name: 'linux-x86_64', backend: 'cpu'],
-                [name: 'linux-x86_64', backend: 'cpu', cpuExtension: 'avx2'],
-                [name: 'linux-x86_64', backend: 'cpu', cpuExtension: 'avx512'],
-                [name: 'linux-x86_64', backend: 'cuda-8.0'],
-                [name: 'linux-x86_64', backend: 'cuda-9.0'],
-                [name: 'linux-x86_64', backend: 'cuda-9.1'],
-
-                [name: 'macosx-x86_64', backend: 'cpu'],
-                [name: 'macosx-x86_64', backend: 'cpu', cpuExtension: 'avx2'],
-                /*
-                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                     at the same time for CUDA - Xcode 8 required,
-                     which means that we can't enable avx512 builds at the moment
-                  */
-//                [name: 'macosx-x86_64', backend: 'cpu', cpuExtension: 'avx512'],
-                [name: 'macosx-x86_64', backend: 'cuda-8.0'],
-                [name: 'macosx-x86_64', backend: 'cuda-9.0'],
-                [name: 'macosx-x86_64', backend: 'cuda-9.1'],
-
-                [name: 'windows-x86_64', backend: 'cpu'],
-                [name: 'windows-x86_64', backend: 'cpu', cpuExtension: 'avx2'],
-                /* FIXME: avx512 */
-//                [name: 'windows-x86_64', backend: 'cpu', cpuExtension: 'avx512'],
-                [name: 'windows-x86_64', backend: 'cuda-8.0'],
-                [name: 'windows-x86_64', backend: 'cuda-9.0'],
-                [name: 'windows-x86_64', backend: 'cuda-9.1']
-        ]
-
         /* Gitter endpoint url for devlibnd4j room */
         gitterEndpointUrl = 'https://webhooks.gitter.im/e/97334c78c3f82c5ad21e'
     }

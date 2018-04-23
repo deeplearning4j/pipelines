@@ -7,8 +7,6 @@ abstract class Project implements Serializable {
     protected platforms
     protected final String branchName
     protected final String projectName
-    /* Default platforms for most of the projects */
-    protected static List defaultPlatforms = [[name: 'linux-x86_64-generic']]
     /* Default job properties */
     protected final List jobSpecificProperties = []
     protected static String gitterEndpointUrl = ''
@@ -29,7 +27,7 @@ abstract class Project implements Serializable {
         this.projectName = projectName
         branchName = this.script.env.BRANCH_NAME
         /* Default platforms will be used if developer didn't redefine them in Jenkins file */
-        platforms = jobConfig?.getAt('platforms') ?: defaultPlatforms
+        platforms = jobConfig?.getAt('platforms') ?: getDefaultPlatforms(this.projectName)
         /* Configure job build parameters */
         setBuildParameters(jobSpecificProperties)
         /* Terminate older builds */
@@ -410,5 +408,67 @@ abstract class Project implements Serializable {
                 script.echo "[WARNING] Build number ${build.number} was terminated because of current(latest) run."
             }
         }
+    }
+
+    @NonCPS
+    protected List getDefaultPlatforms(String projectName) {
+        List defaultPlatforms
+        switch (projectName) {
+            case ['libnd4j', 'nd4j']:
+                defaultPlatforms = [
+                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+
+                        [name: 'ios-arm64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.1'],
+
+                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
+
+                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        /*
+                             FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+                             at the same time for CUDA - Xcode 8 required,
+                             which means that we can't enable avx512 builds at the moment
+                          */
+//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
+
+                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        /* FIXME: avx512 */
+//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1']
+                ]
+                break
+            case 'deeplearning4j':
+                defaultPlatforms = [
+                        [name: 'linux-x86_64']
+                ]
+                break
+            default:
+                defaultPlatforms = [
+                        [name: 'linux-x86_64-generic']
+                ]
+                break
+        }
+
+        defaultPlatforms
     }
 }

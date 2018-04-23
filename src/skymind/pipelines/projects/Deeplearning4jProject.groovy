@@ -10,11 +10,6 @@ class Deeplearning4jProject extends Project {
             [sparkVersion: "2", scalaVersion: "2.11", cudaVersion: "9.1"]
     ]
 
-    static {
-        /* Override default platforms */
-        defaultPlatforms = [[name: 'linux-x86_64']]
-    }
-
     void initPipeline() {
         for (Map pltm : platforms) {
             Map platform = pltm
