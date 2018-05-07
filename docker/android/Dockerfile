@@ -79,6 +79,15 @@ RUN curl -fsSL ${PROTOBUF_DOWNLOAD_URL} \
     make -j2 && \
     make install
 
+# Install git lfs for dl4j-test-resources
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh | bash && \
+    yum -y clean all && \
+        yum -y install \
+            git-lfs \
+            && \
+        yum clean all && \
+        git lfs install
+
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
 ENV PATH /opt/sbt/bin:/opt/cmake/bin:${ANDROID_NDK_HOME}:${PROTOBUF_HOME}/bin:${PATH}

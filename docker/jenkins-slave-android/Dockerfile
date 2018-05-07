@@ -82,11 +82,18 @@ RUN source /opt/rh/devtoolset-4/enable && \
     cd .. && \
     rm -r protobuf-${PROTOBUF_PACKAGE_VERSION}
 
+# Install git lfs for dl4j-test-resources
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh | bash && \
+    yum -y clean all && \
+        yum -y install \
+            git-lfs \
+            && \
+        yum clean all && \
+        git lfs install
+
 ENV HOME /home/jenkins
 RUN groupadd jenkins -g 1000 && \
     useradd -d $HOME -u 1000 -g 1000 -m jenkins
-
-
 
 ARG JENKINS_AGENT_VERSION=3.17
 RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar \

@@ -67,6 +67,12 @@ RUN apt-get -qqy update && \
     ln -s ${CMAKE_HOME}/bin/* /usr/local/bin && \
     ln -s ${PROTOBUF_HOME}/bin/* /usr/local/bin
 
+# Install git lfs for dl4j-test-resources
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git-lfs && \
+    git lfs install && \
+    rm -r /var/lib/apt/lists/*
+
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
 ENV PATH=/usr/local/cuda-9.0/bin${PATH:+:${PATH}} \
