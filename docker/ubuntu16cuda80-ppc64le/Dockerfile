@@ -67,11 +67,18 @@ RUN apt-get -qqy update && \
     ln -s ${CMAKE_HOME}/bin/* /usr/local/bin && \
     ln -s ${PROTOBUF_HOME}/bin/* /usr/local/bin
 
+# Install go dependency for git lfs
+RUN curl -fsSL "https://dl.google.com/go/go1.10.2.linux-ppc64le.tar.gz" \
+    | tar -xzC /opt && \
+    ln -s /opt/go/bin/* /usr/local/bin
+
 # Install git lfs for dl4j-test-resources
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git-lfs && \
-    git lfs install && \
-    rm -r /var/lib/apt/lists/*
+RUN curl -fsSL "https://github.com/git-lfs/git-lfs/archive/v2.4.0.tar.gz" \
+    | tar -xzC /opt && \
+    cd /opt/git-lfs-2.4.0 && \
+    ./script/bootstrap && \
+    ln -s /opt/git-lfs-2.4.0/bin/* /usr/local/bin && \
+    git lfs install --system
 
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
