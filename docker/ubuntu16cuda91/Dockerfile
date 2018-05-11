@@ -52,13 +52,13 @@ RUN curl -fsSL ${PROTOBUF_DOWNLOAD_URL} \
     cd .. && \
     rm -r protobuf-${PROTOBUF_PACKAGE_VERSION}
 
-RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
-
 # Install git lfs for dl4j-test-resources
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git-lfs && \
-    git lfs install && \
-    rm -r /var/lib/apt/lists/*
+#RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+#    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git-lfs && \
+#    git lfs install && \
+#    rm -r /var/lib/apt/lists/*
+
+RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
 ENV PATH /opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH}
 
