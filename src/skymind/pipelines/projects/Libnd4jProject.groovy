@@ -236,6 +236,7 @@ class Libnd4jProject extends Project {
                             'clean',
                             (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
                             (releaseApproved) ? "-DperformRelease" : '',
                             (releaseApproved) ? "-P staging" : ''
@@ -250,6 +251,7 @@ class Libnd4jProject extends Project {
                             'clean',
                             (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
                             (releaseApproved) ? "-DperformRelease" : '',
                             (releaseApproved) ? "-P staging" : '',
