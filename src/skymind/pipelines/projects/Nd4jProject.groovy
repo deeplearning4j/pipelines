@@ -193,8 +193,6 @@ class Nd4jProject extends Project {
                 '\''
         String mavenExcludesForCuda = '-pl ' +
                 '\'' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native,' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform,' +
                 '!nd4j-backends/nd4j-tests' +
                 '\''
 
