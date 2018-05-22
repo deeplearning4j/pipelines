@@ -116,11 +116,11 @@ class Module implements Serializable {
             runBuildLogic()
         }
 
-//        if (!branchName.contains(releaseBranchPattern)) {
-//            script.stage('Test') {
-//                runTestLogic()
-//            }
-//        }
+        if (!branchName.contains(releaseBranchPattern)) {
+            script.stage('Test') {
+                runTestLogic()
+            }
+        }
 //        script.stage('Static code analysis') {
 //            runStaticCodeAnalysisLogic()
 //        }
@@ -142,14 +142,18 @@ class Module implements Serializable {
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
-            if (backend == 'cpu' && cpuExtension) {
+            if (backend == 'cpu') {
+                mavenArguments.push("-Dmaven.libnd4j.test.skip=true")
+
+                if (cpuExtension) {
                     mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
+                }
             }
 
             if (backend.contains('cuda')) {
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
 
-                if (branchName != 'master' && !branchName.contains(releaseBranchPattern)) {
+                if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
                 }
             }
@@ -205,21 +209,24 @@ class Module implements Serializable {
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
-            if (backend == 'cpu' && cpuExtension) {
-                mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
+            if (backend == 'cpu') {
+                if (cpuExtension) {
+                    mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
+                }
             }
 
             if (backend.contains('cuda')) {
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
 
-                if (branchName != 'master' && !branchName.contains(releaseBranchPattern)) {
+                if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
                 }
             }
         }
 
         if (modulesToBuild.any { it =~ /^nd4j/ }) {
-            mavenArguments.push('-P testresources')
+//            FIXME: temporary remove this profile for libnd4j tests
+//            mavenArguments.push('-P testresources')
             mavenArguments.push('-P native-snapshots')
             mavenArguments.push('-P uberjar')
 
@@ -259,10 +266,10 @@ class Module implements Serializable {
                 }
             }
         }
-
-        if (modulesToBuild.any { it =~ /^deeplearning4j/ }) {
-            mavenArguments.push('-P testresources')
-        }
+//            FIXME: temporary remove this profile for libnd4j tests
+//        if (modulesToBuild.any { it =~ /^deeplearning4j/ }) {
+//            mavenArguments.push('-P testresources')
+//        }
 
         mavenArguments
     }
@@ -273,14 +280,18 @@ class Module implements Serializable {
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
-            if (backend == 'cpu' && cpuExtension) {
-                mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
+            if (backend == 'cpu') {
+                mavenArguments.push("-Dmaven.libnd4j.test.skip=true")
+
+                if (cpuExtension) {
+                    mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
+                }
             }
 
             if (backend.contains('cuda')) {
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
 
-                if (branchName != 'master' && !branchName.contains(releaseBranchPattern)) {
+                if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
                 }
             }
@@ -377,7 +388,9 @@ class Module implements Serializable {
                 (modulesToBuild.any { it =~ /^arbiter|^gym-java-client|^rl4j|^scalnet|^jumpy/ }) ?
                         '-P ci-build-generic-modules' : '',
                 mavenProjects(),
-                (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
+//                FIXME: workaround to run tests for cpu backend
+//                (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
+                '-Dmaven.test.skip=true',
                 (releaseApproved) ? "-P staging" : '',
                 (releaseApproved && stageName == 'deploy') ?
                         "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
