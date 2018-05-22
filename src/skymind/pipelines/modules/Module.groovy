@@ -368,10 +368,12 @@ class Module implements Serializable {
                 (stageName == 'build') ? 'clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
-                (modulesToBuild.any { it =~ /^nd4j/ }) ?
-                        '-P ci-build-nd4j' : '',
-                (modulesToBuild.any { it =~ /^libnd4j/ }) ?
-                        '-P ci-build-libnd4j' : '',
+                (modulesToBuild.any { it =~ /^libnd4j|^nd4j/ }) ?
+                        '-P ci-build-backend-modules' : '',
+                (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) ?
+                        '-P ci-build-multiplatform-projects' : '',
+                (modulesToBuild.any { it =~ /^arbiter|^gym-java-client|^rl4j|^scalnet|^jumpy/ }) ?
+                        '-P ci-build-generic-modules' : '',
                 mavenProjects(),
                 (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
