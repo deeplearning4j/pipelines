@@ -70,13 +70,13 @@ class Module implements Serializable {
         String testCommand = getMvnCommand('test')
 
         switch (platformName) {
-            case ~/^android.*$/:
-            case ['linux-x86_64', 'linux-x86_64-generic']:
-                testCommand = """\
-                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable; fi
-                    ${testCommand}
-                """.stripIndent()
-                break
+//            case ~/^android.*$/:
+//            case ['linux-x86_64', 'linux-x86_64-generic']:
+//                testCommand = """\
+//                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable; fi
+//                    ${testCommand}
+//                """.stripIndent()
+//                break
             case ~/^ios.*$/:
             case ['macosx-x86_64']:
                 /* export CC, CXX, CPP, LD required for switching compiler from clang (default for Mac) to gcc */
@@ -208,6 +208,7 @@ class Module implements Serializable {
 
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
+            mavenArguments.push("-Dclean.skip=true")
 
             if (backend == 'cpu') {
                 if (cpuExtension) {
@@ -399,7 +400,7 @@ class Module implements Serializable {
         ]
 
         if (isUnixNode) {
-            String devtoolsetVersion = cpuExtension ? '6' : '4'
+            String devtoolsetVersion = cpuExtension ? '6' : (stageName == 'test') ? '3' : '4'
 
             mavenArguments = [
                     "if [ -f /etc/redhat-release ]; " +
