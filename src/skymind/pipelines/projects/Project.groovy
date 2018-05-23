@@ -226,7 +226,7 @@ abstract class Project implements Serializable {
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U -B',
                             'clean',
-                            'install',
+                            (branchName == 'master') ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ')
@@ -238,7 +238,7 @@ abstract class Project implements Serializable {
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             'mvn -U -B',
                             'clean',
-                            'install',
+                            (branchName == 'master') ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
