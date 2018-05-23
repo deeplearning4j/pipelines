@@ -116,11 +116,11 @@ class Module implements Serializable {
             runBuildLogic()
         }
 
-        if (!branchName.contains(releaseBranchPattern)) {
-            script.stage('Test') {
-                runTestLogic()
-            }
-        }
+//        if (!branchName.contains(releaseBranchPattern)) {
+//            script.stage('Test') {
+//                runTestLogic()
+//            }
+//        }
 //        script.stage('Static code analysis') {
 //            runStaticCodeAnalysisLogic()
 //        }
