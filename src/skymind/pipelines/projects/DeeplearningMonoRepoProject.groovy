@@ -156,20 +156,27 @@ class DeeplearningMonoRepoProject implements Serializable {
 
             if (module =~ /^libnd4j|^nd4j/) {
                 mappings.multi.modules.push(module)
-            } else if (module =~ /^deeplearning4j/) {
+            } else if (module =~ /^deeplearning4j|^datavec/) {
                 mappings.gpu.modules.push(module)
             } else {
                 mappings.generic.modules.push(module)
             }
         }
 
-        Map result = mappings.collectEntries { key, value ->
-            [(key) : [modules: value.modules.unique(), platforms: value.platforms]]
+        /* Strip mappings with empty modules list */
+        Map result = mappings.collectEntries { key, value -> value.modules ?
+                [(key) : [modules: value.modules.unique(), platforms: value.platforms]] :
+                [:]
         }
 
         if (result.containsKey('gpu') && result.containsKey('generic')) {
             result.gpu.modules += result.generic.modules
             result.remove('generic')
+        }
+
+        if (result.containsKey('multi') && result.containsKey('gpu')) {
+            result.multi.modules += result.gpu.modules
+            result.remove('gpu')
         }
 
         result.collect { key, value ->
@@ -219,7 +226,7 @@ class DeeplearningMonoRepoProject implements Serializable {
                         try {
                             if (platformName.contains('ppc64') ||
                                     platformName.contains('linux') &&
-                                    backend.contains('cuda')
+                                    backend?.contains('cuda')
                             ) {
 //                                TODO: Check local repository mapping for builds in docker
                                 /* Get docker container configuration */
@@ -266,12 +273,12 @@ class DeeplearningMonoRepoProject implements Serializable {
                         [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
                         [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.1'],
 
-                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.1'],
 
                         [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
                         [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
