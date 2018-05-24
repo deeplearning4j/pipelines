@@ -74,7 +74,7 @@ abstract class Project implements Serializable {
                     [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints]
             )
 
-            commonJobProperties.push(script.pipelineTriggers([script.cron('@midnight')]))
+//            commonJobProperties.push(script.pipelineTriggers([script.cron('@midnight')]))
         }
 
         script.properties(commonJobProperties + jobSpecificProperties)
