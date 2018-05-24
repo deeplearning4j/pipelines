@@ -386,9 +386,7 @@ class Module implements Serializable {
                         '-P ci-build-generic-modules' : '',
                 '-P \'!all\'',
                 mavenProjects(),
-//                FIXME: workaround to run tests for cpu backend
-//                (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
-                '-Dmaven.test.skip=true',
+                (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
                 (releaseApproved && stageName == 'deploy') ?
                         "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
