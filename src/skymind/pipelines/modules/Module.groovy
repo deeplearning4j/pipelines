@@ -384,6 +384,7 @@ class Module implements Serializable {
                         '-P ci-build-multiplatform-projects' : '',
                 (modulesToBuild.any { it =~ /^arbiter|^gym-java-client|^rl4j|^scalnet|^jumpy/ }) ?
                         '-P ci-build-generic-modules' : '',
+                '-P \'!all\'',
                 mavenProjects(),
 //                FIXME: workaround to run tests for cpu backend
 //                (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
