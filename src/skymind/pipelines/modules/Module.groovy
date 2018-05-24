@@ -143,8 +143,6 @@ class Module implements Serializable {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
-                mavenArguments.push("-Dmaven.libnd4j.test.skip=true")
-
                 if (cpuExtension) {
                     mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
                 }
@@ -282,8 +280,6 @@ class Module implements Serializable {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
-                mavenArguments.push("-Dmaven.libnd4j.test.skip=true")
-
                 if (cpuExtension) {
                     mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
                 }
