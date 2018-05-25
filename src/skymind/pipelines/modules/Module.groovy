@@ -24,13 +24,12 @@ class Module implements Serializable {
     Module(Map args, script) {
         this.script = script
         backend = args.containsKey('backend') ?
-                args.backend :
-                script.error('Missing backend argument!')
+                args.backend : ''
         branchName = args.containsKey('branchName') ?
                 args.branchName :
                 script.error('Missing branchName argument!')
         cpuExtension = args.containsKey('cpuExtension') ? args.cpuExtension : ''
-        cudaVersion = backend.contains('cuda') ? backend.tokenize('-')[1] : ''
+        cudaVersion = backend?.contains('cuda') ? backend.tokenize('-')[1] : ''
         isUnixNode = args.containsKey('isUnixNode') ?
                 args.isUnixNode :
                 script.error('Missing isUnixNode argument!')
@@ -52,11 +51,13 @@ class Module implements Serializable {
     }
 
     protected void runBuildLogic() {
-        if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
-            updateVersion('scala', scalaVersion)
-            updateVersion('spark', sparkVersion)
-        } else if (modulesToBuild.any { it =~ /^arbiter|^scalnet|^nd4j/ }) {
-            updateVersion('scala', scalaVersion)
+        if (platformName in ['linux-x86_64', 'linux-x86_64-generic']) {
+            if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
+                updateVersion('scala', scalaVersion)
+                updateVersion('spark', sparkVersion)
+            } else if (modulesToBuild.any { it =~ /^arbiter|^scalnet|^nd4j/ }) {
+                updateVersion('scala', scalaVersion)
+            }
         }
 
         if (cudaVersion) {
@@ -136,13 +137,21 @@ class Module implements Serializable {
         }
     }
 
-    private List getMavenBuildArguments() {
+    private List getMvnArguments(String stageName) {
         List mavenArguments = []
 
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
+            if (stageName == 'test') {
+                mavenArguments.push("-Dclean.skip=true")
+            }
+
             if (backend == 'cpu') {
+                if (stageName == 'test') {
+                    mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
+                }
+
                 if (cpuExtension) {
                     mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
                 }
@@ -150,6 +159,7 @@ class Module implements Serializable {
 
             if (backend.contains('cuda')) {
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
+                mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
 
                 if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
@@ -161,73 +171,10 @@ class Module implements Serializable {
             mavenArguments.push('-P native-snapshots')
             mavenArguments.push('-P uberjar')
 
-            if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
-                mavenArguments.push('-P libnd4j-assembly')
-            }
-
-            if (backend == 'cpu') {
-                mavenArguments.push("-Djavacpp.platform=${platformName}")
-
-                if (cpuExtension) {
-                    mavenArguments.push("-Djavacpp.extension=${cpuExtension}")
-                }
-
-                if (platformName.contains('linux') || platformName.contains('android')) {
-                    mavenArguments.push('-DprotocCommand=protoc')
-                }
-
-                if (platformName.contains('ios')) {
-                    mavenArguments.push('-Djavacpp.platform.compiler=clang++')
-                }
-
-                if (platformName == 'ios-arm64') {
-                    mavenArguments.push('-Djavacpp.platform.sysroot=' +
-                            '$(xcrun --sdk iphoneos --show-sdk-path)')
-                }
-
-                if (platformName == 'ios-x86_64') {
-                    mavenArguments.push('-Djavacpp.platform.sysroot=' +
-                            '$(xcrun --sdk iphonesimulator --show-sdk-path)')
-                }
-            }
-
-            if (backend.contains('cuda')) {
-                if (platformName.contains('linux')) {
-                    mavenArguments.push('-DprotocCommand=protoc')
-                }
-            }
-        }
-
-        mavenArguments
-    }
-
-    private List getMavenTestArguments() {
-        List mavenArguments = []
-
-        if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-            mavenArguments.push("-Dlibnd4j.platform=${platformName}")
-            mavenArguments.push("-Dclean.skip=true")
-
-            if (backend == 'cpu') {
-                if (cpuExtension) {
-                    mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
-                }
-            }
-
-            if (backend.contains('cuda')) {
-                mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
-
-                if (branchName != 'master') {
-                    mavenArguments.push("-Dlibnd4j.compute=30")
-                }
-            }
-        }
-
-        if (modulesToBuild.any { it =~ /^nd4j/ }) {
+            if (stageName == 'test') {
 //            FIXME: temporary remove this profile for libnd4j tests
 //            mavenArguments.push('-P testresources')
-            mavenArguments.push('-P native-snapshots')
-            mavenArguments.push('-P uberjar')
+            }
 
             if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
                 mavenArguments.push('-P libnd4j-assembly')
@@ -265,87 +212,27 @@ class Module implements Serializable {
                 }
             }
         }
+
+        if (stageName == 'test') {
 //            FIXME: temporary remove this profile for libnd4j tests
 //        if (modulesToBuild.any { it =~ /^deeplearning4j/ }) {
 //            mavenArguments.push('-P testresources')
 //        }
-
-        mavenArguments
-    }
-
-    private List getMavenDeployArguments() {
-        List mavenArguments = []
-
-        if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-            mavenArguments.push("-Dlibnd4j.platform=${platformName}")
-
-            if (backend == 'cpu') {
-                if (cpuExtension) {
-                    mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
-                }
-            }
-
-            if (backend.contains('cuda')) {
-                mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
-
-                if (branchName != 'master') {
-                    mavenArguments.push("-Dlibnd4j.compute=30")
-                }
-            }
-        }
-
-        if (modulesToBuild.any { it =~ /^nd4j/ }) {
-            mavenArguments.push('-P native-snapshots')
-            mavenArguments.push('-P uberjar')
-
-            if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
-                mavenArguments.push('-P libnd4j-assembly')
-            }
-
-            if (backend == 'cpu') {
-                mavenArguments.push("-Djavacpp.platform=${platformName}")
-
-                if (cpuExtension) {
-                    mavenArguments.push("-Djavacpp.extension=${cpuExtension}")
-                }
-
-                if (platformName.contains('linux') || platformName.contains('android')) {
-                    mavenArguments.push('-DprotocCommand=protoc')
-                }
-
-                if (platformName.contains('ios')) {
-                    mavenArguments.push('-Djavacpp.platform.compiler=clang++')
-                }
-
-                if (platformName == 'ios-arm64') {
-                    mavenArguments.push('-Djavacpp.platform.sysroot=' +
-                            '$(xcrun --sdk iphoneos --show-sdk-path)')
-                }
-
-                if (platformName == 'ios-x86_64') {
-                    mavenArguments.push('-Djavacpp.platform.sysroot=' +
-                            '$(xcrun --sdk iphonesimulator --show-sdk-path)')
-                }
-            }
-
-            if (backend.contains('cuda')) {
-                if (platformName.contains('linux')) {
-                    mavenArguments.push('-DprotocCommand=protoc')
-                }
-            }
         }
 
         mavenArguments
     }
 
     protected String getMvnCommand(String stageName) {
-        List mavenArguments
-        List mavenBuildArguments = getMavenBuildArguments()
-        List mavenTestArguments = getMavenTestArguments()
-        List mavenDeployArguments = getMavenDeployArguments()
+        String mavenCommand
 
         Closure mavenProjects = {
             List projects = []
+            List supportedModules = [
+                    'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
+//                'nd4s',
+                    'gym-java-client', 'rl4j', 'scalnet', 'jumpy'
+            ]
             List mavenExcludesForNd4jNative = [
                     (platformName.contains('ios')) ?
                             '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform' : '',
@@ -360,31 +247,54 @@ class Module implements Serializable {
             ]
 
             if (modulesToBuild.any { it =~ /^nd4j/ }) {
-                if (backend == 'cpu') {
-                    projects.addAll(mavenExcludesForNd4jNative)
-                }
+                if (platformName != 'linux-x86_64') {
+                    if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+                        projects.addAll(['libnd4j'])
+                    }
 
-                if (backend.contains('cuda')) {
-                    projects.addAll(mavenExcludesForNd4jCuda)
+                    if (backend == 'cpu') {
+                        projects.addAll(['nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native'])
+                    }
+
+                    if (backend.contains('cuda')) {
+                        projects.addAll(['nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
+                    }
+
+                    return '-pl \'' + (projects).findAll().join(',') + '\''
+                } else {
+                    if (backend == 'cpu') {
+                        projects.addAll(mavenExcludesForNd4jNative)
+                    }
+
+                    if (backend.contains('cuda')) {
+                        projects.addAll(mavenExcludesForNd4jCuda)
+                    }
+
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
+            } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+                if (platformName != 'linux-x86_64') {
+                    projects.addAll(['libnd4j'])
+
+                    return '-pl \'' + (projects).findAll().join(',') + '\''
+                } else {
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+                }
+            } else {
+                /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
+                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
+                        '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
             }
-
-            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
         }
 
         List commonArguments = [
-                'mvn -B -amd',
+                'mvn -B',
                 (stageName == 'build') ? '-U' : '',
                 (stageName == 'build') ? 'clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
-                (modulesToBuild.any { it =~ /^libnd4j|^nd4j/ }) ?
-                        '-P ci-build-backend-modules' : '',
-                (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) ?
-                        '-P ci-build-multiplatform-projects' : '',
-                (modulesToBuild.any { it =~ /^arbiter|^gym-java-client|^rl4j|^scalnet|^jumpy/ }) ?
-                        '-P ci-build-generic-modules' : '',
-                '-P \'!all\'',
                 mavenProjects(),
                 (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
@@ -397,7 +307,7 @@ class Module implements Serializable {
         if (isUnixNode) {
             String devtoolsetVersion = cpuExtension ? '6' : (stageName == 'test') ? '3' : '4'
 
-            mavenArguments = [
+            mavenCommand = ([
                     "if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
@@ -408,9 +318,9 @@ class Module implements Serializable {
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE}/" +
                                     "${script.pipelineEnv.localRepositoryPath}" : ''
-            ]
+            ] + getMvnArguments(stageName)).findAll().join(' ')
         } else {
-            mavenArguments = [
+            mavenCommand = ([
                     'vcvars64.bat',
                     '&&',
                     'bash -c',
@@ -421,35 +331,10 @@ class Module implements Serializable {
                             "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
                             "${script.pipelineEnv.localRepositoryPath}",
                     '-s ${MAVEN_SETTINGS}'
-            ]
+            ] + getMvnArguments(stageName)).findAll().join(' ') + '"'
         }
 
-        switch (stageName) {
-            case 'build':
-                if (isUnixNode) {
-                    return mavenArguments.plus(mavenBuildArguments).findAll().join(' ')
-                } else {
-                    return mavenArguments.plus(mavenBuildArguments).findAll().join(' ') + '"'
-                }
-                break
-            case 'test':
-                if (isUnixNode) {
-                    return mavenArguments.plus(mavenTestArguments).findAll().join(' ')
-                } else {
-                    return mavenArguments.plus(mavenTestArguments).findAll().join(' ') + '"'
-                }
-                break
-            case 'deploy':
-                if (isUnixNode) {
-                    return mavenArguments.plus(mavenDeployArguments).findAll().join(' ')
-                } else {
-                    return mavenArguments.plus(mavenDeployArguments).findAll().join(' ') + '"'
-                }
-                break
-            default:
-                throw new IllegalArgumentException('Stage is not supported yet')
-                break
-        }
+        return mavenCommand
     }
 
     protected void updateVersion(String updateTarget, String version) {
