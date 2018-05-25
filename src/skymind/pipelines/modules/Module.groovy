@@ -143,13 +143,9 @@ class Module implements Serializable {
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
-            if (stageName == 'test') {
-                mavenArguments.push("-Dclean.skip=true")
-            }
-
             if (backend == 'cpu') {
-                if (stageName == 'test') {
-                    mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
+                if (stageName in ['test', 'deploy']) {
+                    mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
 
                 if (cpuExtension) {
@@ -161,6 +157,10 @@ class Module implements Serializable {
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
                 mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
 
+                if (stageName in ['test', 'deploy']) {
+                    mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
+                }
+
                 if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
                 }
@@ -170,11 +170,6 @@ class Module implements Serializable {
         if (modulesToBuild.any { it =~ /^nd4j/ }) {
             mavenArguments.push('-P native-snapshots')
             mavenArguments.push('-P uberjar')
-
-            if (stageName == 'test') {
-//            FIXME: temporary remove this profile for libnd4j tests
-//            mavenArguments.push('-P testresources')
-            }
 
             if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
                 mavenArguments.push('-P libnd4j-assembly')
@@ -213,11 +208,11 @@ class Module implements Serializable {
             }
         }
 
-        if (stageName == 'test') {
-//            FIXME: temporary remove this profile for libnd4j tests
-//        if (modulesToBuild.any { it =~ /^deeplearning4j/ }) {
-//            mavenArguments.push('-P testresources')
-//        }
+        // FIXME: temporary remove this profile for libnd4j tests
+        if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j/ }) {
+//            if (stageName == 'test') {
+//                mavenArguments.push('-P testresources')
+//            }
         }
 
         mavenArguments
