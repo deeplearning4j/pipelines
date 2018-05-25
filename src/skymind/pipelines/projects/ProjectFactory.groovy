@@ -33,6 +33,7 @@ class ProjectFactory implements Serializable {
                 break
             case 'dl4j-test-resources':
                 new Deeplearning4jTestResourcesProject(script, projectName, jobConfig).initPipeline()
+                break
             case 'Arbiter':
                 new ArbiterProject(script, projectName, jobConfig).initPipeline()
                 break
