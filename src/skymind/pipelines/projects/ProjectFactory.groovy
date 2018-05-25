@@ -29,7 +29,7 @@ class ProjectFactory implements Serializable {
             case 'deeplearning4j-monotest':
             case 'deeplearning4j':
 //                new Deeplearning4jProject(script, projectName, jobConfig).initPipeline()
-                new DeeplearningMonoRepoProject(script, jobConfig).initPipeline()
+                new Deeplearning4jMonoRepoProject(script, jobConfig).initPipeline()
                 break
             case 'dl4j-test-resources':
                 new Deeplearning4jTestResourcesProject(script, projectName, jobConfig).initPipeline()

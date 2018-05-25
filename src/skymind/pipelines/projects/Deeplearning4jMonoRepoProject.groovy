@@ -9,7 +9,7 @@ import skymind.pipelines.modules.Module
  * Step 3: Generate reactor with the help of profiles.
  * Step 4: Pick projects to build and excludes platform dependent modules with the help of -pl maven option.
  */
-class DeeplearningMonoRepoProject implements Serializable {
+class Deeplearning4jMonoRepoProject implements Serializable {
     private script
     private final String projectName
     private final String branchName
@@ -25,7 +25,7 @@ class DeeplearningMonoRepoProject implements Serializable {
      * @param script
      * @param jobConfig configuration of job/run environment
      */
-    DeeplearningMonoRepoProject(Object script, Map jobConfig) {
+    Deeplearning4jMonoRepoProject(Object script, Map jobConfig) {
         this.script = script
         this.jobConfig = jobConfig ?: [:]
         branchName = this.script.env.BRANCH_NAME
