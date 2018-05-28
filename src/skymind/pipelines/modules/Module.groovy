@@ -50,7 +50,7 @@ class Module implements Serializable {
         sparkVersion = args.containsKey('sparkVersion') ? args.sparkVersion : ''
     }
 
-    protected void runBuildLogic() {
+    private void runBuildLogic() {
         if (platformName in ['linux-x86_64', 'linux-x86_64-generic']) {
             if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
                 updateVersion('scala', scalaVersion)
@@ -67,53 +67,33 @@ class Module implements Serializable {
         script.mvn getMvnCommand('build')
     }
 
-    protected void runTestLogic() {
-        String testCommand = getMvnCommand('test')
-
-        switch (platformName) {
-//            case ~/^android.*$/:
-//            case ['linux-x86_64', 'linux-x86_64-generic']:
-//                testCommand = """\
-//                    if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-3/enable; fi
-//                    ${testCommand}
-//                """.stripIndent()
-//                break
-            case ~/^ios.*$/:
-            case ['macosx-x86_64']:
-                /* export CC, CXX, CPP, LD required for switching compiler from clang (default for Mac) to gcc */
-                testCommand = """\
-                    export CC=\$(ls -1 /usr/local/bin/gcc-? | head -n 1)
-                    export CXX=\$(ls -1 /usr/local/bin/g++-? | head -n 1)
-                    ${testCommand}
-                """.stripIndent()
-                break
-            default:
-                break
-        }
-
-        script.mvn testCommand
+    private void runTestLogic() {
+        script.mvn getMvnCommand('test')
 
 //        TODO: Add archive test artifacts for libnd4j
         /* Archiving test results */
 //        script.junit testResults: "**/${backend}_test_results.xml", allowEmptyResults: true
     }
 
-    protected void runDeployLogic() {
+    private void runDeployLogic() {
         script.mvn getMvnCommand('deploy')
     }
 
     protected void stagesToRun() {
         script.stage('Checkout') {
+            getFancyStageDecorator('Checkout stage')
             script.checkout script.scm
         }
 
         if (branchName.contains(releaseBranchPattern)) {
             script.stage("Prepare for Release") {
+                getFancyStageDecorator('Prepare for Release stage')
                 setupEnvForRelease()
             }
         }
 
         script.stage('Build') {
+            getFancyStageDecorator('Build stage')
             runBuildLogic()
         }
 
@@ -132,6 +112,7 @@ class Module implements Serializable {
 
         if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
             script.stage('Deploy') {
+                getFancyStageDecorator('Deploy stage')
                 runDeployLogic()
             }
         }
@@ -144,6 +125,25 @@ class Module implements Serializable {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
+                // FIXME: Workaround to enable tests only for libnd4j
+                List platformExcludesForTests = [
+                        'android-arm',
+                        'android-arm64',
+                        'android-x86',
+                        'android-x86_64',
+                        'ios-arm64',
+                        'ios-x86_64'
+                ]
+
+                if (!platformExcludesForTests.contains(platformName)) {
+                    mavenArguments.push('-Dlibnd4j.test')
+                }
+
+                // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
+                if (!cpuExtension && platformName == 'linux-x86_64') {
+                    mavenArguments.push('-Dlibnd4j.test.is.release.build=false')
+                }
+
                 if (stageName in ['test', 'deploy']) {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
@@ -161,6 +161,7 @@ class Module implements Serializable {
                     mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
                 }
 
+                // Set CC to 30 to increase build speed for PR and ordinary branches
                 if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
                 }
@@ -208,17 +209,16 @@ class Module implements Serializable {
             }
         }
 
-        // FIXME: temporary remove this profile for libnd4j tests
         if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j/ }) {
-//            if (stageName == 'test') {
-//                mavenArguments.push('-P testresources')
-//            }
+            if (stageName == 'test') {
+                mavenArguments.push('-P testresources')
+            }
         }
 
         mavenArguments
     }
 
-    protected String getMvnCommand(String stageName) {
+    private String getMvnCommand(String stageName) {
         String mavenCommand
 
         Closure mavenProjects = {
@@ -242,7 +242,7 @@ class Module implements Serializable {
             ]
 
             if (modulesToBuild.any { it =~ /^nd4j/ }) {
-                if (platformName != 'linux-x86_64') {
+                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
                     if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                         projects.addAll(['libnd4j'])
                     }
@@ -264,17 +264,18 @@ class Module implements Serializable {
                     if (backend.contains('cuda')) {
                         projects.addAll(mavenExcludesForNd4jCuda)
                     }
-
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                    /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
                             '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-                if (platformName != 'linux-x86_64') {
+                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
                     projects.addAll(['libnd4j'])
 
                     return '-pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                    /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
                             '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
             } else {
@@ -300,7 +301,7 @@ class Module implements Serializable {
         ]
 
         if (isUnixNode) {
-            String devtoolsetVersion = cpuExtension ? '6' : (stageName == 'test') ? '3' : '4'
+            String devtoolsetVersion = cpuExtension ? '6' : '4'
 
             mavenCommand = ([
                     "if [ -f /etc/redhat-release ]; " +
@@ -332,7 +333,7 @@ class Module implements Serializable {
         return mavenCommand
     }
 
-    protected void updateVersion(String updateTarget, String version) {
+    private void updateVersion(String updateTarget, String version) {
         if (isUnixNode) {
             script.sh "bash ./change-${updateTarget.toLowerCase()}-versions.sh ${version}"
         } else {
@@ -341,7 +342,7 @@ class Module implements Serializable {
         }
     }
 
-    protected void setupEnvForRelease() {
+    private void setupEnvForRelease() {
         if (releaseApproved) {
             populateGpgKeys()
             updateGitCredentials()
@@ -351,7 +352,7 @@ class Module implements Serializable {
         }
     }
 
-    protected void populateGpgKeys() {
+    private void populateGpgKeys() {
         script.withCredentials([
                 script.file(credentialsId: 'gpg-pub-key-jenkins', variable: 'GPG_PUBRING'),
                 script.file(credentialsId: 'gpg-private-key-jenkins', variable: 'GPG_SECRING'),
@@ -386,7 +387,7 @@ class Module implements Serializable {
         }
     }
 
-    protected void updateGitCredentials() {
+    private void updateGitCredentials() {
         if (isUnixNode) {
             script.sh """
                 git config user.email 'jenkins@skymind.io'
@@ -398,5 +399,11 @@ class Module implements Serializable {
                 bash -c 'git config user.name "Jenkins"'
             """.stripIndent()
         }
+    }
+
+    private void getFancyStageDecorator(String text) {
+        int charsNumber = Math.round((78-text.length())/2)
+
+        script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
 }
