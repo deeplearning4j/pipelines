@@ -125,7 +125,6 @@ class Module implements Serializable {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
-                // FIXME: Workaround to enable tests only for libnd4j
                 List platformExcludesForTests = [
                         'android-arm',
                         'android-arm64',
@@ -135,8 +134,13 @@ class Module implements Serializable {
                         'ios-x86_64'
                 ]
 
+                // FIXME: Workaround to enable tests only for supported by current infra platforms
                 if (!platformExcludesForTests.contains(platformName)) {
-                    mavenArguments.push('-Dlibnd4j.test')
+                    // FIXME: Skipping tests for release branches to reduce the build time
+                    if (!branchName.contains(releaseBranchPattern)) {
+                        mavenArguments.push('-Dlibnd4j.test.skip=false')
+                        mavenArguments.push('-Dlibnd4j.tests.phase=process-resources')
+                    }
                 }
 
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
