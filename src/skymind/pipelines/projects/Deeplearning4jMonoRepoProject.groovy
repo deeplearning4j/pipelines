@@ -257,64 +257,71 @@ class Deeplearning4jMonoRepoProject implements Serializable {
     protected List getPlatforms(String module = '') {
         List platforms
 
-        switch (module) {
-            case ['libnd4j', 'nd4j']:
-                platforms = [
-                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+        // Set linux platform for fast tests pipeline
+        if (!branchName =~ 'master|release|PR-\\d+|deeplearning4j-\\d+.\\d+.\\d+.*') {
+            platforms = [
+                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu']
+            ]
+        } else {
+            switch (module) {
+                case ['libnd4j', 'nd4j']:
+                    platforms = [
+                            [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
+                            [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
+                            [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
+                            [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
-                        [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+                            [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
+                            [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
-                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.1'],
+                            [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
+                            [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                            [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                            [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.1'],
 
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.1'],
+                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
+                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.1'],
 
-                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        /*
+                            [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                            /*
                              FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
                              at the same time for CUDA - Xcode 8 required,
                              which means that we can't enable avx512 builds at the moment
                           */
 //                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
+                            [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
 
-                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        /* FIXME: avx512 */
+                            [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                            /* FIXME: avx512 */
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1']
-                ]
-                break
-            case 'deeplearning4j':
-                platforms = [
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.1']
-                ]
-                break
-            default:
-                platforms = [
-                        [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.10'],
-                        [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.11'],
-                        [name: 'linux-x86_64-generic', sparkVersion: '2', scalaVersion: '2.11']
-                ]
-                break
+                            [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1']
+                    ]
+                    break
+                case 'deeplearning4j':
+                    platforms = [
+                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.1']
+                    ]
+                    break
+                default:
+                    platforms = [
+                            [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.10'],
+                            [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.11'],
+                            [name: 'linux-x86_64-generic', sparkVersion: '2', scalaVersion: '2.11']
+                    ]
+                    break
+            }
         }
 
         platforms
