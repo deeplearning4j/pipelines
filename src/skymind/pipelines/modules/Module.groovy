@@ -14,6 +14,9 @@ class Module implements Serializable {
     private String releaseVersion
     private String scalaVersion
     private String sparkVersion
+    private String streamName
+    /* FIXME: Workaround to build and test libnd4j in Debug mode  */
+    private String libnd4jBuildMode = 'release'
 
     /**
      * Module class constructor
@@ -48,6 +51,7 @@ class Module implements Serializable {
                 script.error('Missing releaseVersion argument!')
         scalaVersion = args.containsKey('scalaVersion') ? args.scalaVersion : ''
         sparkVersion = args.containsKey('sparkVersion') ? args.sparkVersion : ''
+        streamName = args.containsKey('streamName') ? args.streamName : ''
     }
 
     private void runBuildLogic() {
@@ -69,10 +73,6 @@ class Module implements Serializable {
 
     private void runTestLogic() {
         script.mvn getMvnCommand('test')
-
-//        TODO: Add archive test artifacts for libnd4j
-        /* Archiving test results */
-//        script.junit testResults: "**/${backend}_test_results.xml", allowEmptyResults: true
     }
 
     private void runDeployLogic() {
@@ -92,16 +92,51 @@ class Module implements Serializable {
             }
         }
 
-        script.stage('Build') {
-            getFancyStageDecorator('Build stage')
-            runBuildLogic()
+        /*
+            FIXME: Workaround to switch stages order for linux-x86_64-cpu platform,
+            to be able to test libnd4j artifacts in debug build mode, and eventually deploy final
+            artifacts that were build in release mode.
+         */
+        if (streamName != 'linux-x86_64-cpu') {
+            script.stage('Build') {
+                getFancyStageDecorator('Build stage')
+                runBuildLogic()
+            }
         }
 
-//        if (!branchName.contains(releaseBranchPattern)) {
+        if (branchName != 'master' || !branchName.contains(releaseBranchPattern)) {
+            if (streamName == 'linux-x86_64-cpu') {
+                script.stage('Test libnd4j in debug mode') {
+                    libnd4jBuildMode = 'debug'
+                    getFancyStageDecorator('Test libnd4j in debug mode stage')
+                    runTestLogic()
+                }
+
+                script.stage('Test') {
+                    libnd4jBuildMode = 'release'
+                    getFancyStageDecorator('Test stage')
+                    runTestLogic()
+                }
+            } else {
+                script.stage('Test') {
+                    getFancyStageDecorator('Test stage')
+                    runTestLogic()
+                }
+            }
 //            script.stage('Test') {
+//                getFancyStageDecorator('Test stage')
 //                runTestLogic()
 //            }
-//        }
+        }
+
+        // FIXME: Second part of workaround
+        if (streamName == 'linux-x86_64-cpu') {
+            script.stage('Build') {
+                getFancyStageDecorator('Build stage')
+                runBuildLogic()
+            }
+        }
+
 //        script.stage('Static code analysis') {
 //            runStaticCodeAnalysisLogic()
 //        }
@@ -120,34 +155,37 @@ class Module implements Serializable {
 
     private List getMvnArguments(String stageName) {
         List mavenArguments = []
+        List platformExcludesForCpuTests = [
+                'android-arm',
+                'android-arm64',
+                'android-x86',
+                'android-x86_64',
+                'ios-arm64',
+                'ios-x86_64'
+        ]
+        List platformExcludesForCudaTests = [
+                'macosx-x86_64',
+                'linux-ppc64le',
+                'linux-x86_64',
+                'windows-x86_64'
+        ]
 
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
-                List platformExcludesForTests = [
-                        'android-arm',
-                        'android-arm64',
-                        'android-x86',
-                        'android-x86_64',
-                        'ios-arm64',
-                        'ios-x86_64'
-                ]
-
-                // FIXME: Workaround to enable tests only for supported by current infra platforms
-                if (!platformExcludesForTests.contains(platformName) && stageName != 'deploy') {
-                    // FIXME: Skipping tests for release branches to reduce the build time
-                    if (!branchName.contains(releaseBranchPattern)) {
-                        mavenArguments.push('-Dlibnd4j.test.skip=false')
-                        mavenArguments.push('-Dlibnd4j.tests.phase=process-resources')
-                    }
+                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
+                if (platformExcludesForCpuTests.contains(platformName) && stageName == 'test') {
+                        mavenArguments.push('-Dmaven.test.skip=true')
                 }
 
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
-                if (!cpuExtension && platformName == 'linux-x86_64' && stageName != 'deploy') {
+//                if (!cpuExtension && platformName == 'linux-x86_64' && stageName != 'deploy') {
+                if (libnd4jBuildMode == 'debug') {
                     mavenArguments.push('-Dlibnd4j.test.is.release.build=false')
                 }
 
+                // Workaround to skip compilation libnd4j for CPU during test and deploy stages
                 if (stageName in ['test', 'deploy']) {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
@@ -164,6 +202,12 @@ class Module implements Serializable {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
 
+                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
+                if (platformExcludesForCudaTests.contains(platformName) && stageName == 'test') {
+                    mavenArguments.push('-Dmaven.test.skip=true')
+                }
+
+                // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
                 if (stageName in ['test', 'deploy']) {
                     mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
                 }
@@ -172,6 +216,9 @@ class Module implements Serializable {
                 if (branchName != 'master') {
                     mavenArguments.push("-Dlibnd4j.compute=30")
                 }
+
+                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
+                mavenArguments.push('-Dlibnd4j.test.skip=true')
             }
         }
 
@@ -185,6 +232,17 @@ class Module implements Serializable {
             }
 
             if (backend == 'cpu') {
+                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
+                if (stageName == 'test') {
+                    if (platformExcludesForCpuTests.contains(platformName) ||
+                            (platformName == 'linux-x86_64' && cpuExtension == 'avx512')
+                    ) {
+                        mavenArguments.push('-Dmaven.test.skip=true')
+                    } else {
+                        mavenArguments.push('-P test-nd4j-native')
+                    }
+                }
+
                 if (cpuExtension) {
                     mavenArguments.push("-Djavacpp.extension=${cpuExtension}")
                 }
@@ -206,12 +264,36 @@ class Module implements Serializable {
                     mavenArguments.push('-Djavacpp.platform.sysroot=' +
                             '$(xcrun --sdk iphonesimulator --show-sdk-path)')
                 }
+
+                /*
+                    FIXME: Workaround for maven-surefire-plugin,
+                    to fix macOS number of threads limitation during Nd4j tests for CPU
+                    Otherwise, getting following exception:
+                        java.lang.OutOfMemoryError: unable to create new native thread
+                 */
+                if (platformName == 'macosx-x86_64' && backend == 'cpu' && stageName == 'test') {
+                    mavenArguments.push('-DreuseForks=false')
+                }
             }
 
             if (backend.contains('cuda')) {
                 if (platformName.contains('linux')) {
                     mavenArguments.push('-DprotocCommand=protoc')
                 }
+
+                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
+                if (stageName == 'test') {
+                    if (platformExcludesForCudaTests.contains(platformName)) {
+                        mavenArguments.push('-Dmaven.test.skip=true')
+                    } else {
+                        mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
+                    }
+                }
+            }
+
+            // FIXME: Workaround to run libnd4j, nd4j tests only
+            if (stageName == 'test') {
+                mavenArguments.push('-P ci-test')
             }
         }
 
@@ -220,7 +302,7 @@ class Module implements Serializable {
                 mavenArguments.push('-P testresources')
             }
 
-            if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
+            if (!modulesToBuild.any { it =~ /^libnd4j|^nd4j/ }) {
                 mavenArguments.push('-P libnd4j-assembly')
             }
         }
@@ -261,7 +343,7 @@ class Module implements Serializable {
             ]
 
             if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
-                if (platformName == 'linux-x86_64' && backend == 'cpu' && !cpuExtension) {
+                if (platformName == 'linux-x86_64' && backend == 'cpu' && !cpuExtension && libnd4jBuildMode == 'release') {
                     projects.addAll(mavenExcludesForDeeplearning4jNative)
                 }
             }
@@ -273,19 +355,25 @@ class Module implements Serializable {
                     }
 
                     if (backend == 'cpu') {
-                        projects.addAll(['nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native'])
+                        // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
+                        projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native'])
                     }
 
                     if (backend.contains('cuda')) {
-                        projects.addAll(['nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
+                        // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
+                        projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
                     }
 
                     return '-am -pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-                    /* FIXME: Looks like with lates changes above (first if) current if statement will never be triggered. */
                     if (backend == 'cpu') {
                         if (!modulesToBuild.any { mavenExcludesForNd4jNative.contains(it) }) {
-                            projects.addAll(mavenExcludesForNd4jNative)
+                            if (libnd4jBuildMode == 'release') {
+                                projects.addAll(mavenExcludesForNd4jNative)
+                                projects.addAll(mavenExcludesForDeeplearning4jNative)
+                            } else {
+                                projects.addAll(['libnd4j'])
+                            }
                         }
                     }
 
@@ -295,18 +383,15 @@ class Module implements Serializable {
                             projects.addAll(mavenExcludesForNd4jCuda)
                         }
                     }
-//                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
-//                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+
                     return '-pl \'' + (projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
                     projects.addAll(['libnd4j'])
 
-                    return '-am -pl \'' + (projects).findAll().join(',') + '\''
+                    return '-pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-//                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
-//                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                     return ''
                 }
             } else {
@@ -316,9 +401,9 @@ class Module implements Serializable {
         }
 
         List commonArguments = [
-                'mvn -B',
-                (stageName == 'build') ? '-U' : '',
-                (stageName == 'build') ? 'clean install' :
+                // FIXME: -B -V -e not picked by Windows from withMaven pipeline step
+                'mvn -B -V -e',
+                (stageName == 'build') ? '-U clean package' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
                 mavenProjects(),
@@ -331,7 +416,6 @@ class Module implements Serializable {
         ]
 
         if (isUnixNode) {
-//            String devtoolsetVersion = cpuExtension ? '6' : '4'
             String devtoolsetVersion = backend.contains('cuda') ? '4' : '7'
 
             mavenCommand = ([
@@ -436,5 +520,25 @@ class Module implements Serializable {
         int charsNumber = Math.round((78-text.length())/2)
 
         script.echo("*" * charsNumber + text + "*" * charsNumber)
+    }
+
+    private void parseTestResults(String testStageOutput) {
+//        def testStageOutput = script.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+
+//        if (testStageOutput != null) {
+//            def total = testStageOutput.totalCount
+//            def failed = testStageOutput.failCount
+//            def skipped = testStageOutput.skipCount
+//            def passed = total - failed - skipped
+//
+//            script.echo "Test Status:\n  Passed: ${passed}, Failed: ${failed} ${testStageOutput.failureDiffString}, Skipped: ${skipped}"
+//        }
+        for (l in testStageOutput.tokenize('\n')) {
+            String line = l
+
+            if (line.contains('Tests run:')) {
+                script.echo "Test results: ${line}"
+            }
+        }
     }
 }

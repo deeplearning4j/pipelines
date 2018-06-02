@@ -251,7 +251,8 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             releaseBranchPattern: releaseBranchPattern,
                             releaseVersion      : releaseVersion,
                             scalaVersion        : scalaVersion,
-                            sparkVersion        : sparkVersion
+                            sparkVersion        : sparkVersion,
+                            streamName          : streamName
                     ], script)
 
                     /* Redefine default workspace to fix Windows path length limitation */
@@ -326,7 +327,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                              FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
                              at the same time for CUDA - Xcode 8 required,
                              which means that we can't enable avx512 builds at the moment
-                          */
+                            */
 //                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
                             [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
@@ -377,19 +378,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
         ]
 
         if (script.env.JOB_BASE_NAME == 'master') {
-            List notificationEndpoints = [
-                    /* Gitter endpoint url for dev_channel room */
-                    [
-                            retries: 5,
-                            urlInfo: [
-                                    urlOrId: 'https://webhooks.gitter.im/e/d74b592f0914132e59ba',
-                                    urlType: 'PUBLIC'
-                            ]
-                    ],
-            ].findAll()
-
             commonJobProperties.addAll([
-//                    [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints],
                     script.pipelineTriggers([script.cron('@midnight')])
             ])
         }
