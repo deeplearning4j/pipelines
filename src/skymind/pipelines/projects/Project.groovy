@@ -227,7 +227,7 @@ abstract class Project implements Serializable {
                             'mvn -U -B',
                             'clean',
                             (branchName == 'master') ? 'deploy' : 'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            "-Dlocal.software.repository=ci-nexus",
                             (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
@@ -239,7 +239,7 @@ abstract class Project implements Serializable {
                             'mvn -U -B',
                             'clean',
                             (branchName == 'master') ? 'deploy' : 'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            "-Dlocal.software.repository=ci-nexus",
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
