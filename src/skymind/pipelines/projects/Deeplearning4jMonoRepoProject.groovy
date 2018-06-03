@@ -199,19 +199,22 @@ class Deeplearning4jMonoRepoProject implements Serializable {
             /* Create stream body */
             streams["$streamName"] = {
                 script.node(streamName) {
-                    Boolean isUnix = script.isUnix()
-                    String separator = isUnix ? '/' : '\\'
-                    String wsFolderName = 'workspace' +
+                    Boolean isUnixNode = script.isUnix()
+                    String separator = isUnixNode ? '/' : '\\'
+                    /* Workaround for Windows path length limitation */
+                    String wsFolderName = ((isUnixNode) ? 'workspace' : 'ws') +
                             separator +
-                            [projectName,
+                            [(isUnixNode) ?
+                                     projectName :
+                                     (projectName.contains('deeplearning4j') ? 'dl4j' : projectName),
                              script.env.BRANCH_NAME,
-                             streamName].join('_').replaceAll('/', '_')
+                             streamName].join('-').replaceAll('/', '-')
                     /* Get logic for the run, depending on changes */
                     Module module = new Module([
                             backend             : backend,
                             branchName          : branchName,
                             cpuExtension        : cpuExtension,
-                            isUnixNode          : isUnix,
+                            isUnixNode          : isUnixNode,
                             modulesToBuild      : modulesToBuild,
                             platformName        : platformName,
                             releaseApproved     : releaseApproved,
