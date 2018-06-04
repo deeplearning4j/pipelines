@@ -259,12 +259,18 @@ class Module implements Serializable {
 
                     return '-pl \'' + (projects).findAll().join(',') + '\''
                 } else {
+                    /* FIXME: Looks like with lates changes above (first if) current if statement will never be triggered. */
                     if (backend == 'cpu') {
-                        projects.addAll(mavenExcludesForNd4jNative)
+                        if (!modulesToBuild.any { mavenExcludesForNd4jNative.contains(it) }) {
+                            projects.addAll(mavenExcludesForNd4jNative)
+                        }
                     }
 
                     if (backend.contains('cuda')) {
-                        projects.addAll(mavenExcludesForNd4jCuda)
+                        /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
+                        if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) }) {
+                            projects.addAll(mavenExcludesForNd4jCuda)
+                        }
                     }
                     /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
                     return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
