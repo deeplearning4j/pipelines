@@ -361,7 +361,10 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints]
             )
 
-            commonJobProperties.push(script.pipelineTriggers([script.cron('@midnight')]))
+            commonJobProperties.addAll([
+                    script.overrideIndexTriggers(true),
+                    script.pipelineTriggers([script.cron('@midnight')])
+            ])
         }
 
         script.properties(commonJobProperties)
