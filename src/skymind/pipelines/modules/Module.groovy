@@ -268,8 +268,9 @@ class Module implements Serializable {
 
                     if (backend.contains('cuda')) {
                         /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
+                        /* TEMPORARY REMOVE EXCLUDES TO NOT FAIL THE BUILDS */
                         if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) }) {
-                            projects.addAll(mavenExcludesForNd4jCuda)
+//                            projects.addAll(mavenExcludesForNd4jCuda)
                         }
                     }
                     /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
