@@ -76,6 +76,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
+            script.archiveArtifacts allowEmptyArchive: true, artifacts: '*.log'
             new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
         }
     }
