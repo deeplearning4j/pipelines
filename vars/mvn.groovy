@@ -7,7 +7,7 @@ def call(String command) {
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
             maven: 'maven-3.3.9',
-            mavenOpts: "-XX:ErrorFile=${env.WORKSPACE}/hs_err_pid%p.log",
+//            mavenOpts: "-XX:ErrorFile=${env.WORKSPACE}/hs_err_pid%p.log",
             options: [
                     artifactsPublisher(disabled: true),
                     junitPublisher(disabled: false),

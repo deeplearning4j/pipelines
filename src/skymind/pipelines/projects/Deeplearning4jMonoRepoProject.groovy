@@ -76,7 +76,6 @@ class Deeplearning4jMonoRepoProject implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
-            script.archiveArtifacts allowEmptyArchive: true, artifacts: '*.log'
             new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
         }
     }
@@ -248,6 +247,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             }
                         }
                         finally {
+                            script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
                             script.cleanWs deleteDirs: true
                         }
                     }
