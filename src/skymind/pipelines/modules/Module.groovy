@@ -159,7 +159,10 @@ class Module implements Serializable {
 
             if (backend.contains('cuda')) {
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
-                mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
+
+                if (platformName != 'linux-x86_64') {
+                    mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
+                }
 
                 if (stageName in ['test', 'deploy']) {
                     mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
@@ -244,7 +247,7 @@ class Module implements Serializable {
             ]
 
             if (modulesToBuild.any { it =~ /^nd4j/ }) {
-                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
+                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
                     if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                         projects.addAll(['libnd4j'])
                     }
@@ -274,7 +277,8 @@ class Module implements Serializable {
                     }
                     /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
                     return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
-                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+//                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+                            '-pl \'' + (projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
