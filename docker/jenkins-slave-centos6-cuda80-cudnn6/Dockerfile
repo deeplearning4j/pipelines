@@ -12,6 +12,8 @@ RUN yum -y clean all && \
             devtoolset-4-libasan-devel \
             devtoolset-6-toolchain \
             devtoolset-6-libasan-devel \
+            devtoolset-7-toolchain \
+            devtoolset-7-libasan-devel \
             tar \
             wget \
             curl \
