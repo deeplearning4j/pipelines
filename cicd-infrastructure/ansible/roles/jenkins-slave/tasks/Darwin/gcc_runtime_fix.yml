@@ -1,0 +1,16 @@
+---
+- name: Darwin | Check if fix for gcc runtime libraries already applied
+  command: "otool -L /usr/local/lib/gcc/5/{{ item }}"
+  register: gcc_fix_applied
+  changed_when: gcc_fix_applied.stdout.find('@rpath/' + item) == -1
+  with_items: "{{ gcc_runtime_libs_add }}"
+
+- name: Darwin | Fix for gcc runtime libraries (add support of C++ exceptions)
+  block:
+    - command: "install_name_tool -add_rpath /usr/local/lib/gcc/5/ -add_rpath @loader_path/. -id @rpath/{{ item }} /usr/local/lib/gcc/5/{{ item }}"
+      when: (gcc_fix_applied.results | selectattr('item', 'equalto', item) | map(attribute='changed') | join('')) == 'True'
+      with_items: "{{ gcc_runtime_libs_add }}"
+
+    - command: "install_name_tool -change /usr/local/lib/gcc/5/{{ item }} @rpath/{{ item }} /usr/local/lib/gcc/5/{{ item }}"
+      with_items: "{{ gcc_runtime_libs_change }}"
+      when: (gcc_fix_applied.results | selectattr('item', 'equalto', item) | map(attribute='changed') | join('')) == 'True'

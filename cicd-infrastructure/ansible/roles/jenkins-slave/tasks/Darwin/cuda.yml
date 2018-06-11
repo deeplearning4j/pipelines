@@ -1,0 +1,47 @@
+---
+- name: Darwin | Check if CUDA is already installed
+  stat:
+    path: "/Developer/NVIDIA/CUDA-{{ cuda_version }}/bin/"
+  register: cuda_folder
+
+- name: Darwin | Download CUDA binaries
+  get_url:
+    url: "{{ cuda_base_url }}/{{ cuda_version }}/{{ cuda_url_prefix }}/{{ cuda_binary_name }}"
+    checksum: "md5:{{ cuda_binary_md5 }}"
+    dest: "{{ ansible_download_path }}/{{ cuda_binary_name }}.dmg"
+    owner: "{{ ansible_user }}"
+    group: "staff"
+    mode: 0644
+  when: cuda_folder.stat.exists == False
+
+- name: Darwin | Mount CUDA installation image
+  command: "hdiutil attach -mountpoint {{ cuda_binary_mount_point }} {{ cuda_binary_name }}.dmg"
+  args:
+    chdir: "{{ ansible_download_path }}"
+  when: cuda_folder.stat.exists == False
+
+- name: Darwin | Install CUDA
+  command: "{{ cuda_binary_mount_point }}/{{ cuda_installer_path }} {{ cuda_installer_options }}"
+  args:
+    chdir: "{{ ansible_download_path }}"
+  when: cuda_folder.stat.exists == False
+
+- name: Darwin | Unmount CUDA installation image
+  command: "hdiutil detach {{ cuda_binary_mount_point }}"
+  when: cuda_folder.stat.exists == False
+
+- name: Darwin | Update PATH environment variable with path to CUDA binaries
+  set_fact:
+    path_environment_variable_value: "{{ path_environment_variable_value }} + [ '/Developer/NVIDIA/CUDA-{{ cuda_version }}/bin' ]"
+
+- name: Darwin | Create final value for PATH environment variable
+  set_fact:
+    jenkins_slave_user_path_environment_variable_value: "export PATH=\"{{ path_environment_variable_value | reverse | join(':') }}\""
+
+- name: Darwin | Update DYLD_LIBRARY_PATH environment variable with path to CUDA libs
+  set_fact:
+    dyld_library_path_environment_variable_value: "{{ dyld_library_path_environment_variable_value }} + [ '/Developer/NVIDIA/CUDA-{{ cuda_version }}/lib' ]"
+
+- name: Darwin | Create final value for DYLD_LIBRARY_PATH environment variable
+  set_fact:
+    jenkins_slave_user_dyld_library_path_environment_variable_value: "export DYLD_LIBRARY_PATH=\"{{ dyld_library_path_environment_variable_value | reverse | join(':') }}\""

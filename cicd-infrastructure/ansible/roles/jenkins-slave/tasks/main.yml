@@ -1,0 +1,162 @@
+---
+# tasks file for jenkins-slave
+
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version | int }}.yml"
+    - "../vars/{{ ansible_distribution }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../vars/main.yml"
+
+- name: Set authorized key for ansible user copying it from current user
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+  tags:
+    - jenkins-slave
+
+- name: Create folder for installation binaries
+  file:
+    path: "{{ ansible_download_path }}"
+    mode: 0755
+    state: directory
+  tags:
+    - jenkins-slave
+
+- name: Create Jenkins slave workspace folder
+  file:
+    path: "{{ jenkins_slave_workspace_folder_path }}"
+    owner: "{{ jenkins_user_name }}"
+    group: "{{ jenkins_user_group }}"
+    mode: 0755
+    state: directory
+  when: jenkins_slave_connection_type == 'jnlp'
+  tags:
+    - jenkins-slave
+
+- name: Create Jenkins slave root folder
+  file:
+    path: "{{ jenkins_slave_root_folder_path }}"
+    owner: "{{ jenkins_user_name }}"
+    group: "{{ jenkins_user_group }}"
+    mode: 0755
+    state: directory
+  tags:
+    - jenkins-slave
+
+- name: Create Jenkins slave logs folder
+  file:
+    path: "{{ jenkins_slave_logs_folder_path }}"
+    owner: "{{ jenkins_user_name }}"
+    group: "{{ jenkins_user_group }}"
+    mode: 0755
+    state: directory
+  when: jenkins_slave_connection_type == 'jnlp'
+  tags:
+    - jenkins-slave
+
+- name: Create Jenkins slave tmp folder
+  file:
+    path: "{{ jenkins_slave_tmp_folder_path }}"
+    owner: "{{ jenkins_user_name }}"
+    group: "{{ jenkins_user_group }}"
+    mode: 0755
+    state: directory
+  when: jenkins_slave_connection_type == 'jnlp'
+  tags:
+    - jenkins-slave
+
+- name: Create Jenkins slave remoting folder
+  file:
+    path: "{{ jenkins_slave_remoting_folder_path }}"
+    owner: "{{ jenkins_user_name }}"
+    group: "{{ jenkins_user_group }}"
+    mode: 0755
+    state: directory
+  tags:
+    - jenkins-slave
+
+- name: Download Jenkins slave binary
+  get_url:
+    url: "{{ jenkins_slave_jar_url | join('') }}"
+    dest: "{{ jenkins_slave_root_folder_path }}/{{ jenkins_slave_binary_name }}"
+    owner: "{{ jenkins_user_name }}"
+    group: "{{ jenkins_user_group }}"
+    mode: 0644
+  when: jenkins_slave_connection_type == 'jnlp'
+  tags:
+    - jenkins-slave
+
+- name: Get Jenkins user ssh private key
+  slurp:
+    src: "{{ jenkins_user_home + '/.ssh/id_rsa' }}"
+  register: jenkins_user_private_key
+  when: jenkins_slave_connection_type == 'ssh'
+  tags:
+    - jenkins-slave
+
+- name: Get Jenkins slave ssh host key
+  slurp:
+    src: "/etc/ssh/ssh_host_rsa_key.pub"
+  register: jenkins_slave_ssh_host_key
+  when: jenkins_slave_connection_type == 'ssh'
+  tags:
+    - jenkins-slave
+
+- name: Include Ubuntu jenkins-slave role tasks
+  include_tasks: Ubuntu.yml
+  when: ansible_os_family == 'Ubuntu'
+  tags:
+    - jenkins-slave
+
+- name: Include Darwin jenkins-slave role tasks
+  include_tasks: Darwin.yml
+  when: ansible_os_family == 'Darwin'
+  tags:
+    - jenkins-slave
+
+- name: Darwin | Update environment files
+  lineinfile:
+    dest: "/Users/{{ item.0.owner }}/{{ item.1 }}"
+    state: present
+    line: "{{ item.2 }}"
+    create: yes
+    group: "{{ item.0.group }}"
+    owner: "{{ item.0.owner }}"
+    mode: 0644
+  with_nested: "{{ jenkins_slave_environment_files }}"
+  tags:
+    - jenkins-slave
+
+- name: Get Jenkins crumb for API requests
+  uri:
+    url: "{{ jenkins_master_crumb_url }}"
+    method: GET
+    user: "{{ jenkins_master_api_user_name }}"
+    # Token can be fetched from Jenkins UI at user configuration page
+    password: "{{ jenkins_master_api_user_token }}"
+    headers:
+      Content-Type: "application/json"
+    return_content: yes
+    force_basic_auth: yes
+  register: jenkins_master_crumb_token
+  tags:
+    - jenkins-slave
+
+- name: Create slave record on Jenkins
+  uri:
+    url: "{{ jenkins_master_script_text_url | join('') }}"
+    method: POST
+    user: "{{ jenkins_master_api_user_name }}"
+    password: "{{ jenkins_master_api_user_token }}"
+    force_basic_auth: yes
+    body: "script={{ lookup('template', 'jenkins-slave/create_slave_node_record_on_jenkins.groovy.j2') | urlencode }}"
+    headers:
+      Content-Type: "application/x-www-form-urlencoded"
+      # FIXME: add logic to not fail the task if crumb variable is empty
+      Jenkins-Crumb: "{{ jenkins_master_crumb_token.json.crumb }}"
+    return_content: yes
+  register: jenkins_slave_jnlp_secret
+  tags:
+    - jenkins-slave

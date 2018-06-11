@@ -1,0 +1,51 @@
+---
+- name: Darwin | Check if Xcode is already installed
+  stat:
+    path: "/Applications/Xcode{{ xcode_version }}.app/Contents/Developer/"
+  register: xcode_folder
+
+- name: Darwin | Copy Xcode installation binaries
+  copy:
+    src: "{{ xcode_binary_local_path }}/{{ xcode_binary_name }}.{{ xcode_binary_extension }}"
+    dest: "{{ ansible_download_path }}"
+    owner: "{{ ansible_user }}"
+    group: "staff"
+    mode: 0755
+  when: xcode_folder.stat.exists == False
+
+- name: Darwin | Check that the xcode archive is valid
+  shell: "pkgutil --check-signature {{ ansible_download_path }}/{{ xcode_binary_name }}.{{ xcode_binary_extension }} | grep 'Status: signed Apple Software'"
+  args:
+    executable: /bin/bash
+  when: xcode_folder.stat.exists == False
+
+- name: Darwin | Install Xcode
+  shell: "open -FWga \"Archive Utility\" --args {{ ansible_download_path }}/{{ xcode_binary_name }}.{{ xcode_binary_extension }}"
+  args:
+    executable: /bin/bash
+  when: xcode_folder.stat.exists == False
+
+- name: Darwin | Move Xcode To Application
+  shell: "mv {{ ansible_download_path }}/Xcode*.app /Applications/Xcode{{ xcode_version }}.app"
+  args:
+    executable: /bin/bash
+  when: xcode_folder.stat.exists == False
+
+- name: Darwin | Accept license agreement
+  shell: "/Applications/Xcode{{ xcode_version }}.app/Contents/Developer/usr/bin/xcodebuild -license accept"
+  args:
+    executable: /bin/bash
+  when: xcode_folder.stat.exists == False
+
+- name: Darwin | Install Xcode additional packages
+  shell: "installer -pkg /Applications/Xcode{{ xcode_version }}.app/Contents/Resources/Packages/{{ item }} -tgt /"
+  args:
+    executable: /bin/bash
+  with_items: "{{ xcode_additional_packages }}"
+  when: xcode_folder.stat.exists == False
+
+- name: Darwin | Set Xcode Developer Directory
+  shell: "xcode-select -s /Applications/Xcode{{ xcode_version }}.app/Contents/Developer/"
+  args:
+    executable: /bin/bash
+  when: xcode_folder.stat.exists == False

@@ -2,7 +2,7 @@
 .idea/
 
 # Vagrant artifacts
-.vargant/
+.vagrant/
 
 # Ansible tmp files
 *.retry

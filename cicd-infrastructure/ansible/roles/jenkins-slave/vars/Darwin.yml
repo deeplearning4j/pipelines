@@ -1,0 +1,124 @@
+---
+# System variables
+root_user_name: "root"
+root_user_group: "wheel"
+
+# Jenkins slave variables
+jenkins_slave_service_config_file_name: "org.jenkins-ci.slave.jnlp.plist"
+#jenkins_slave_service_config_file_path: "/Users/{{ jenkins_user_name }}/Library/LaunchAgents"
+# In order for Jenkins to be launched with UI support, it needs to be running as an Agent and not as a daemon
+jenkins_slave_service_config_file_path: "/Library/LaunchDaemons"
+path_environment_variable_value:
+  - '$PATH'
+  - '/usr/local/sbin'
+  - '/usr/local/bin'
+dyld_library_path_environment_variable_value:
+  - '$DYLD_LIBRARY_PATH'
+
+# Homebrew variables
+homebrew_installed_packages:
+  - wget
+  - curl
+  - git
+#  - tinc
+  - openssl
+  - htop
+  - gcc5
+  - cmake
+homebrew_taps:
+  - homebrew/core
+  - homebrew/cask
+  - homebrew/cask-versions
+homebrew_cask_apps:
+  - java8
+
+# Tinc variables
+tinc_netname: "jenkins"
+tinc_service_config_file_name: "org.tinc.jenkins.plist"
+tinc_service_config_file_path: "/Library/LaunchDaemons"
+tinc_config_base_path: "/etc/tinc/{{ tinc_netname }}"
+tinc_config_file_name: "tinc.conf"
+tinc_config_file_path: "{{ tinc_config_base_path }}/{{tinc_config_file_name}}"
+tinc_log_rotation_config_file_name: "tinc.conf"
+tinc_config_hosts_path: "{{ tinc_config_base_path }}/hosts"
+# WARNING: Tinc restriction you can only use letters, numbers and the underscore for Names.
+tinc_config_jenkins_master_host_name: "masterjenkins"
+# WARNING: Tinc restriction you can only use letters, numbers and the underscore for Names.
+tinc_connection_name: "jenkins_mac_slave"
+tinc_interface_ip_address: "10.9.7.11"
+tinc_interface_net_mask: "255.255.0.0"
+tinc_rsa_key_names:
+  - "rsa_key.priv"
+  - "rsa_key.pub"
+
+# CUDA variables
+cuda_base_url: "https://developer.nvidia.com/compute/cuda"
+# TODO: add logic to fetch and parse md5 for every binary
+cuda_versions:
+  "8.0":
+    binary_name: "cuda_8.0.61_mac-dmg"
+    url_prefix: "Prod2/local_installers"
+    md5: "5217de8bfde0ca5d8d7f9e48588df706"
+    mount_point: "/Volumes/CUDAMacOSXInstaller_8.0"
+    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+  "9.0":
+    binary_name: "cuda_9.0.176_mac-dmg"
+    url_prefix: "Prod/local_installers"
+    md5: "19369a391a7475cace0f3c377aebbecb"
+    mount_point: "/Volumes/CUDAMacOSXInstaller_9.0"
+    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+  "9.1":
+    binary_name: "cuda_9.1.85_mac"
+    url_prefix: "Prod/local_installers"
+    md5: "af2a4c1078ea65500318ed5ed9ec0d07"
+    mount_point: "/Volumes/CUDAMacOSXInstaller_9.1"
+    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+
+# Xcode variables
+xcode_versions:
+  "8":
+    binary_local_path: "Darwin/Xcode"
+    binary_name: "Xcode_8"
+    binary_extension: "xip"
+xcode_additional_packages:
+  - 'MobileDevice.pkg'
+  - 'MobileDeviceDevelopment.pkg'
+  - 'XcodeSystemResources.pkg'
+  - 'XcodeSystemResources.pkg'
+
+# GCC fix variables
+gcc_runtime_libs_add:
+  - libgcc_s.1.dylib
+  - libgomp.1.dylib
+  - libstdc++.6.dylib
+gcc_runtime_libs_change:
+  - libgomp.1.dylib
+  - libstdc++.6.dylib
+
+# SSHD variables
+sshd_config_properties:
+  # Ansible comment line
+  - { regexp: '^# Configuration provided by Ansible', line: '# Configuration provided by Ansible', state: "present" }
+  # ClientAliveInterval 60
+  - { regexp: '^ClientAliveInterval', line: 'ClientAliveInterval 60', state: "present" }
+  # ClientAliveCountMax 10000
+  - { regexp: '^ClientAliveCountMax', line: 'ClientAliveCountMax 10000', state: "present" }
+#  # PasswordAuthentication no
+#  - { regexp: '^PasswordAuthentication yes', line: '', state: "absent" }
+#  - { regexp: '^PasswordAuthentication no', line: 'PasswordAuthentication no', state: "present" }
+  # PermitEmptyPasswords no
+  - { regexp: '^PermitEmptyPasswords yes', line: '', state: "absent" }
+  - { regexp: '^PermitEmptyPasswords no', line: 'PermitEmptyPasswords no', state: "present" }
+  # LoginGraceTime 1m
+  - { regexp: '^LoginGraceTime', line: 'LoginGraceTime 1m', state: "present" }
+  # PermitRootLogin no
+  - { regexp: '^PermitRootLogin yes', line: '', state: "absent" }
+  - { regexp: '^PermitRootLogin no', line: 'PermitRootLogin no', state: "present" }
+  # LogLevel 1m to record login attempts, etc.
+  - { regexp: '^LogLevel', line: 'LogLevel VERBOSE', state: "present" }
+#  # UsePAM no -> if this is not set to 'no' then password authentication still possible!
+#  - { regexp: '^UsePAM yes', line: '', state: "absent" }
+#  - { regexp: '^UsePAM no', line: 'UsePAM no', state: "present" }
