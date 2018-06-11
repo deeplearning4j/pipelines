@@ -72,11 +72,18 @@ class Deeplearning4jMonoRepoProject implements Serializable {
             }
         }
         catch (error) {
-            script.echo "[ERROR] ${error}\nCause is ${error.getCause()}"
-            script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
+            if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class)) {
+                script.currentBuild.result = 'ABORTED'
+            } else {
+                script.currentBuild.result = 'FAILURE'
+            }
+
+            script.echo "[ERROR] ${error}" +
+                    (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
+                    (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
-            new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
+            new NotificationHelper(script).sendEmail(script.currentBuild.result)
         }
     }
 

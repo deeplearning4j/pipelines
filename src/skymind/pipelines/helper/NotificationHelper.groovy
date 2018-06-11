@@ -65,10 +65,5 @@ class NotificationHelper implements Serializable {
                 body: details,
                 mimeType: 'text/html'
         )
-//        script.step([
-//                $class                  : 'Mailer',
-//                notifyEveryUnstableBuild: true,
-//                recipients              : 'serhii@skymind.io'
-//        ])
     }
 }
