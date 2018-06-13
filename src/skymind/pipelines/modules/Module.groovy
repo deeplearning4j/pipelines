@@ -260,7 +260,7 @@ class Module implements Serializable {
                         projects.addAll(['nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
                     }
 
-                    return '-pl \'' + (projects).findAll().join(',') + '\''
+                    return '-am -pl \'' + (projects).findAll().join(',') + '\''
                 } else {
                     /* FIXME: Looks like with lates changes above (first if) current if statement will never be triggered. */
                     if (backend == 'cpu') {
@@ -275,24 +275,20 @@ class Module implements Serializable {
                             projects.addAll(mavenExcludesForNd4jCuda)
                         }
                     }
-                    /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
-//                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
-                            '-pl \'' + (projects).findAll().join(',') + '\''
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
                     projects.addAll(['libnd4j'])
 
-                    return '-pl \'' + (projects).findAll().join(',') + '\''
+                    return '-am -pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-                    /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
                             '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
             } else {
-                /* FIXME: Temporary building all dependencies for detected modules, but should be ? '-amd ' : '-am ' */
-                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
+                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
                         '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
             }
         }
