@@ -275,7 +275,7 @@ class Module implements Serializable {
                             projects.addAll(mavenExcludesForNd4jCuda)
                         }
                     }
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
                             '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
@@ -284,11 +284,11 @@ class Module implements Serializable {
 
                     return '-am -pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
                             '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
                 }
             } else {
-                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
                         '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
             }
         }
