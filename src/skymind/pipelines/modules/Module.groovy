@@ -275,8 +275,9 @@ class Module implements Serializable {
                             projects.addAll(mavenExcludesForNd4jCuda)
                         }
                     }
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
-                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+//                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
+//                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+                    return '-pl \'' + (projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
@@ -284,11 +285,12 @@ class Module implements Serializable {
 
                     return '-am -pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
-                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+//                    return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
+//                            '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+                    return ''
                 }
             } else {
-                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-amd ') +
+                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
                         '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
             }
         }
