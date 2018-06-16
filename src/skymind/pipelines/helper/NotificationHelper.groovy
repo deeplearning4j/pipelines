@@ -50,12 +50,16 @@ class NotificationHelper implements Serializable {
                 ((changeId) ? "<p>Author: ${changeAuthor} (${changeAuthorEmail})</p>\n" : '') +
                 "<p>Check run details at <a href=\"${buildUrl}\">${jobName}</a></p>"
 
+//        def recipients = script.emailextrecipients([
+//                [$class: 'CulpritsRecipientProvider'],
+//                [$class: 'DevelopersRecipientProvider'],
+//                [$class: 'RequesterRecipientProvider'],
+//                [$class: 'UpstreamComitterRecipientProvider'],
+//                [$class: 'FirstFailingBuildSuspectsRecipientProvider']
+//        ])
+
         def recipients = script.emailextrecipients([
-                [$class: 'CulpritsRecipientProvider'],
-                [$class: 'DevelopersRecipientProvider'],
-                [$class: 'RequesterRecipientProvider'],
-                [$class: 'UpstreamComitterRecipientProvider'],
-                [$class: 'FirstFailingBuildSuspectsRecipientProvider']
+                [$class: 'DevelopersRecipientProvider']
         ])
 
         /* Send e-mail notification */
