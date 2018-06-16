@@ -87,18 +87,34 @@ class Deeplearning4jMonoRepoProject implements Serializable {
         }
     }
 
+//    private List getChanges() {
+//        List changedFiles = []
+//
+//        for (change in script.currentBuild.changeSets) {
+//            for (items in change.items) {
+//                for (affectedFile in items.affectedFiles) {
+//                    changedFiles.push(affectedFile.path)
+//                }
+//            }
+//        }
+//
+//        changedFiles
+//    }
+
     private List getChanges() {
-        List changedFiles = []
+        Boolean unixNode = script.isUnix()
+        String shell = unixNode ? 'sh' : 'bat'
 
-        for (change in script.currentBuild.changeSets) {
-            for (items in change.items) {
-                for (affectedFile in items.affectedFiles) {
-                    changedFiles.push(affectedFile.path)
-                }
-            }
-        }
+        String shellCommand = (branchName == 'master') ?
+                'git --no-pager diff --name-only HEAD^ HEAD' :
+                'git --no-pager diff --name-only HEAD $(git merge-base HEAD origin/master)'
 
-        changedFiles
+//        if (!branchName.contains(releaseBranchPattern)) {
+//            return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
+//        } else {
+//            return []
+//        }
+        return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
     }
 
     private List getModulesToBuild(List changedFiles) {
