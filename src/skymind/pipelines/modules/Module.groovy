@@ -51,7 +51,8 @@ class Module implements Serializable {
     }
 
     private void runStaticCodeAnalysisLogic() {
-        String sonarCommand = 'mvn sonar:sonar'
+//        String sonarCommand = 'mvn sonar:sonar'
+        String sonarCommand = getMvnCommand('codeAnalysis')
 
         script.withSonarQubeEnv('SonarCloud') {
             if (isUnixNode) {
@@ -346,7 +347,8 @@ class Module implements Serializable {
                 (stageName == 'build') ? '-U' : '',
                 (stageName == 'build') ? 'clean install' :
                         (stageName == 'test') ? 'test' :
-                                (stageName == 'deploy') ? 'deploy' : '',
+                                (stageName == 'deploy') ? 'deploy' :
+                                        (stageName == 'codeAnalysis') ? 'sonar:sonar' : '',
                 mavenProjects(),
                 (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
