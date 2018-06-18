@@ -50,6 +50,28 @@ class Module implements Serializable {
         sparkVersion = args.containsKey('sparkVersion') ? args.sparkVersion : ''
     }
 
+    private void runStaticCodeAnalysisLogic() {
+        String sonarCommand = 'mvn sonar:sonar'
+
+        script.withSonarQubeEnv('SonarCloud') {
+            if (isUnixNode) {
+                script.sh sonarCommand
+            } else {
+                script.bat sonarCommand
+            }
+        }
+    }
+
+    private void waitForQualityGateResults() {
+        script.timeout(time: 1, unit: 'HOURS') {
+            def qualityGateResults = script.waitForQualityGate()
+
+            if (qualityGateResults.status != 'OK') {
+                script.error "Pipeline aborted due to quality gate failure: ${qualityGateResults.status}"
+            }
+        }
+    }
+
     private void runBuildLogic() {
         if (platformName in ['linux-x86_64', 'linux-x86_64-generic']) {
             if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
@@ -97,13 +119,18 @@ class Module implements Serializable {
             runBuildLogic()
         }
 
+        script.stage('Static code analysis') {
+            runStaticCodeAnalysisLogic()
+        }
+
+        script.stage("Quality gate check") {
+            waitForQualityGateResults()
+        }
+
 //        if (!branchName.contains(releaseBranchPattern)) {
 //            script.stage('Test') {
 //                runTestLogic()
 //            }
-//        }
-//        script.stage('Static code analysis') {
-//            runStaticCodeAnalysisLogic()
 //        }
 //
 //        script.stage('Security scan') {
@@ -431,7 +458,7 @@ class Module implements Serializable {
     }
 
     private void getFancyStageDecorator(String text) {
-        int charsNumber = Math.round((78-text.length())/2)
+        int charsNumber = Math.round((78 - text.length()) / 2)
 
         script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
