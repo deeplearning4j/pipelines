@@ -121,6 +121,7 @@ class Module implements Serializable {
         }
 
         script.stage('Static code analysis') {
+            getFancyStageDecorator('Code analysis stage')
             runStaticCodeAnalysisLogic()
         }
 
@@ -348,7 +349,7 @@ class Module implements Serializable {
                 (stageName == 'build') ? 'clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' :
-                                        (stageName == 'codeAnalysis') ? 'sonar:sonar' : '',
+                                        (stageName == 'codeAnalysis') ? '-X sonar:sonar' : '',
                 mavenProjects(),
                 (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
