@@ -64,7 +64,8 @@ class NotificationHelper implements Serializable {
 
         /* Send e-mail notification */
         script.emailext(
-                to: recipients,
+//                to: recipients,
+                to: 'serhii.shepel@gmail.com',
                 subject: subject,
                 body: details,
                 mimeType: 'text/html'
