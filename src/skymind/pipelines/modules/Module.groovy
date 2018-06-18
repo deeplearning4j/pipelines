@@ -220,6 +220,10 @@ class Module implements Serializable {
             if (stageName == 'test') {
                 mavenArguments.push('-P testresources')
             }
+
+            if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
+                mavenArguments.push('-P libnd4j-assembly')
+            }
         }
 
         mavenArguments
