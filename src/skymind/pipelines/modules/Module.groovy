@@ -165,8 +165,8 @@ class Module implements Serializable {
                 if (!platformExcludesForTests.contains(platformName) && stageName != 'deploy') {
                     // FIXME: Skipping tests for release branches to reduce the build time
                     if (!branchName.contains(releaseBranchPattern)) {
-                        mavenArguments.push('-Dlibnd4j.test.skip=false')
-                        mavenArguments.push('-Dlibnd4j.tests.phase=process-resources')
+//                        mavenArguments.push('-Dlibnd4j.test.skip=false')
+//                        mavenArguments.push('-Dlibnd4j.tests.phase=process-resources')
                     }
                 }
 
