@@ -349,7 +349,7 @@ class Module implements Serializable {
                 (stageName == 'build') ? 'clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' :
-                                        (stageName == 'codeAnalysis') ? '-X sonar:sonar' : '',
+                                        (stageName == 'codeAnalysis') ? '-X sonar:sonar -Dsonar.organization=deeplearning4j' : '',
                 mavenProjects(),
                 (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
