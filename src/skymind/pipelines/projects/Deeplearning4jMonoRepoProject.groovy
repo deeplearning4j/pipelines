@@ -105,16 +105,13 @@ class Deeplearning4jMonoRepoProject implements Serializable {
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
 
-        String shellCommand = (branchName == 'master') ?
-                'git --no-pager diff --name-only HEAD^ HEAD' :
-                'git --no-pager diff --name-only HEAD $(git merge-base HEAD origin/master)'
+        String shellCommand = 'git --no-pager diff --name-only HEAD $(git merge-base HEAD origin/master)'
 
-//        if (!branchName.contains(releaseBranchPattern)) {
-//            return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
-//        } else {
-//            return []
-//        }
-        return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
+        if (branchName.contains('PR')) {
+            return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
+        } else {
+            return []
+        }
     }
 
     private List getModulesToBuild(List changedFiles) {
