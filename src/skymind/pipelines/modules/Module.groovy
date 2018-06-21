@@ -135,7 +135,7 @@ class Module implements Serializable {
                 ]
 
                 // FIXME: Workaround to enable tests only for supported by current infra platforms
-                if (!platformExcludesForTests.contains(platformName)) {
+                if (!platformExcludesForTests.contains(platformName) && stageName != 'deploy') {
                     // FIXME: Skipping tests for release branches to reduce the build time
                     if (!branchName.contains(releaseBranchPattern)) {
                         mavenArguments.push('-Dlibnd4j.test.skip=false')
@@ -144,7 +144,7 @@ class Module implements Serializable {
                 }
 
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
-                if (!cpuExtension && platformName == 'linux-x86_64') {
+                if (!cpuExtension && platformName == 'linux-x86_64' && stageName != 'deploy') {
                     mavenArguments.push('-Dlibnd4j.test.is.release.build=false')
                 }
 
