@@ -249,6 +249,15 @@ class Module implements Serializable {
                     '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
                     '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform'
             ]
+            List mavenExcludesForDeeplearning4jNative = [
+                    '!deeplearning4j/deeplearning4j-cuda'
+            ]
+
+            if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
+                if (platformName == 'linux-x86_64' && backend == 'cpu' && !cpuExtension) {
+                    projects.addAll(mavenExcludesForDeeplearning4jNative)
+                }
+            }
 
             if (modulesToBuild.any { it =~ /^nd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
