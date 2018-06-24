@@ -226,6 +226,12 @@ class Module implements Serializable {
             }
         }
 
+        if (modulesToBuild.any { it =~ /^datavec/}) {
+            if (!modulesToBuild.any { it =~ /^nd4j/}) {
+                mavenArguments.push('-P libnd4j-assembly')
+            }
+        }
+
         mavenArguments
     }
 
