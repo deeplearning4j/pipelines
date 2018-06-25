@@ -83,7 +83,9 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
-            new NotificationHelper(script).sendEmail(script.currentBuild.result)
+//            new NotificationHelper(script).sendEmail()
+            script.notifier.sendSlackNotification()
+            script.notifier.sendEmailNotification()
         }
     }
 
@@ -379,7 +381,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
             ].findAll()
 
             commonJobProperties.addAll([
-                    [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints],
+//                    [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints],
                     script.pipelineTriggers([script.cron('@midnight')])
             ])
         }

@@ -90,7 +90,7 @@ abstract class Project implements Serializable {
         }
         finally {
             /* Get instance of NotificationHelper class for sending notifications about run status */
-            new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
+            new NotificationHelper(script).sendEmail()
         }
     }
 
