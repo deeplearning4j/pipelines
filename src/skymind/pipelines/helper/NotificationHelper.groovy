@@ -2,50 +2,22 @@ package skymind.pipelines.helper
 
 class NotificationHelper implements Serializable {
     private script
+    private buildResult
 
     NotificationHelper(script) {
         this.script = script
+        buildResult = this.script.currentBuild.result
     }
 
-    private String getColorName(String buildStatus) {
-        switch (buildStatus) {
-            case 'STARTED':
-                return 'YELLOW'
-                break
-            case 'SUCCESSFUL':
-                return 'GREEN'
-                break
-            default:
-                return 'RED'
-                break
-        }
-    }
-
-    private String getColorCode(String buildStatus) {
-        switch (buildStatus) {
-            case 'STARTED':
-                return '#FFFF00'
-                break
-            case 'SUCCESSFUL':
-                return '#00FF00'
-                break
-            default:
-                return '#FF0000'
-                break
-        }
-    }
-
-    protected void sendEmail(String buildStatus = 'STARTED') {
+    protected void sendEmail() {
         String jobName = script.currentBuild.rawBuild.fullDisplayName
         String changeId = script.env.CHANGE_ID
         String changeTitle = script.env.CHANGE_TITLE
         String changeAuthor = script.env.CHANGE_AUTHOR
         String changeAuthorEmail = script.env.CHANGE_AUTHOR_EMAIL
         String buildUrl = script.env.RUN_DISPLAY_URL
-        /* Build status of null means successful */
-        buildStatus = buildStatus ?: 'SUCCESS'
 
-        String subject = "${buildStatus.toLowerCase().capitalize()} | ${jobName}"
+        String subject = "${buildResult.toLowerCase().capitalize()} | ${jobName}"
         String details = ((changeId) ? "<p>Changes: ${changeId}, ${changeTitle}</p>\n": '') +
                 ((changeId) ? "<p>Author: ${changeAuthor} (${changeAuthorEmail})</p>\n" : '') +
                 "<p>Check run details at <a href=\"${buildUrl}\">${jobName}</a></p>"
@@ -65,7 +37,7 @@ class NotificationHelper implements Serializable {
         /* Send e-mail notification */
         script.emailext(
 //                to: recipients,
-                to: 'serhii.shepel@gmail.com',
+                to: 'serhii@gmail.com',
                 subject: subject,
                 body: details,
                 mimeType: 'text/html'
