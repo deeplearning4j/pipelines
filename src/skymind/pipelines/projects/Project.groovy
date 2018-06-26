@@ -1,6 +1,5 @@
 package skymind.pipelines.projects
 
-import skymind.pipelines.helper.NotificationHelper
 
 abstract class Project implements Serializable {
     protected script
@@ -89,8 +88,7 @@ abstract class Project implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
-            /* Get instance of NotificationHelper class for sending notifications about run status */
-            new NotificationHelper(script).sendEmail()
+            script.notifier.sendEmailNotification(script.currentBuild.result)
         }
     }
 

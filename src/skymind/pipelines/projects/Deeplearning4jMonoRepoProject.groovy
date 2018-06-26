@@ -1,6 +1,6 @@
 package skymind.pipelines.projects
 
-import skymind.pipelines.helper.NotificationHelper
+
 import skymind.pipelines.modules.Module
 
 /**
@@ -43,7 +43,10 @@ class Deeplearning4jMonoRepoProject implements Serializable {
         List modulesToBuild
 
         try {
+            script.notifier.sendSlackNotification('STARTED')
+
             script.stage('Prepare Run') {
+
                 script.node('linux-x86_64-generic') {
                     script.checkout script.scm
 
@@ -83,9 +86,8 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
-//            new NotificationHelper(script).sendEmail()
-            script.notifier.sendSlackNotification()
-            script.notifier.sendEmailNotification()
+            script.notifier.sendSlackNotification(script.currentBuild.result)
+            script.notifier.sendEmailNotification(script.currentBuild.result)
         }
     }
 

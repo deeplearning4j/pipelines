@@ -1,7 +1,8 @@
 #!/usr/bin/env groovy
 
-void sendSlackNotification() {
-    String buildResult = currentBuild.result ?: 'UNKNOWN'
+void sendSlackNotification(String buildResult) {
+    // Build result of null means successful
+    buildResult = buildResult ?: 'SUCCESS'
     String jobName = currentBuild.rawBuild.fullDisplayName
     String buildUrl = env.RUN_DISPLAY_URL
     String subject = "${buildResult.toLowerCase().capitalize()} | <${buildUrl}|${jobName}>"
@@ -21,6 +22,8 @@ void sendSlackNotification() {
             notificationColor = "warning"
             break
         case 'FAILURE':
+            notificationColor = "danger"
+            break
         default:
             notificationColor = "danger"
             break
@@ -30,8 +33,9 @@ void sendSlackNotification() {
     slackSend color: notificationColor, message: "${subject}"
 }
 
-void sendEmailNotification() {
-    String buildResult = currentBuild.result ?: 'UNKNOWN'
+void sendEmailNotification(String buildResult) {
+    // Build result of null means successful
+    buildResult = buildResult ?: 'SUCCESS'
     String jobName = currentBuild.rawBuild.fullDisplayName
     String changeId = env.CHANGE_ID
     String changeTitle = env.CHANGE_TITLE
