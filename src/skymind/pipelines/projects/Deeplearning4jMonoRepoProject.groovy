@@ -75,7 +75,12 @@ class Deeplearning4jMonoRepoProject implements Serializable {
             }
         }
         catch (error) {
-            if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class)) {
+            if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
+                    error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
+                    (error instanceof hudson.AbortException &&
+                            (error.message.contains('script returned exit code 143') ||
+                                    error.message.contains('Queue task was cancelled')))
+            ) {
                 script.currentBuild.result = 'ABORTED'
             } else {
                 script.currentBuild.result = 'FAILURE'
