@@ -9,12 +9,10 @@ void sendSlackNotification(String buildResult) {
     String notificationColor
 
     switch (buildResult) {
-        case 'STARTED':
-            notificationColor = 'info'
-            break
         case 'SUCCESS':
             notificationColor = "good"
             break
+        case 'STARTED':
         case 'ABORTED':
             notificationColor = "#D4DADF"
             break
