@@ -23,6 +23,8 @@ RUN yum -y clean all && \
             git \
             rpm-build \
             sudo \
+            # Required for libnd4j CPU tests (minifier)
+            which \
            && \
         yum clean all
 
