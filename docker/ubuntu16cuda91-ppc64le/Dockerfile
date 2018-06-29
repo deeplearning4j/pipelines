@@ -20,33 +20,26 @@ RUN apt-get -qqy update && \
     dpkg -i /tmp/cuda-repo.deb && \
     rm -f /tmp/cuda-repo.deb
 
-ENV CMAKE_PACKAGE_VERSION 3.9.0
-ENV CMAKE_PACKAGE_NAME cmake-${CMAKE_PACKAGE_VERSION}.tar.gz
-ENV CMAKE_DOWNLOAD_URL https://cmake.org/files/v3.9/${CMAKE_PACKAGE_NAME}
 ENV CMAKE_HOME /opt/cmake
-
-RUN curl -fsSL ${CMAKE_DOWNLOAD_URL} \
+RUN curl -fsSL https://cmake.org/files/v3.9/cmake-3.9.0.tar.gz \
     | tar xz && \
-    cd cmake-${CMAKE_PACKAGE_VERSION} && \
+    cd cmake-3.9.0 && \
     ./configure --prefix=${CMAKE_HOME} && \
     make -j2 && \
     make install && \
     cd .. && \
-    rm -r cmake-${CMAKE_PACKAGE_VERSION}
+    rm -r cmake-3.9.0
 
-ENV PROTOBUF_PACKAGE_VERSION 3.5.0
-ENV PROTOBUF_PACKAGE_NAME protobuf-cpp-${PROTOBUF_PACKAGE_VERSION}.tar.gz
-ENV PROTOBUF_DOWNLOAD_URL https://github.com/google/protobuf/releases/download/v${PROTOBUF_PACKAGE_VERSION}/${PROTOBUF_PACKAGE_NAME}
 ENV PROTOBUF_HOME /opt/protobuf
-
-RUN curl -fsSL ${PROTOBUF_DOWNLOAD_URL} \
+RUN source /opt/rh/devtoolset-4/enable && \
+    curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-cpp-3.5.1.tar.gz \
     | tar xz && \
-    cd protobuf-${PROTOBUF_PACKAGE_VERSION} && \
+    cd protobuf-3.5.1 && \
     ./configure --prefix=${PROTOBUF_HOME} && \
     make -j2 && \
     make install && \
     cd .. && \
-    rm -r protobuf-${PROTOBUF_PACKAGE_VERSION}
+    rm -r protobuf-3.5.1
 
 ENV CUDA_VERSION 9-1
 RUN apt-get -qqy update && \

@@ -16,7 +16,7 @@ RUN apt-get -qqy update && \
     add-apt-repository ppa:openjdk-r/ppa -y && \
     add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
     apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/7fa2af80.pub && \
-    curl -fsSL http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/cuda-repo-ubuntu1604_8.0.61-1_ppc64el.deb -o /tmp/cuda-repo.deb && \
+    curl -fsSL http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/cuda-repo-ubuntu1604_9.2.88-1_ppc64el.deb -o /tmp/cuda-repo.deb && \
     dpkg -i /tmp/cuda-repo.deb && \
     rm -f /tmp/cuda-repo.deb
 
@@ -41,7 +41,7 @@ RUN source /opt/rh/devtoolset-4/enable && \
     cd .. && \
     rm -r protobuf-3.5.1
 
-ENV CUDA_VERSION 8-0
+ENV CUDA_VERSION 9-2
 RUN apt-get -qqy update && \
     apt-get -qqy install --no-install-recommends \
         gcc \
@@ -75,8 +75,8 @@ RUN curl -fsSL "https://dl.google.com/go/go1.10.2.linux-ppc64le.tar.gz" \
 
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
-ENV PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}} \
-    LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+ENV PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} \
+    LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 USER jenkins
 

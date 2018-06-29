@@ -1,4 +1,4 @@
-FROM centos:7
+FROM nvidia/cuda:9.2-cudnn7-devel-centos6
 
 RUN yum -y clean all && \
         yum -y install \
@@ -6,6 +6,9 @@ RUN yum -y clean all && \
             epel-release \
            && \
         yum -y install \
+            devtoolset-3-toolchain \
+            devtoolset-3-libasan-devel \
+            devtoolset-3-liblsan-devel \
             devtoolset-4-toolchain \
             devtoolset-4-libasan-devel \
             devtoolset-4-liblsan-devel \
@@ -61,14 +64,6 @@ RUN source /opt/rh/devtoolset-4/enable && \
     cd .. && \
     rm -r protobuf-3.5.1
 
-ENV ANDROID_NDK_HOME /opt/android-ndk-r16b
-# This environment variable required for buildnativeoperations.sh script execution
-ENV ANDROID_NDK=${ANDROID_NDK_HOME}
-RUN mkdir -p /opt && \
-    wget --no-cookies --no-check-certificate http://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip && \
-    unzip -q android-ndk-r16b-linux-x86_64.zip -d /opt && \
-    rm -f android-ndk-r16b-linux-x86_64.zip
-
 # Install git lfs for dl4j-test-resources
 #RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh | bash && \
 #    yum -y clean all && \
@@ -99,7 +94,7 @@ VOLUME ${JENKINS_AGENT_WORKDIR}
 
 WORKDIR /home/jenkins
 
-ENV PATH /opt/sbt/bin:/opt/cmake/bin:${ANDROID_NDK_HOME}:${PROTOBUF_HOME}/bin:${PATH}
+ENV PATH /opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH}
 
 COPY jenkins-slave /usr/local/bin/jenkins-slave
 
