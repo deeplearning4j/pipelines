@@ -3,11 +3,16 @@
 def call(String command) {
     Boolean unixNode = isUnix()
     String shell = unixNode ? 'sh' : 'bat'
+    String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
+            'global_mvn_settings_xml' :
+            'deeplearning4j-maven-global-settings'
 
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
             maven: 'maven-3.3.9',
 //            mavenOpts: "-XX:ErrorFile=${env.WORKSPACE}/hs_err_pid%p.log",
+//            mavenSettingsConfig: 'deeplearning4j-test-resources-maven-settings',
+            globalMavenSettingsConfig: configFileName,
             options: [
                     artifactsPublisher(disabled: true),
                     junitPublisher(disabled: false),
@@ -21,14 +26,14 @@ def call(String command) {
     ) {
         /* Run the maven build */
         if (unixNode) {
-            "$shell" command
+                "$shell" command
         }
         /*
             Workaround for windows, because there is no way to redefine location of settings.xml
             and we are using bash to invoke maven, and bash doesn't work with windows like paths
         */
         else {
-            configFileProvider([configFile(fileId: 'global_mvn_settings_xml', variable: 'MAVEN_SETTINGS')]) {
+            configFileProvider([configFile(fileId: configFileName, variable: 'MAVEN_SETTINGS')]) {
                 String mavenSettingsFilePath = env.MAVEN_SETTINGS.replaceAll('\\\\', '/')
 
                 withEnv(["MAVEN_SETTINGS=$mavenSettingsFilePath"]) {
