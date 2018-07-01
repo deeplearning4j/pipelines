@@ -53,7 +53,7 @@ tinc_rsa_key_names:
 
 # CUDA variables
 cuda_base_url: "https://developer.nvidia.com/compute/cuda"
-# TODO: add logic to fetch and parse md5 for every binary
+# TODO: add logic to fetch and parse md5 for every binary from https://developer.download.nvidia.com/compute/cuda/<cuda.version>/Prod/docs/sidebar/md5sum.txt
 cuda_versions:
   "8.0":
     binary_name: "cuda_8.0.61_mac-dmg"
@@ -74,6 +74,13 @@ cuda_versions:
     url_prefix: "Prod/local_installers"
     md5: "af2a4c1078ea65500318ed5ed9ec0d07"
     mount_point: "/Volumes/CUDAMacOSXInstaller_9.1"
+    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+  "9.2":
+    binary_name: "cuda_9.2.64_mac"
+    url_prefix: "Prod/local_installers"
+    md5: "8254739a33574820ff27628453fe33f3"
+    mount_point: "/Volumes/CUDAMacOSXInstaller_9.2"
     installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
     installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
 

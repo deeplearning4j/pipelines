@@ -35,3 +35,4 @@ ansible-playbook -i production site.yml
 5. Missing logic for customizing the dock.
 6. Missing logic for disabling updates, except security updates.
 7. Missing logic for fallback and cleanup.
+8. Fix duplication of exports in bash_profile and bash_rc.
