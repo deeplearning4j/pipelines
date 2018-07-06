@@ -249,7 +249,8 @@ class Module implements Serializable {
                     (platformName.contains('ios')) ?
                             '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform' : '',
                     '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda',
-                    '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform'
+                    '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform',
+                    '!deeplearning4j/deeplearning4j-cuda'
             ]
             List mavenExcludesForNd4jCuda = [
                     '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
