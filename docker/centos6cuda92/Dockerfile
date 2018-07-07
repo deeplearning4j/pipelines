@@ -1,4 +1,4 @@
-FROM nvidia/cuda:9.0-cudnn7-devel-centos6
+FROM nvidia/cuda:9.2-cudnn7-devel-centos6
 
 RUN yum -y clean all && \
         yum -y install \
