@@ -178,14 +178,13 @@ class Module implements Serializable {
         if (modulesToBuild.any { it =~ /^nd4j/ }) {
             mavenArguments.push('-P native-snapshots')
             mavenArguments.push('-P uberjar')
+            mavenArguments.push("-Djavacpp.platform=${platformName}")
 
             if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
                 mavenArguments.push('-P libnd4j-assembly')
             }
 
             if (backend == 'cpu') {
-                mavenArguments.push("-Djavacpp.platform=${platformName}")
-
                 if (cpuExtension) {
                     mavenArguments.push("-Djavacpp.extension=${cpuExtension}")
                 }
@@ -228,6 +227,7 @@ class Module implements Serializable {
 
         if (modulesToBuild.any { it =~ /^datavec/}) {
             if (!modulesToBuild.any { it =~ /^nd4j/}) {
+                mavenArguments.push("-Djavacpp.platform=${platformName}")
                 mavenArguments.push('-P libnd4j-assembly')
             }
         }
