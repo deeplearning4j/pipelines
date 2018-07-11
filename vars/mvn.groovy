@@ -1,8 +1,8 @@
 #!/usr/bin/env groovy
 
 def call(String command) {
-    Boolean unixNode = isUnix()
-    String shell = unixNode ? 'sh' : 'bat'
+    Boolean isUnixNode = isUnix()
+    String shell = isUnixNode ? 'sh' : 'bat'
     String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
             'global_mvn_settings_xml' :
             'deeplearning4j-maven-global-settings'
@@ -15,7 +15,7 @@ def call(String command) {
             globalMavenSettingsConfig: configFileName,
             options: [
                     artifactsPublisher(disabled: true),
-                    junitPublisher(disabled: false),
+                    junitPublisher(disabled: true),
                     findbugsPublisher(disabled: true),
                     openTasksPublisher(disabled: true),
                     dependenciesFingerprintPublisher(disabled: true),
@@ -25,7 +25,7 @@ def call(String command) {
             ]
     ) {
         /* Run the maven build */
-        if (unixNode) {
+        if (isUnixNode) {
                 "$shell" command
         }
         /*
