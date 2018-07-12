@@ -104,7 +104,7 @@ class Module implements Serializable {
             }
         }
 
-        if (branchName != 'master' || !branchName.contains(releaseBranchPattern)) {
+        if (!(branchName == 'master' || branchName.contains(releaseBranchPattern))) {
             if (streamName == 'linux-x86_64-cpu') {
                 script.stage('Test libnd4j in debug mode') {
                     libnd4jBuildMode = 'debug'
