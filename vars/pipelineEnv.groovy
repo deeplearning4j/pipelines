@@ -46,6 +46,11 @@ Map getDockerConfig(String streamName) {
             return [image: 'skymindops/pipelines:centos6cuda91', params: dockerParams]
             break
 
+        case ['linux-x86_64-cuda-9.2']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'skymindops/pipelines:centos6cuda92', params: dockerParams]
+            break
+
         case ['linux-ppc64le-cpu']:
             return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--shm-size=4g --tmpfs /tmp:size=4g']
             break
@@ -60,6 +65,10 @@ Map getDockerConfig(String streamName) {
 
         case ['linux-ppc64le-cuda-9.1']:
             return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=16g']
+            break
+
+        case ['linux-ppc64le-cuda-9.2']:
+            return [image : 'skymindops/pipelines:ubuntu16cuda92-ppc64le', params: '--shm-size=8g --tmpfs /tmp:size=16g']
             break
 
         case ~/^ios.*$/:
