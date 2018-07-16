@@ -219,6 +219,9 @@ class Module implements Serializable {
 
                 // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
                 mavenArguments.push('-Dlibnd4j.test.skip=true')
+
+                // FIXME: Workaround to fix dependencies problem if there is nd4j, datavec or deeplearning4j in project reactor, but changes were made only for libnd4j
+                mavenArguments.push("-Djavacpp.platform=${platformName}")
             }
         }
 
