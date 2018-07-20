@@ -196,6 +196,7 @@ class Module implements Serializable {
             }
 
             if (backend.contains('cuda')) {
+                mavenArguments.push("-Dlibnd4j.chip=cuda")
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
 
                 if (platformName != 'linux-x86_64') {
@@ -214,7 +215,7 @@ class Module implements Serializable {
 
                 // Set CC to 30 to increase build speed for PR and ordinary branches
                 if (branchName != 'master') {
-                    mavenArguments.push("-Dlibnd4j.compute=30")
+                    mavenArguments.push("-Dlibnd4j.compute=37")
                 }
 
                 // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
