@@ -283,12 +283,20 @@ class Module implements Serializable {
 
                 /*
                     FIXME: Workaround for maven-surefire-plugin,
-                    to fix macOS number of threads limitation during Nd4j tests for CPU
+                    to fix macOS number of threads limitation and linux JVM crashes,
+                    during Nd4j tests for CPU
+
                     Otherwise, getting following exception:
                         java.lang.OutOfMemoryError: unable to create new native thread
                  */
-                if (platformName == 'macosx-x86_64' && backend == 'cpu' && stageName == 'test') {
+                if ((streamName == 'macosx-x86_64-cpu' || streamName == 'linux-x86_64-cpu') &&
+                        stageName == 'test') {
                     mavenArguments.push('-DreuseForks=false')
+                }
+
+                if (platformName == 'linux-x86_64' && !cpuExtension) {
+                    mavenArguments.push('-P tf-cpu')
+                    mavenArguments.push('-P nd4j-tf-cpu')
                 }
             }
 
@@ -304,6 +312,11 @@ class Module implements Serializable {
                     } else {
                         mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
                     }
+                }
+
+                if (platformName == 'linux-x86_64') {
+                    mavenArguments.push('-P tf-gpu')
+                    mavenArguments.push('-P nd4j-tf-gpu')
                 }
 
                 if (!modulesToBuild.any { it =~ /^libnd4j/}) {
