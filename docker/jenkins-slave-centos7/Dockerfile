@@ -79,7 +79,7 @@ RUN groupadd jenkins -g 1000 && \
     echo "jenkins ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user && \
     chmod 0440 /etc/sudoers.d/user
 
-ARG JENKINS_AGENT_VERSION=3.20
+ARG JENKINS_AGENT_VERSION=3.21
 RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar \
     https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${JENKINS_AGENT_VERSION}/remoting-${JENKINS_AGENT_VERSION}.jar && \
     chmod 755 /usr/share/jenkins && \
