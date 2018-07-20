@@ -393,11 +393,11 @@ class Module implements Serializable {
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
                     projects.addAll(['libnd4j'])
-
-                    return '-pl \'' + (projects).findAll().join(',') + '\''
                 } else {
-                    return ''
+                    projects.addAll(mavenExcludesForNd4jCuda)
                 }
+
+                return '-pl \'' + (projects).findAll().join(',') + '\''
             } else {
                 return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
                         '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
