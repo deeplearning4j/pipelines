@@ -407,7 +407,7 @@ class Module implements Serializable {
         List commonArguments = [
                 // FIXME: -B -V -e not picked by Windows from withMaven pipeline step
                 'mvn -B -V -e',
-                (stageName == 'build') ? '-U clean package' :
+                (stageName == 'build') ? '-U clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
                 mavenProjects(),
