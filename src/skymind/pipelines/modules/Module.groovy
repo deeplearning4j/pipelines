@@ -391,10 +391,17 @@ class Module implements Serializable {
                     return '-pl \'' + (projects).findAll().join(',') + '\''
                 }
             } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && backend == 'cpu')) {
+                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
                     projects.addAll(['libnd4j'])
                 } else {
-                    projects.addAll(mavenExcludesForNd4jCuda)
+                    if (backend == 'cpu') {
+                        projects.addAll(mavenExcludesForNd4jNative)
+                        projects.addAll(mavenExcludesForDeeplearning4jNative)
+                    }
+
+                    if (backend.contains('cuda')) {
+                        projects.addAll(mavenExcludesForNd4jCuda)
+                    }
                 }
 
                 return '-pl \'' + (projects).findAll().join(',') + '\''
