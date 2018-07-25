@@ -79,8 +79,8 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
                     error instanceof java.lang.InterruptedException ||
                     (error instanceof hudson.AbortException &&
-                            (error.message.contains('script returned exit code 143') ||
-                                    error.message.contains('Queue task was cancelled')))
+                            (error?.message?.contains('script returned exit code 143') ||
+                                    error?.message?.contains('Queue task was cancelled')))
             ) {
                 script.currentBuild.result = 'ABORTED'
             } else {
