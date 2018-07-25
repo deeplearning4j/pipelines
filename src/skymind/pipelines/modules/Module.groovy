@@ -301,7 +301,7 @@ class Module implements Serializable {
             }
         }
 
-        if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j/ }) {
+        if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j|^libnd4j/ }) {
             if (stageName == 'test') {
                 mavenArguments.push('-P testresources')
             }
