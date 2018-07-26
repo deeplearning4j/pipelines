@@ -238,9 +238,7 @@ class Module implements Serializable {
             if (backend == 'cpu') {
                 // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
-                    if (platformExcludesForCpuTests.contains(platformName) ||
-                            (platformName == 'linux-x86_64' && cpuExtension == 'avx512')
-                    ) {
+                    if (platformExcludesForCpuTests.contains(platformName)) {
                         mavenArguments.push('-Dmaven.test.skip=true')
                     } else {
                         mavenArguments.push('-P test-nd4j-native')
