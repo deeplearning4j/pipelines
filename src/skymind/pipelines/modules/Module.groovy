@@ -247,6 +247,9 @@ class Module implements Serializable {
 
                 if (cpuExtension) {
                     mavenArguments.push("-Djavacpp.extension=${cpuExtension}")
+                    if (stageName == 'test') {
+                        mavenArguments.push("-Ddependency.classifier=${platformName}-${cpuExtension}")
+                    }
                 }
 
                 if (platformName.contains('linux') || platformName.contains('android')) {
