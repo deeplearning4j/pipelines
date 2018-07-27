@@ -72,7 +72,11 @@ class Module implements Serializable {
     }
 
     private void runTestLogic() {
-        script.mvn getMvnCommand('test')
+        if (libnd4jBuildMode == 'debug') {
+            script.mvn getMvnCommand('test') + ' -Dlibnd4j.test.is.release.build=false'
+        } else {
+            script.mvn getMvnCommand('test')
+        }
     }
 
     private void runDeployLogic() {
@@ -238,7 +242,7 @@ class Module implements Serializable {
             mavenArguments.push('-P uberjar')
             mavenArguments.push("-Djavacpp.platform=${platformName}")
 
-            if (!modulesToBuild.any { it =~ /^libnd4j/ }) {
+            if (!modulesToBuild.any { it =~ /^libnd4j/ } && (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension))) {
                 mavenArguments.push('-P libnd4j-assembly')
             }
 
