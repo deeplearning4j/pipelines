@@ -97,7 +97,7 @@ class Module implements Serializable {
             to be able to test libnd4j artifacts in debug build mode, and eventually deploy final
             artifacts that were build in release mode.
          */
-        if (streamName != 'linux-x86_64-cpu') {
+        if (streamName != 'linux-x86_64-cpu' || (platformName == 'linux-x86_64' && cpuExtension)) {
             script.stage('Build') {
                 getFancyStageDecorator('Build stage')
                 runBuildLogic()
