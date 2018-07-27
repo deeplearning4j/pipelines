@@ -112,6 +112,13 @@ class Module implements Serializable {
                     runTestLogic()
                 }
 
+                if (libnd4jBuildMode == 'debug') {
+                    script.stage('Clean test results of libnd4j in debug mode') {
+                        getFancyStageDecorator('Clean test results of libnd4j in debug mode')
+                        script.mvn "mvn -B -V -e clean -pl \'libnd4j\' -Dlocal.software.repository=sonatype"
+                    }
+                }
+
                 script.stage('Test') {
                     libnd4jBuildMode = 'release'
                     getFancyStageDecorator('Test stage')
