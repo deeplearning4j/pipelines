@@ -407,7 +407,8 @@ class Module implements Serializable {
 
                 return '-pl \'' + (projects).findAll().join(',') + '\''
             } else {
-                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+//                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
+                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '') +
                         '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
             }
         }
