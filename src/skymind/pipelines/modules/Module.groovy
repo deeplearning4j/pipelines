@@ -305,6 +305,25 @@ class Module implements Serializable {
                         mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
                     }
                 }
+
+                if (!modulesToBuild.any { it =~ /^libnd4j/}) {
+                    mavenArguments.push("-Dlibnd4j.chip=cuda")
+                    mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
+
+                    if (platformName != 'linux-x86_64') {
+                        mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
+                    }
+
+                    // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
+                    if (stageName in ['test', 'deploy']) {
+                        mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
+                    }
+
+                    // Set CC to 30 to increase build speed for PR and ordinary branches
+                    if (branchName != 'master') {
+                        mavenArguments.push("-Dlibnd4j.compute=37")
+                    }
+                }
             }
 
             // FIXME: Workaround to run libnd4j, nd4j tests only
