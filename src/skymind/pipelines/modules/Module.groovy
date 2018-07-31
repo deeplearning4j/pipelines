@@ -343,10 +343,10 @@ class Module implements Serializable {
 //                }
             }
 
-            // FIXME: Workaround to run libnd4j, nd4j tests only
-            if (stageName == 'test') {
-                mavenArguments.push('-P ci-test')
-            }
+//            // FIXME: Workaround to run libnd4j, nd4j tests only
+//            if (stageName == 'test') {
+//                mavenArguments.push('-P ci-test')
+//            }
         }
 
         if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j|^libnd4j/ }) {
@@ -402,9 +402,9 @@ class Module implements Serializable {
 
             if (modulesToBuild.any { it =~ /^nd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
-//                    if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-//                        projects.addAll(['libnd4j'])
-//                    }
+                    if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+                        projects.addAll(['libnd4j'])
+                    }
 
                     if (backend == 'cpu') {
                         // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
