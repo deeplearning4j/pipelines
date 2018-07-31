@@ -92,71 +92,53 @@ class Module implements Serializable {
             }
         }
 
-        /*
-            FIXME: Workaround to switch stages order for linux-x86_64-cpu platform,
-            to be able to test libnd4j artifacts in debug build mode, and eventually deploy final
-            artifacts that were build in release mode.
-         */
-        if (streamName != 'linux-x86_64-cpu' || (platformName == 'linux-x86_64' && cpuExtension)) {
+        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
             script.stage('Build') {
                 getFancyStageDecorator('Build stage')
                 runBuildLogic()
             }
-        }
 
-        if (!(branchName == 'master' || branchName.contains(releaseBranchPattern))) {
+            script.stage('Deploy') {
+                getFancyStageDecorator('Deploy stage')
+                runDeployLogic()
+            }
+        } else {
             if (streamName == 'linux-x86_64-cpu') {
                 script.stage('Test libnd4j in debug mode') {
                     libnd4jBuildMode = 'debug'
                     getFancyStageDecorator('Test libnd4j in debug mode stage')
                     runTestLogic()
+                    libnd4jBuildMode = 'release'
                 }
 
-                if (libnd4jBuildMode == 'debug') {
-                    script.stage('Clean test results of libnd4j in debug mode') {
-                        getFancyStageDecorator('Clean test results of libnd4j in debug mode')
-                        script.mvn "mvn -B -V -e clean -pl \'libnd4j\' -Dlocal.software.repository=sonatype"
-                    }
+                script.stage('Build') {
+                    getFancyStageDecorator('Build stage')
+                    runBuildLogic()
                 }
 
                 script.stage('Test') {
-                    libnd4jBuildMode = 'release'
                     getFancyStageDecorator('Test stage')
                     runTestLogic()
                 }
             } else {
+                script.stage('Build') {
+                    getFancyStageDecorator('Build stage')
+                    runBuildLogic()
+                }
+
                 script.stage('Test') {
                     getFancyStageDecorator('Test stage')
                     runTestLogic()
                 }
             }
-//            script.stage('Test') {
-//                getFancyStageDecorator('Test stage')
-//                runTestLogic()
+
+//            script.stage('Static code analysis') {
+//                runStaticCodeAnalysisLogic()
 //            }
-        }
-
-        // FIXME: Second part of workaround
-        if (streamName == 'linux-x86_64-cpu') {
-            script.stage('Build') {
-                getFancyStageDecorator('Build stage')
-                runBuildLogic()
-            }
-        }
-
-//        script.stage('Static code analysis') {
-//            runStaticCodeAnalysisLogic()
-//        }
 //
-//        script.stage('Security scan') {
-//            runSecurityScanLogic()
-//        }
-
-        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-            script.stage('Deploy') {
-                getFancyStageDecorator('Deploy stage')
-                runDeployLogic()
-            }
+//            script.stage('Security scan') {
+//                runSecurityScanLogic()
+//            }
         }
     }
 
