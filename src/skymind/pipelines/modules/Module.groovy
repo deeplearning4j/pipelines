@@ -73,7 +73,7 @@ class Module implements Serializable {
 
     private void runTestLogic() {
         if (libnd4jBuildMode == 'debug') {
-            script.mvn getMvnCommand('test') + ' -Dlibnd4j.test.is.release.build=false'
+            script.mvn getMvnCommand('test')
         } else {
             script.mvn getMvnCommand('test')
         }
@@ -197,7 +197,7 @@ class Module implements Serializable {
                 }
 
                 // Workaround to skip compilation libnd4j for CPU during test and deploy stages
-                if (stageName in ['test', 'deploy']) {
+                if (stageName in ['test', 'deploy'] && libnd4jBuildMode != 'debug') {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
 
