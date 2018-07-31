@@ -319,24 +319,24 @@ class Module implements Serializable {
                     mavenArguments.push('-P nd4j-tf-gpu')
                 }
 
-                if (!modulesToBuild.any { it =~ /^libnd4j/}) {
-                    mavenArguments.push("-Dlibnd4j.chip=cuda")
-                    mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
-
-                    if (platformName != 'linux-x86_64') {
-                        mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
-                    }
-
-                    // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
-                    if (stageName in ['test', 'deploy']) {
-                        mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
-                    }
-
-                    // Set CC to 30 to increase build speed for PR and ordinary branches
-                    if (branchName != 'master') {
-                        mavenArguments.push("-Dlibnd4j.compute=37")
-                    }
-                }
+//                if (!modulesToBuild.any { it =~ /^libnd4j/}) {
+//                    mavenArguments.push("-Dlibnd4j.chip=cuda")
+//                    mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
+//
+//                    if (platformName != 'linux-x86_64') {
+//                        mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
+//                    }
+//
+//                    // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
+//                    if (stageName in ['test', 'deploy']) {
+//                        mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
+//                    }
+//
+//                    // Set CC to 30 to increase build speed for PR and ordinary branches
+//                    if (branchName != 'master') {
+//                        mavenArguments.push("-Dlibnd4j.compute=37")
+//                    }
+//                }
             }
 
             // FIXME: Workaround to run libnd4j, nd4j tests only
@@ -398,9 +398,9 @@ class Module implements Serializable {
 
             if (modulesToBuild.any { it =~ /^nd4j/ }) {
                 if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
-                    if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-                        projects.addAll(['libnd4j'])
-                    }
+//                    if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+//                        projects.addAll(['libnd4j'])
+//                    }
 
                     if (backend == 'cpu') {
                         // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
@@ -419,9 +419,10 @@ class Module implements Serializable {
                             if (libnd4jBuildMode == 'release') {
                                 projects.addAll(mavenExcludesForNd4jNative)
                                 projects.addAll(mavenExcludesForDeeplearning4jNative)
-                            } else {
-                                projects.addAll(['libnd4j'])
                             }
+//                            else {
+//                                projects.addAll(['libnd4j'])
+//                            }
                         }
                     }
 
