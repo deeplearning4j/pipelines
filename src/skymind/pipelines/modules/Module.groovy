@@ -17,6 +17,27 @@ class Module implements Serializable {
     private String streamName
     /* FIXME: Workaround to build and test libnd4j in Debug mode  */
     private String libnd4jBuildMode = 'release'
+    /* FIXME: List of platforms on which we can't run tests ATM */
+    private List streamsToExclude = [
+            'android-arm-cpu',
+            'android-arm64-cpu',
+            'android-x86-cpu',
+            'android-x86_64-cpu',
+            'ios-arm64-cpu',
+            'ios-x86_64-cpu',
+            'macosx-x86_64-cuda-8.0',
+            'macosx-x86_64-cuda-9.0',
+            'macosx-x86_64-cuda-9.2',
+            'linux-ppc64le-cuda-8.0',
+            'linux-ppc64le-cuda-9.0',
+            'linux-ppc64le-cuda-9.2',
+            'linux-x86_64-cuda-8.0',
+            'linux-x86_64-cuda-9.0',
+            'linux-x86_64-cuda-9.2',
+            'windows-x86_64-cuda-8.0',
+            'windows-x86_64-cuda-9.0',
+            'windows-x86_64-cuda-9.2',
+    ]
 
     /**
      * Module class constructor
@@ -126,9 +147,11 @@ class Module implements Serializable {
                     runBuildLogic()
                 }
 
-                script.stage('Test') {
-                    getFancyStageDecorator('Test stage')
-                    runTestLogic()
+                if (!(streamName in streamsToExclude)) {
+                    script.stage('Test') {
+                        getFancyStageDecorator('Test stage')
+                        runTestLogic()
+                    }
                 }
             }
 
@@ -144,29 +167,29 @@ class Module implements Serializable {
 
     private List getMvnArguments(String stageName) {
         List mavenArguments = []
-        List platformExcludesForCpuTests = [
-                'android-arm',
-                'android-arm64',
-                'android-x86',
-                'android-x86_64',
-                'ios-arm64',
-                'ios-x86_64'
-        ]
-        List platformExcludesForCudaTests = [
-                'macosx-x86_64',
-                'linux-ppc64le',
-                'linux-x86_64',
-                'windows-x86_64'
-        ]
+//        List platformExcludesForCpuTests = [
+//                'android-arm',
+//                'android-arm64',
+//                'android-x86',
+//                'android-x86_64',
+//                'ios-arm64',
+//                'ios-x86_64'
+//        ]
+//        List platformExcludesForCudaTests = [
+//                'macosx-x86_64',
+//                'linux-ppc64le',
+//                'linux-x86_64',
+//                'windows-x86_64'
+//        ]
 
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
-                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
-                if (platformExcludesForCpuTests.contains(platformName) && stageName == 'test') {
-                        mavenArguments.push('-Dmaven.test.skip=true')
-                }
+//                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
+//                if (platformExcludesForCpuTests.contains(platformName) && stageName == 'test') {
+//                        mavenArguments.push('-Dmaven.test.skip=true')
+//                }
 
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
 //                if (!cpuExtension && platformName == 'linux-x86_64' && stageName != 'deploy') {
@@ -194,10 +217,10 @@ class Module implements Serializable {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
 
-                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
-                if (platformExcludesForCudaTests.contains(platformName) && stageName == 'test') {
-                    mavenArguments.push('-Dmaven.test.skip=true')
-                }
+//                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
+//                if (platformExcludesForCudaTests.contains(platformName) && stageName == 'test') {
+//                    mavenArguments.push('-Dmaven.test.skip=true')
+//                }
 
                 // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
 //                if (stageName in ['test', 'deploy']) {
@@ -230,11 +253,11 @@ class Module implements Serializable {
             if (backend == 'cpu') {
                 // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
-                    if (platformExcludesForCpuTests.contains(platformName)) {
-                        mavenArguments.push('-Dmaven.test.skip=true')
-                    } else {
+//                    if (platformExcludesForCpuTests.contains(platformName)) {
+//                        mavenArguments.push('-Dmaven.test.skip=true')
+//                    } else {
                         mavenArguments.push('-P test-nd4j-native')
-                    }
+//                    }
                 }
 
                 if (cpuExtension) {
@@ -288,11 +311,11 @@ class Module implements Serializable {
 
                 // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
-                    if (platformExcludesForCudaTests.contains(platformName)) {
-                        mavenArguments.push('-Dmaven.test.skip=true')
-                    } else {
+//                    if (platformExcludesForCudaTests.contains(platformName)) {
+//                        mavenArguments.push('-Dmaven.test.skip=true')
+//                    } else {
                         mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
-                    }
+//                    }
                 }
 
                 if (platformName == 'linux-x86_64') {
@@ -442,8 +465,8 @@ class Module implements Serializable {
         }
 
         List commonArguments = [
-                // FIXME: -B -V -e not picked by Windows from withMaven pipeline step
-                'mvn -B -V -e',
+                // FIXME: -e -B -V not picked by Windows from withMaven pipeline step
+                'mvn -e -B -V',
                 (stageName == 'build') ? '-U clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
