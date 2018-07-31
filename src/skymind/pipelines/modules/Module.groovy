@@ -189,7 +189,8 @@ class Module implements Serializable {
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
 //                if (!cpuExtension && platformName == 'linux-x86_64' && stageName != 'deploy') {
                 if (libnd4jBuildMode == 'debug') {
-                    mavenArguments.push('-Dlibnd4j.test.is.release.build=false')
+//                    mavenArguments.push('-Dlibnd4j.test.is.release.build=false')
+                    mavenArguments.push('-Dlibnd4j.build=debug')
                 }
 
                 // Workaround to skip compilation libnd4j for CPU during test and deploy stages
