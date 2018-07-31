@@ -72,11 +72,7 @@ class Module implements Serializable {
     }
 
     private void runTestLogic() {
-        if (libnd4jBuildMode == 'debug') {
-            script.mvn getMvnCommand('test')
-        } else {
-            script.mvn getMvnCommand('test')
-        }
+        script.mvn getMvnCommand('test')
     }
 
     private void runDeployLogic() {
@@ -420,9 +416,9 @@ class Module implements Serializable {
                                 projects.addAll(mavenExcludesForNd4jNative)
                                 projects.addAll(mavenExcludesForDeeplearning4jNative)
                             }
-//                            else {
-//                                projects.addAll(['libnd4j'])
-//                            }
+                            else {
+                                projects.addAll(['libnd4j'])
+                            }
                         }
                     }
 
