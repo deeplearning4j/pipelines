@@ -194,7 +194,8 @@ class Module implements Serializable {
                 }
 
                 // Workaround to skip compilation libnd4j for CPU during test and deploy stages
-                if (stageName in ['test', 'deploy'] && libnd4jBuildMode != 'debug') {
+//                if (stageName in ['test', 'deploy'] && libnd4jBuildMode != 'debug') {
+                if (stageName in ['deploy'] && libnd4jBuildMode != 'debug') {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
 
@@ -217,7 +218,8 @@ class Module implements Serializable {
                 }
 
                 // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
-                if (stageName in ['test', 'deploy']) {
+//                if (stageName in ['test', 'deploy']) {
+                if (stageName in ['deploy']) {
                     mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
                 }
 
