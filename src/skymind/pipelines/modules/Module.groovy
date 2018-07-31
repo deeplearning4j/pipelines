@@ -415,8 +415,7 @@ class Module implements Serializable {
                             if (libnd4jBuildMode == 'release') {
                                 projects.addAll(mavenExcludesForNd4jNative)
                                 projects.addAll(mavenExcludesForDeeplearning4jNative)
-                            }
-                            else {
+                            } else {
                                 projects.addAll(['libnd4j'])
                             }
                         }
@@ -436,8 +435,12 @@ class Module implements Serializable {
                     projects.addAll(['libnd4j'])
                 } else {
                     if (backend == 'cpu') {
-                        projects.addAll(mavenExcludesForNd4jNative)
-                        projects.addAll(mavenExcludesForDeeplearning4jNative)
+                        if (libnd4jBuildMode == 'release') {
+                            projects.addAll(mavenExcludesForNd4jNative)
+                            projects.addAll(mavenExcludesForDeeplearning4jNative)
+                        } else {
+                            projects.addAll(['libnd4j'])
+                        }
                     }
 
                     if (backend.contains('cuda')) {
