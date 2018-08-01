@@ -218,12 +218,14 @@ class Module implements Serializable {
             mavenArguments.push('-P uberjar')
             mavenArguments.push("-Djavacpp.platform=${platformName}")
 
-            if (!modulesToBuild.any { it =~ /^libnd4j/ } && (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension))) {
+            if (!modulesToBuild.any { it =~ /^libnd4j/ } &&
+                    (platformName != 'linux-x86_64' ||
+                            (platformName == 'linux-x86_64' && cpuExtension))
+            ) {
                 mavenArguments.push('-P libnd4j-assembly')
             }
 
             if (backend == 'cpu') {
-                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
                     mavenArguments.push('-P test-nd4j-native')
                 }
@@ -265,11 +267,6 @@ class Module implements Serializable {
                         stageName == 'test') {
                     mavenArguments.push('-DreuseForks=false')
                 }
-
-                if (platformName == 'linux-x86_64' && !cpuExtension) {
-                    mavenArguments.push('-P tf-cpu')
-                    mavenArguments.push('-P nd4j-tf-cpu')
-                }
             }
 
             if (backend.contains('cuda')) {
@@ -277,11 +274,21 @@ class Module implements Serializable {
                     mavenArguments.push('-DprotocCommand=protoc')
                 }
 
-                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
                     mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
                 }
+            }
+        }
 
+        if (modulesToBuild.any { it =~ /^nd4j|^libnd4j/ }) {
+            if (backend == 'cpu') {
+                if (platformName == 'linux-x86_64' && !cpuExtension) {
+                    mavenArguments.push('-P tf-cpu')
+                    mavenArguments.push('-P nd4j-tf-cpu')
+                }
+            }
+
+            if (backend.contains('cuda')) {
                 if (platformName == 'linux-x86_64') {
                     mavenArguments.push('-P tf-gpu')
                     mavenArguments.push('-P nd4j-tf-gpu')
