@@ -167,39 +167,17 @@ class Module implements Serializable {
 
     private List getMvnArguments(String stageName) {
         List mavenArguments = []
-//        List platformExcludesForCpuTests = [
-//                'android-arm',
-//                'android-arm64',
-//                'android-x86',
-//                'android-x86_64',
-//                'ios-arm64',
-//                'ios-x86_64'
-//        ]
-//        List platformExcludesForCudaTests = [
-//                'macosx-x86_64',
-//                'linux-ppc64le',
-//                'linux-x86_64',
-//                'windows-x86_64'
-//        ]
 
         if (modulesToBuild.any { it =~ /^libnd4j/ }) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
-//                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
-//                if (platformExcludesForCpuTests.contains(platformName) && stageName == 'test') {
-//                        mavenArguments.push('-Dmaven.test.skip=true')
-//                }
-
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
-//                if (!cpuExtension && platformName == 'linux-x86_64' && stageName != 'deploy') {
                 if (libnd4jBuildMode == 'debug') {
-//                    mavenArguments.push('-Dlibnd4j.test.is.release.build=false')
                     mavenArguments.push('-Dlibnd4j.build=debug')
                 }
 
                 // Workaround to skip compilation libnd4j for CPU during test and deploy stages
-//                if (stageName in ['test', 'deploy'] && libnd4jBuildMode != 'debug') {
                 if (stageName in ['deploy'] && libnd4jBuildMode != 'debug') {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
@@ -217,13 +195,7 @@ class Module implements Serializable {
                     mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
                 }
 
-//                // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
-//                if (platformExcludesForCudaTests.contains(platformName) && stageName == 'test') {
-//                    mavenArguments.push('-Dmaven.test.skip=true')
-//                }
-
                 // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
-//                if (stageName in ['test', 'deploy']) {
                 if (stageName in ['deploy']) {
                     mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
                 }
@@ -233,8 +205,8 @@ class Module implements Serializable {
                     mavenArguments.push("-Dlibnd4j.compute=37")
                 }
 
-                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
-                mavenArguments.push('-Dlibnd4j.test.skip=true')
+//                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
+//                mavenArguments.push('-Dlibnd4j.test.skip=true')
 
                 // FIXME: Workaround to fix dependencies problem if there is nd4j, datavec or deeplearning4j in project reactor, but changes were made only for libnd4j
                 mavenArguments.push("-Djavacpp.platform=${platformName}")
@@ -253,11 +225,7 @@ class Module implements Serializable {
             if (backend == 'cpu') {
                 // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
-//                    if (platformExcludesForCpuTests.contains(platformName)) {
-//                        mavenArguments.push('-Dmaven.test.skip=true')
-//                    } else {
-                        mavenArguments.push('-P test-nd4j-native')
-//                    }
+                    mavenArguments.push('-P test-nd4j-native')
                 }
 
                 if (cpuExtension) {
@@ -311,42 +279,14 @@ class Module implements Serializable {
 
                 // FIXME: Workaround to skip tests only for not supported, by current infra, platforms
                 if (stageName == 'test') {
-//                    if (platformExcludesForCudaTests.contains(platformName)) {
-//                        mavenArguments.push('-Dmaven.test.skip=true')
-//                    } else {
-                        mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
-//                    }
+                    mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
                 }
 
                 if (platformName == 'linux-x86_64') {
                     mavenArguments.push('-P tf-gpu')
                     mavenArguments.push('-P nd4j-tf-gpu')
                 }
-
-//                if (!modulesToBuild.any { it =~ /^libnd4j/}) {
-//                    mavenArguments.push("-Dlibnd4j.chip=cuda")
-//                    mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
-//
-//                    if (platformName != 'linux-x86_64') {
-//                        mavenArguments.push('-Dlibnd4j.cpu.compile.skip=true')
-//                    }
-//
-//                    // Workaround to skip compilation libnd4j for CUDA during test and deploy stages
-//                    if (stageName in ['test', 'deploy']) {
-//                        mavenArguments.push('-Dlibnd4j.cuda.compile.skip=true')
-//                    }
-//
-//                    // Set CC to 30 to increase build speed for PR and ordinary branches
-//                    if (branchName != 'master') {
-//                        mavenArguments.push("-Dlibnd4j.compute=37")
-//                    }
-//                }
             }
-
-//            // FIXME: Workaround to run libnd4j, nd4j tests only
-//            if (stageName == 'test') {
-//                mavenArguments.push('-P ci-test')
-//            }
         }
 
         if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j|^libnd4j/ }) {
@@ -458,7 +398,6 @@ class Module implements Serializable {
 
                 return '-pl \'' + (projects).findAll().join(',') + '\''
             } else {
-//                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '-am ') +
                 return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '') +
                         '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
             }
