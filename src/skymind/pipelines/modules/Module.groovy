@@ -165,10 +165,12 @@ class Module implements Serializable {
         }
     }
 
-    private List getMvnArguments(String stageName) {
+    private List getMvnArguments(String stageName, List modules) {
         List mavenArguments = []
 
-        if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+        if (modules.any { it =~ /libnd4j/ } ||
+                (platformName == 'linux-x86_64' && (!cpuExtension || backend.contains('cuda')))
+        ) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (backend == 'cpu') {
@@ -213,17 +215,17 @@ class Module implements Serializable {
             }
         }
 
-        if (modulesToBuild.any { it =~ /^nd4j/ }) {
+        if (modules.any { it =~ /nd4j/ }) {
             mavenArguments.push('-P native-snapshots')
             mavenArguments.push('-P uberjar')
             mavenArguments.push("-Djavacpp.platform=${platformName}")
 
-            if (!modulesToBuild.any { it =~ /^libnd4j/ } &&
-                    (platformName != 'linux-x86_64' ||
-                            (platformName == 'linux-x86_64' && cpuExtension))
-            ) {
-                mavenArguments.push('-P libnd4j-assembly')
-            }
+//            if (!modules.any { it =~ /^libnd4j/ } &&
+//                    (platformName != 'linux-x86_64' ||
+//                            (platformName == 'linux-x86_64' && cpuExtension))
+//            ) {
+//                mavenArguments.push('-P libnd4j-assembly')
+//            }
 
             if (backend == 'cpu') {
                 if (stageName == 'test') {
@@ -263,8 +265,9 @@ class Module implements Serializable {
                     Otherwise, getting following exception:
                         java.lang.OutOfMemoryError: unable to create new native thread
                  */
-                if ((streamName == 'macosx-x86_64-cpu' || streamName == 'linux-x86_64-cpu') &&
-                        stageName == 'test') {
+                if (((platformName == 'macosx-x86_64' || platformName == 'linux-x86_64') && backend == 'cpu') &&
+                        stageName == 'test'
+                ) {
                     mavenArguments.push('-DreuseForks=false')
                 }
             }
@@ -280,34 +283,37 @@ class Module implements Serializable {
             }
         }
 
-        if (modulesToBuild.any { it =~ /^nd4j|^libnd4j/ }) {
-            if (backend == 'cpu') {
-                if (platformName == 'linux-x86_64' && !cpuExtension) {
-                    mavenArguments.push('-P tf-cpu')
-                    mavenArguments.push('-P nd4j-tf-cpu')
+        if (modules.any { it =~ /nd4j/ }) {
+            if (platformName == 'linux-x86_64') {
+                if (backend == 'cpu') {
+                    if (!cpuExtension) {
+                        mavenArguments.push('-P tf-cpu')
+                        mavenArguments.push('-P nd4j-tf-cpu')
+                    }
                 }
-            }
 
-            if (backend.contains('cuda')) {
-                if (platformName == 'linux-x86_64') {
+                if (backend.contains('cuda')) {
                     mavenArguments.push('-P tf-gpu')
                     mavenArguments.push('-P nd4j-tf-gpu')
                 }
             }
         }
 
-        if (modulesToBuild.any { it =~ /^deeplearning4j|^nd4j|^libnd4j/ }) {
+        if (modules.any { it =~ /deeplearning4j|nd4j|libnd4j/ } ||
+                (platformName == 'linux-x86_64' && (!cpuExtension || backend.contains('cuda')))
+        ) {
             if (stageName == 'test') {
                 mavenArguments.push('-P testresources')
             }
 
-            if (!modulesToBuild.any { it =~ /^libnd4j|^nd4j/ }) {
+//            if (!modules.any { it =~ /^libnd4j|^nd4j/ }) {
+            if (!modules.any { it =~ /|^nd4j/ }) {
                 mavenArguments.push('-P libnd4j-assembly')
             }
         }
 
-        if (modulesToBuild.any { it =~ /^datavec/}) {
-            if (!modulesToBuild.any { it =~ /^nd4j/}) {
+        if (modules.any { it =~ /^datavec/}) {
+            if (!modules.any { it =~ /^nd4j/}) {
                 mavenArguments.push("-Djavacpp.platform=${platformName}")
                 mavenArguments.push('-P libnd4j-assembly')
             }
@@ -316,80 +322,57 @@ class Module implements Serializable {
         mavenArguments
     }
 
-    private String getMvnCommand(String stageName) {
-        String mavenCommand
-
-        Closure mavenProjects = {
-            List projects = []
-            List supportedModules = [
-                    'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
+    private String getMavenProjects(String stageName) {
+        List projects = []
+        String mvnArguments
+        List supportedModules = [
+                'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
-                    'gym-java-client', 'rl4j', 'scalnet', 'jumpy'
-            ]
-            List mavenExcludesForNd4jNative = [
-                    (platformName.contains('ios')) ?
-                            '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform' : '',
-                    '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda',
-                    '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform',
-                    '!deeplearning4j/deeplearning4j-cuda'
-            ]
-            List mavenExcludesForNd4jCuda = [
-                    '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
-                    '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform'
-            ]
-            List mavenExcludesForDeeplearning4jNative = [
-                    '!deeplearning4j/deeplearning4j-cuda'
-            ]
+                'gym-java-client', 'rl4j', 'scalnet', 'jumpy'
+        ]
+        List mavenExcludesForNd4jNative = [
+                (platformName.contains('ios')) ?
+                        '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform' : '',
+                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda',
+                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform'
+        ]
+        List mavenExcludesForNd4jCuda = [
+                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
+                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform'
+        ]
+        List mavenExcludesForDeeplearning4jNative = [
+                '!deeplearning4j/deeplearning4j-cuda'
+        ]
 
-            if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
-                if (platformName == 'linux-x86_64' && backend == 'cpu' && !cpuExtension && libnd4jBuildMode == 'release') {
-                    projects.addAll(mavenExcludesForDeeplearning4jNative)
-                }
+        if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
+            if (platformName == 'linux-x86_64' && backend == 'cpu' && !cpuExtension && libnd4jBuildMode == 'release') {
+                projects.addAll(mavenExcludesForDeeplearning4jNative)
             }
+        }
 
-            if (modulesToBuild.any { it =~ /^nd4j/ }) {
-                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
-                    if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-                        projects.addAll(['libnd4j'])
-                    }
+        if (modulesToBuild.any { it =~ /^nd4j/ }) {
+            if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
+//                if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+//                    projects.addAll(['libnd4j'])
+//                }
+                projects.addAll(['libnd4j'])
 
-                    if (backend == 'cpu') {
-                        // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
-                        projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native'])
-                    }
-
-                    if (backend.contains('cuda')) {
-                        // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
-                        projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
-                    }
-
-                    return '-am -pl \'' + (projects).findAll().join(',') + '\''
-                } else {
-                    if (backend == 'cpu') {
-                        if (!modulesToBuild.any { mavenExcludesForNd4jNative.contains(it) }) {
-                            if (libnd4jBuildMode == 'release') {
-                                projects.addAll(mavenExcludesForNd4jNative)
-                                projects.addAll(mavenExcludesForDeeplearning4jNative)
-                            } else {
-                                projects.addAll(['libnd4j'])
-                            }
-                        }
-                    }
-
-                    if (backend.contains('cuda')) {
-                        /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
-                        if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) }) {
-                            projects.addAll(mavenExcludesForNd4jCuda)
-                        }
-                    }
-
-                    return '-pl \'' + (projects).findAll().join(',') + '\''
+                if (backend == 'cpu') {
+                    // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
+                    projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native'])
                 }
-            } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
-                if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
-                    projects.addAll(['libnd4j'])
-                } else {
-                    if (backend == 'cpu') {
+
+                if (backend.contains('cuda')) {
+                    // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
+                    projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
+                }
+
+                mvnArguments = getMvnArguments(stageName, projects).findAll().join(' ')
+
+                return '-am -pl \'' + (projects).findAll().join(',') + '\'' + ' ' + mvnArguments
+            } else {
+                if (backend == 'cpu') {
+                    if (!modulesToBuild.any { mavenExcludesForNd4jNative.contains(it) }) {
                         if (libnd4jBuildMode == 'release') {
                             projects.addAll(mavenExcludesForNd4jNative)
                             projects.addAll(mavenExcludesForDeeplearning4jNative)
@@ -397,18 +380,53 @@ class Module implements Serializable {
                             projects.addAll(['libnd4j'])
                         }
                     }
+                }
 
-                    if (backend.contains('cuda')) {
+                if (backend.contains('cuda')) {
+                    /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
+                    if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) } &&
+                            !modulesToBuild.any { mavenExcludesForDeeplearning4jNative.contains(it) }
+                    ) {
                         projects.addAll(mavenExcludesForNd4jCuda)
+                        projects.addAll(mavenExcludesForDeeplearning4jNative)
                     }
                 }
 
-                return '-pl \'' + (projects).findAll().join(',') + '\''
-            } else {
-                return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '') +
-                        '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\''
+                mvnArguments = getMvnArguments(stageName, projects).findAll().join(' ')
+
+                return '-pl \'' + (projects).findAll().join(',') + '\'' + ' ' + mvnArguments
             }
+        } else if (modulesToBuild.any { it =~ /^libnd4j/ }) {
+            if (platformName != 'linux-x86_64' || (platformName == 'linux-x86_64' && cpuExtension)) {
+                projects.addAll(['libnd4j'])
+            } else {
+                if (backend == 'cpu') {
+                    if (libnd4jBuildMode == 'release') {
+                        projects.addAll(mavenExcludesForNd4jNative)
+                        projects.addAll(mavenExcludesForDeeplearning4jNative)
+                    } else {
+                        projects.addAll(['libnd4j'])
+                    }
+                }
+
+                if (backend.contains('cuda')) {
+                    projects.addAll(mavenExcludesForNd4jCuda)
+                }
+            }
+
+            mvnArguments = getMvnArguments(stageName, projects).findAll().join(' ')
+
+            return '-pl \'' + (projects).findAll().join(',') + '\'' + ' ' + mvnArguments
+        } else {
+            mvnArguments = getMvnArguments(stageName, modulesToBuild + projects).findAll().join(' ')
+
+            return (modulesToBuild.sort() == supportedModules.sort() ? '-amd ' : '') +
+                    '-pl \'' + (modulesToBuild + projects).findAll().join(',') + '\'' + ' ' + mvnArguments
         }
+    }
+
+    private String getMvnCommand(String stageName) {
+        String mavenCommand
 
         List commonArguments = [
                 // FIXME: -e -B -V not picked by Windows from withMaven pipeline step
@@ -416,7 +434,7 @@ class Module implements Serializable {
                 (stageName == 'build') ? '-U clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
-                mavenProjects(),
+                getMavenProjects(stageName),
                 (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
                 (releaseApproved) ? "-P staging" : '',
                 (releaseApproved && stageName == 'deploy') ?
@@ -439,7 +457,7 @@ class Module implements Serializable {
                             "-Dmaven.repo.local=" +
                                     "${script.env.WORKSPACE}/" +
                                     "${script.pipelineEnv.localRepositoryPath}" : ''
-            ] + getMvnArguments(stageName)).findAll().join(' ')
+            ]).findAll().join(' ')
         } else {
             mavenCommand = ([
                     'vcvars64.bat',
@@ -452,7 +470,7 @@ class Module implements Serializable {
                             "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
                             "${script.pipelineEnv.localRepositoryPath}",
                     '-s ${MAVEN_SETTINGS}'
-            ] + getMvnArguments(stageName)).findAll().join(' ') + '"'
+            ]).findAll().join(' ') + '"'
         }
 
         return mavenCommand
