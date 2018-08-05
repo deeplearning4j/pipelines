@@ -228,6 +228,11 @@ class Module implements Serializable {
 //            }
 
             if (backend == 'cpu') {
+                if (stageName in ['test', 'deploy']) {
+                    mavenArguments.push('-Djavacpp.parser.skip=true')
+                    mavenArguments.push('-Djavacpp.compiler.skip=true')
+                }
+
                 if (stageName == 'test') {
                     mavenArguments.push('-P test-nd4j-native')
                 }
