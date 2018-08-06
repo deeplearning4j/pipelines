@@ -203,7 +203,7 @@ class Module implements Serializable {
                 }
 
                 // Set CC to 30 to increase build speed for PR and ordinary branches
-                if (branchName != 'master') {
+                if (!(branchName == 'master' || branchName.contains(releaseBranchPattern))) {
                     mavenArguments.push("-Dlibnd4j.compute=37")
                 }
 
