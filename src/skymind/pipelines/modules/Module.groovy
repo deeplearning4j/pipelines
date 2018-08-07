@@ -494,9 +494,35 @@ class Module implements Serializable {
         if (releaseApproved) {
             populateGpgKeys()
             updateGitCredentials()
-//            TODO: add implementation of updateDependencyVersions method
 //            updateDependencyVersions(releaseVersion)
-            script.setProjectVersion(releaseVersion, true)
+//            script.setProjectVersion(releaseVersion, true)
+        }
+    }
+
+    private void updateDependencyVersions(String version) {
+        if (platformName == 'linux-x86_64' && backend.contains('cuda')) {
+            if (script.isUnix()) {
+                script.sh """
+                    for item in 'libnd4j' 'nd4j' 'deeplearning4j' 'arbiter' 'datavec' 'gym-java-client' 'jumpy' 'rl4j' 'scalnet'; do
+                        pushd "\${item}"
+
+                        sed -i "s/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${version}<\\/nd4j.version>/" pom.xml
+                        sed -i "s/<datavec.version>.*<\\/datavec.version>/<datavec.version>${version}<\\/datavec.version>/" pom.xml
+                        sed -i "s/<deeplearning4j.version>.*<\\/deeplearning4j.version>/<deeplearning4j.version>${version}<\\/deeplearning4j.version>/" pom.xml
+                        sed -i "s/<dl4j-test-resources.version>.*<\\/dl4j-test-resources.version>/<dl4j-test-resources.version>${version}<\\/dl4j-test-resources.version>/" pom.xml
+
+                        #Spark versions, like <version>xxx_spark_2-SNAPSHOT</version>
+                        for f in \$(find . -name 'pom.xml' -not -path '*target*'); do
+                            sed -i "s/version>.*_spark_.*</version>${version}_spark_1</g" "\${f}"
+                        done
+
+                        popd
+                    done
+            """.stripIndent()
+            } else {
+                /* TODO: Add windows support */
+                script.error "[ERROR] Windows is not supported yet."
+            }
         }
     }
 
