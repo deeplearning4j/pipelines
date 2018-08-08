@@ -350,7 +350,7 @@ class Module implements Serializable {
         ]
 
         if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
-            if (platformName == 'linux-x86_64' && backend == 'cpu' && !cpuExtension && libnd4jBuildMode == 'release') {
+            if (streamName == 'linux-x86_64-cpu' && libnd4jBuildMode == 'release') {
                 projects.addAll(mavenExcludesForDeeplearning4jNative)
             }
         }
@@ -393,7 +393,6 @@ class Module implements Serializable {
                             !modulesToBuild.any { mavenExcludesForDeeplearning4jNative.contains(it) }
                     ) {
                         projects.addAll(mavenExcludesForNd4jCuda)
-                        projects.addAll(mavenExcludesForDeeplearning4jNative)
                     }
                 }
 
