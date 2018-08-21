@@ -456,7 +456,10 @@ class Module implements Serializable {
                     "if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
-                    'export PATH=$MVN_CMD_DIR:$PATH &&'
+                    'export PATH=$MVN_CMD_DIR:$PATH &&',
+                    /* MAVEN_OPTS provided below, should help to effectively use of docker container resources with Java 8 */
+                    (!(platformName in ['macosx-x86_64', 'ios-x86_64', 'ios-arm64', 'windows-x86_64'])) ?
+                            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&' : ''
             ] + commonArguments + [
                     /* Workaround for MacOS/iOS which doesn't honour withMaven options */
                     (platformName.contains('macosx') || platformName.contains('ios')) ?
