@@ -293,11 +293,11 @@ class Deeplearning4jMonoRepoProject implements Serializable {
         List platforms
 
         // Set linux platform for fast tests pipeline
-        if (!(branchName =~ 'master|release|PR-\\d+|deeplearning4j-\\d+.\\d+.\\d+.*')) {
-            platforms = [
-                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu']
-            ]
-        } else {
+//        if (!(branchName =~ 'master|release|PR-\\d+|deeplearning4j-\\d+.\\d+.\\d+.*')) {
+//            platforms = [
+//                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu']
+//            ]
+//        } else {
             switch (module) {
                 case ['libnd4j', 'nd4j']:
                     platforms = [
@@ -357,7 +357,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     ]
                     break
             }
-        }
+//        }
 
         platforms
     }
