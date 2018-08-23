@@ -38,6 +38,7 @@ class Module implements Serializable {
             'windows-x86_64-cuda-9.0',
             'windows-x86_64-cuda-9.2',
     ]
+    public Map testResults
 
     /**
      * Module class constructor
@@ -93,7 +94,17 @@ class Module implements Serializable {
     }
 
     private void runTestLogic() {
-        script.mvn getMvnCommand('test')
+        try {
+            script.mvn getMvnCommand('test')
+        }
+        finally {
+            def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+
+            testResults = [
+                    platform: streamName,
+                    testResults: parseTestResults(tr)
+            ]
+        }
     }
 
     private void runDeployLogic() {
@@ -436,7 +447,8 @@ class Module implements Serializable {
 
         List commonArguments = [
                 // FIXME: -e -B -V not picked by Windows from withMaven pipeline step
-                'mvn -e -B -V',
+                // -T 1C set to run maven build in parallel
+                'mvn -e -B -V -T 1C',
                 (stageName == 'build') ? '-U clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
@@ -585,23 +597,23 @@ class Module implements Serializable {
         script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
 
-    private void parseTestResults(String testStageOutput) {
-//        def testStageOutput = script.currentBuild.rawBuild.getAction(AbstractTestResultAction.class)
+    private String parseTestResults(testResults) {
+        String testResultsDetails = ''
 
-//        if (testStageOutput != null) {
-//            def total = testStageOutput.totalCount
-//            def failed = testStageOutput.failCount
-//            def skipped = testStageOutput.skipCount
-//            def passed = total - failed - skipped
-//
-//            script.echo "Test Status:\n  Passed: ${passed}, Failed: ${failed} ${testStageOutput.failureDiffString}, Skipped: ${skipped}"
-//        }
-        for (l in testStageOutput.tokenize('\n')) {
-            String line = l
+        if (testResults != null) {
+            def total = testResults.totalCount
+            def failed = testResults.failCount
+            def skipped = testResults.skipCount
+            def passed = total - failed - skipped
 
-            if (line.contains('Tests run:')) {
-                script.echo "Test results: ${line}"
-            }
+            testResultsDetails += ("Total: " + total)
+            testResultsDetails += (", Passed: " + passed)
+            testResultsDetails += (", Failed: " + failed)
+            testResultsDetails += (", Skipped: " + skipped)
+        } else {
+            testResultsDetails = 'No test results found'
         }
+
+        return testResultsDetails
     }
 }
