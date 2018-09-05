@@ -54,19 +54,19 @@ void sendSlackNotification(Map args) {
     jobDetails.put('fallback', subject)
     jobDetails.put('mrkdwn_in', ["fields"])
 
-    // Git branch details
-    JSONObject branch = new JSONObject()
-    branch.put('title', 'Branch')
-    branch.put('value', checkoutDetails.GIT_BRANCH)
-    branch.put('short', true)
-    jobDetailsFields.add(branch)
-
     // Commit author details
     JSONObject author = new JSONObject()
     author.put('title', 'Author')
     author.put('value', committer)
     author.put('short', true)
     jobDetailsFields.add(author)
+
+    // Git branch details
+    JSONObject branch = new JSONObject()
+    branch.put('title', 'Branch')
+    branch.put('value', checkoutDetails.GIT_BRANCH)
+    branch.put('short', true)
+    jobDetailsFields.add(branch)
 
     // Commit message details
     JSONObject commitMessage = new JSONObject()
@@ -103,7 +103,7 @@ void sendSlackNotification(Map args) {
             }
 
             if (failedTests) {
-                failedTestDetails.put('title', 'Failed test results')
+                failedTestDetails.put('title', 'Failed tests')
                 failedTestDetails.put('color', notificationColor)
                 failedTestDetails.put('text', failedTests)
                 failedTestDetails.put('mrkdwn_in', ['text'])
