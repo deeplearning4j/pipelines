@@ -15,7 +15,7 @@ def call(String command) {
             globalMavenSettingsConfig: configFileName,
             options: [
                     artifactsPublisher(disabled: true),
-                    junitPublisher(disabled: true),
+                    junitPublisher(disabled: true), // This option does not allow to distinguish tests results in parallel step, whereas simple junit step call does.
                     findbugsPublisher(disabled: true),
                     openTasksPublisher(disabled: true),
                     dependenciesFingerprintPublisher(disabled: true),

@@ -1,6 +1,6 @@
 package skymind.pipelines.projects
 
-
+import groovy.json.JsonSlurper
 import skymind.pipelines.modules.Module
 
 /**
@@ -18,6 +18,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
     private static String releaseBranchPattern = 'release'
     private static String releaseVersion
     private static String snapshotVersion
+    private List testResults = []
 
     /**
      * Project class constructor
@@ -39,16 +40,69 @@ class Deeplearning4jMonoRepoProject implements Serializable {
         terminateOlderBuilds(this.script.env.JOB_NAME, this.script.env.BUILD_NUMBER.toInteger())
     }
 
+    protected Map parseCheckoutDetails() {
+        Closure shellCommand = { String command ->
+            return script.sh(script: command, returnStdout: true).trim()
+        }
+
+        String gitCommitId = shellCommand('git log -1 --pretty=%H')
+
+        return [GIT_BRANCH: script.env.BRANCH_NAME,
+                GIT_COMMIT: gitCommitId,
+                GIT_COMMITER_NAME: shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
+                GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
+                GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=%B ${gitCommitId}")]
+    }
+
+    private Boolean isMemberOrCollaborator(String committerFullName) {
+        String authCredentialsId = 'skymindops-username-and-token'
+        String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
+
+        String userDetails = script.httpRequest(url: usersSearchUrl,
+                timeout: 60,
+                authentication: authCredentialsId,
+                quiet: true).content
+
+        // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
+        String committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+
+        String memberQueryUrl = "https://api.github.com/orgs/deeplearning4j/members/${committerUsername}"
+
+        int isMemberResponse = script.httpRequest(url: memberQueryUrl,
+                timeout: 60,
+                authentication: authCredentialsId,
+                quiet: true,
+                validResponseCodes: '100:404').status
+
+        return (isMemberResponse == 204)
+
+//    Not working with provided credentials
+//    String collaboratorsQueryUrl = "https://api.github.com/orgs/deeplearning4j/outside_collaborators"
+//    def isCollaboratorResponse = httpRequest url: collaboratorsQueryUrl,
+//            timeout: 120,
+//            authentication: authCredentialsId,
+//            quiet: true
+
+//    return (isMemberResponse.status == '204' || username in isCollaboratorResponse.content.login)
+    }
+
     protected void initPipeline() {
         List modulesToBuild
+        Map checkoutDetails
+        Boolean isMember
 
         try {
-            script.notifier.sendSlackNotification('STARTED')
-
             script.stage('Prepare Run') {
 
                 script.node('linux-x86_64-generic') {
                     script.checkout script.scm
+
+                    checkoutDetails = parseCheckoutDetails()
+
+                    isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
+
+                    script.notifier.sendSlackNotification jobResult: 'STARTED',
+                            checkoutDetails: checkoutDetails, isMember: isMember
 
                     modulesToBuild = getModulesToBuild(changes)
 
@@ -69,9 +123,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                 List modules = mapping.modules ?: script.error('Missing modules!')
                 List platforms = mapping.platforms ?: script.error('Missing platforms!')
 
-                script.stage('Build | Test | Deploy') {
-                    script.parallel getBuildStreams(modules, platforms)
-                }
+                script.parallel getBuildStreams(modules, platforms)
             }
         }
         catch (error) {
@@ -92,8 +144,10 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
-            script.notifier.sendSlackNotification(script.currentBuild.result)
-            script.notifier.sendEmailNotification(script.currentBuild.result)
+            script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
+                    checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
+
+//            script.notifier.sendEmailNotification(script.currentBuild.result)
         }
     }
 
@@ -278,6 +332,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             }
                         }
                         finally {
+                            testResults.add(module.testResults)
                             script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
                             script.cleanWs deleteDirs: true
                         }
