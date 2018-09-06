@@ -448,7 +448,8 @@ class Module implements Serializable {
         List commonArguments = [
                 // FIXME: -e -B -V not picked by Windows from withMaven pipeline step
                 // -T 1C set to run maven build in parallel
-                'mvn -e -B -V -T 1C',
+                // FIXME: Temporary disable maven parallel builds -T 1C
+                'mvn -B -V',
                 (stageName == 'build') ? '-U clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
