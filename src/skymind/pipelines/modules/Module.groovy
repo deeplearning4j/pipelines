@@ -228,7 +228,6 @@ class Module implements Serializable {
         }
 
         if (modules.any { it =~ /nd4j/ }) {
-            mavenArguments.push('-P native-snapshots')
             mavenArguments.push('-P uberjar')
             mavenArguments.push("-Djavacpp.platform=${platformName}")
 
@@ -240,6 +239,12 @@ class Module implements Serializable {
 //            }
 
             if (backend == 'cpu') {
+                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                    mavenArguments.push('-P native')
+                } else {
+                    mavenArguments.push('-P native-snapshots')
+                }
+
                 if (stageName in ['test', 'deploy']) {
                     mavenArguments.push('-Djavacpp.parser.skip=true')
                     mavenArguments.push('-Djavacpp.compiler.skip=true')
@@ -296,6 +301,12 @@ class Module implements Serializable {
             }
 
             if (backend.contains('cuda')) {
+                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                    mavenArguments.push('-P cuda')
+                } else {
+                    mavenArguments.push('-P cuda-snapshots')
+                }
+
                 if (platformName.contains('linux')) {
                     mavenArguments.push('-DprotocCommand=protoc')
                 }
