@@ -37,6 +37,7 @@ class Module implements Serializable {
             'windows-x86_64-cuda-8.0',
             'windows-x86_64-cuda-9.0',
             'windows-x86_64-cuda-9.2',
+            'linux-armhf'
     ]
     public Map testResults
 

@@ -394,7 +394,8 @@ class Deeplearning4jMonoRepoProject implements Serializable {
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
                             [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2']
+                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                            [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
                     ]
                     break
                 case 'deeplearning4j':
