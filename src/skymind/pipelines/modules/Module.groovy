@@ -289,6 +289,10 @@ class Module implements Serializable {
                 ) {
                     mavenArguments.push('-DreuseForks=false')
                 }
+
+                if (platformName == 'linux-armhf') {
+                    mavenArguments.push('-Djavacpp.platform.compiler=${RPI_HOME}/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf-g++')
+                }
             }
 
             if (backend.contains('cuda')) {
