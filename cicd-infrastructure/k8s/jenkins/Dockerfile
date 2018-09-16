@@ -1,4 +1,4 @@
-FROM jenkinsci/jenkins:lts-slim
+FROM jenkinsci/jenkins:2.138.1-slim
 
 # Copy jenkins-github-skip-pr-by-title plugin
 COPY --chown=jenkins plugins/github-skip-pr-by-title.hpi /usr/share/jenkins/ref/plugins/github-skip-pr-by-title.hpi
