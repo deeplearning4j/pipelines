@@ -1,5 +1,7 @@
 package skymind.pipelines.projects
 
+import groovy.json.JsonSlurper
+
 
 abstract class Project implements Serializable {
     protected script
@@ -21,7 +23,7 @@ abstract class Project implements Serializable {
      * @param projectName project name
      * @param jobConfig configuration of job/run environment
      */
-    Project(script, String projectName, Map jobConfig) {
+    Project(Object script, String projectName, Map jobConfig) {
         this.script = script
         this.projectName = projectName
         branchName = this.script.env.BRANCH_NAME
@@ -37,46 +39,28 @@ abstract class Project implements Serializable {
 
     @NonCPS
     protected void setBuildParameters(List jobSpecificProperties) {
-        List commonJobProperties = [
-                script.buildDiscarder(
-                        script.logRotator(
-                                artifactDaysToKeepStr: '3',
-                                artifactNumToKeepStr: '5',
-                                daysToKeepStr: '3',
-                                numToKeepStr: '5'
-                        )
-                ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false]
-        ]
+        List commonJobProperties = []
 
         if (script.env.JOB_BASE_NAME == 'master') {
-            List notificationEndpoints = [
-                    /* Gitter endpoint url for dev_channel room */
-                    [
-                            retries: 5,
-                            urlInfo: [
-                                    urlOrId: 'https://webhooks.gitter.im/e/d74b592f0914132e59ba',
-                                    urlType: 'PUBLIC'
-                            ]
-                    ],
-                    /* If job specific Gitter endpoint url provided that add it to the list */
-                    (gitterEndpointUrl) ? [
-                            retries: 5,
-                            urlInfo: [
-                                    urlOrId: gitterEndpointUrl,
-                                    urlType: 'PUBLIC'
-                            ]
-                    ] : null
-            ].findAll()
-
-            commonJobProperties.push(
-                    [$class: 'HudsonNotificationProperty', endpoints: notificationEndpoints]
-            )
-
-//            commonJobProperties.push(script.pipelineTriggers([script.cron('@midnight')]))
+            commonJobProperties.addAll([
+                    script.pipelineTriggers([script.cron('@midnight')])
+            ])
         }
 
         script.properties(commonJobProperties + jobSpecificProperties)
+    }
+
+    @NonCPS
+    protected terminateOlderBuilds(String jobName, int buildsNumber) {
+        def currentJob = Jenkins.instance.getItemByFullName(jobName)
+
+        for (def build : currentJob.builds) {
+            if (build.isBuilding() && build.number.toInteger() != buildsNumber) {
+                build.doStop()
+                script.echo "[WARNING] Build number ${build.number} was " +
+                        "terminated because of current(latest) run."
+            }
+        }
     }
 
     protected void pipelineWrapper(Closure pipelineBody) {
@@ -397,18 +381,6 @@ abstract class Project implements Serializable {
     }
 
     @NonCPS
-    protected terminateOlderBuilds(String jobName, int buildsNumber) {
-        def currentJob = Jenkins.instance.getItemByFullName(jobName)
-
-        for (def build : currentJob.builds) {
-            if (build.isBuilding() && build.number.toInteger() != buildsNumber) {
-                build.doStop()
-                script.echo "[WARNING] Build number ${build.number} was terminated because of current(latest) run."
-            }
-        }
-    }
-
-    @NonCPS
     protected List getDefaultPlatforms(String projectName) {
         List defaultPlatforms
         switch (projectName) {
@@ -468,5 +440,51 @@ abstract class Project implements Serializable {
         }
 
         defaultPlatforms
+    }
+
+    protected Map parseCheckoutDetails() {
+        Closure shellCommand = { String command ->
+            return script.sh(script: command, returnStdout: true).trim()
+        }
+
+        String gitCommitId = shellCommand('git log -1 --pretty=%H')
+
+        return [GIT_BRANCH: script.env.BRANCH_NAME,
+                GIT_COMMIT: gitCommitId,
+                GIT_COMMITER_NAME: shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
+                GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
+                GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=%B ${gitCommitId}")]
+    }
+
+    protected Boolean isMemberOrCollaborator(String committerFullName) {
+        String authCredentialsId = 'skymindops-username-and-token'
+        String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
+
+        String userDetails = script.httpRequest(url: usersSearchUrl,
+                timeout: 60,
+                authentication: authCredentialsId,
+                quiet: true).content
+
+        // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
+        String committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+
+        String memberQueryUrl = "https://api.github.com/orgs/deeplearning4j/members/${committerUsername}"
+
+        int isMemberResponse = script.httpRequest(url: memberQueryUrl,
+                timeout: 60,
+                authentication: authCredentialsId,
+                quiet: true,
+                validResponseCodes: '100:404').status
+
+        return (isMemberResponse == 204)
+
+//    Not working with provided credentials
+//    String collaboratorsQueryUrl = "https://api.github.com/orgs/deeplearning4j/outside_collaborators"
+//    def isCollaboratorResponse = httpRequest url: collaboratorsQueryUrl,
+//            timeout: 120,
+//            authentication: authCredentialsId,
+//            quiet: true
+
+//    return (isMemberResponse.status == '204' || username in isCollaboratorResponse.content.login)
     }
 }
