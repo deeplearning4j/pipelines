@@ -34,6 +34,9 @@ class ProjectFactory implements Serializable {
             case 'dl4j-test-resources':
                 new Deeplearning4jTestResourcesProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'pydl4j':
+                new PyDl4jProject(script, projectName, jobConfig).initPipeline()
+                break
             case 'Arbiter':
                 new ArbiterProject(script, projectName, jobConfig).initPipeline()
                 break
