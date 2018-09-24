@@ -20,6 +20,8 @@ RUN yum -y clean all && \
             git \
             rpm-build \
             sudo \
+            # Required for Datavec NativeImageLoader
+            gtk2-devel \
            && \
         yum clean all
 

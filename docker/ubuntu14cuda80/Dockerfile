@@ -7,6 +7,8 @@ RUN apt-get update && \
         ca-certificates \
         software-properties-common \
         git \
+        # Required for Datavec NativeImageLoader
+        libgtk2.0-dev \
         && \
 	add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
 	apt-get update && \

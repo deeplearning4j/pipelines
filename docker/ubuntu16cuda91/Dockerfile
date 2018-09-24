@@ -8,6 +8,8 @@ RUN apt-get update && \
         ca-certificates \
         software-properties-common \
         git \
+        # Required for Datavec NativeImageLoader
+        libgtk2.0-dev \
         && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

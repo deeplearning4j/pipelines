@@ -25,6 +25,8 @@ RUN yum -y clean all && \
             sudo \
             # Required for libnd4j CPU tests (minifier)
             which \
+            # Required for Datavec NativeImageLoader
+            gtk2-devel \
            && \
         yum clean all
 

@@ -12,6 +12,8 @@ RUN apt-get -qqy update && \
         git \
         wget \
         openssl \
+        # Required for Datavec NativeImageLoader
+        libgtk2.0-dev \
         && \
     add-apt-repository ppa:openjdk-r/ppa -y && \
     add-apt-repository ppa:ubuntu-toolchain-r/test -y && \

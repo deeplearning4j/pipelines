@@ -22,6 +22,8 @@ RUN yum -y clean all && \
             ca-certificates \
             git \
             rpm-build \
+            # Required for Datavec NativeImageLoader
+            gtk2-devel \
             && \
         yum clean all
 
