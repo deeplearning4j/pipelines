@@ -420,18 +420,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
 
     @NonCPS
     protected void setBuildParameters() {
-        List commonJobProperties = [
-                script.buildDiscarder(
-                        script.logRotator(
-                                artifactDaysToKeepStr: '3',
-                                artifactNumToKeepStr: '5',
-                                daysToKeepStr: '3',
-                                numToKeepStr: '5'
-                        )
-                ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-                script.overrideIndexTriggers(true)
-        ]
+        List commonJobProperties = []
 
         if (script.env.JOB_BASE_NAME == 'master') {
             commonJobProperties.addAll([
