@@ -6,12 +6,6 @@ RUN yum -y clean all && \
             epel-release \
             && \
         yum -y install \
-            devtoolset-3-toolchain \
-            devtoolset-3-libasan-devel \
-            devtoolset-3-liblsan-devel \
-            devtoolset-4-toolchain \
-            devtoolset-4-libasan-devel \
-            devtoolset-4-liblsan-devel \
             devtoolset-6-toolchain \
             devtoolset-6-libasan-devel \
             devtoolset-6-liblsan-devel \

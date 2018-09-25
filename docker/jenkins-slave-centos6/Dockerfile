@@ -6,12 +6,6 @@ RUN yum -y clean all && \
             epel-release \
            && \
         yum -y install \
-            devtoolset-3-toolchain \
-            devtoolset-3-libasan-devel \
-            devtoolset-3-liblsan-devel \
-            devtoolset-4-toolchain \
-            devtoolset-4-libasan-devel \
-            devtoolset-4-liblsan-devel \
             devtoolset-6-toolchain \
             devtoolset-6-libasan-devel \
             devtoolset-6-liblsan-devel \
@@ -57,7 +51,7 @@ RUN mkdir -p /opt/cmake && \
     | tar -xzC /opt/cmake --strip-components=1
 
 ENV PROTOBUF_HOME /opt/protobuf
-RUN source /opt/rh/devtoolset-4/enable && \
+RUN source /opt/rh/devtoolset-6/enable && \
     curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-cpp-3.5.1.tar.gz \
     | tar xz && \
     cd protobuf-3.5.1 && \

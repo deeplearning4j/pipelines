@@ -53,7 +53,7 @@ RUN mkdir -p /opt/cmake && \
         | tar -xzC /opt/cmake --strip-components=1
 
 ENV PROTOBUF_HOME /opt/protobuf
-RUN source /opt/rh/devtoolset-4/enable && \
+RUN source /opt/rh/devtoolset-6/enable && \
     curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-cpp-3.5.1.tar.gz \
     | tar xz && \
     cd protobuf-3.5.1 && \
