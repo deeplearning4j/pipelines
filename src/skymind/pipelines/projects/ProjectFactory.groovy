@@ -52,6 +52,9 @@ class ProjectFactory implements Serializable {
             case 'lagom-skil-api':
                 new LagomSkilApiProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'skil-python':
+                new SkilPythonProject(script, projectName, jobConfig).initPipeline()
+                break
             default:
                 throw new IllegalArgumentException('Project is not supported yet')
                 break
