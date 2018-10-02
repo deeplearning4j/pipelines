@@ -14,40 +14,14 @@ class ProjectFactory implements Serializable {
         String projectName = (script.env.JOB_NAME - script.env.JOB_BASE_NAME).tokenize('/').last().trim()
 
         switch (projectName) {
-            case 'libnd4j':
-                new Libnd4jProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'nd4j':
-                new Nd4jProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'nd4s':
-                new Nd4sProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'DataVec':
-                new DataVecProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'deeplearning4j-monotest':
             case 'deeplearning4j':
-//                new Deeplearning4jProject(script, projectName, jobConfig).initPipeline()
-                new Deeplearning4jMonoRepoProject(script, jobConfig).initPipeline()
+                new Deeplearning4jProject(script, jobConfig).initPipeline()
                 break
             case 'dl4j-test-resources':
                 new Deeplearning4jTestResourcesProject(script, projectName, jobConfig).initPipeline()
                 break
             case 'pydl4j':
                 new PyDl4jProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'Arbiter':
-                new ArbiterProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'gym-java-client':
-                new GymJavaClientProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'rl4j':
-                new Rl4jProject(script, projectName, jobConfig).initPipeline()
-                break
-            case 'ScalNet':
-                new ScalNetProject(script, projectName, jobConfig).initPipeline()
                 break
             case 'skil-server':
                 new SkilServerProject(script, projectName, jobConfig).initPipeline()
