@@ -49,8 +49,8 @@ class ProjectFactory implements Serializable {
             case 'ScalNet':
                 new ScalNetProject(script, projectName, jobConfig).initPipeline()
                 break
-            case 'lagom-skil-api':
-                new LagomSkilApiProject(script, projectName, jobConfig).initPipeline()
+            case 'skil-server':
+                new SkilServerProject(script, projectName, jobConfig).initPipeline()
                 break
             case 'skil-python':
                 new SkilPythonProject(script, projectName, jobConfig).initPipeline()
