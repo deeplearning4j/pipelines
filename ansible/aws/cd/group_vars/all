@@ -1,5 +1,0 @@
-main_user: ec2-user
-uid: 1111
-gid: 1111
-old_uid: 500
-user: jenkins

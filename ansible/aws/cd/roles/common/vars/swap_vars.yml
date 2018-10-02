@@ -1,5 +1,0 @@
----
-swap_file_path: /var/lib/swapfile
-swap_file_size: 4194304
-swappiness: 10
-cache_value : 200
