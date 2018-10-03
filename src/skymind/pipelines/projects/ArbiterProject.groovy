@@ -26,10 +26,7 @@ class ArbiterProject extends Project {
 
                     if (!branchName.contains(releaseBranchPattern)) {
                         script.stage("Test | Scala ${scalaVersion}") {
-                            /* FIXME: Timeout requested by Alex Black because of flappy tests behavior */
-                            script.timeout(15) {
-                                runTests()
-                            }
+                            runTests()
                         }
                     }
 

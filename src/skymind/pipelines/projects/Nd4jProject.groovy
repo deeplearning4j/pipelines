@@ -4,63 +4,6 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class Nd4jProject extends Project {
-    /* Override default platforms */
-    static {
-        defaultPlatforms = [
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-arm'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-x86'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-x86_64'],
-
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 compillers: [],
-                 name      : 'linux-ppc64le'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2', 'avx512'],
-                 compillers   : [],
-                 name         : 'linux-x86_64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-x86_64'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /*
-                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                     at the same time for CUDA - Xcode 8 required,
-                     which means that we can't enable avx512 builds at the moment
-                  */
-//                 cpuExtensions: ['avx2', 'avx512'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2'],
-                 compillers   : [],
-                 name         : 'macosx-x86_64'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2'],
-                 compillers   : [],
-                 name         : 'windows-x86_64']
-        ]
-    }
-
     void initPipeline() {
         pipelineWrapper {
             if (branchName.contains(releaseBranchPattern)) {
@@ -80,196 +23,140 @@ class Nd4jProject extends Project {
 
         for (Map pltm : platforms) {
             Map platform = pltm
-            String platformName = platform.name
-            List backends = platform.backends
-            List compilers = platform.compilers
-            /* List with empty element was added to build for CPU without extension */
-            List cpuExtensions = platform.cpuExtensions ?: ['']
 
-            for (List bckd : backends) {
-                String backend = bckd
+            String platformName = platform.get('name')
+            String scalaVersion = platform.get('scalaVersion')
+            String backend = platform.get('backend')
+            String cpuExtension = platform.get('cpuExtension')
 
-                if (backend == 'cpu') {
-                    for (String cpuExt : cpuExtensions) {
-                        String cpuExtension = cpuExt
-                        String streamName = ["${platformName}", "${backend}", "${cpuExtension}"].findAll().join('-')
+            String streamName = [platformName, backend, cpuExtension].findAll().join('-')
 
-                        /* Create stream body */
-                        streams["$streamName"] = {
-                            script.node(streamName) {
-                                Boolean isUnix = script.isUnix()
-                                String separator = isUnix ? '/' : '\\'
-                                String wsFolderName = 'workspace' +
-                                        separator +
-                                        [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+            /* Create stream body */
+            streams["$streamName"] = {
+                script.node(streamName) {
+                    Boolean isUnix = script.isUnix()
+                    String separator = isUnix ? '/' : '\\'
+                    String wsFolderName = 'workspace' +
+                            separator +
+                            [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
-                                /* Redefine default workspace to fix Windows path length limitation */
-                                script.ws(wsFolderName) {
-                                    try {
-                                        script.stage('Checkout') {
-                                            script.deleteDir()
+                    /* Redefine default workspace to fix Windows path length limitation */
+                    script.ws(wsFolderName) {
+                        try {
+                            script.stage('Checkout') {
+                                script.deleteDir()
 
-                                            script.dir(projectName) {
-                                                script.checkout script.scm
+                                script.dir(projectName) {
+                                    script.checkout script.scm
+                                }
+                            }
+
+                            script.dir(projectName) {
+                                if (platformName.contains('ppc64') || platformName.contains('linux') && backend.contains('cuda')) {
+                                    /* Get docker container configuration */
+                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+
+                                    String dockerImageName = dockerConf['image'] ?:
+                                            script.error('Docker image name is missing.')
+                                    String dockerImageParams = dockerConf?.params
+
+                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                        if (branchName.contains(releaseBranchPattern)) {
+                                            script.stage("Prepare for Release") {
+                                                setupEnvForRelease()
                                             }
                                         }
 
-                                        script.dir(projectName) {
-                                            if (branchName.contains(releaseBranchPattern)) {
-                                                script.stage("Prepare for Release") {
-                                                    setupEnvForRelease()
-                                                }
-                                            }
+                                        script.stage('Build') {
+                                            runStageLogic('build', platformName, backend, cpuExtension, scalaVersion)
+                                        }
 
-                                            script.stage('Build') {
-                                                runStageLogic('build', platformName, backend, cpuExtension)
-                                            }
+                                        if (branchName == 'master' && !branchName.contains(releaseBranchPattern)) {
+//                                            /* Workaround to exclude test for backends that are not supported by Jenkins agents */
+//                                            if (platformName.contains('ios') || platformName.contains('android')) {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                        "because of lack of target device..."
+//                                            }
+//                                            else if (platformName.contains('macosx') && cpuExtension != '') {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                        "because of lack of extension support on Jenkins agent..."
+//                                            }
+//                                            else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                        "because of lack of extension support on Jenkins agent..."
+//                                            }
+//                                            else if (platformName.contains('macosx') && backend.contains('cuda')) {
+//                                                script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                        "because of lack of GPU..."
+//                                            }
+//                                            else {
+//                                                script.stage('Build Test Resources') {
+//                                                    runBuildTestResources(platformName)
+//                                                }
+//
+//                                                script.stage('Test') {
+//                                                    runStageLogic('test', platformName, backend, cpuExtension, scalaVersion)
+//                                                }
+//                                            }
+                                        }
 
-                                            /* FIXME: ATM test are running only for master branch */
-                                            if (branchName == 'master' && !branchName.contains(releaseBranchPattern)) {
-                                                /* Workaround to exclude test for cpu/cpu extensions that are not supported by Jenkins agents */
-                                                if (platformName.contains('ios') || platformName.contains('android')) {
-                                                    script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                            "because of lack of target device..."
-                                                } else if (platformName.contains('macosx') && cpuExtension != '') {
-                                                    script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
-                                                            "because of lack of extension support on Jenkins agent..."
-                                                } else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
-                                                    script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
-                                                            "because of lack of extension support on Jenkins agent..."
-                                                } else {
-                                                    script.stage('Build Test Resources') {
-                                                        runBuildTestResources(platformName)
-                                                    }
-
-                                                    script.stage('Test') {
-                                                        runStageLogic('test', platformName, backend, cpuExtension)
-                                                    }
-                                                }
-                                            }
-
-                                            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                                                script.stage('Deploy') {
-                                                    runStageLogic('deploy', platformName, backend, cpuExtension)
-                                                }
+                                        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                                            script.stage('Deploy') {
+                                                runStageLogic('deploy', platformName, backend, cpuExtension, scalaVersion)
                                             }
                                         }
                                     }
-                                    finally {
-                                        /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
-                                        script.deleteDir()
+                                } else {
+                                    if (branchName.contains(releaseBranchPattern)) {
+                                        script.stage("Prepare for Release") {
+                                            setupEnvForRelease()
+                                        }
+                                    }
+
+                                    script.stage('Build') {
+                                        runStageLogic('build', platformName, backend, cpuExtension, scalaVersion)
+                                    }
+
+                                    if (branchName == 'master' && !branchName.contains(releaseBranchPattern)) {
+//                                        /* Workaround to exclude test for backends that are not supported by Jenkins agents */
+//                                        if (platformName.contains('ios') || platformName.contains('android')) {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                    "because of lack of target device..."
+//                                        }
+//                                        else if (platformName.contains('macosx') && cpuExtension != '') {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                    "because of lack of extension support on Jenkins agent..."
+//                                        }
+//                                        else if (platformName.contains('linux-x86_64') && cpuExtension == 'avx512') {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName} with ${cpuExtension}, " +
+//                                                    "because of lack of extension support on Jenkins agent..."
+//                                        }
+//                                        else if (platformName.contains('macosx') && backend.contains('cuda')) {
+//                                            script.echo "Skipping tests for ${backend} on ${platformName}, " +
+//                                                    "because of lack of GPU..."
+//                                        }
+//                                        else {
+//                                            script.stage('Build Test Resources') {
+//                                                runBuildTestResources(platformName)
+//                                            }
+//
+//                                            script.stage('Test') {
+//                                                runStageLogic('test', platformName, backend, cpuExtension, scalaVersion)
+//                                            }
+//                                        }
+                                    }
+
+                                    if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                                        script.stage('Deploy') {
+                                            runStageLogic('deploy', platformName, backend, cpuExtension, scalaVersion)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                } else {
-                    String streamName = ["${platformName}", "${backend}"].findAll().join('-')
-
-                    /* Create stream body */
-                    streams["$streamName"] = {
-                        script.node(platformName) {
-                            Boolean isUnix = script.isUnix()
-                            String separator = isUnix ? '/' : '\\'
-                            String wsFolderName = 'workspace' +
-                                    separator +
-                                    [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
-
-                            /* Redefine default workspace to fix Windows path length limitation */
-                            script.ws(wsFolderName) {
-                                try {
-                                    script.stage('Checkout') {
-                                        script.deleteDir()
-
-                                        script.dir(projectName) {
-                                            script.checkout script.scm
-                                        }
-                                    }
-
-                                    script.dir(projectName) {
-                                        /* Get docker container configuration */
-                                        Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
-
-                                        if (dockerConf) {
-                                            String dockerImageName = dockerConf['image'] ?:
-                                                    script.error('Docker image name is missing.')
-                                            String dockerImageParams = dockerConf?.params
-
-                                            script.docker.image(dockerImageName).inside(dockerImageParams) {
-                                                if (branchName.contains(releaseBranchPattern)) {
-                                                    script.stage("Prepare for Release") {
-                                                        setupEnvForRelease()
-                                                    }
-                                                }
-
-                                                script.stage('Build') {
-                                                    runStageLogic('build', platformName, backend)
-                                                }
-
-                                                /* FIXME: ATM test are running only for master branch */
-                                                if (branchName == 'master') {
-                                                    /* Workaround to exclude test for backends that are not supported by Jenkins agents */
-                                                    if (platformName.contains('macosx') && backend.contains('cuda')) {
-                                                        script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                                "because of lack of GPU..."
-                                                    } else {
-                                                        script.stage('Build Test Resources') {
-                                                            runBuildTestResources(platformName)
-                                                        }
-
-                                                        script.stage('Test') {
-                                                            runStageLogic('test', platformName, backend)
-                                                        }
-                                                    }
-                                                }
-
-                                                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                                                    script.stage('Deploy') {
-                                                        runStageLogic('deploy', platformName, backend)
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            if (branchName.contains(releaseBranchPattern)) {
-                                                script.stage("Prepare for Release") {
-                                                    setupEnvForRelease()
-                                                }
-                                            }
-
-                                            script.stage('Build') {
-                                                runStageLogic('build', platformName, backend)
-                                            }
-
-                                            /* FIXME: ATM test are running only for master branch */
-                                            if (branchName == 'master') {
-                                                /* Workaround to exclude test for backends that are not supported by Jenkins agents */
-                                                if (platformName.contains('macosx') && backend.contains('cuda')) {
-                                                    script.echo "Skipping tests for ${backend} on ${platformName}, " +
-                                                            "because of lack of GPU..."
-                                                } else {
-                                                    script.stage('Build Test Resources') {
-                                                        runBuildTestResources(platformName)
-                                                    }
-
-                                                    script.stage('Test') {
-                                                        runStageLogic('test', platformName, backend)
-                                                    }
-                                                }
-                                            }
-
-                                            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                                                script.stage("Deploy") {
-                                                    runStageLogic('deploy', platformName, backend)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                finally {
-                                    /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
-                                    script.deleteDir()
-                                }
-                            }
+                        finally {
+                            /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
+                            script.deleteDir()
                         }
                     }
                 }
@@ -279,7 +166,7 @@ class Nd4jProject extends Project {
         streams
     }
 
-    private void runStageLogic(String stageName, String platform, String backend, String cpuExtension = '') {
+    private void runStageLogic(String stageName, String platformName, String backend, String cpuExtension, String scalaVersion) {
         String mvnCommand
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
@@ -299,40 +186,33 @@ class Nd4jProject extends Project {
         }
         String mavenExcludesForCpu = '-pl ' +
                 '\'' +
-                ((platform.contains('ios')) ? '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform,' : '') +
+                ((platformName.contains('ios')) ? '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform,' : '') +
                 '!nd4j-backends/nd4j-backend-impls/nd4j-cuda,' +
                 '!nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform,' +
                 '!nd4j-backends/nd4j-tests' +
                 '\''
         String mavenExcludesForCuda = '-pl ' +
                 '\'' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native,' +
-                '!nd4j-backends/nd4j-backend-impls/nd4j-native-platform,' +
                 '!nd4j-backends/nd4j-tests' +
                 '\''
 
         /* Nd4j build with libn4j CPU backend and/or specific extension */
         if (backend == 'cpu') {
-            /* Workaround to set scala version */
-            String scalaVersion = (platform in ['android-arm', 'android-x86', 'ios-arm64']) ?
-                    '2.10' :
-                    '2.11'
-
             script.echo "[INFO] Setting Scala version to: $scalaVersion"
             script."$shell" script: updateScalaCommand(scalaVersion)
 
-            mvnCommand = getMvnCommand(stageName, (cpuExtension != ''), [
-                    "-Djavacpp.platform=${platform}",
+            mvnCommand = getMvnCommand(stageName, cpuExtension, [
+                    "-Djavacpp.platform=${platformName}",
                     (cpuExtension) ? "-Djavacpp.extension=${cpuExtension}" : '',
-                    (platform.contains('linux') || platform.contains('android')) ?
+                    (platformName.contains('linux') || platformName.contains('android')) ?
                             '-DprotocCommand=protoc' :
                             '',
-                    (platform.contains('ios')) ? '-Djavacpp.platform.compiler=clang++' : '',
-                    (platform == 'ios-arm64') ?
+                    (platformName.contains('ios')) ? '-Djavacpp.platform.compiler=clang++' : '',
+                    (platformName == 'ios-arm64') ?
                             '-Djavacpp.platform.sysroot=$(xcrun --sdk iphoneos --show-sdk-path)' : '',
-                    (platform == 'ios-x86_64') ?
+                    (platformName == 'ios-x86_64') ?
                             '-Djavacpp.platform.sysroot=$(xcrun --sdk iphonesimulator --show-sdk-path)' : '',
-                    (platform.contains('macosx') || platform.contains('ios')) ?
+                    (platformName.contains('macosx') || platformName.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             '',
                     (stageName != 'test') ?
@@ -341,8 +221,8 @@ class Nd4jProject extends Project {
             ])
 
             script.echo "[INFO] ${stageName.capitalize()}ing nd4j ${backend} backend with " +
-                    "Scala ${scalaVersion} versions and ${cpuExtension} extension"
-
+                    "Scala ${scalaVersion} versions" +
+                    (cpuExtension ? " and ${cpuExtension} extension" : '')
             script.mvn "$mvnCommand"
         }
         /* Nd4j build with libn4j CUDA backend */
@@ -352,31 +232,27 @@ class Nd4jProject extends Project {
             script.echo "[INFO] Setting CUDA version to: $cudaVersion"
             script."$shell" script: updateCudaCommand(cudaVersion)
 
-            /* Workaround to set scala version */
-            String scalaVersion = (backend.contains('8.0')) ? '2.10' : '2.11'
-
             script.echo "[INFO] Setting Scala version to: $scalaVersion"
             script."$shell" script: updateScalaCommand(scalaVersion)
 
-            mvnCommand = getMvnCommand(stageName, false, [
-                    (platform.contains('linux')) ?
+            mvnCommand = getMvnCommand(stageName, cpuExtension, [
+                    (platformName.contains('linux')) ?
                             '-DprotocCommand=protoc' :
                             '',
-                    (platform.contains('macosx') || platform.contains('ios')) ?
+                    (platformName.contains('macosx') || platformName.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             '',
                     (stageName != 'test') ? mavenExcludesForCuda : '-pl \'nd4j-backends/nd4j-backend-impls/nd4j-cuda\''
             ])
 
             script.echo "[INFO] ${stageName.capitalize()}ing nd4j with CUDA ${cudaVersion} and Scala ${scalaVersion} versions"
-
             script.mvn "$mvnCommand"
         }
     }
 
-    protected String getMvnCommand(String stageName, Boolean isCpuWithExtension, List mvnArguments = []) {
+    protected String getMvnCommand(String stageName, String cpuExtension, List mvnArguments = []) {
         Boolean unixNode = script.isUnix()
-        String devtoolsetVersion = isCpuWithExtension ? '6' : '4'
+        String devtoolsetVersion = cpuExtension ? '6' : '4'
 
         switch (stageName) {
             case 'build':

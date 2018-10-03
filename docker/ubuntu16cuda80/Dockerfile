@@ -8,6 +8,8 @@ RUN apt-get update && \
         ca-certificates \
         software-properties-common \
         git \
+        # Required for Datavec NativeImageLoader
+        libgtk2.0-dev \
         && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -51,6 +53,12 @@ RUN curl -fsSL ${PROTOBUF_DOWNLOAD_URL} \
     make install && \
     cd .. && \
     rm -r protobuf-${PROTOBUF_PACKAGE_VERSION}
+
+# Install git lfs for dl4j-test-resources
+#RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+#    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git-lfs && \
+#    git lfs install && \
+#    rm -r /var/lib/apt/lists/*
 
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 

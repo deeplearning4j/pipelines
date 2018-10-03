@@ -1,5 +1,42 @@
-tmp/
-*.old
-*.tmp
+# Intellij Idea settings
+.idea/
+
+# Vagrant artifacts
+.vagrant/
+
+# Ansible tmp files
 *.retry
-*.bak
+
+# Compiled source
+__pycache__/
+*$py.class
+*.so
+*.py[cod]
+
+# Logs
+*.log
+
+# Packages
+*.dmg
+*.xip
+*.7z
+*.gz
+*.rar
+*.tar
+*.zip
+# *.jar
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.tox
+*.sublime*
+*.egg-info
+Icon?
+ehthumbs.db
+Thumbs.db
+.eggs
+.coverage

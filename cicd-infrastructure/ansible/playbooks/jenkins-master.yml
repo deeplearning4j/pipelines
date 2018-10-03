@@ -1,0 +1,7 @@
+---
+- name: Provision Jenkins master
+  hosts: jenkins-master
+  roles:
+    - common
+    - jenkins-master
+  become: true

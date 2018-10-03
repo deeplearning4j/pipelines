@@ -1,17 +1,13 @@
 package skymind.pipelines.projects
 
-import skymind.pipelines.helper.NotificationHelper
+import groovy.json.JsonSlurper
+
 
 abstract class Project implements Serializable {
     protected script
-//    protected notifications
     protected platforms
     protected final String branchName
     protected final String projectName
-    /* Default platforms for most of the projects */
-    protected static List defaultPlatforms = [
-            [backends: [], compillers: [], name: 'linux-x86_64-generic']
-    ]
     /* Default job properties */
     protected final List jobSpecificProperties = []
     protected static String gitterEndpointUrl = ''
@@ -27,14 +23,12 @@ abstract class Project implements Serializable {
      * @param projectName project name
      * @param jobConfig configuration of job/run environment
      */
-    Project(script, String projectName, Map jobConfig) {
+    Project(Object script, String projectName, Map jobConfig) {
         this.script = script
         this.projectName = projectName
         branchName = this.script.env.BRANCH_NAME
         /* Default platforms will be used if developer didn't redefine them in Jenkins file */
-        platforms = jobConfig?.getAt('platforms') ?: defaultPlatforms
-//        /* Get instance of NotificationHelper class for sending notifications about run status */
-//        notifications = new NotificationHelper(script)
+        platforms = jobConfig?.getAt('platforms') ?: getDefaultPlatforms(this.projectName)
         /* Configure job build parameters */
         setBuildParameters(jobSpecificProperties)
         /* Terminate older builds */
@@ -45,56 +39,28 @@ abstract class Project implements Serializable {
 
     @NonCPS
     protected void setBuildParameters(List jobSpecificProperties) {
-        List commonJobProperties = [
-                script.buildDiscarder(
-                        script.logRotator(
-                                artifactDaysToKeepStr: '3',
-                                artifactNumToKeepStr: '5',
-                                daysToKeepStr: '3',
-                                numToKeepStr: '5'
-                        )
-                ),
-                [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false],
-                /* Workaround to disable branch indexing */
-                script.pipelineTriggers([])
-//                script.parameters([
-//                        script.choice(
-//                                choices: ['nexus', 'sonatype', 'jfrog', 'bintray'].join('\n'),
-//                                description: 'Maven profile names list',
-//                                name: 'MAVEN_PROFILE_ACTIVATION_NAME'
-//                        )
-//                ])
-        ]
+        List commonJobProperties = []
 
         if (script.env.JOB_BASE_NAME == 'master') {
-            commonJobProperties.push(
-                    [
-                            $class   : 'HudsonNotificationProperty',
-                            endpoints: [
-                                    /* Gitter endpoint url for dev_channel room */
-                                    [
-                                            retries: 5,
-                                            urlInfo: [
-                                                    urlOrId: 'https://webhooks.gitter.im/e/d74b592f0914132e59ba',
-                                                    urlType: 'PUBLIC'
-                                            ]
-                                    ],
-                                    /* If job specific Gitter endpoint url provided that add it to the list */
-                                    (gitterEndpointUrl) ?
-                                            [
-                                                    retries: 5,
-                                                    urlInfo: [
-                                                            urlOrId: gitterEndpointUrl,
-                                                            urlType: 'PUBLIC'
-                                                    ]
-                                            ] :
-                                            null
-                            ].findAll()
-                    ]
-            )
+            commonJobProperties.addAll([
+                    script.pipelineTriggers([script.cron('@midnight')])
+            ])
         }
 
         script.properties(commonJobProperties + jobSpecificProperties)
+    }
+
+    @NonCPS
+    protected terminateOlderBuilds(String jobName, int buildsNumber) {
+        def currentJob = Jenkins.instance.getItemByFullName(jobName)
+
+        for (def build : currentJob.builds) {
+            if (build.isBuilding() && build.number.toInteger() != buildsNumber) {
+                build.doStop()
+                script.echo "[WARNING] Build number ${build.number} was " +
+                        "terminated because of current(latest) run."
+            }
+        }
     }
 
     protected void pipelineWrapper(Closure pipelineBody) {
@@ -106,12 +72,7 @@ abstract class Project implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
-//            script.currentBuild.displayName = "#${this.script.currentBuild.number} " +
-//                    script.pipelineEnv.buildDisplayName?.findAll()?.join(' | ')
-//            notifications.sendEmail(script.currentBuild.currentResult)
-
-            /* Get instance of NotificationHelper class for sending notifications about run status */
-            new NotificationHelper(script).sendEmail(script.currentBuild.currentResult)
+            script.notifier.sendEmailNotification(script.currentBuild.result)
         }
     }
 
@@ -119,6 +80,7 @@ abstract class Project implements Serializable {
         for (Map pltm : platforms) {
             Map platform = pltm
             String platformName = platform.name
+
             script.node(platformName) {
                 pipelineWrapper {
                     try {
@@ -130,29 +92,6 @@ abstract class Project implements Serializable {
                             }
                         }
 
-//                    script.stage('Update project version') {
-//                        script.dir(projectName) {
-//                            projectVersion = projectObjectModel?.version
-////                            script.isVersionReleased(projectName, projectVersion)
-////                            script.setProjectVersion(projectVersion, true)
-//                        }
-//                    }
-
-//                    script.pipelineEnv.buildDisplayName.push(platformName)
-
-//                    String createFoldersScript = "mkdir -p " +
-//                            "${script.pipelineEnv.jenkinsDockerM2Folder}/" +
-//                            "${script.pipelineEnv.mvnProfileActivationName} " +
-//                            "${script.pipelineEnv.jenkinsDockerSbtFolder}"
-//
-//                    script.sh script: createFoldersScript
-
-//                        Map dockerConf = script.pipelineEnv.getDockerConfig(platformName)
-//                        String dockerImageName = dockerConf['image'] ?:
-//                                script.error('Docker image name is missing.')
-//                        String dockerImageParams = dockerConf?.'params'
-
-//                        stagesToRun(dockerImageName, dockerImageParams)
                         stagesToRun()
                     }
                     finally {
@@ -269,8 +208,8 @@ abstract class Project implements Serializable {
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U -B',
                             'clean',
-                            'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (branchName == 'master') ? 'deploy' : 'install',
+                            "-Dlocal.software.repository=ci-nexus",
                             (releaseApproved) ? "-P staging" : ''
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
@@ -281,8 +220,8 @@ abstract class Project implements Serializable {
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
                             'mvn -U -B',
                             'clean',
-                            'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            (branchName == 'master') ? 'deploy' : 'install',
+                            "-Dlocal.software.repository=ci-nexus",
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
@@ -309,7 +248,7 @@ abstract class Project implements Serializable {
     protected void getReleaseParameters() {
         def userInput
 
-        script.timeout(time:1, unit:'HOURS') {
+        script.timeout(time: 1, unit: 'HOURS') {
             userInput = script.input message: 'Perform release?',
                     parameters: [
                             script.string(defaultValue: '', description: 'Release version', name: 'releaseVersion'),
@@ -329,8 +268,7 @@ abstract class Project implements Serializable {
             releaseVersion = userInput.releaseVersion
             snapshotVersion = userInput.snapshotVersion
             script.env.STAGING_REPOSITORY = userInput.stagingRepository
-        }
-        else {
+        } else {
             script.error "[ERROR] Provided staging repository ID ${script.env.STAGING_REPOSITORY} is not valid."
         }
     }
@@ -391,8 +329,7 @@ abstract class Project implements Serializable {
         stagingRepoId =~ /\w+-\d+/
     }
 
-    protected void updateVersions(String version) {
-    }
+    protected void updateVersions(String version) {}
 
     protected void populateGpgKeys() {
         script.withCredentials([
@@ -414,8 +351,7 @@ abstract class Project implements Serializable {
                         gpg --list-keys
                     # fi
                 '''.stripIndent()
-            }
-            else {
+            } else {
                 script.bat '''
                     bash -c "rm -rf ${HOME}/.gnupg/*.gpg"
                     bash -c "gpg --list-keys"
@@ -436,8 +372,7 @@ abstract class Project implements Serializable {
                 git config user.email 'jenkins@skymind.io'
                 git config user.name 'Jenkins CI (Skymind)'
             """.stripIndent()
-        }
-        else {
+        } else {
             script.bat """
                 bash -c 'git config user.email "jenkins@skymind.io"'
                 bash -c 'git config user.name "Jenkins"'
@@ -446,14 +381,110 @@ abstract class Project implements Serializable {
     }
 
     @NonCPS
-    protected terminateOlderBuilds(String jobName, int buildsNumber) {
-        def currentJob = Jenkins.instance.getItemByFullName(jobName)
+    protected List getDefaultPlatforms(String projectName) {
+        List defaultPlatforms
+        switch (projectName) {
+            case ['libnd4j', 'nd4j']:
+                defaultPlatforms = [
+                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
-        for (def build : currentJob.builds) {
-            if (build.isBuilding() && build.number.toInteger() != buildsNumber) {
-                build.doStop()
-                script.echo "[WARNING] Build number ${build.number} was terminated because of current(latest) run."
-            }
+                        [name: 'ios-arm64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.1'],
+
+                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
+
+                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        /*
+                             FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+                             at the same time for CUDA - Xcode 8 required,
+                             which means that we can't enable avx512 builds at the moment
+                          */
+//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
+
+                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        /* FIXME: avx512 */
+//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1']
+                ]
+                break
+            case 'deeplearning4j':
+                defaultPlatforms = [
+                        [name: 'linux-x86_64']
+                ]
+                break
+            default:
+                defaultPlatforms = [
+                        [name: 'linux-x86_64-generic']
+                ]
+                break
         }
+
+        defaultPlatforms
+    }
+
+    protected Map parseCheckoutDetails() {
+        Closure shellCommand = { String command ->
+            return script.sh(script: command, returnStdout: true).trim()
+        }
+
+        String gitCommitId = shellCommand('git log -1 --pretty=%H')
+
+        return [GIT_BRANCH: script.env.BRANCH_NAME,
+                GIT_COMMIT: gitCommitId,
+                GIT_COMMITER_NAME: shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
+                GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
+                GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=%B ${gitCommitId}")]
+    }
+
+    protected Boolean isMemberOrCollaborator(String committerFullName) {
+        String authCredentialsId = 'skymindops-username-and-token'
+        String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
+
+        String userDetails = script.httpRequest(url: usersSearchUrl,
+                timeout: 60,
+                authentication: authCredentialsId,
+                quiet: true).content
+
+        // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
+        String committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+
+        String memberQueryUrl = "https://api.github.com/orgs/deeplearning4j/members/${committerUsername}"
+
+        int isMemberResponse = script.httpRequest(url: memberQueryUrl,
+                timeout: 60,
+                authentication: authCredentialsId,
+                quiet: true,
+                validResponseCodes: '100:404').status
+
+        return (isMemberResponse == 204)
+
+//    Not working with provided credentials
+//    String collaboratorsQueryUrl = "https://api.github.com/orgs/deeplearning4j/outside_collaborators"
+//    def isCollaboratorResponse = httpRequest url: collaboratorsQueryUrl,
+//            timeout: 120,
+//            authentication: authCredentialsId,
+//            quiet: true
+
+//    return (isMemberResponse.status == '204' || username in isCollaboratorResponse.content.login)
     }
 }

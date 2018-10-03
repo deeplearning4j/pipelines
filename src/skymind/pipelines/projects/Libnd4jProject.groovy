@@ -4,61 +4,6 @@ class Libnd4jProject extends Project {
     private final String libnd4jTestsFilter
 
     static {
-        /* Override default platforms */
-        defaultPlatforms = [
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-arm'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-x86'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'android-x86_64'],
-
-                [backends  : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 compillers: [],
-                 name      : 'linux-ppc64le'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2', 'avx512'],
-                 compillers   : [],
-                 name         : 'linux-x86_64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-arm64'],
-
-                [backends  : ['cpu'],
-                 compillers: [],
-                 name      : 'ios-x86_64'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /*
-                     FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                     at the same time for CUDA - Xcode 8 required,
-                     which means that we can't enable avx512 builds at the moment
-                  */
-//                 cpuExtensions: ['', 'avx2', 'avx512'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2'],
-                 compillers   : [],
-                 name         : 'macosx-x86_64'],
-
-                [backends     : ['cpu', 'cuda-8.0', 'cuda-9.0', 'cuda-9.1'],
-                 /* Empty element was added to build for CPU without extension */
-                 cpuExtensions: ['', 'avx2'],
-                 compillers   : [],
-                 name         : 'windows-x86_64']
-        ]
-
         /* Gitter endpoint url for devlibnd4j room */
         gitterEndpointUrl = 'https://webhooks.gitter.im/e/97334c78c3f82c5ad21e'
     }
@@ -88,149 +33,87 @@ class Libnd4jProject extends Project {
 
         for (Map pltm : platforms) {
             Map platform = pltm
-            String platformName = platform.name
-            List backends = platform.backends
-            List compilers = platform.compilers
-            /* List with empty element was added to build for CPU without extension */
-            List cpuExtensions = platform.cpuExtensions ?: ['']
 
-            for (List bckd : backends) {
-                String backend = bckd
+            String platformName = platform.get('name')
+            String backend = platform.get('backend')
+            String cpuExtension = platform.get('cpuExtension')
 
-                if (backend == 'cpu') {
-                    for (String cpuExt : cpuExtensions) {
-                        String cpuExtension = cpuExt
-                        String streamName = ["${platformName}", "${backend}", "${cpuExtension}"].findAll().join('-')
+            String streamName = [platformName, backend, cpuExtension].findAll().join('-')
 
-                        /* Create stream body */
-                        streams["$streamName"] = {
-                            script.node(streamName) {
-                                Boolean isUnix = script.isUnix()
-                                String separator = isUnix ? '/' : '\\'
-                                String wsFolderName = 'workspace' +
-                                        separator +
-                                        [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
+            /* Create stream body */
+            streams["$streamName"] = {
+                script.node(streamName) {
+                    Boolean isUnix = script.isUnix()
+                    String separator = isUnix ? '/' : '\\'
+                    String wsFolderName = 'workspace' +
+                            separator +
+                            [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
 
-                                /* Redefine default workspace to fix Windows path length limitation */
-                                script.ws(wsFolderName) {
-                                    try {
-                                        script.stage('Checkout') {
-                                            script.deleteDir()
+                    /* Redefine default workspace to fix Windows path length limitation */
+                    script.ws(wsFolderName) {
+                        try {
+                            script.stage('Checkout') {
+                                script.deleteDir()
 
-                                            script.dir(projectName) {
-                                                script.checkout script.scm
+                                script.dir(projectName) {
+                                    script.checkout script.scm
+                                }
+                            }
+
+                            script.dir(projectName) {
+                                if (platformName.contains('ppc64') || platformName.contains('linux') && backend.contains('cuda')) {
+                                    /* Get docker container configuration */
+                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+
+                                    String dockerImageName = dockerConf['image'] ?:
+                                            script.error('Docker image name is missing.')
+                                    String dockerImageParams = dockerConf?.params
+
+                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                        if (branchName.contains(releaseBranchPattern)) {
+                                            script.stage("Prepare for Release") {
+                                                setupEnvForRelease()
                                             }
                                         }
 
-                                        script.dir(projectName) {
-                                            if (branchName.contains(releaseBranchPattern)) {
-                                                script.stage("Prepare for Release") {
-                                                    setupEnvForRelease()
+                                        if (!branchName.contains(releaseBranchPattern)) {
+                                            script.stage('Test') {
+                                                /* Run tests only for CPU backend, while CUDA tests are under development */
+                                                if (backend == 'cpu') {
+                                                    runtTests(platformName, backend)
                                                 }
                                             }
+                                        }
 
-                                            if (!branchName.contains(releaseBranchPattern)) {
-                                                script.stage('Test') {
-                                                    /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                    if (backend == 'cpu') {
-                                                        runtTests(platformName, backend)
-                                                    }
-                                                }
-                                            }
+                                        script.stage('Build') {
+                                            runStageLogic('build', platformName, backend, cpuExtension)
+                                        }
+                                    }
+                                } else {
+                                    if (branchName.contains(releaseBranchPattern)) {
+                                        script.stage("Prepare for Release") {
+                                            setupEnvForRelease()
+                                        }
+                                    }
 
-                                            script.stage('Build') {
-                                                runStageLogic('build', platformName, backend, cpuExtension)
+                                    if (!branchName.contains(releaseBranchPattern)) {
+                                        script.stage('Test') {
+                                            /* Run tests only for CPU backend, while CUDA tests are under development */
+                                            if (backend == 'cpu') {
+                                                runtTests(platformName, backend)
                                             }
                                         }
                                     }
-                                    finally {
-                                        /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
-                                        script.deleteDir()
+
+                                    script.stage('Build') {
+                                        runStageLogic('build', platformName, backend, cpuExtension)
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                else {
-                    String streamName = ["${platformName}", "${backend}"].findAll().join('-')
-
-                    /* Create stream body */
-                    streams["$streamName"] = {
-                        script.node(streamName) {
-                            Boolean isUnix = script.isUnix()
-                            String separator = isUnix ? '/' : '\\'
-                            String wsFolderName = 'workspace' +
-                                    separator +
-                                    [projectName, script.env.BRANCH_NAME, streamName].join('_').replaceAll('/', '_')
-
-                            /* Redefine default workspace to fix Windows path length limitation */
-                            script.ws(wsFolderName) {
-                                try {
-                                    script.stage('Checkout') {
-                                        script.deleteDir()
-
-                                        script.dir(projectName) {
-                                            script.checkout script.scm
-                                        }
-                                    }
-
-                                    script.dir(projectName) {
-                                        /* Get docker container configuration */
-                                        Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
-
-                                        if (dockerConf) {
-                                            String dockerImageName = dockerConf['image'] ?:
-                                                    script.error('Docker image name is missing.')
-                                            String dockerImageParams = dockerConf?.params
-
-                                            script.docker.image(dockerImageName).inside(dockerImageParams) {
-                                                if (branchName.contains(releaseBranchPattern)) {
-                                                    script.stage("Prepare for Release") {
-                                                        setupEnvForRelease()
-                                                    }
-                                                }
-
-                                                if (!branchName.contains(releaseBranchPattern)) {
-                                                    script.stage('Test') {
-                                                        /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                        if (backend == 'cpu') {
-                                                            runtTests(platformName, backend)
-                                                        }
-                                                    }
-                                                }
-
-                                                script.stage('Build') {
-                                                    runStageLogic('build', platformName, backend)
-                                                }
-                                            }
-                                        } else {
-                                            if (branchName.contains(releaseBranchPattern)) {
-                                                script.stage("Prepare for Release") {
-                                                    setupEnvForRelease()
-                                                }
-                                            }
-
-                                            if (!branchName.contains(releaseBranchPattern)) {
-                                                script.stage('Test') {
-                                                    /* Run tests only for CPU backend, while CUDA tests are under development */
-                                                    if (backend == 'cpu') {
-                                                        runtTests(platformName, backend)
-                                                    }
-                                                }
-                                            }
-
-                                            script.stage('Build') {
-                                                runStageLogic('build', platformName, backend)
-                                            }
-                                        }
-                                    }
-                                }
-                                finally {
-                                    /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
-                                    script.deleteDir()
-                                }
-                            }
+                        finally {
+                            /* FIXME: cleanWs step doesn't clean custom workspace, whereas deleteDir does */
+                            script.deleteDir()
                         }
                     }
                 }
@@ -240,7 +123,7 @@ class Libnd4jProject extends Project {
         streams
     }
 
-    private void runtTests(String platform, String backend) {
+    private void runtTests(String platformName, String backend) {
         Boolean unixNode = script.isUnix()
         String shell = unixNode ? 'sh' : 'bat'
         String separator = unixNode ? '/' : '\\'
@@ -254,7 +137,7 @@ class Libnd4jProject extends Project {
                         (libnd4jTestsFilter ? ' ' + libnd4jTestsFilter : '')
         ].join(' && ')
 
-        switch (platform) {
+        switch (platformName) {
             case ['linux-ppc64le', 'windows-x86_64']:
                 break
             case ~/^android.*$/:
@@ -280,14 +163,14 @@ class Libnd4jProject extends Project {
 
         if (script.fileExists("${testFolderName}")) {
             /* Run tests */
-            script.echo "[INFO] Running tests on ${platform}, for ${backend} backend"
+            script.echo "[INFO] Running tests on ${platformName}, for ${backend} backend"
 
             script."${shell}" "${testCommand}"
 
             /* Archiving test results */
             script.junit testResults: "**/${backend}_test_results.xml", allowEmptyResults: true
 
-            script.echo "[INFO] Finished to run tests on ${platform}, for ${backend} backend"
+            script.echo "[INFO] Finished to run tests on ${platformName}, for ${backend} backend"
         } else {
             script.error "${testFolderName} was not found."
         }
@@ -300,49 +183,47 @@ class Libnd4jProject extends Project {
      * <groupId>.<artifactId>-<version>-<classifier>
      * Example: org.nd4j.libnd4j-1.0.0-SNAPSHOT-android-x86-cuda-8.0
      *
-     * @param platform
+     * @param platformName
      * @param backend
      * @param cpuExtension
      */
-    private void runStageLogic(String stageName, String platform, String backend, String cpuExtension = '') {
+    private void runStageLogic(String stageName, String platformName, String backend, String cpuExtension) {
         String mvnCommand
 
         /* Build libnd4j for CPU backend */
         if (backend == 'cpu') {
-            mvnCommand = getMvnCommand(stageName, (cpuExtension != ''), [
-                    "-Dlibnd4j.platform=${platform}",
+            mvnCommand = getMvnCommand(stageName, cpuExtension, [
+                    "-Dlibnd4j.platform=${platformName}",
                     (cpuExtension) ? "-Dlibnd4j.extension=${cpuExtension}" : '',
-                    (platform.contains('macosx') || platform.contains('ios')) ?
+                    (platformName.contains('macosx') || platformName.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             ''
             ])
 
-            script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend with ${cpuExtension} extension"
-
+            script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend"  + (cpuExtension ? " with ${cpuExtension} extension" : '')
             script.mvn "$mvnCommand"
         }
         /* Build libnd4j for CUDA backend */
         else {
             String cudaVersion = backend.tokenize('-')[1]
 
-            mvnCommand = getMvnCommand(stageName, false, [
-                    "-Dlibnd4j.platform=${platform}",
+            mvnCommand = getMvnCommand(stageName, cpuExtension, [
+                    "-Dlibnd4j.platform=${platformName}",
                     "-Dlibnd4j.cuda=${cudaVersion}",
                     (branchName != 'master' && !branchName.contains(releaseBranchPattern)) ? "-Dlibnd4j.compute=30" : '',
-                    (platform.contains('macosx') || platform.contains('ios')) ?
+                    (platformName.contains('macosx') || platformName.contains('ios')) ?
                             "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
                             ''
             ])
 
             script.echo "[INFO] ${stageName.capitalize()}ing libnd4j ${backend} backend"
-
             script.mvn "$mvnCommand"
         }
     }
 
-    protected String getMvnCommand(String stageName, Boolean isCpuWithExtension, List mvnArguments = []) {
+    protected String getMvnCommand(String stageName, String cpuExtension, List mvnArguments = []) {
         Boolean unixNode = script.isUnix()
-        String devtoolsetVersion = isCpuWithExtension ? '6' : '4'
+        String devtoolsetVersion = cpuExtension ? '6' : '4'
 
         switch (stageName) {
             case 'build':
@@ -351,11 +232,11 @@ class Libnd4jProject extends Project {
                             "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
-//                            'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G\' &&',
                             'mvn -U -B',
                             'clean',
                             (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
                             (releaseApproved) ? "-DperformRelease" : '',
                             (releaseApproved) ? "-P staging" : ''
@@ -366,11 +247,11 @@ class Libnd4jProject extends Project {
                             '&&',
                             'bash -c',
                             '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-//                            'export MAVEN_OPTS=\'-Xms1G -Xmx8G -Dorg.bytedeco.javacpp.maxbytes=8G -Dorg.bytedeco.javacpp.maxphysicalbytes=8G\' &&',
                             'mvn -U -B',
                             'clean',
                             (branchName == 'master' || branchName.contains(releaseBranchPattern)) ? 'deploy' : 'install',
                             "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
+                            '-Dmaven.test.skip=true',
                             (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
                             (releaseApproved) ? "-DperformRelease" : '',
                             (releaseApproved) ? "-P staging" : '',

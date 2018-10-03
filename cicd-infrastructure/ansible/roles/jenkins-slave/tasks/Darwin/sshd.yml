@@ -1,0 +1,8 @@
+---
+- name: Darwin | Update sshd_config settings
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
+  with_items: "{{ sshd_config_properties }}"

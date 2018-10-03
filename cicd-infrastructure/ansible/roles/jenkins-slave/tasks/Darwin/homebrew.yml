@@ -1,0 +1,33 @@
+---
+- name: Darwin | Check if Homebrew is already installed
+  stat:
+    path: /usr/local/bin/brew
+  register: homebrew_is_installed
+
+- name: Darwin | Install Homebrew
+# FIXME: not working
+  script: install_homebrew.sh
+# FIXME: WRONG USER HOME (root)
+#  args:
+#    chdir: "{{ ansible_env.HOME }}"
+  when: not homebrew_is_installed.stat.exists
+
+- name: Darwin | Add Homebrew taps
+  homebrew_tap:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ homebrew_taps }}"
+
+- name: Darwin | Install Homebrew packages
+  homebrew:
+    name: "{{ item }}"
+    state: present
+    update_homebrew: yes
+  with_items: "{{ homebrew_installed_packages }}"
+
+- name: Darwin | Install Homebrew cask packages
+  homebrew_cask:
+    name: "{{ item }}"
+    state: present
+    update_homebrew: yes
+  with_items: "{{ homebrew_cask_apps }}"

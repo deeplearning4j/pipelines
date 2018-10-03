@@ -26,8 +26,16 @@ class ProjectFactory implements Serializable {
             case 'DataVec':
                 new DataVecProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'deeplearning4j-monotest':
             case 'deeplearning4j':
-                new Deeplearning4jProject(script, projectName, jobConfig).initPipeline()
+//                new Deeplearning4jProject(script, projectName, jobConfig).initPipeline()
+                new Deeplearning4jMonoRepoProject(script, jobConfig).initPipeline()
+                break
+            case 'dl4j-test-resources':
+                new Deeplearning4jTestResourcesProject(script, projectName, jobConfig).initPipeline()
+                break
+            case 'pydl4j':
+                new PyDl4jProject(script, projectName, jobConfig).initPipeline()
                 break
             case 'Arbiter':
                 new ArbiterProject(script, projectName, jobConfig).initPipeline()
@@ -41,8 +49,11 @@ class ProjectFactory implements Serializable {
             case 'ScalNet':
                 new ScalNetProject(script, projectName, jobConfig).initPipeline()
                 break
-            case 'lagom-skil-api':
-                new LagomSkilApiProject(script, projectName, jobConfig).initPipeline()
+            case 'skil-server':
+                new SkilServerProject(script, projectName, jobConfig).initPipeline()
+                break
+            case 'skil-python':
+                new SkilPythonProject(script, projectName, jobConfig).initPipeline()
                 break
             default:
                 throw new IllegalArgumentException('Project is not supported yet')

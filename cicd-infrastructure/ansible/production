@@ -1,0 +1,9 @@
+[jenkins-master]
+master-jenkins.skymind.io
+
+[jenkins-slaves:children]
+macos-jenkins-slaves
+
+[macos-jenkins-slaves]
+e3-2.macminivault.com
+d11-1.macminivault.com
