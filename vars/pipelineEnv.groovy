@@ -51,6 +51,11 @@ Map getDockerConfig(String streamName) {
             return [image: 'skymindops/pipelines:centos6cuda92', params: dockerParams]
             break
 
+        case ['linux-x86_64-cuda-10.0']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'skymindops/pipelines:centos6cuda100', params: dockerParams]
+            break
+
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cpu']:
             return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--init --shm-size=4g --tmpfs /tmp:size=4g']
@@ -74,6 +79,10 @@ Map getDockerConfig(String streamName) {
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cuda-9.2']:
             return [image : 'skymindops/pipelines:ubuntu16cuda92-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            break
+
+        case ['linux-ppc64le-cuda-10.0']:
+            return [image : 'skymindops/pipelines:ubuntu1604cuda100-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ~/^ios.*$/:

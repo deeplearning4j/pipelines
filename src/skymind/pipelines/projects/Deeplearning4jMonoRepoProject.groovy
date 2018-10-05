@@ -368,6 +368,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
                             [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                            [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
@@ -375,6 +376,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
                             [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
                             [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
                             [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
@@ -387,6 +389,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
                             [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
                             [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
                             [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
@@ -395,6 +398,7 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                             [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
                             [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
                             [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
                     ]
                     break
@@ -402,7 +406,8 @@ class Deeplearning4jMonoRepoProject implements Serializable {
                     platforms = [
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cuda-8.0'],
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2']
+                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']
                     ]
                     break
                 default:
