@@ -53,7 +53,7 @@ Map getDockerConfig(String streamName) {
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cpu']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--init --shm-size=4g --tmpfs /tmp:size=4g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
