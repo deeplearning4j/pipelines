@@ -479,7 +479,7 @@ class Module implements Serializable {
         ]
 
         if (isUnixNode) {
-            String devtoolsetVersion = backend?.contains('cuda') ? '4' : '7'
+            String devtoolsetVersion = backend?.contains('cuda') ? '6' : '7'
 
             mavenCommand = ([
                     "if [ -f /etc/redhat-release ]; " +
