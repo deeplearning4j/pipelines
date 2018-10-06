@@ -13,8 +13,8 @@ cloud-stats:0.19
 cloudbees-folder:6.6
 command-launcher:1.2
 config-file-provider:3.2
-configuration-as-code:1.0
-configuration-as-code-support:1.0
+configuration-as-code:1.1
+configuration-as-code-support:1.1
 credentials-binding:1.16
 credentials:2.1.18
 dashboard-view:2.9.11
@@ -99,7 +99,7 @@ sonar:2.8.1
 ssh-agent:1.17
 ssh-credentials:1.14
 ssh-slaves:1.28.1
-structs:1.15
+structs:1.17
 timestamper:1.8.10
 token-macro:2.5
 versioncolumn:2.0
