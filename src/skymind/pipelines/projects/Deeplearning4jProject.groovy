@@ -153,38 +153,42 @@ class Deeplearning4jProject implements Serializable {
         }
     }
 
-//    private List getChanges() {
-//        List changedFiles = []
-//
-//        for (change in script.currentBuild.changeSets) {
-//            for (items in change.items) {
-//                for (affectedFile in items.affectedFiles) {
-//                    changedFiles.push(affectedFile.path)
-//                }
-//            }
-//        }
-//
-//        changedFiles
-//    }
-
     private List getChanges() {
-        Boolean unixNode = script.isUnix()
-        String shell = unixNode ? 'sh' : 'bat'
+        List changedFiles = []
 
-        String shellCommand = 'git --no-pager diff --name-only HEAD $(git merge-base HEAD origin/master)'
+        for (chSet in script.currentBuild.changeSets) {
+            def changeSet = chSet
 
-        if (branchName.contains('PR')) {
-            return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
-        } else {
-            return []
+            for (fl in changeSet.items) {
+                def files = fl
+
+                for (affectedFile in files.affectedFiles) {
+                    changedFiles.push(affectedFile.path)
+                }
+            }
         }
+
+        changedFiles
     }
+
+//    private List getChanges() {
+//        Boolean unixNode = script.isUnix()
+//        String shell = unixNode ? 'sh' : 'bat'
+//
+//        String shellCommand = 'git --no-pager diff --name-only HEAD $(git merge-base HEAD origin/master)'
+//
+//        if (branchName.contains('PR')) {
+//            return script."$shell"(script: "${shellCommand}", returnStdout: true).trim().tokenize('\n')
+//        } else {
+//            return []
+//        }
+//    }
 
     private List getModulesToBuild(List changedFiles) {
         List supportedModules = [
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
-                'gym-java-client', 'rl4j', 'scalnet', 'jumpy'
+                'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec'
         ]
         List changesRelatedToModules = []
         List changesNotRelatedToModules = []
@@ -234,6 +238,7 @@ class Deeplearning4jProject implements Serializable {
         Map mappings = [
                 multi: [modules: [], platforms: getPlatforms('libnd4j')],
                 gpu: [modules: [], platforms: getPlatforms('deeplearning4j')],
+                pymodules: [modules: [], platforms: getPlatforms('jumpy')],
                 generic: [modules: [], platforms: getPlatforms()]
         ]
 
@@ -244,6 +249,8 @@ class Deeplearning4jProject implements Serializable {
                 mappings.multi.modules.push(module)
             } else if (module =~ /^deeplearning4j|^datavec/) {
                 mappings.gpu.modules.push(module)
+            } else if (module =~ /^pydatavec|^jumpy/) {
+                mappings.pymodules.modules.push(module)
             } else {
                 mappings.generic.modules.push(module)
             }
@@ -280,7 +287,11 @@ class Deeplearning4jProject implements Serializable {
             String cpuExtension = platform.get('cpuExtension')
             String scalaVersion = platform.get('scalaVersion')
             String sparkVersion = platform.get('sparkVersion')
-            String streamName = [platformName, backend, cpuExtension].findAll().join('-')
+            String pythonVersion = platform.containsKey('pythonVersion') ?
+                    'python' + '-' + platform.get('pythonVersion') : ''
+            String streamName = [
+                    platformName, backend, cpuExtension, pythonVersion
+            ].findAll().join('-')
 
             /* Create stream body */
             streams["$streamName"] = {
@@ -405,6 +416,12 @@ class Deeplearning4jProject implements Serializable {
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
                             [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
                             [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']
+                    ]
+                    break
+                case ['pydatavec', 'jumpy']:
+                    platforms = [
+                            [name: 'linux-x86_64', pythonVersion: '2'],
+                            [name: 'linux-x86_64', pythonVersion: '3']
                     ]
                     break
                 default:

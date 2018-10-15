@@ -14,6 +14,7 @@ class Module implements Serializable {
     private String releaseVersion
     private String scalaVersion
     private String sparkVersion
+    private String pythonVersion
     private String streamName
     /* FIXME: Workaround to build and test libnd4j in Debug mode  */
     private String libnd4jBuildMode = 'release'
@@ -76,6 +77,7 @@ class Module implements Serializable {
                 script.error('Missing releaseVersion argument!')
         scalaVersion = args.containsKey('scalaVersion') ? args.scalaVersion : ''
         sparkVersion = args.containsKey('sparkVersion') ? args.sparkVersion : ''
+        pythonVersion = args.containsKey('pythonVersion') ? args.pythonVersion : ''
         streamName = args.containsKey('streamName') ? args.streamName : ''
         localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
     }
@@ -184,7 +186,7 @@ class Module implements Serializable {
         List mavenArguments = []
 
         if (modules.any { it =~ /libnd4j/ } ||
-                (platformName == 'linux-x86_64' && (!cpuExtension || backend.contains('cuda')))
+                (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
             mavenArguments.push("-Dorg.bytedeco.javacpp.cachedir=${javacppCacheFolder}")
@@ -205,7 +207,7 @@ class Module implements Serializable {
                 }
             }
 
-            if (backend.contains('cuda')) {
+            if (backend?.contains('cuda')) {
                 mavenArguments.push("-Dlibnd4j.chip=cuda")
                 mavenArguments.push("-Dlibnd4j.cuda=${cudaVersion}")
 
@@ -338,7 +340,7 @@ class Module implements Serializable {
         }
 
         if (modules.any { it =~ /deeplearning4j|nd4j|libnd4j/ } ||
-                (platformName == 'linux-x86_64' && (!cpuExtension || backend.contains('cuda')))
+                (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
             if (stageName == 'test') {
                 mavenArguments.push('-P testresources')
@@ -366,7 +368,7 @@ class Module implements Serializable {
         List supportedModules = [
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
-                'gym-java-client', 'rl4j', 'scalnet', 'jumpy'
+                'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec'
         ]
         List mavenExcludesForNd4jNative = [
                 (platformName.contains('ios')) ?
@@ -420,7 +422,7 @@ class Module implements Serializable {
                     }
                 }
 
-                if (backend.contains('cuda')) {
+                if (backend?.contains('cuda')) {
                     /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
                     if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) } &&
                             !modulesToBuild.any { mavenExcludesForDeeplearning4jNative.contains(it) }
