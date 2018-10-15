@@ -3,6 +3,9 @@ FROM jenkinsci/jenkins:2.138.2-slim
 # Copy jenkins-github-skip-pr-by-title plugin
 COPY --chown=jenkins plugins/github-skip-pr-by-title.hpi /usr/share/jenkins/ref/plugins/github-skip-pr-by-title.hpi
 
+# SGE Cloud plugin for managing load on PPC64LE platform
+COPY --chown=jenkins plugins/sge-cloud-plugin.hpi /usr/share/jenkins/ref/plugins/sge-cloud-plugin.hpi
+
 # Copy list of requrired plugins
 ARG PLUGINS_FILE_NAME=plugins_locked.txt
 COPY --chown=jenkins configs/plugins/$PLUGINS_FILE_NAME /usr/share/jenkins/ref/plugins.txt
