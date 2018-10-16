@@ -306,7 +306,8 @@ class Deeplearning4jProject implements Serializable {
                             releaseVersion      : releaseVersion,
                             scalaVersion        : scalaVersion,
                             sparkVersion        : sparkVersion,
-                            streamName          : streamName
+                            streamName          : streamName,
+                            workspaceFolderName : wsFolderName,
                     ], script)
 
                     /* Redefine default workspace to fix Windows path length limitation */
