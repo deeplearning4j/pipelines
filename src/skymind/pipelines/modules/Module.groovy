@@ -39,8 +39,7 @@ class Module implements Serializable {
             'windows-x86_64-cuda-10.0',
             'linux-armhf-cpu'
     ]
-    private String buildWorkspace
-    private String workspaceFolderName
+    private String javacppCacheFolder = '.javacpp/cache/'
     private static String localRepositoryPath
     public Map testResults
 
@@ -78,15 +77,7 @@ class Module implements Serializable {
         scalaVersion = args.containsKey('scalaVersion') ? args.scalaVersion : ''
         sparkVersion = args.containsKey('sparkVersion') ? args.sparkVersion : ''
         streamName = args.containsKey('streamName') ? args.streamName : ''
-        workspaceFolderName = args.containsKey('workspaceFolderName') ? args.workspaceFolderName :
-                script.error('Missing workspaceFolderName argument!')
         localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
-        buildWorkspace = (isUnixNode) ?
-                "${workspaceFolderName}/${localRepositoryPath}" :
-                [
-                        workspaceFolderName,
-                        localRepositoryPath
-                ].findAll().join('/').replaceAll('\\\\', '/')
     }
 
     private void runBuildLogic() {
@@ -198,7 +189,7 @@ class Module implements Serializable {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
 
             if (platformName == 'windows-x86_64') {
-                mavenArguments.push("-Dorg.bytedeco.javacpp.cachedir=${script.env.WORKSPACE.replaceAll('\\\\', '/')}")
+                mavenArguments.push("-Dorg.bytedeco.javacpp.cachedir=${javacppCacheFolder}")
             }
 
             if (backend == 'cpu') {
@@ -508,7 +499,7 @@ class Module implements Serializable {
             ] + commonArguments + [
                     /* Workaround for MacOS/iOS which doesn't honour withMaven options */
                     (platformName.contains('macosx') || platformName.contains('ios')) ?
-                            "-Dmaven.repo.local=${buildWorkspace}" : ''
+                            "-Dmaven.repo.local=${localRepositoryPath}" : ''
             ]).findAll().join(' ')
         } else {
             mavenCommand = ([
@@ -518,7 +509,7 @@ class Module implements Serializable {
                     '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&'
             ] + commonArguments + [
                     /* Workaround for Windows which doesn't honour withMaven options */
-                    "-Dmaven.repo.local=${buildWorkspace}",
+                    "-Dmaven.repo.local=${localRepositoryPath}",
                     '-s ${MAVEN_SETTINGS}'
             ]).findAll().join(' ') + '"'
         }
