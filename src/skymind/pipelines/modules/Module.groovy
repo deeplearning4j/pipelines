@@ -187,10 +187,7 @@ class Module implements Serializable {
                 (platformName == 'linux-x86_64' && (!cpuExtension || backend.contains('cuda')))
         ) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
-
-            if (platformName == 'windows-x86_64') {
-                mavenArguments.push("-Dorg.bytedeco.javacpp.cachedir=${javacppCacheFolder}")
-            }
+            mavenArguments.push("-Dorg.bytedeco.javacpp.cachedir=${javacppCacheFolder}")
 
             if (backend == 'cpu') {
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
