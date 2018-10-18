@@ -55,18 +55,6 @@ class SkilServerProject extends Project {
 
                     script.stage('Build ModelServer') {
                         script.dir('modelserver') {
-                            String buildSkilMavenArguments = [
-                                    mavenBaseCommand,
-                                    'clean',
-                                    'install'
-                            ].findAll().join(' ')
-
-                            script.mvn buildSkilMavenArguments
-                        }
-                    }
-
-                    script.stage('Build SKIL') {
-                        script.dir('modelserver') {
                             String buildModelServerMavenArguments = [
                                     mavenBaseCommand,
                                     'clean',
@@ -80,11 +68,23 @@ class SkilServerProject extends Project {
                         }
                     }
 
+                    script.stage('Build SKIL') {
+                        script.dir('modelserver') {
+                            String buildSkilMavenArguments = [
+                                    mavenBaseCommand,
+                                    'clean',
+                                    'install'
+                            ].findAll().join(' ')
+
+                            script.mvn buildSkilMavenArguments
+                        }
+                    }
+
                     script.stage('Run tests') {
                         script.dir('modelserver') {
                             String runTestsMavenArguments = [
                                     mavenBaseCommand,
-                                    'test',
+                                    '-fae test',
                             ].findAll().join(' ')
 
                             script.mvn runTestsMavenArguments
