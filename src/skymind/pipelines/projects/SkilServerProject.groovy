@@ -7,6 +7,10 @@ class SkilServerProject extends Project {
     public List testResults = []
     private Map checkoutDetails
     private Boolean isMember
+    private String mavenBaseCommand = [
+            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
+            'mvn'
+    ].findAll().join(' ')
 
     protected List getPlatforms() {
         return [
@@ -28,7 +32,7 @@ class SkilServerProject extends Project {
 
                     script.stage('Install test resources') {
                         String installTestResourcesMavenArguments = [
-                                'mvn',
+                                mavenBaseCommand,
                                 'clean',
                                 'install',
                                 '-pl skil-test-resources'
@@ -40,7 +44,7 @@ class SkilServerProject extends Project {
                     script.stage('Build client APIs') {
                         script.dir('skil-apis') {
                             String buildClientApiMavenArguments = [
-                                    'mvn',
+                                    mavenBaseCommand,
                                     'clean',
                                     'install'
                             ].findAll().join(' ')
@@ -52,7 +56,7 @@ class SkilServerProject extends Project {
                     script.stage('Build ModelServer') {
                         script.dir('modelserver') {
                             String buildSkilMavenArguments = [
-                                    'mvn',
+                                    mavenBaseCommand,
                                     'clean',
                                     'install'
                             ].findAll().join(' ')
@@ -64,7 +68,7 @@ class SkilServerProject extends Project {
                     script.stage('Build SKIL') {
                         script.dir('modelserver') {
                             String buildModelServerMavenArguments = [
-                                    'mvn',
+                                    mavenBaseCommand,
                                     'clean',
                                     'install',
                                     '-P native',
@@ -79,7 +83,7 @@ class SkilServerProject extends Project {
                     script.stage('Run tests') {
                         script.dir('modelserver') {
                             String runTestsMavenArguments = [
-                                    'mvn',
+                                    mavenBaseCommand,
                                     'test',
                             ].findAll().join(' ')
 
