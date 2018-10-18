@@ -42,6 +42,7 @@ github:1.29.3
 greenballs:1.15
 handlebars:1.1.1
 htmlpublisher:1.17
+http_request:1.8.22
 icon-shim:2.0.3
 jackson2-api:2.8.11.3
 jdk-tool:1.1
