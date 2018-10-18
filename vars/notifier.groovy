@@ -50,7 +50,8 @@ void sendSlackNotification(Map args) {
     jobDetails.put('title', jobName)
     jobDetails.put('title_link', jobUrl)
     jobDetails.put('color', notificationColor)
-    jobDetails.put('pretext', ":gear: Job status: " + jobResult.toLowerCase().capitalize())
+    jobDetails.put('pretext', ":gear: Job status: " +
+            jobResult.toLowerCase().capitalize() + (jobResult == 'FAILURE' ? ' :mindblown:' : ''))
     jobDetails.put('fallback', subject)
     jobDetails.put('mrkdwn_in', ["fields"])
 
