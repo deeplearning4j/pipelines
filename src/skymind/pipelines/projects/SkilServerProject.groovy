@@ -28,6 +28,7 @@ class SkilServerProject extends Project {
 
                     script.stage('Install test resources') {
                         String installTestResourcesMavenArguments = [
+                                'mvn',
                                 'clean',
                                 'install',
                                 '-pl skil-test-resources'
@@ -39,6 +40,7 @@ class SkilServerProject extends Project {
                     script.stage('Build client APIs') {
                         script.dir('skil-apis') {
                             String buildClientApiMavenArguments = [
+                                    'mvn',
                                     'clean',
                                     'install'
                             ].findAll().join(' ')
@@ -50,6 +52,7 @@ class SkilServerProject extends Project {
                     script.stage('Build ModelServer') {
                         script.dir('modelserver') {
                             String buildSkilMavenArguments = [
+                                    'mvn',
                                     'clean',
                                     'install'
                             ].findAll().join(' ')
@@ -61,6 +64,7 @@ class SkilServerProject extends Project {
                     script.stage('Build SKIL') {
                         script.dir('modelserver') {
                             String buildModelServerMavenArguments = [
+                                    'mvn',
                                     'clean',
                                     'install',
                                     '-P native',
@@ -75,6 +79,7 @@ class SkilServerProject extends Project {
                     script.stage('Run tests') {
                         script.dir('modelserver') {
                             String runTestsMavenArguments = [
+                                    'mvn',
                                     'test',
                             ].findAll().join(' ')
 
