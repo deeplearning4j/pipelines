@@ -55,7 +55,7 @@ class Deeplearning4jProject implements Serializable {
     }
 
     private Boolean isMemberOrCollaborator(String committerFullName) {
-        String authCredentialsId = 'skymindops-username-and-token'
+        String authCredentialsId = 'github-username-and-token'
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
 
         String userDetails = script.httpRequest(url: usersSearchUrl,
