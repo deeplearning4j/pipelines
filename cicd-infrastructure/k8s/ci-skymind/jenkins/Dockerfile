@@ -5,6 +5,7 @@ COPY --chown=jenkins plugins/github-skip-pr-by-title.hpi /usr/share/jenkins/ref/
 
 # SGE Cloud plugin for managing load on PPC64LE platform
 COPY --chown=jenkins plugins/sge-cloud-plugin.hpi /usr/share/jenkins/ref/plugins/sge-cloud-plugin.hpi
+COPY --chown=jenkins plugins/copy-to-slave.hpi /usr/share/jenkins/ref/plugins/copy-to-slave.hpi
 
 # Copy list of requrired plugins
 ARG PLUGINS_FILE_NAME=plugins_locked.txt

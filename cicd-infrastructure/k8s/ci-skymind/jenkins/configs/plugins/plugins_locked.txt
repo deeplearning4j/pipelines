@@ -13,8 +13,8 @@ cloud-stats:0.19
 cloudbees-folder:6.6
 command-launcher:1.2
 config-file-provider:3.3
-configuration-as-code:1.1
-configuration-as-code-support:1.1
+configuration-as-code:1.2
+configuration-as-code-support:1.2
 credentials-binding:1.16
 credentials:2.1.18
 dashboard-view:2.9.11
@@ -57,10 +57,10 @@ jucies:0.2.1
 junit-attachments:1.5
 junit:1.26.1
 kubernetes-credentials:0.4.0
-kubernetes:1.12.8
+kubernetes:1.13.0
 log-parser:2.0
 m2release:0.14.0
-mailer:1.21
+mailer:1.22
 mapdb-api:1.0.9.0
 mask-passwords:2.12.0
 matrix-auth:2.3
@@ -94,7 +94,7 @@ resource-disposer:0.12
 saferestart:0.3
 scm-api:2.3.0
 scm-filter-branch-pr:0.4
-script-security:1.46
+script-security:1.47
 slack:2.3
 sonar:2.8.1
 ssh-agent:1.17
@@ -108,7 +108,7 @@ workflow-aggregator:2.6
 workflow-api:2.30
 workflow-basic-steps:2.11
 workflow-cps-global-lib:2.12
-workflow-cps:2.58
+workflow-cps:2.59
 workflow-durable-task-step:2.22
 workflow-job:2.26
 workflow-multibranch:2.20
