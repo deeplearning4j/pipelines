@@ -63,19 +63,13 @@ RUN source /opt/rh/devtoolset-6/enable && \
     cd .. && \
     rm -r protobuf-3.5.1
 
-# Install git lfs for dl4j-test-resources
-#RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.rpm.sh | bash && \
-#    yum -y clean all && \
-#        yum -y install \
-#            git-lfs \
-#            && \
-#        yum clean all && \
-#        git lfs install
-
+ENV HOME /home/jenkins
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
-ENV PATH /opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH}
+ENV PATH=/opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH}
 
 USER jenkins
+
+WORKDIR /home/jenkins
 
 CMD ["cat"]
