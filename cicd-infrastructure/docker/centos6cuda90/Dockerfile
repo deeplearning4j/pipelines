@@ -32,9 +32,9 @@ RUN mkdir -p /opt && \
     # Switch from fecth jdk with curl to wget, because of errors during the fetch
     wget --no-cookies --no-check-certificate \
         --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
-        http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
-    tar -xzf jdk-8u181-linux-x64.tar.gz -C /opt && \
-    rm jdk-8u181-linux-x64.tar.gz && \
+        http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz && \
+    tar -xzf jdk-8u191-linux-x64.tar.gz -C /opt && \
+    rm jdk-8u191-linux-x64.tar.gz && \
     mv /opt/jdk* ${JAVA_HOME} && \
     update-alternatives --install /usr/bin/java java ${JAVA_HOME}/bin/java 100 && \
     update-alternatives --install /usr/bin/javac javac ${JAVA_HOME}/bin/javac 100
