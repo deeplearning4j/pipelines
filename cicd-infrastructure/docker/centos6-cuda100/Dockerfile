@@ -60,8 +60,9 @@ RUN source /opt/rh/devtoolset-6/enable && \
     cd .. && \
     rm -r protobuf-3.5.1
 
+# Default Jenkins user ID is 1000, as workaround it been set to 1001
 ENV HOME /home/jenkins
-RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
+RUN groupadd jenkins -g 1001 && useradd -u 1001 -g 1001 -m jenkins
 
 ENV PATH=/opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH}
 
