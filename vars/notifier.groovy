@@ -182,14 +182,10 @@ private String parseFailedTestResults() {
                         '\n',
                         "_*Test name*_",
                         failedTest.getFullDisplayName(),
-                        "_*Error*_",
-                        '```',
-                        failedTest.getErrorDetails(),
-                        '```',
-                        "_*Stacktrace*_",
-                        '```',
-                        failedTest.getErrorStackTrace().trim(),
-                        '```'
+                        failedTest.getErrorDetails()?.trim() ? "_*Error*_\n```" +
+                                failedTest.getErrorDetails()?.trim() + '```' : '',
+                        failedTest.getErrorStackTrace().trim() ? "_*Stacktrace*_\n```" +
+                                failedTest.getErrorStackTrace()?.trim() + '```' : ''
                 ].findAll().join('\n')
 
                 failedTestResults = failedTestResults + failedTestDescription
