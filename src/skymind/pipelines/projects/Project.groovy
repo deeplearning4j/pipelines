@@ -457,22 +457,21 @@ abstract class Project implements Serializable {
     }
 
     protected Boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
-        int isMemberResponse = 0
-        String committerUsername
+        Boolean isMember = false
+        List gitHubUsers = []
         String authCredentialsId = 'github-username-and-token'
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
         Boolean doCommitterUsernameCheck = true
 
         // Workaround if committerFullName request contains multiple results
-        switch (committerFullName) {
-            case 'Eduardo Gonzalez':
-                doCommitterUsernameCheck = false
-                committerUsername = 'wmeddie'
-                break
-            default:
-                committerUsername = ''
-                break
-        }
+//        switch (committerFullName) {
+//            case 'Eduardo Gonzalez':
+//                doCommitterUsernameCheck = false
+//                isMember = true
+//                break
+//            default:
+//                break
+//        }
 
         if (doCommitterUsernameCheck) {
             String userDetails = script.httpRequest(url: usersSearchUrl,
@@ -481,19 +480,24 @@ abstract class Project implements Serializable {
                     quiet: true).content
 
             // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
-            committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+            gitHubUsers = new JsonSlurper().parseText(userDetails).items.login
         }
 
-        if (committerUsername) {
-            String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
+        if (gitHubUsers) {
+            for (usr in gitHubUsers) {
+                String committerUsername = usr
+                String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
 
-            isMemberResponse = script.httpRequest(url: memberQueryUrl,
-                    timeout: 60,
-                    authentication: authCredentialsId,
-                    quiet: true,
-                    validResponseCodes: '100:404').status
+                int isMemberResponse = script.httpRequest(url: memberQueryUrl,
+                        timeout: 60,
+                        authentication: authCredentialsId,
+                        quiet: true,
+                        validResponseCodes: '100:404').status
+
+                isMember = (isMemberResponse == 204)
+            }
         }
 
-        return (isMemberResponse == 204)
+        return isMember
     }
 }
