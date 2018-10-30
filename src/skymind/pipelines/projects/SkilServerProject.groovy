@@ -73,7 +73,8 @@ class SkilServerProject extends Project {
                             String buildSkilMavenArguments = [
                                     mavenBaseCommand,
                                     'clean',
-                                    'install'
+                                    'install',
+                                    '-Dmaven.test.skip=true'
                             ].findAll().join(' ')
 
                             script.mvn buildSkilMavenArguments
@@ -85,7 +86,17 @@ class SkilServerProject extends Project {
                                     '-fae test',
                             ].findAll().join(' ')
 
-                            script.mvn runTestsMavenArguments
+
+                            try {
+                                script.mvn runTestsMavenArguments
+                            }
+                            finally {
+                                def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+
+                                testResults = [
+                                        testResults: parseTestResults(tr)
+                                ]
+                            }
                         }
                     }
                     finally {
@@ -155,5 +166,25 @@ class SkilServerProject extends Project {
                         checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
             }
         }
+    }
+
+    private String parseTestResults(testResults) {
+        String testResultsDetails = ''
+
+        if (testResults != null) {
+            def total = testResults.totalCount
+            def failed = testResults.failCount
+            def skipped = testResults.skipCount
+            def passed = total - failed - skipped
+
+            testResultsDetails += ("Total: " + total)
+            testResultsDetails += (", Passed: " + passed)
+            testResultsDetails += (", Failed: " + failed)
+            testResultsDetails += (", Skipped: " + skipped)
+        } else {
+            testResultsDetails = 'No test results found'
+        }
+
+        return testResultsDetails
     }
 }
