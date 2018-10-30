@@ -457,34 +457,43 @@ abstract class Project implements Serializable {
     }
 
     protected Boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
+        int isMemberResponse = 0
+        String committerUsername
         String authCredentialsId = 'github-username-and-token'
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
+        Boolean doCommitterUsernameCheck = true
 
-        String userDetails = script.httpRequest(url: usersSearchUrl,
-                timeout: 60,
-                authentication: authCredentialsId,
-                quiet: true).content
+        // Workaround if committerFullName request contains multiple results
+        switch (committerFullName) {
+            case 'Eduardo Gonzalez':
+                doCommitterUsernameCheck = false
+                committerUsername = 'wmeddie'
+                break
+            default:
+                committerUsername = ''
+                break
+        }
 
-        // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
-        String committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+        if (doCommitterUsernameCheck) {
+            String userDetails = script.httpRequest(url: usersSearchUrl,
+                    timeout: 60,
+                    authentication: authCredentialsId,
+                    quiet: true).content
 
-        String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
+            // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
+            committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+        }
 
-        int isMemberResponse = script.httpRequest(url: memberQueryUrl,
-                timeout: 60,
-                authentication: authCredentialsId,
-                quiet: true,
-                validResponseCodes: '100:404').status
+        if (committerUsername) {
+            String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
+
+            isMemberResponse = script.httpRequest(url: memberQueryUrl,
+                    timeout: 60,
+                    authentication: authCredentialsId,
+                    quiet: true,
+                    validResponseCodes: '100:404').status
+        }
 
         return (isMemberResponse == 204)
-
-//    Not working with provided credentials
-//    String collaboratorsQueryUrl = "https://api.github.com/orgs/deeplearning4j/outside_collaborators"
-//    def isCollaboratorResponse = httpRequest url: collaboratorsQueryUrl,
-//            timeout: 120,
-//            authentication: authCredentialsId,
-//            quiet: true
-
-//    return (isMemberResponse.status == '204' || username in isCollaboratorResponse.content.login)
     }
 }
