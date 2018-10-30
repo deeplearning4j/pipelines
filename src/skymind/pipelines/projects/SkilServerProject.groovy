@@ -30,7 +30,7 @@ class SkilServerProject extends Project {
                             script.checkout script.scm
 
                             checkoutDetails = parseCheckoutDetails()
-                            isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
+                            isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, 'skymindio')
 
                             script.notifier.sendSlackNotification jobResult: 'STARTED',
                                     checkoutDetails: checkoutDetails, isMember: isMember

@@ -456,7 +456,7 @@ abstract class Project implements Serializable {
                 GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=%B ${gitCommitId}")]
     }
 
-    protected Boolean isMemberOrCollaborator(String committerFullName) {
+    protected Boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
         String authCredentialsId = 'github-username-and-token'
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
 
@@ -468,7 +468,7 @@ abstract class Project implements Serializable {
         // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
         String committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
 
-        String memberQueryUrl = "https://api.github.com/orgs/deeplearning4j/members/${committerUsername}"
+        String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
 
         int isMemberResponse = script.httpRequest(url: memberQueryUrl,
                 timeout: 60,
