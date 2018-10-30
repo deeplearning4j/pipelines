@@ -8,7 +8,8 @@ class SkilServerProject extends Project {
     private Map checkoutDetails
     private Boolean isMember
     private String mavenBaseCommand = [
-            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
+            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions ' +
+                    '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
             'mvn'
     ].findAll().join(' ')
 
@@ -27,8 +28,12 @@ class SkilServerProject extends Project {
                     try {
                         script.stage('Checkout') {
                             script.checkout script.scm
+
                             checkoutDetails = parseCheckoutDetails()
                             isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
+
+                            script.notifier.sendSlackNotification jobResult: 'STARTED',
+                                    checkoutDetails: checkoutDetails, isMember: isMember
                         }
 
                         script.stage('Install test resources') {
@@ -86,23 +91,14 @@ class SkilServerProject extends Project {
                                     '-fae test',
                             ].findAll().join(' ')
 
-
-                            try {
-                                script.mvn runTestsMavenArguments
-                            }
-                            finally {
-                                def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-
-                                testResults = [
-                                        testResults: parseTestResults(tr)
-                                ]
-                            }
+                            script.mvn runTestsMavenArguments
                         }
                     }
                     finally {
+                        def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+
                         testResults.add([
-                                platform   : platform,
-                                testResults: ''
+                                testResults: parseTestResults(tr)
                         ])
 
                         script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
