@@ -55,44 +55,37 @@ class Deeplearning4jProject implements Serializable {
     }
 
     protected Boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
-        int isMemberResponse = 0
-        String committerUsername
+        Boolean isMember = false
+        List gitHubUsers = []
         String authCredentialsId = 'github-username-and-token'
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
         Boolean doCommitterUsernameCheck = true
-
-        // Workaround if committerFullName request contains multiple results
-        switch (committerFullName) {
-            case 'Eduardo Gonzalez':
-                doCommitterUsernameCheck = false
-                committerUsername = 'wmeddie'
-                break
-            default:
-                committerUsername = ''
-                break
-        }
 
         if (doCommitterUsernameCheck) {
             String userDetails = script.httpRequest(url: usersSearchUrl,
                     timeout: 60,
                     authentication: authCredentialsId,
-                    quiet: true).content
+                    quiet: false).content
 
             // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
-            committerUsername = new JsonSlurper().parseText(userDetails).items[0].login
+            gitHubUsers = new JsonSlurper().parseText(userDetails).items.login
         }
 
-        if (committerUsername) {
-            String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
+        if (gitHubUsers) {
+            isMember = gitHubUsers.find() { committerUsername ->
+                String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
 
-            isMemberResponse = script.httpRequest(url: memberQueryUrl,
-                    timeout: 60,
-                    authentication: authCredentialsId,
-                    quiet: true,
-                    validResponseCodes: '100:404').status
+                int isMemberResponse = script.httpRequest(url: memberQueryUrl,
+                        timeout: 60,
+                        authentication: authCredentialsId,
+                        quiet: false,
+                        validResponseCodes: '100:404').status
+
+                return (isMemberResponse == 204)
+            }
         }
 
-        return (isMemberResponse == 204)
+        return isMember
     }
 
     protected void initPipeline() {

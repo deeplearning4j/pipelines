@@ -463,16 +463,6 @@ abstract class Project implements Serializable {
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
         Boolean doCommitterUsernameCheck = true
 
-        // Workaround if committerFullName request contains multiple results
-//        switch (committerFullName) {
-//            case 'Eduardo Gonzalez':
-//                doCommitterUsernameCheck = false
-//                isMember = true
-//                break
-//            default:
-//                break
-//        }
-
         if (doCommitterUsernameCheck) {
             String userDetails = script.httpRequest(url: usersSearchUrl,
                     timeout: 60,
@@ -482,21 +472,6 @@ abstract class Project implements Serializable {
             // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
             gitHubUsers = new JsonSlurper().parseText(userDetails).items.login
         }
-
-//        if (gitHubUsers) {
-//            for (usr in gitHubUsers) {
-//                String committerUsername = usr
-//                String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
-//
-//                int isMemberResponse = script.httpRequest(url: memberQueryUrl,
-//                        timeout: 60,
-//                        authentication: authCredentialsId,
-//                        quiet: false,
-//                        validResponseCodes: '100:404').status
-//
-//                isMember = (isMemberResponse == 204)
-//            }
-//        }
 
         if (gitHubUsers) {
             isMember = gitHubUsers.find() { committerUsername ->
