@@ -65,7 +65,7 @@ class Deeplearning4jProject implements Serializable {
             String userDetails = script.httpRequest(url: usersSearchUrl,
                     timeout: 60,
                     authentication: authCredentialsId,
-                    quiet: false).content
+                    quiet: true).content
 
             // WARNING: fetching first username from the search results may cause wrong recipient notifications on organization side.
             gitHubUsers = new JsonSlurper().parseText(userDetails).items.login
@@ -78,7 +78,7 @@ class Deeplearning4jProject implements Serializable {
                 int isMemberResponse = script.httpRequest(url: memberQueryUrl,
                         timeout: 60,
                         authentication: authCredentialsId,
-                        quiet: false,
+                        quiet: true,
                         validResponseCodes: '100:404').status
 
                 return (isMemberResponse == 204)
