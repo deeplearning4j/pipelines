@@ -483,9 +483,23 @@ abstract class Project implements Serializable {
             gitHubUsers = new JsonSlurper().parseText(userDetails).items.login
         }
 
+//        if (gitHubUsers) {
+//            for (usr in gitHubUsers) {
+//                String committerUsername = usr
+//                String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
+//
+//                int isMemberResponse = script.httpRequest(url: memberQueryUrl,
+//                        timeout: 60,
+//                        authentication: authCredentialsId,
+//                        quiet: false,
+//                        validResponseCodes: '100:404').status
+//
+//                isMember = (isMemberResponse == 204)
+//            }
+//        }
+
         if (gitHubUsers) {
-            for (usr in gitHubUsers) {
-                String committerUsername = usr
+            isMember = gitHubUsers.find() { committerUsername ->
                 String memberQueryUrl = "https://api.github.com/orgs/${gitHubOrganizationName}/members/${committerUsername}"
 
                 int isMemberResponse = script.httpRequest(url: memberQueryUrl,
@@ -494,7 +508,7 @@ abstract class Project implements Serializable {
                         quiet: true,
                         validResponseCodes: '100:404').status
 
-                isMember = (isMemberResponse == 204)
+                return (isMemberResponse == 204)
             }
         }
 
