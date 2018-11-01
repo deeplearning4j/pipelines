@@ -67,7 +67,8 @@ class SkilServerProject extends Project {
                                         'install',
                                         '-P native',
                                         '-P tf-cpu',
-                                        '-DskipTests'
+                                        '-DskipTests',
+                                        '-Dmaven.test.skip=true'
                                 ].findAll().join(' ')
 
                                 script.mvn buildModelServerMavenArguments
