@@ -29,7 +29,7 @@ email-ext:2.63
 embeddable-build-status:1.9
 extended-choice-parameter:0.76
 favorite:2.3.2
-git-changelog:2.11
+git-changelog:2.14
 git-client:2.7.3
 git-parameter:0.9.6
 git-server:1.7
