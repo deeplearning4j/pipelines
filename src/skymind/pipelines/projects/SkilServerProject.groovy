@@ -121,7 +121,7 @@ class SkilServerProject extends Project {
                                         mavenBaseCommand,
                                         '-fae',
                                         'test',
-//                                        '-P ci'
+                                        '-P ci'
                                 ].findAll().join(' ')
 
                                 script.mvn runTestsMavenArguments
@@ -137,41 +137,32 @@ class SkilServerProject extends Project {
                             script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
-
-                            script.cleanWs deleteDirs: true
                         }
                     }
 
-//                    script.container('docker') {
-//                        script.stage('Checkout') {
-//                            script.checkout script.scm
-//                            script.sh 'ls -la .'
-//                        }
-//
-//                        script.dir('skil-ui-modules/src/main/typescript/dashboard') {
-//                            script.stage('Clear cache and build docker image from scratch') {
-//                                script.sh '''\
-//                                docker-compose rm -f
-//                                export HOST_UID_GID=$(id -u):$(id -g)
-//                                docker-compose build
-//                                # docker-compose build --no-cache --pull
-//                            '''.stripIndent()
-//                            }
-//
-//                            script.stage('SKIL Dashboard Unit Tests') {
-//                                script.sh '''\
-//                                docker images
-//                                docker-compose run -u 1000:1000 --rm dev "yarn run test-teamcity"
-//                            '''.stripIndent()
-//                            }
-//
-//                            script.stage('SKIL Dashboard E2E Tests') {
-//                                script.sh '''\
-//                                docker-compose run -u 1000:1000 --rm dev "yarn run e2e-teamcity"
-//                            '''.stripIndent()
-//                            }
-//                        }
-//                    }
+                    script.container('docker') {
+                        script.dir('skil-ui-modules/src/main/typescript/dashboard') {
+                            script.stage('Clear cache and build docker image from scratch') {
+                                script.sh '''\
+                                    docker-compose rm -f
+                                    docker-compose build
+                                    # docker-compose build --no-cache --pull
+                                '''.stripIndent()
+                            }
+
+                            script.stage('SKIL Dashboard Unit Tests') {
+                                script.sh '''\
+                                    docker-compose run --rm dev yarn run test-teamcity
+                                '''.stripIndent()
+                            }
+
+                            script.stage('SKIL Dashboard E2E Tests') {
+                                script.sh '''\
+                                    docker-compose run --rm dev yarn run e2e-teamcity
+                                '''.stripIndent()
+                            }
+                        }
+                    }
                 }
                 catch (error) {
                     if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
@@ -191,6 +182,8 @@ class SkilServerProject extends Project {
                             (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
                 }
                 finally {
+                    script.cleanWs deleteDirs: true
+
                     script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
                             checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
                 }
