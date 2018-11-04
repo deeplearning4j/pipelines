@@ -23,7 +23,9 @@ class SkilServerProject extends Project {
         String platform = getPlatforms()[0].name
 
         script.node(platform) {
-            String wsFolderName = [projectName, script.env.BRANCH_NAME].join('-').replaceAll('/', '-')
+            String wsFolderName = 'workspace' + '/' + [
+                    projectName, script.env.BRANCH_NAME
+            ].join('-').replaceAll('/', '-')
 
             script.ws(wsFolderName) {
                 try {
