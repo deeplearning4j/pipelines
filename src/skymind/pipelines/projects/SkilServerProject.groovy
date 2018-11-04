@@ -92,29 +92,29 @@ class SkilServerProject extends Project {
                                 script.mvn buildSkilMavenArguments
                             }
 
-                            script.stage('Generate artifacts') {
-                                String generateSkilTarballMavenArguments = [
-                                        mavenBaseCommand,
-                                        'package',
-                                        '-Pgenerate-tarball',
-                                        '-DskipTests=true',
-                                        '-Dmaven.test.skip=true',
-                                        '-Dmaven.javadoc.skip=true'
-                                ].findAll().join(' ')
-
-                                script.mvn generateSkilTarballMavenArguments
-
-                                String generateSkilRpmMavenArguments = [
-                                        mavenBaseCommand,
-                                        'package',
-                                        '-Pgenerate-rpm',
-                                        '-DskipTests=true',
-                                        '-Dmaven.test.skip=true',
-                                        '-Dmaven.javadoc.skip=true',
-                                ].findAll().join(' ')
-
-                                script.mvn generateSkilRpmMavenArguments
-                            }
+//                            script.stage('Generate artifacts') {
+//                                String generateSkilTarballMavenArguments = [
+//                                        mavenBaseCommand,
+//                                        'package',
+//                                        '-Pgenerate-tarball',
+//                                        '-DskipTests=true',
+//                                        '-Dmaven.test.skip=true',
+//                                        '-Dmaven.javadoc.skip=true'
+//                                ].findAll().join(' ')
+//
+//                                script.mvn generateSkilTarballMavenArguments
+//
+//                                String generateSkilRpmMavenArguments = [
+//                                        mavenBaseCommand,
+//                                        'package',
+//                                        '-Pgenerate-rpm',
+//                                        '-DskipTests=true',
+//                                        '-Dmaven.test.skip=true',
+//                                        '-Dmaven.javadoc.skip=true',
+//                                ].findAll().join(' ')
+//
+//                                script.mvn generateSkilRpmMavenArguments
+//                            }
 
                             script.stage('Run tests') {
                                 String runTestsMavenArguments = [
