@@ -135,8 +135,8 @@ class SkilServerProject extends Project {
                             ])
 
                             script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
-                            script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
+//                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
+//                            script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
 
                             script.cleanWs deleteDirs: true
                         }
