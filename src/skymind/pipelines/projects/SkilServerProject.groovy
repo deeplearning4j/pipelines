@@ -119,7 +119,9 @@ class SkilServerProject extends Project {
                             script.stage('Run tests') {
                                 String runTestsMavenArguments = [
                                         mavenBaseCommand,
-                                        '-fae test',
+                                        '-fae',
+                                        'test',
+                                        '-P ci'
                                 ].findAll().join(' ')
 
                                 script.mvn runTestsMavenArguments
