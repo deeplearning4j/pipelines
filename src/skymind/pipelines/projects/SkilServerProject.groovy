@@ -142,36 +142,36 @@ class SkilServerProject extends Project {
                         }
                     }
 
-                    script.container('docker') {
-                        script.stage('Checkout') {
-                            script.checkout script.scm
-                            script.sh 'ls -la .'
-                        }
-
-                        script.dir('skil-ui-modules/src/main/typescript/dashboard') {
-                            script.stage('Clear cache and build docker image from scratch') {
-                                script.sh '''\
-                                docker-compose rm -f
-                                export HOST_UID_GID=$(id -u):$(id -g)
-                                docker-compose build
-                                # docker-compose build --no-cache --pull
-                            '''.stripIndent()
-                            }
-
-                            script.stage('SKIL Dashboard Unit Tests') {
-                                script.sh '''\
-                                docker images
-                                docker-compose run -u 1000:1000 --rm dev "yarn run test-teamcity"
-                            '''.stripIndent()
-                            }
-
-                            script.stage('SKIL Dashboard E2E Tests') {
-                                script.sh '''\
-                                docker-compose run -u 1000:1000 --rm dev "yarn run e2e-teamcity"
-                            '''.stripIndent()
-                            }
-                        }
-                    }
+//                    script.container('docker') {
+//                        script.stage('Checkout') {
+//                            script.checkout script.scm
+//                            script.sh 'ls -la .'
+//                        }
+//
+//                        script.dir('skil-ui-modules/src/main/typescript/dashboard') {
+//                            script.stage('Clear cache and build docker image from scratch') {
+//                                script.sh '''\
+//                                docker-compose rm -f
+//                                export HOST_UID_GID=$(id -u):$(id -g)
+//                                docker-compose build
+//                                # docker-compose build --no-cache --pull
+//                            '''.stripIndent()
+//                            }
+//
+//                            script.stage('SKIL Dashboard Unit Tests') {
+//                                script.sh '''\
+//                                docker images
+//                                docker-compose run -u 1000:1000 --rm dev "yarn run test-teamcity"
+//                            '''.stripIndent()
+//                            }
+//
+//                            script.stage('SKIL Dashboard E2E Tests') {
+//                                script.sh '''\
+//                                docker-compose run -u 1000:1000 --rm dev "yarn run e2e-teamcity"
+//                            '''.stripIndent()
+//                            }
+//                        }
+//                    }
                 }
                 catch (error) {
                     if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
