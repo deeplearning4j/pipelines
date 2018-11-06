@@ -121,7 +121,7 @@ class SkilServerProject extends Project {
                                         mavenBaseCommand,
                                         '-fae',
                                         'test',
-                                        '-P ci'
+//                                        '-P ci'
                                 ].findAll().join(' ')
 
                                 script.mvn runTestsMavenArguments
