@@ -8,12 +8,12 @@ RUN apk add --no-cache \
 
 RUN pip install docker-compose
 
-ENV HOME /home/jenkins
-RUN addgroup -g 1000 jenkins && \
-    adduser -D -u 1000 -G jenkins jenkins && \
-    usermod -aG ping jenkins
-
-USER jenkins
-WORKDIR $HOME
-
-CMD ["cat"]
+#ENV HOME /home/jenkins
+#RUN addgroup -g 1000 jenkins && \
+#    adduser -D -u 1000 -G jenkins jenkins && \
+#    usermod -aG ping jenkins
+#
+#USER jenkins
+#WORKDIR $HOME
+#
+#CMD ["cat"]
