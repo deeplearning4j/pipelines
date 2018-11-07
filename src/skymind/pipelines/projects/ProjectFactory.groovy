@@ -29,6 +29,9 @@ class ProjectFactory implements Serializable {
             case 'skil-python':
                 new SkilPythonProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'zeppelin':
+                new ZeppelinProject(script, projectName, jobConfig).initPipeline()
+                break
             default:
                 throw new IllegalArgumentException('Project is not supported yet')
                 break
