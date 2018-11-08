@@ -46,7 +46,8 @@ class SkilServerProject extends Project {
                                         mavenBaseCommand,
                                         'clean',
                                         'install',
-                                        '-pl skil-test-resources'
+                                        '-pl skil-test-resources',
+                                        '-P ci-nexus'
                                 ].findAll().join(' ')
 
                                 script.mvn installTestResourcesMavenArguments
