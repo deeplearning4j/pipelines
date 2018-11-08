@@ -62,7 +62,7 @@ class SkilServerProject extends Project {
                                         'clean',
                                         'install',
                                         '-pl :skil-auth',
-                                        '-X',
+                                        '--also-make',
                                         '-DskipTests',
                                         '-Dmaven.test.skip=true',
                                         '-Dmaven.javadoc.skip=true'
