@@ -41,28 +41,33 @@ class SkilServerProject extends Project {
                                         checkoutDetails: checkoutDetails, isMember: isMember
                             }
 
-                            script.stage('Install test resources') {
-                                String installTestResourcesMavenArguments = [
-                                        mavenBaseCommand,
-                                        'clean',
-                                        'install',
-                                        '-pl skil-test-resources',
-                                        '-P ci-nexus'
-                                ].findAll().join(' ')
-
-                                script.mvn installTestResourcesMavenArguments
-                            }
-
                             script.stage('Build client APIs') {
                                 script.dir('skil-apis') {
                                     String buildClientApiMavenArguments = [
                                             mavenBaseCommand,
                                             'clean',
-                                            'install'
+                                            'install',
+                                            '-DskipTests',
+                                            '-Dmaven.test.skip=true',
+                                            '-Dmaven.javadoc.skip=true'
                                     ].findAll().join(' ')
 
                                     script.mvn buildClientApiMavenArguments
                                 }
+                            }
+
+                            script.stage('Build SKIL auth') {
+                                String buildSkilAuthMavenArguments = [
+                                        mavenBaseCommand,
+                                        'clean',
+                                        'install',
+                                        '-pl :skil-auth',
+                                        '-DskipTests',
+                                        '-Dmaven.test.skip=true',
+                                        '-Dmaven.javadoc.skip=true'
+                                ].findAll().join(' ')
+
+                                script.mvn buildSkilAuthMavenArguments
                             }
 
                             script.stage('Build ModelServer') {
@@ -81,30 +86,58 @@ class SkilServerProject extends Project {
                                 }
                             }
 
+                            script.stage('Install test resources') {
+                                script.dir('skil-test-resources') {
+                                    String installTestResourcesMavenArguments = [
+                                            mavenBaseCommand,
+                                            'clean',
+                                            'install',
+                                            '-DskipTests',
+                                            '-Dmaven.test.skip=true',
+                                            '-Dmaven.javadoc.skip=true',
+
+                                    ].findAll().join(' ')
+
+                                    script.mvn installTestResourcesMavenArguments
+                                }
+                            }
+
                             script.stage('Build SKIL') {
                                 String buildSkilMavenArguments = [
                                         mavenBaseCommand,
                                         'clean',
                                         'install',
                                         '-DskipTests=true',
-                                        '-Dmaven.test.skip=true'
+                                        '-Dmaven.test.skip=true',
+                                        '-Dmaven.javadoc.skip=true'
                                 ].findAll().join(' ')
 
                                 script.mvn buildSkilMavenArguments
                             }
 
-//                            script.stage('Generate artifacts') {
-//                                String generateSkilTarballMavenArguments = [
-//                                        mavenBaseCommand,
-//                                        'package',
-//                                        '-Pgenerate-tarball',
-//                                        '-DskipTests=true',
-//                                        '-Dmaven.test.skip=true',
-//                                        '-Dmaven.javadoc.skip=true'
-//                                ].findAll().join(' ')
-//
-//                                script.mvn generateSkilTarballMavenArguments
-//
+                            script.stage('Run tests') {
+                                String runTestsMavenArguments = [
+                                        mavenBaseCommand,
+                                        'test',
+                                        '-P ci',
+                                        '-P ci-nexus'
+                                ].findAll().join(' ')
+
+                                script.mvn runTestsMavenArguments
+                            }
+
+                            script.stage('Generate artifacts') {
+                                String generateSkilTarballMavenArguments = [
+                                        mavenBaseCommand,
+                                        'package',
+                                        '-Pgenerate-tarball',
+                                        '-DskipTests=true',
+                                        '-Dmaven.test.skip=true',
+                                        '-Dmaven.javadoc.skip=true'
+                                ].findAll().join(' ')
+
+                                script.mvn generateSkilTarballMavenArguments
+
 //                                String generateSkilRpmMavenArguments = [
 //                                        mavenBaseCommand,
 //                                        'package',
@@ -115,17 +148,6 @@ class SkilServerProject extends Project {
 //                                ].findAll().join(' ')
 //
 //                                script.mvn generateSkilRpmMavenArguments
-//                            }
-
-                            script.stage('Run tests') {
-                                String runTestsMavenArguments = [
-                                        mavenBaseCommand,
-                                        '-fae',
-                                        'test',
-                                        '-P ci'
-                                ].findAll().join(' ')
-
-                                script.mvn runTestsMavenArguments
                             }
                         }
                         finally {
@@ -136,7 +158,7 @@ class SkilServerProject extends Project {
                             ])
 
                             script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-//                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
+                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
                         }
                     }
