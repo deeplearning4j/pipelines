@@ -47,7 +47,6 @@ class SkilServerProject extends Project {
                                             mavenBaseCommand,
                                             'clean',
                                             'install',
-                                            '-X',
                                             '-DskipTests',
                                             '-Dmaven.test.skip=true',
                                             '-Dmaven.javadoc.skip=true'
@@ -63,6 +62,7 @@ class SkilServerProject extends Project {
                                         'clean',
                                         'install',
                                         '-pl :skil-auth',
+                                        '-X',
                                         '-DskipTests',
                                         '-Dmaven.test.skip=true',
                                         '-Dmaven.javadoc.skip=true'
