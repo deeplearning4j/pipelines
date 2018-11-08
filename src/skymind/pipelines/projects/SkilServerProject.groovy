@@ -65,7 +65,8 @@ class SkilServerProject extends Project {
                                         '--also-make',
                                         '-DskipTests',
                                         '-Dmaven.test.skip=true',
-                                        '-Dmaven.javadoc.skip=true'
+                                        '-Dmaven.javadoc.skip=true',
+                                        '-P ci-nexus'
                                 ].findAll().join(' ')
 
                                 script.mvn buildSkilAuthMavenArguments
@@ -95,8 +96,7 @@ class SkilServerProject extends Project {
                                             'install',
                                             '-DskipTests',
                                             '-Dmaven.test.skip=true',
-                                            '-Dmaven.javadoc.skip=true',
-
+                                            '-Dmaven.javadoc.skip=true'
                                     ].findAll().join(' ')
 
                                     script.mvn installTestResourcesMavenArguments
