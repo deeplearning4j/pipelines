@@ -47,6 +47,7 @@ class SkilServerProject extends Project {
                                             mavenBaseCommand,
                                             'clean',
                                             'install',
+                                            '-X',
                                             '-DskipTests',
                                             '-Dmaven.test.skip=true',
                                             '-Dmaven.javadoc.skip=true'
