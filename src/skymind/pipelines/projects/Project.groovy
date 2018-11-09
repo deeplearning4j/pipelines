@@ -72,7 +72,7 @@ abstract class Project implements Serializable {
             script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
         }
         finally {
-            script.notifier.sendEmailNotification(script.currentBuild.result)
+//            script.notifier.sendEmailNotification(script.currentBuild.result)
         }
     }
 
