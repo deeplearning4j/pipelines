@@ -222,6 +222,7 @@ abstract class Project implements Serializable {
                             'clean',
                             (branchName == 'master') ? 'deploy' : 'install',
                             "-Dlocal.software.repository=ci-nexus",
+                            "-Dresources.jar.compression=true",
                             /* Workaround for Windows which doesn't honour withMaven options */
                             '-s ${MAVEN_SETTINGS}',
                             "-Dmaven.repo.local=" +
