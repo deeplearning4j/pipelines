@@ -66,7 +66,8 @@ class SkilServerProject extends Project {
                                         '-DskipTests',
                                         '-Dmaven.test.skip=true',
                                         '-Dmaven.javadoc.skip=true',
-                                        '-P ci-nexus'
+                                        '-P ci-nexus',
+                                        '-T 1C'
                                 ].findAll().join(' ')
 
                                 script.mvn buildSkilAuthMavenArguments
@@ -110,7 +111,8 @@ class SkilServerProject extends Project {
                                         'install',
                                         '-DskipTests=true',
                                         '-Dmaven.test.skip=true',
-                                        '-Dmaven.javadoc.skip=true'
+                                        '-Dmaven.javadoc.skip=true',
+                                        '-T 1C'
                                 ].findAll().join(' ')
 
                                 script.mvn buildSkilMavenArguments
@@ -121,7 +123,8 @@ class SkilServerProject extends Project {
                                         mavenBaseCommand,
                                         'test',
                                         '-P ci',
-                                        '-P ci-nexus'
+                                        '-P ci-nexus',
+                                        '-T 1C'
                                 ].findAll().join(' ')
 
                                 script.mvn runTestsMavenArguments
