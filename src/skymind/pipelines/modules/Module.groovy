@@ -342,7 +342,7 @@ class Module implements Serializable {
         if (modules.any { it =~ /deeplearning4j|nd4j|libnd4j/ } ||
                 (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
-            if (stageName == 'test') {
+            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec/})) {
                 mavenArguments.push('-P testresources')
             }
 
