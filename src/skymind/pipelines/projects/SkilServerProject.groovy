@@ -124,7 +124,7 @@ class SkilServerProject extends Project {
                                         'test',
                                         '-P ci',
                                         '-P ci-nexus',
-                                        '-T 1C'
+//                                        '-T 1C'
                                 ].findAll().join(' ')
 
                                 script.mvn runTestsMavenArguments
