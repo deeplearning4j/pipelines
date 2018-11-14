@@ -6,7 +6,7 @@ apache-httpcomponents-client-4-api:4.5.5-3.0
 authentication-tokens:1.3
 blueocean:1.9.0
 bouncycastle-api:2.17
-branch-api:2.0.20
+branch-api:2.0.21
 build-name-setter:1.6.9
 build-timeout:1.19
 cloud-stats:0.19
@@ -17,7 +17,7 @@ configuration-as-code:1.3
 configuration-as-code-support:1.3
 credentials-binding:1.17
 credentials:2.1.18
-dashboard-view:2.9.11
+dashboard-view:2.10
 display-url-api:2.2.0
 docker-commons:1.13
 docker-java-api:3.0.14
@@ -44,9 +44,9 @@ handlebars:1.1.1
 htmlpublisher:1.17
 http_request:1.8.22
 icon-shim:2.0.3
-jackson2-api:2.8.11.3
+jackson2-api:2.9.7.1
 jdk-tool:1.1
-jira:3.0.4
+jira:3.0.5
 job-dsl:1.70
 jobConfigHistory:2.18.3
 jquery-detached:1.2.1
@@ -73,9 +73,9 @@ node-iterator-api:1.5.0
 notification:1.13
 pipeline-build-step:2.7
 pipeline-github-lib:1.0
-pipeline-graph-analysis:1.7
+pipeline-graph-analysis:1.8
 pipeline-input-step:2.8
-pipeline-maven:3.5.15
+pipeline-maven:3.6.0
 pipeline-milestone-step:1.3.1
 pipeline-model-api:1.3.2
 pipeline-model-declarative-agent:1.1.1
@@ -85,7 +85,7 @@ pipeline-rest-api:2.10
 pipeline-stage-step:2.3
 pipeline-stage-tags-metadata:1.3.2
 pipeline-stage-view:2.10
-pipeline-utility-steps:2.1.0
+pipeline-utility-steps:2.2.0
 plain-credentials:1.4
 plugin-usage-plugin:0.4
 publish-over:0.22
@@ -105,12 +105,12 @@ timestamper:1.8.10
 token-macro:2.5
 versioncolumn:2.0
 workflow-aggregator:2.6
-workflow-api:2.31
+workflow-api:2.32
 workflow-basic-steps:2.12
 workflow-cps-global-lib:2.12
 workflow-cps:2.60
 workflow-durable-task-step:2.26
-workflow-job:2.27
+workflow-job:2.29
 workflow-multibranch:2.20
 workflow-scm-step:2.7
 workflow-step-api:2.16
