@@ -188,7 +188,8 @@ class Deeplearning4jProject implements Serializable {
         List supportedModules = [
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
-                'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec'
+                'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
+                'pydl4j'
         ]
         List changesRelatedToModules = []
         List changesNotRelatedToModules = []
@@ -249,7 +250,7 @@ class Deeplearning4jProject implements Serializable {
                 mappings.multi.modules.push(module)
             } else if (module =~ /^deeplearning4j|^datavec/) {
                 mappings.gpu.modules.push(module)
-            } else if (module =~ /^pydatavec|^jumpy/) {
+            } else if (module =~ /^pydatavec|^jumpy|^pydl4j/) {
                 mappings.pymodules.modules.push(module)
             } else {
                 mappings.generic.modules.push(module)
@@ -418,7 +419,7 @@ class Deeplearning4jProject implements Serializable {
                             [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']
                     ]
                     break
-                case ['pydatavec', 'jumpy']:
+                case ['pydatavec', 'jumpy', 'pydl4j']:
                     platforms = [
                             [name: 'linux-x86_64', pythonVersion: '2'],
                             [name: 'linux-x86_64', pythonVersion: '3']

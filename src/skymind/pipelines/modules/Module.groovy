@@ -342,7 +342,7 @@ class Module implements Serializable {
         if (modules.any { it =~ /deeplearning4j|nd4j|libnd4j/ } ||
                 (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
-            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec/})) {
+            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec|^pydl4j/})) {
                 mavenArguments.push('-P testresources')
             }
 
@@ -368,7 +368,8 @@ class Module implements Serializable {
         List supportedModules = [
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
-                'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec'
+                'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
+                'pydl4j'
         ]
         List mavenExcludesForNd4jNative = [
                 (platformName.contains('ios')) ?
@@ -376,13 +377,15 @@ class Module implements Serializable {
                 '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda',
                 '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform',
                 '!jumpy',
-                '!pydatavec'
+                '!pydatavec',
+                '!pydl4j'
         ]
         List mavenExcludesForNd4jCuda = [
                 '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
                 '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform',
                 '!jumpy',
-                '!pydatavec'
+                '!pydatavec',
+                '!pydl4j'
         ]
         List mavenExcludesForDeeplearning4jNative = [
                 '!deeplearning4j/deeplearning4j-cuda'
