@@ -288,10 +288,11 @@ class Deeplearning4jProject implements Serializable {
             String cpuExtension = platform.get('cpuExtension')
             String scalaVersion = platform.get('scalaVersion')
             String sparkVersion = platform.get('sparkVersion')
+            String os = platform.get('os')
             String pythonVersion = platform.containsKey('pythonVersion') ?
                     'python' + '-' + platform.get('pythonVersion') : ''
             String streamName = [
-                    platformName, backend, cpuExtension, pythonVersion
+                    platformName, os, backend, cpuExtension, pythonVersion
             ].findAll().join('-')
 
             /* Create stream body */
@@ -318,6 +319,7 @@ class Deeplearning4jProject implements Serializable {
                             releaseApproved     : releaseApproved,
                             releaseBranchPattern: releaseBranchPattern,
                             releaseVersion      : releaseVersion,
+                            os                  : os,
                             scalaVersion        : scalaVersion,
                             sparkVersion        : sparkVersion,
                             streamName          : streamName
@@ -383,8 +385,15 @@ class Deeplearning4jProject implements Serializable {
                             [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
                             [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
-                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
-                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                            (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                    [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
+                                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
+
+                            (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                    [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'] :
+                                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+//                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
+//                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
                             [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
                             [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
                             [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
