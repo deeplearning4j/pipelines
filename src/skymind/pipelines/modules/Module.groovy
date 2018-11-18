@@ -16,6 +16,7 @@ class Module implements Serializable {
     private String sparkVersion
     private String pythonVersion
     private String streamName
+    private String os
     /* FIXME: Workaround to build and test libnd4j in Debug mode  */
     private String libnd4jBuildMode = 'release'
     /* FIXME: List of platforms on which we can't run tests ATM */
@@ -79,6 +80,9 @@ class Module implements Serializable {
         sparkVersion = args.containsKey('sparkVersion') ? args.sparkVersion : ''
         pythonVersion = args.containsKey('pythonVersion') ? args.pythonVersion : ''
         streamName = args.containsKey('streamName') ? args.streamName : ''
+        // FIXME: Workaround for master and release builds
+        streamName = (streamName == 'linux-x86_64-cpu-centos6') ? 'linux-x86_64-cpu' : streamName
+        os = args.containsKey('os') ? args.os : ''
         localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
     }
 
