@@ -120,6 +120,8 @@ class Deeplearning4jProject implements Serializable {
 
             List mappings = filterModulesToBuild(modulesToBuild)
 
+            script.println "${mappings}"
+
             for (map in mappings) {
                 Map mapping = map
                 List modules = mapping.modules ?: script.error('Missing modules!')
