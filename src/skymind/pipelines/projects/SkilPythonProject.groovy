@@ -105,7 +105,7 @@ class SkilPythonProject extends Project {
         script.sh """\
             pip install --user Cython --install-option=\"--no-cython-compile\"
             pip install --user -e .[tests]
-            python -m pytest --pep8 -m pep8
+            python -m pytest --pep8 -m pep8 tests/mock/
         """.stripIndent()
     }
 }
