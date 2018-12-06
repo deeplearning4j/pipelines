@@ -32,6 +32,9 @@ class ProjectFactory implements Serializable {
             case 'zeppelin':
                 new ZeppelinProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'strumpf':
+                new StrumpfProject(script, projectName, jobConfig).initPipeline()
+                break
             default:
                 throw new IllegalArgumentException('Project is not supported yet')
                 break
