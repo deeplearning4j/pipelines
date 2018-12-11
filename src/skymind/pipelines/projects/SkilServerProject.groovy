@@ -56,22 +56,22 @@ class SkilServerProject extends Project {
                                 }
                             }
 
-                            script.stage('Build SKIL auth') {
-                                String buildSkilAuthMavenArguments = [
-                                        mavenBaseCommand,
-                                        'clean',
-                                        'install',
-                                        '-pl :skil-auth',
-                                        '--also-make',
-                                        '-DskipTests',
-                                        '-Dmaven.test.skip=true',
-                                        '-Dmaven.javadoc.skip=true',
-                                        '-P ci-nexus',
-                                        '-T 1C'
-                                ].findAll().join(' ')
-
-                                script.mvn buildSkilAuthMavenArguments
-                            }
+//                            script.stage('Build SKIL auth') {
+//                                String buildSkilAuthMavenArguments = [
+//                                        mavenBaseCommand,
+//                                        'clean',
+//                                        'install',
+//                                        '-pl :skil-auth',
+//                                        '--also-make',
+//                                        '-DskipTests',
+//                                        '-Dmaven.test.skip=true',
+//                                        '-Dmaven.javadoc.skip=true',
+//                                        '-P ci-nexus',
+//                                        '-T 1C'
+//                                ].findAll().join(' ')
+//
+//                                script.mvn buildSkilAuthMavenArguments
+//                            }
 
                             script.stage('Build ModelServer') {
                                 script.dir('modelserver') {
@@ -79,8 +79,8 @@ class SkilServerProject extends Project {
                                             mavenBaseCommand,
                                             'clean',
                                             'install',
-                                            '-P native',
-                                            '-P tf-cpu',
+                                            '-Pnative',
+                                            '-Ptf-cpu',
                                             '-DskipTests',
                                             '-Dmaven.test.skip=true'
                                     ].findAll().join(' ')
@@ -124,6 +124,7 @@ class SkilServerProject extends Project {
                                         'test',
                                         '-P ci',
                                         '-P ci-nexus',
+// FIXME: NOT WORKING!
 //                                        '-T 1C'
                                 ].findAll().join(' ')
 
@@ -135,6 +136,7 @@ class SkilServerProject extends Project {
                                         mavenBaseCommand,
                                         'package',
                                         '-Pgenerate-tarball',
+                                        '-Pbuilddistro',
                                         '-DskipTests=true',
                                         '-Dmaven.test.skip=true',
                                         '-Dmaven.javadoc.skip=true'
