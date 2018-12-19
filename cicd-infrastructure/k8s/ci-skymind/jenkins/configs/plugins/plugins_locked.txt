@@ -96,7 +96,7 @@ saferestart:0.3
 scm-api:2.3.0
 scm-filter-branch-pr:0.4
 script-security:1.49
-slack:2.10
+slack:2.11
 sonar:2.8.1
 ssh-agent:1.17
 ssh-credentials:1.14
