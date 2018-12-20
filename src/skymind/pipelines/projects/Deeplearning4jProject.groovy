@@ -297,7 +297,7 @@ class Deeplearning4jProject implements Serializable {
             String streamName = [
                     platformName, os, backend, cpuExtension, pythonVersion
             ].findAll().join('-')
-            List buindInContainer = [
+            List buildInContainer = [
                     'android-arm-cpu',
                     'android-arm64-cpu',
                     'android-x86-cpu',
@@ -314,7 +314,7 @@ class Deeplearning4jProject implements Serializable {
             /* Create stream body */
             streams["$streamName"] = {
                 script.node(streamName) {
-                    if (streamName in [buindInContainer]) {
+                    if (streamName in buildInContainer) {
                         script.container('builder') {
                             Boolean isUnixNode = script.isUnix()
                             String separator = isUnixNode ? '/' : '\\'
@@ -373,7 +373,6 @@ class Deeplearning4jProject implements Serializable {
                             }
                         }
                     } else {
-
                         Boolean isUnixNode = script.isUnix()
                         String separator = isUnixNode ? '/' : '\\'
                         /* Workaround for Windows path length limitation */

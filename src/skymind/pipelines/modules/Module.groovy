@@ -497,19 +497,35 @@ class Module implements Serializable {
 
         if (isUnixNode) {
             String devtoolsetVersion = backend?.contains('cuda') ? '6' : '7'
+            List withMavenDockerFixPlatformsToIgnore = [
+                    'android-arm-cpu',
+                    'android-arm64-cpu',
+                    'android-x86-cpu',
+                    'android-x86_64-cpu',
+                    'linux-armhf-cpu',
+                    'linux-x86_64-centos6-cpu',
+                    'linux-x86_64-centos6-cpu-avx2',
+                    'linux-x86_64-centos6-cpu-avx512',
+                    'linux-x86_64-cpu',
+                    'linux-x86_64-cpu-avx2',
+                    'linux-x86_64-cpu-avx512'
+            ]
 
             mavenCommand = ([
                     "if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
-                    'export PATH=$MVN_CMD_DIR:$PATH &&',
+                    (!(streamName in withMavenDockerFixPlatformsToIgnore)) ?
+                            'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
                     /* MAVEN_OPTS provided below, should help to effectively use of docker container resources with Java 8 */
                     (!(platformName in ['macosx-x86_64', 'ios-x86_64', 'ios-arm64', 'windows-x86_64'])) ?
                             'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&' : ''
             ] + commonArguments + [
                     /* Workaround for MacOS/iOS which doesn't honour withMaven options */
                     (platformName.contains('macosx') || platformName.contains('ios')) ?
-                            "-Dmaven.repo.local=${localRepositoryPath}" : ''
+                            "-Dmaven.repo.local=${localRepositoryPath}" :
+                            (platformName.contains('android')) ?
+                                    "-Dmaven.repo.local=${script.env.HOME}/${localRepositoryPath}" : ''
             ]).findAll().join(' ')
         } else {
             mavenCommand = ([
