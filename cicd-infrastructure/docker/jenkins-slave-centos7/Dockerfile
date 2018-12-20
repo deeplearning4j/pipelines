@@ -35,17 +35,23 @@ RUN mkdir -p /opt && \
     # Switch from fecth jdk with curl to wget, because of errors during the fetch
     wget --no-cookies --no-check-certificate \
         --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
-        http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz && \
-    tar -xzf jdk-8u181-linux-x64.tar.gz -C /opt && \
-    rm jdk-8u181-linux-x64.tar.gz && \
+        http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz && \
+    tar -xzf jdk-8u191-linux-x64.tar.gz -C /opt && \
+    rm jdk-8u191-linux-x64.tar.gz && \
     mv /opt/jdk* ${JAVA_HOME} && \
     update-alternatives --install /usr/bin/java java ${JAVA_HOME}/bin/java 100 && \
     update-alternatives --install /usr/bin/javac javac ${JAVA_HOME}/bin/javac 100
 
+ENV M2_HOME /opt/maven
 RUN mkdir -p /opt/maven && \
     curl -fsSL http://apache.osuosl.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz \
     | tar -xzC /opt/maven --strip-components=1 && \
-    ln -s /opt/maven/bin/mvn /usr/bin/mvn
+    ln -s /opt/maven/bin/mvn /usr/bin/ && \
+    # Workaround for concurrent safe maven local repository
+    curl -O http://repo1.maven.org/maven2/io/takari/aether/takari-local-repository/0.11.2/takari-local-repository-0.11.2.jar && \
+    mv takari-local-repository-0.11.2.jar ${M2_HOME}/lib/ext && \
+    curl -O http://repo1.maven.org/maven2/io/takari/takari-filemanager/0.8.3/takari-filemanager-0.8.3.jar && \
+    mv takari-filemanager-0.8.3.jar ${M2_HOME}/lib/ext
 
 RUN mkdir -p /opt/sbt && \
     curl -fsSL https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz \
@@ -81,7 +87,7 @@ RUN groupadd jenkins -g 1000 && \
     echo "jenkins ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user && \
     chmod 0440 /etc/sudoers.d/user
 
-ARG JENKINS_AGENT_VERSION=3.25
+ARG JENKINS_AGENT_VERSION=3.27
 RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar \
     https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${JENKINS_AGENT_VERSION}/remoting-${JENKINS_AGENT_VERSION}.jar && \
     chmod 755 /usr/share/jenkins && \
