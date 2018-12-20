@@ -1,15 +1,14 @@
 #!/usr/bin/env groovy
 
-def call(String command) {
+def call(String command, Boolean inK8s = false) {
     Boolean isUnixNode = isUnix()
     String shell = isUnixNode ? 'sh' : 'bat'
     String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
             'global_mvn_settings_xml' :
             'deeplearning4j-maven-global-settings'
-
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
-            maven: 'maven-3.6.0',
+//            maven: 'maven-3.6.0',
             /* -XX:+TieredCompilation -XX:TieredStopAtLevel=1 options should make JVM start a bit faster */
             mavenOpts: "-Djava.awt.headless=true -XX:+TieredCompilation -XX:TieredStopAtLevel=1",
             globalMavenSettingsConfig: configFileName,
@@ -24,9 +23,17 @@ def call(String command) {
                     jgivenPublisher(disabled: true)
             ]
     ) {
+        /* Workaround to fix wrong value of PATH env variable that picked by pipeline
+            (value from specific container is ignored)
+         */
+        if (inK8s) {
+            String fixedPath = "${shell}" script: 'echo ${PATH}', returnStdout: true
+            env.PATH = "${fixedPath.trim()}"
+        }
+
         /* Run the maven build */
         if (isUnixNode) {
-                "$shell" command
+            "$shell" command
         }
         /*
             Workaround for windows, because there is no way to redefine location of settings.xml

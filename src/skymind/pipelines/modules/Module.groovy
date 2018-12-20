@@ -44,6 +44,19 @@ class Module implements Serializable {
     private String javacppCacheFolder = '.javacpp/cache/'
     private static String localRepositoryPath
     public Map testResults
+    private List withMavenDockerFixPlatformsToIgnore = [
+            'android-arm-cpu',
+            'android-arm64-cpu',
+            'android-x86-cpu',
+            'android-x86_64-cpu',
+            'linux-armhf-cpu',
+            'linux-x86_64-centos6-cpu',
+            'linux-x86_64-centos6-cpu-avx2',
+            'linux-x86_64-centos6-cpu-avx512',
+            'linux-x86_64-cpu',
+            'linux-x86_64-cpu-avx2',
+            'linux-x86_64-cpu-avx512'
+    ]
 
     /**
      * Module class constructor
@@ -87,6 +100,8 @@ class Module implements Serializable {
     }
 
     private void runBuildLogic() {
+
+
         if (platformName in ['linux-x86_64', 'linux-x86_64-generic']) {
             if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
                 updateVersion('scala', scalaVersion)
@@ -100,7 +115,12 @@ class Module implements Serializable {
             updateVersion('cuda', cudaVersion)
         }
 
-        script.mvn getMvnCommand('build')
+        Boolean inK8s = false
+        if (streamName in withMavenDockerFixPlatformsToIgnore) {
+            inK8s = true
+        }
+
+        script.mvn(getMvnCommand('build'), inK8s)
     }
 
     private void runTestLogic() {
@@ -497,19 +517,6 @@ class Module implements Serializable {
 
         if (isUnixNode) {
             String devtoolsetVersion = backend?.contains('cuda') ? '6' : '7'
-            List withMavenDockerFixPlatformsToIgnore = [
-                    'android-arm-cpu',
-                    'android-arm64-cpu',
-                    'android-x86-cpu',
-                    'android-x86_64-cpu',
-                    'linux-armhf-cpu',
-                    'linux-x86_64-centos6-cpu',
-                    'linux-x86_64-centos6-cpu-avx2',
-                    'linux-x86_64-centos6-cpu-avx512',
-                    'linux-x86_64-cpu',
-                    'linux-x86_64-cpu-avx2',
-                    'linux-x86_64-cpu-avx512'
-            ]
 
             mavenCommand = ([
                     "if [ -f /etc/redhat-release ]; " +
