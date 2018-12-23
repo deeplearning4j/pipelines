@@ -1,0 +1,98 @@
+ARG BASEIMAGE_VERSION=14.04
+FROM amd64/ubuntu:${BASEIMAGE_VERSION} as BASEIMAGE
+
+FROM BASEIMAGE AS BUILD_TOOLS
+
+# Set DEBIAN_FRONTEND to skip any interactive post-install configuration steps
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get -qqy update && \
+    apt-get -y --no-install-recommends install \
+        wget \
+        curl \
+        ca-certificates \
+        software-properties-common \
+        make && \
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc-4.9 \
+        g++-4.9 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 50 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 50 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mkdir -p /opt/maven && \
+    curl -fsSL http://apache.osuosl.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz | \
+    tar -xzC /opt/maven --strip-components=1
+
+RUN mkdir -p /opt/sbt && \
+    curl -fsSL https://dl.bintray.com/sbt/native-packages/sbt/0.13.13/sbt-0.13.13.tgz | \
+    tar -xzC /opt/sbt --strip-components=1
+
+RUN mkdir -p /opt/cmake && \
+    curl -fsSL https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz | \
+    tar -xzC /opt/cmake --strip-components=1
+
+ENV PROTOBUF_HOME /opt/protobuf
+RUN curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-cpp-3.5.1.tar.gz \
+    | tar xz && \
+    cd protobuf-3.5.1 && \
+    ./configure --prefix=${PROTOBUF_HOME} && \
+    make -j2 && \
+    make install && \
+    cd .. && \
+    rm -rf protobuf-3.5.1
+
+ENV JAVA_HOME /opt/java
+# Switch from fecth jdk with curl to wget, because of errors during the fetch
+RUN wget --no-cookies --no-check-certificate \
+        --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+        http://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz && \
+    tar -xzf jdk-8u191-linux-x64.tar.gz -C /opt && \
+    rm jdk-8u191-linux-x64.tar.gz && \
+    mv /opt/jdk* ${JAVA_HOME} && \
+    update-alternatives --install /usr/bin/java java ${JAVA_HOME}/bin/java 100 && \
+    update-alternatives --set java ${JAVA_HOME}/bin/java && \
+    update-alternatives --install /usr/bin/javac javac ${JAVA_HOME}/bin/javac 100 && \
+    update-alternatives --set javac ${JAVA_HOME}/bin/javac
+
+FROM BASEIMAGE AS BASE_BUILDER_IMAGE
+
+COPY --from=BUILD_TOOLS /opt /opt
+
+ENV JAVA_HOME=/opt/java \
+    M2_HOME=/opt/maven \
+    MAVEN_HOME=/opt/maven
+
+RUN apt-get -qqy update && \
+    apt-get -y --no-install-recommends install \
+        wget \
+        curl \
+        ca-certificates \
+        software-properties-common \
+        git \
+        gnupg-agent \
+        dirmngr \
+        # Required for Datavec NativeImageLoader
+        libgtk2.0-dev && \
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        gcc-4.9 \
+        g++-4.9 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 50 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 50 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    ln -s /opt/maven/bin/mvn /usr/bin/mvn
+
+ENV HOME /home/jenkins
+RUN groupadd jenkins -g 1000 && useradd -d $HOME -u 1000 -g 1000 -m jenkins
+
+WORKDIR ${HOME}
+
+USER jenkins
+
+ENV PATH=/opt/sbt/bin:/opt/cmake/bin:/opt/protobuf/bin:$JAVA_HOME/bin:${MAVEN_HOME}/bin:${PATH}
+
+CMD ["cat"]
