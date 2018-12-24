@@ -97,18 +97,20 @@ class Deeplearning4jProject implements Serializable {
             script.stage('Prepare Run') {
 
                 script.node('linux-x86_64-generic') {
-                    script.checkout script.scm
+                    script.container('builder') {
+                        script.checkout script.scm
 
-                    checkoutDetails = parseCheckoutDetails()
+                        checkoutDetails = parseCheckoutDetails()
 
-                    isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
+                        isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
 
-                    script.notifier.sendSlackNotification jobResult: 'STARTED',
-                            checkoutDetails: checkoutDetails, isMember: isMember
+                        script.notifier.sendSlackNotification jobResult: 'STARTED',
+                                checkoutDetails: checkoutDetails, isMember: isMember
 
-                    modulesToBuild = getModulesToBuild(changes)
+                        modulesToBuild = getModulesToBuild(changes)
 
-                    script.echo "[INFO] Changed modules: ${modulesToBuild}"
+                        script.echo "[INFO] Changed modules: ${modulesToBuild}"
+                    }
                 }
             }
 
@@ -298,59 +300,61 @@ class Deeplearning4jProject implements Serializable {
             /* Create stream body */
             streams["$streamName"] = {
                 script.node(streamName) {
-                    Boolean isUnixNode = script.isUnix()
-                    String separator = isUnixNode ? '/' : '\\'
-                    /* Workaround for Windows path length limitation */
-                    String wsFolderName = ((isUnixNode) ? 'workspace' : 'ws') +
-                            separator +
-                            [(isUnixNode) ?
-                                     projectName :
-                                     (projectName.contains('deeplearning4j') ? 'dl4j' : projectName),
-                             script.env.BRANCH_NAME,
-                             streamName].join('-').replaceAll('/', '-')
-                    /* Get logic for the run, depending on changes */
-                    Module module = new Module([
-                            backend             : backend,
-                            branchName          : branchName,
-                            cpuExtension        : cpuExtension,
-                            isUnixNode          : isUnixNode,
-                            modulesToBuild      : modulesToBuild,
-                            platformName        : platformName,
-                            releaseApproved     : releaseApproved,
-                            releaseBranchPattern: releaseBranchPattern,
-                            releaseVersion      : releaseVersion,
-                            os                  : os,
-                            scalaVersion        : scalaVersion,
-                            sparkVersion        : sparkVersion,
-                            streamName          : streamName
-                    ], script)
+                    script.container('builder') {
+                        Boolean isUnixNode = script.isUnix()
+                        String separator = isUnixNode ? '/' : '\\'
+                        /* Workaround for Windows path length limitation */
+                        String wsFolderName = ((isUnixNode) ? 'workspace' : 'ws') +
+                                separator +
+                                [(isUnixNode) ?
+                                         projectName :
+                                         (projectName.contains('deeplearning4j') ? 'dl4j' : projectName),
+                                 script.env.BRANCH_NAME,
+                                 streamName].join('-').replaceAll('/', '-')
+                        /* Get logic for the run, depending on changes */
+                        Module module = new Module([
+                                backend             : backend,
+                                branchName          : branchName,
+                                cpuExtension        : cpuExtension,
+                                isUnixNode          : isUnixNode,
+                                modulesToBuild      : modulesToBuild,
+                                platformName        : platformName,
+                                releaseApproved     : releaseApproved,
+                                releaseBranchPattern: releaseBranchPattern,
+                                releaseVersion      : releaseVersion,
+                                os                  : os,
+                                scalaVersion        : scalaVersion,
+                                sparkVersion        : sparkVersion,
+                                streamName          : streamName
+                        ], script)
 
-                    /* Redefine default workspace to fix Windows path length limitation */
-                    script.ws(wsFolderName) {
-                        try {
-                            if (platformName.contains('ppc64') ||
-                                    platformName.contains('linux') &&
-                                    backend?.contains('cuda')
-                            ) {
+                        /* Redefine default workspace to fix Windows path length limitation */
+                        script.ws(wsFolderName) {
+                            try {
+                                if (platformName.contains('ppc64') ||
+                                        platformName.contains('linux') &&
+                                        backend?.contains('cuda')
+                                ) {
 //                                TODO: Check local repository mapping for builds in docker
-                                /* Get docker container configuration */
-                                Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+                                    /* Get docker container configuration */
+                                    Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
 
-                                String dockerImageName = dockerConf['image'] ?:
-                                        script.error('Docker image name is missing.')
-                                String dockerImageParams = dockerConf?.params
+                                    String dockerImageName = dockerConf['image'] ?:
+                                            script.error('Docker image name is missing.')
+                                    String dockerImageParams = dockerConf?.params
 
-                                script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                    script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                        module.stagesToRun()
+                                    }
+                                } else {
                                     module.stagesToRun()
                                 }
-                            } else {
-                                module.stagesToRun()
                             }
-                        }
-                        finally {
-                            testResults.add(module.testResults)
-                            script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-                            script.cleanWs deleteDirs: true
+                            finally {
+                                testResults.add(module.testResults)
+                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
+                                script.cleanWs deleteDirs: true
+                            }
                         }
                     }
                 }
