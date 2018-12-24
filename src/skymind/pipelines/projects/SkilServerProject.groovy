@@ -56,6 +56,23 @@ class SkilServerProject extends Project {
                                 }
                             }
 
+                            script.stage('Build SKIL DB manager') {
+                                String buildSkilAuthMavenArguments = [
+                                        mavenBaseCommand,
+                                        'clean',
+                                        'install',
+                                        '-pl :skil-db-manager',
+                                        '--also-make',
+                                        '-DskipTests',
+                                        '-Dmaven.test.skip=true',
+                                        '-Dmaven.javadoc.skip=true',
+//                                        '-P ci-nexus',
+//                                        '-T 1C'
+                                ].findAll().join(' ')
+
+                                script.mvn buildSkilAuthMavenArguments
+                            }
+
 //                            script.stage('Build SKIL auth') {
 //                                String buildSkilAuthMavenArguments = [
 //                                        mavenBaseCommand,
