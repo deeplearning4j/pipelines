@@ -74,11 +74,11 @@ RUN yum install -y \
     ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 ENV HOME /home/jenkins
-RUN groupadd jenkins -g 1000 && useradd -d $HOME -u 1000 -g 1000 -m jenkins
-
-WORKDIR ${HOME}
-
-USER jenkins
+#RUN groupadd jenkins -g 1000 && useradd -d $HOME -u 1000 -g 1000 -m jenkins
+#
+#WORKDIR ${HOME}
+#
+#USER jenkins
 
 ENV PATH=/opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH}
 
