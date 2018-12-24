@@ -107,7 +107,8 @@ VOLUME ${JENKINS_AGENT_WORKDIR}
 
 WORKDIR /home/jenkins
 
-ENV PATH /opt/sbt/bin:/opt/cmake/bin:${ANDROID_NDK_HOME}:${PROTOBUF_HOME}/bin:${PATH}
+ENV PATH=/opt/sbt/bin:/opt/cmake/bin:${ANDROID_NDK_HOME}:${PROTOBUF_HOME}/bin:${PATH} \
+    JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${JAVA_OPTS}"
 
 COPY jenkins-slave /usr/local/bin/jenkins-slave
 
