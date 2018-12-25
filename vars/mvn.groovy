@@ -9,7 +9,7 @@ def call(String command) {
 
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
-            maven: 'maven-3.3.9',
+            maven: 'maven-3.6.0',
             /* -XX:+TieredCompilation -XX:TieredStopAtLevel=1 options should make JVM start a bit faster */
             mavenOpts: "-Djava.awt.headless=true -XX:+TieredCompilation -XX:TieredStopAtLevel=1",
             globalMavenSettingsConfig: configFileName,
