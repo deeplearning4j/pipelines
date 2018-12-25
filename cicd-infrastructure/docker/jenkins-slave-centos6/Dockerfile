@@ -14,7 +14,7 @@ RUN yum install -y \
         tar \
         curl \
         openssl \
-        ca-certificates \
+        ca-certificates && \
     yum clean all && rm -rf /var/cache/yum
 
 ENV M2_HOME /opt/maven
@@ -77,7 +77,8 @@ RUN yum install -y \
     ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 ENV HOME /home/jenkins
-RUN groupadd jenkins -g 1000 && useradd -d $HOME -u 1000 -g 1000 -m jenkins
+# FIXME: WORKAROUND FOR WRONG JENKINS USER ID IN JNLP CONTAINER
+RUN groupadd jenkins -g 10000 && useradd -d $HOME -u 10000 -g 10000 -m jenkins
 
 USER jenkins
 
