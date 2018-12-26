@@ -18,9 +18,9 @@ RUN yum install -y \
     yum clean all && rm -rf /var/cache/yum
 
 ENV M2_HOME /opt/maven
-RUN mkdir -p /opt/maven && \
+RUN mkdir -p ${M2_HOME} && \
     curl -fsSL http://apache.osuosl.org/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz | \
-        tar -xzC /opt/maven --strip-components=1 && \
+        tar -xzC ${M2_HOME} --strip-components=1 && \
     # Workaround for concurrent safe maven local repository
     curl -O http://repo1.maven.org/maven2/io/takari/aether/takari-local-repository/0.11.2/takari-local-repository-0.11.2.jar && \
     mv takari-local-repository-0.11.2.jar ${M2_HOME}/lib/ext && \

@@ -1,4 +1,4 @@
-ARG BASEIMAGE_VERSION=6.6
+ARG BASEIMAGE_VERSION=7.6.1810
 FROM amd64/centos:${BASEIMAGE_VERSION} as BASEIMAGE
 
 FROM BASEIMAGE AS BUILD_TOOLS
@@ -19,9 +19,9 @@ RUN yum install -y \
     yum clean all && rm -rf /var/cache/yum
 
 ENV M2_HOME /opt/maven
-RUN mkdir -p /opt/maven && \
+RUN mkdir -p ${M2_HOME} && \
     curl -fsSL http://apache.osuosl.org/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz | \
-        tar -xzC /opt/maven --strip-components=1 && \
+        tar -xzC ${M2_HOME} --strip-components=1 && \
     # Workaround for concurrent safe maven local repository
     curl -O http://repo1.maven.org/maven2/io/takari/aether/takari-local-repository/0.11.2/takari-local-repository-0.11.2.jar && \
     mv takari-local-repository-0.11.2.jar ${M2_HOME}/lib/ext && \
@@ -46,7 +46,6 @@ RUN source /opt/rh/devtoolset-6/enable && \
     cd .. && \
     rm -rf protobuf-3.5.1
 
-ENV ANDROID_NDK_HOME /opt/android-ndk-r16b
 RUN mkdir -p /opt && \
     curl -s http://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip -o android-ndk-r16b-linux-x86_64.zip && \
     unzip -q android-ndk-r16b-linux-x86_64.zip -d /opt && \
