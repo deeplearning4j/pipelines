@@ -35,12 +35,11 @@ RUN mkdir -p /opt/cmake && \
     curl -fsSL https://cmake.org/files/v3.9/cmake-3.9.0-Linux-x86_64.tar.gz | \
     tar -xzC /opt/cmake --strip-components=1
 
-ENV PROTOBUF_HOME /opt/protobuf
 RUN source /opt/rh/devtoolset-6/enable && \
     curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-cpp-3.5.1.tar.gz \
     | tar xz && \
     cd protobuf-3.5.1 && \
-    ./configure --prefix=${PROTOBUF_HOME} && \
+    ./configure --prefix=/opt/protobuf && \
     make -j2 && \
     make install && \
     cd .. && \
@@ -86,7 +85,7 @@ WORKDIR ${HOME}
 
 USER jenkins
 
-ENV PATH=/opt/sbt/bin:/opt/cmake/bin:${PROTOBUF_HOME}/bin:${PATH} \
+ENV PATH=/opt/sbt/bin:/opt/cmake/bin:/opt/protobuf/bin:${PATH} \
     JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${JAVA_OPTS}"
 
 CMD ["cat"]
