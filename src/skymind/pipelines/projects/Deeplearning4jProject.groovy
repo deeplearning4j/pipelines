@@ -47,9 +47,9 @@ class Deeplearning4jProject implements Serializable {
 
         String gitCommitId = shellCommand('git log -1 --pretty=%H')
 
-        return [GIT_BRANCH: script.env.BRANCH_NAME,
-                GIT_COMMIT: gitCommitId,
-                GIT_COMMITER_NAME: shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
+        return [GIT_BRANCH        : script.env.BRANCH_NAME,
+                GIT_COMMIT        : gitCommitId,
+                GIT_COMMITER_NAME : shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
                 GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
                 GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=%B ${gitCommitId}")]
     }
@@ -239,10 +239,10 @@ class Deeplearning4jProject implements Serializable {
 
     private List filterModulesToBuild(List modulesToBuild) {
         Map mappings = [
-                multi: [modules: [], platforms: getPlatforms('libnd4j')],
-                gpu: [modules: [], platforms: getPlatforms('deeplearning4j')],
+                multi    : [modules: [], platforms: getPlatforms('libnd4j')],
+                gpu      : [modules: [], platforms: getPlatforms('deeplearning4j')],
                 pymodules: [modules: [], platforms: getPlatforms('jumpy')],
-                generic: [modules: [], platforms: getPlatforms()]
+                generic  : [modules: [], platforms: getPlatforms()]
         ]
 
         for (mod in modulesToBuild) {
@@ -260,9 +260,10 @@ class Deeplearning4jProject implements Serializable {
         }
 
         /* Strip mappings with empty modules list */
-        Map result = mappings.collectEntries { key, value -> value.modules ?
-                [(key) : [modules: value.modules.unique(), platforms: value.platforms]] :
-                [:]
+        Map result = mappings.collectEntries { key, value ->
+            value.modules ?
+                    [(key): [modules: value.modules.unique(), platforms: value.platforms]] :
+                    [:]
         }
 
         if (result.containsKey('gpu') && result.containsKey('generic')) {
@@ -296,11 +297,83 @@ class Deeplearning4jProject implements Serializable {
             String streamName = [
                     platformName, os, backend, cpuExtension, pythonVersion
             ].findAll().join('-')
+            List buindInContainer = [
+                    'android-arm-cpu',
+                    'android-arm64-cpu',
+                    'android-x86-cpu',
+                    'android-x86_64-cpu',
+                    'linux-armhf-cpu',
+                    'linux-x86_64-centos6-cpu',
+                    'linux-x86_64-centos6-cpu-avx2',
+                    'linux-x86_64-centos6-cpu-avx512',
+                    'linux-x86_64-cpu',
+                    'linux-x86_64-cpu-avx2',
+                    'linux-x86_64-cpu-avx512'
+            ]
 
             /* Create stream body */
             streams["$streamName"] = {
                 script.node(streamName) {
-                    script.container('builder') {
+                    if (streamName in [buindInContainer]) {
+                        script.container('builder') {
+                            Boolean isUnixNode = script.isUnix()
+                            String separator = isUnixNode ? '/' : '\\'
+                            /* Workaround for Windows path length limitation */
+                            String wsFolderName = ((isUnixNode) ? 'workspace' : 'ws') +
+                                    separator +
+                                    [(isUnixNode) ?
+                                             projectName :
+                                             (projectName.contains('deeplearning4j') ? 'dl4j' : projectName),
+                                     script.env.BRANCH_NAME,
+                                     streamName].join('-').replaceAll('/', '-')
+                            /* Get logic for the run, depending on changes */
+                            Module module = new Module([
+                                    backend             : backend,
+                                    branchName          : branchName,
+                                    cpuExtension        : cpuExtension,
+                                    isUnixNode          : isUnixNode,
+                                    modulesToBuild      : modulesToBuild,
+                                    platformName        : platformName,
+                                    releaseApproved     : releaseApproved,
+                                    releaseBranchPattern: releaseBranchPattern,
+                                    releaseVersion      : releaseVersion,
+                                    os                  : os,
+                                    scalaVersion        : scalaVersion,
+                                    sparkVersion        : sparkVersion,
+                                    streamName          : streamName
+                            ], script)
+
+                            /* Redefine default workspace to fix Windows path length limitation */
+                            script.ws(wsFolderName) {
+                                try {
+                                    if (platformName.contains('ppc64') ||
+                                            platformName.contains('linux') &&
+                                            backend?.contains('cuda')
+                                    ) {
+//                                TODO: Check local repository mapping for builds in docker
+                                        /* Get docker container configuration */
+                                        Map dockerConf = script.pipelineEnv.getDockerConfig(streamName)
+
+                                        String dockerImageName = dockerConf['image'] ?:
+                                                script.error('Docker image name is missing.')
+                                        String dockerImageParams = dockerConf?.params
+
+                                        script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                            module.stagesToRun()
+                                        }
+                                    } else {
+                                        module.stagesToRun()
+                                    }
+                                }
+                                finally {
+                                    testResults.add(module.testResults)
+                                    script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
+                                    script.cleanWs deleteDirs: true
+                                }
+                            }
+                        }
+                    } else {
+
                         Boolean isUnixNode = script.isUnix()
                         String separator = isUnixNode ? '/' : '\\'
                         /* Workaround for Windows path length limitation */
@@ -373,79 +446,79 @@ class Deeplearning4jProject implements Serializable {
 //                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu']
 //            ]
 //        } else {
-            switch (module) {
-                case ['libnd4j', 'nd4j']:
-                    platforms = [
-                            [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
-                            [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                            [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
-                            [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+        switch (module) {
+            case ['libnd4j', 'nd4j']:
+                platforms = [
+                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
-                            [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                            [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
+                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
-                            [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
-                            [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                            [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
-                            (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
-                                    [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
-                                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
+                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
+                                [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
 
-                            (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
-                                    [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'] :
-                                    [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'] :
+                                [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
 //                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
 //                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
-                            [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                            /*
-                             FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                             at the same time for CUDA - Xcode 8 required,
-                             which means that we can't enable avx512 builds at the moment
-                            */
+                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        /*
+                         FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+                         at the same time for CUDA - Xcode 8 required,
+                         which means that we can't enable avx512 builds at the moment
+                        */
 //                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                            [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
-                            [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                            /* FIXME: avx512 */
+                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+                        /* FIXME: avx512 */
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                            [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
-                            [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
-                    ]
-                    break
-                case 'deeplearning4j':
-                    platforms = [
-                            [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                            [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']
-                    ]
-                    break
-                case ['pydatavec', 'jumpy', 'pydl4j']:
-                    platforms = [
-                            [name: 'linux-x86_64', pythonVersion: '2'],
-                            [name: 'linux-x86_64', pythonVersion: '3']
-                    ]
-                    break
-                default:
-                    platforms = [
-                            [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.10'],
-                            [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.11'],
-                            [name: 'linux-x86_64-generic', sparkVersion: '2', scalaVersion: '2.11']
-                    ]
-                    break
-            }
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
+                ]
+                break
+            case 'deeplearning4j':
+                platforms = [
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']
+                ]
+                break
+            case ['pydatavec', 'jumpy', 'pydl4j']:
+                platforms = [
+                        [name: 'linux-x86_64', pythonVersion: '2'],
+                        [name: 'linux-x86_64', pythonVersion: '3']
+                ]
+                break
+            default:
+                platforms = [
+                        [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.10'],
+                        [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.11'],
+                        [name: 'linux-x86_64-generic', sparkVersion: '2', scalaVersion: '2.11']
+                ]
+                break
+        }
 //        }
 
         platforms
