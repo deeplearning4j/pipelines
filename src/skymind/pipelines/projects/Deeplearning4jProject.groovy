@@ -51,7 +51,8 @@ class Deeplearning4jProject implements Serializable {
                 GIT_COMMIT        : gitCommitId,
                 GIT_COMMITER_NAME : shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
                 GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
-                GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=%B ${gitCommitId}")]
+                // Change pretty format from -pretty=%B to --pretty=format:'%s%n%n%b' because of old version of git (1.7.1)
+                GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=format:'%s%n%n%b' ${gitCommitId}")]
     }
 
     protected Boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
