@@ -82,20 +82,22 @@ abstract class Project implements Serializable {
             String platformName = platform.name
 
             script.node(platformName) {
-                pipelineWrapper {
-                    try {
-                        script.stage('Checkout') {
-                            script.deleteDir()
+                script.container('builder'){
+                    pipelineWrapper {
+                        try {
+                            script.stage('Checkout') {
+                                script.deleteDir()
 
-                            script.dir(projectName) {
-                                script.checkout script.scm
+                                script.dir(projectName) {
+                                    script.checkout script.scm
+                                }
                             }
-                        }
 
-                        stagesToRun()
-                    }
-                    finally {
-                        script.cleanWs deleteDirs: true
+                            stagesToRun()
+                        }
+                        finally {
+                            script.cleanWs deleteDirs: true
+                        }
                     }
                 }
             }
