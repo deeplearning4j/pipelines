@@ -6,7 +6,9 @@ def call(String command, Boolean inK8s = false) {
     String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
             'global_mvn_settings_xml' :
             'deeplearning4j-maven-global-settings'
-    String fixedPath = "${shell}" script: 'echo ${PATH}', returnStdout: true
+    if (inK8s) {
+        String fixedPath = sh(script: 'echo ${PATH}', returnStdout: true).trim()
+    }
 
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
@@ -29,7 +31,7 @@ def call(String command, Boolean inK8s = false) {
             (value from specific container is ignored)
          */
         if (inK8s) {
-            env.PATH = "${fixedPath.trim()}"
+            env.PATH = "${fixedPath}"
         }
 
         /* Run the maven build */
