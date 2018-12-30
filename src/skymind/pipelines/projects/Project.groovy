@@ -111,7 +111,7 @@ abstract class Project implements Serializable {
             case 'build':
                 if (unixNode) {
                     return [
-                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable ; fi ;',
+                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U -B',
@@ -144,7 +144,7 @@ abstract class Project implements Serializable {
             case 'test':
                 if (unixNode) {
                     return [
-                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable ; fi ;',
+                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable ; fi ;',
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -B',
@@ -170,7 +170,7 @@ abstract class Project implements Serializable {
             case 'deploy':
                 if (unixNode) {
                     return [
-                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable; fi;",
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -B',
@@ -205,7 +205,7 @@ abstract class Project implements Serializable {
             case 'build-test-resources':
                 if (unixNode) {
                     return [
-                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-4/enable; fi;",
+                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable; fi;",
                             /* Pipeline withMaven step requires this line if it runs in Docker container */
                             'export PATH=$MVN_CMD_DIR:$PATH &&',
                             'mvn -U -B',
