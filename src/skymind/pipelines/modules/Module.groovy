@@ -16,7 +16,6 @@ class Module implements Serializable {
     private String sparkVersion
     private String pythonVersion
     private String streamName
-    private String os
     /* FIXME: Workaround to build and test libnd4j in Debug mode  */
     private String libnd4jBuildMode = 'release'
     /* FIXME: List of platforms on which we can't run tests ATM */
@@ -95,7 +94,6 @@ class Module implements Serializable {
         streamName = args.containsKey('streamName') ? args.streamName : ''
         // FIXME: Workaround for master and release builds
         streamName = (streamName == 'linux-x86_64-cpu-centos6') ? 'linux-x86_64-cpu' : streamName
-        os = args.containsKey('os') ? args.os : ''
         localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
     }
 
@@ -115,12 +113,9 @@ class Module implements Serializable {
             updateVersion('cuda', cudaVersion)
         }
 
-        Boolean inK8s = false
-        if (streamName in withMavenDockerFixPlatformsToIgnore) {
-            inK8s = true
-        }
+        Boolean inK8s = (withMavenDockerFixPlatformsToIgnore.contains(streamName)) ? true : false
 
-        script.mvn(getMvnCommand('build'), inK8s)
+        script.mvn getMvnCommand('build'), inK8s
     }
 
     private void runTestLogic() {
@@ -522,7 +517,7 @@ class Module implements Serializable {
                     "if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
-                    (!(streamName in withMavenDockerFixPlatformsToIgnore)) ?
+                    (!(withMavenDockerFixPlatformsToIgnore.contains(streamName))) ?
                             'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
                     /* MAVEN_OPTS provided below, should help to effectively use of docker container resources with Java 8 */
                     (!(platformName in ['macosx-x86_64', 'ios-x86_64', 'ios-arm64', 'windows-x86_64'])) ?
