@@ -58,7 +58,7 @@ jucies:0.2.1
 junit-attachments:1.5
 junit:1.26.1
 kubernetes-credentials:0.4.0
-kubernetes:1.14.1
+kubernetes:1.14.2
 log-parser:2.0
 m2release:0.14.0
 mailer:1.22
@@ -100,7 +100,7 @@ slack:2.12
 sonar:2.8.1
 ssh-agent:1.17
 ssh-credentials:1.14
-ssh-slaves:1.29.1
+ssh-slaves:1.29.4
 structs:1.17
 timestamper:1.8.10
 token-macro:2.5
