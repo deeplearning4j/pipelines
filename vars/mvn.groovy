@@ -5,10 +5,10 @@ def call(String command, Boolean inK8s = false) {
     String shell = isUnixNode ? 'sh' : 'bat'
     String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
             'global_mvn_settings_xml' : 'deeplearning4j-maven-global-settings'
-    String fixedPath = (inK8s) ?
-            (isUnixNode) ? sh(script: 'echo ${PATH}', returnStdout: true).trim() :
-                    bat(script: 'echo ${PATH}', returnStdout: true).trim() :
-            ''
+//    String fixedPath = (inK8s) ?
+//            (isUnixNode) ? sh(script: 'echo ${PATH}', returnStdout: true).trim() :
+//                    bat(script: 'echo ${PATH}', returnStdout: true).trim() :
+//            ''
 
     withMaven(
             /* Maven installation declared in the Jenkins "Global Tool Configuration" */
@@ -31,7 +31,7 @@ def call(String command, Boolean inK8s = false) {
             (value from specific container is ignored)
          */
 //        if (fixedPath) {
-            env.PATH = "${fixedPath}"
+//            env.PATH = "${fixedPath}"
 //        }
 
         /* Run the maven build */
