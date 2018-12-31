@@ -83,9 +83,26 @@ RUN yum install -y \
 
 ENV HOME /home/jenkins
 # FIXME: WORKAROUND FOR WRONG JENKINS USER ID IN JNLP CONTAINER
-RUN groupadd jenkins -g 10000 && useradd -d $HOME -u 10000 -g 10000 -m jenkins
+# RUN groupadd jenkins -g 10000 && useradd -d $HOME -u 10000 -g 10000 -m jenkins
+
+RUN groupadd jenkins -g 1000 && useradd -d $HOME -u 1000 -g 1000 -m jenkins
+
+ARG JENKINS_AGENT_VERSION=3.27
+RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar \
+    https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${JENKINS_AGENT_VERSION}/remoting-${JENKINS_AGENT_VERSION}.jar && \
+    chmod 755 /usr/share/jenkins && \
+    chmod 644 /usr/share/jenkins/slave.jar
 
 USER jenkins
+
+ARG JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+ENV JENKINS_AGENT_WORKDIR=${JENKINS_AGENT_WORKDIR}
+RUN mkdir /home/jenkins/.jenkins && mkdir -p ${JENKINS_AGENT_WORKDIR}
+
+VOLUME /home/jenkins/.jenkins
+VOLUME ${JENKINS_AGENT_WORKDIR}
+
+COPY jenkins-slave /usr/local/bin/jenkins-slave
 
 WORKDIR ${HOME}
 
@@ -96,7 +113,20 @@ ENV PATH=/opt/sbt/bin:/opt/cmake/bin:/opt/protobuf/bin:${PATH} \
 # This environment variable required for buildnativeoperations.sh script execution
 ENV ANDROID_NDK=${ANDROID_NDK_HOME}
 
-CMD ["cat"]
+ENTRYPOINT ["jenkins-slave"]
+
+#USER jenkins
+#
+#WORKDIR ${HOME}
+#
+#ENV PATH=/opt/sbt/bin:/opt/cmake/bin:/opt/protobuf/bin:${PATH} \
+#    JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${JAVA_OPTS}" \
+#    ANDROID_NDK_HOME=/opt/android-ndk-r16b
+#
+## This environment variable required for buildnativeoperations.sh script execution
+#ENV ANDROID_NDK=${ANDROID_NDK_HOME}
+#
+#CMD ["cat"]
 
 
 
