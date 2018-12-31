@@ -98,7 +98,7 @@ class Deeplearning4jProject implements Serializable {
             script.stage('Prepare Run') {
 
                 script.node('linux-x86_64-generic') {
-                    script.container('builder') {
+                    script.container('jnlp') {
                         script.checkout script.scm
 
                         checkoutDetails = parseCheckoutDetails()
@@ -343,7 +343,7 @@ class Deeplearning4jProject implements Serializable {
                     ], script)
 
                     if (buildInContainer.contains(streamName)) {
-                        script.container('builder') {
+                        script.container('jnlp') {
                             /* Redefine default workspace to fix Windows path length limitation */
                             script.ws(wsFolderName) {
                                 try {

@@ -82,7 +82,7 @@ abstract class Project implements Serializable {
             String platformName = platform.name
 
             script.node(platformName) {
-                script.container('builder'){
+                script.container('jnlp'){
                     pipelineWrapper {
                         try {
                             script.stage('Checkout') {
