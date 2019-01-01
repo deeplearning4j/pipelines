@@ -406,7 +406,7 @@ class Deeplearning4jProject implements Serializable {
             case ['libnd4j', 'nd4j']:
                 platforms = [
                         [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
+//                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
 //                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
 //                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 //
