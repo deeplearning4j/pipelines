@@ -498,7 +498,7 @@ class Module implements Serializable {
                 // -T 1C set to run maven build in parallel
                 // FIXME: Temporary disable maven parallel builds -T 1C
                 'mvn -B -V',
-                (stageName == 'build') ? '-U clean install' :
+                (stageName == 'build') ? '-U -T 1C clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
                 getMavenProjects(stageName),
@@ -514,7 +514,7 @@ class Module implements Serializable {
             String devtoolsetVersion = backend?.contains('cuda') ? '6' : '7'
 
             mavenCommand = ([
-                    "if [ -f /etc/redhat-release ]; " +
+                    "   if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
                     (!(withMavenDockerFixPlatformsToIgnore.contains(streamName))) ?
