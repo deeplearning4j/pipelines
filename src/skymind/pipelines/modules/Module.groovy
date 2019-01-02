@@ -498,7 +498,7 @@ class Module implements Serializable {
                 // -T 1C set to run maven build in parallel
                 // FIXME: Temporary disable maven parallel builds -T 1C
                 'mvn -B -V',
-                (stageName == 'build') ? '-U -T 1C clean install' :
+                (stageName == 'build') ? '-U -T 1C clean install -Dmaven.javadoc.skip=true' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
                 getMavenProjects(stageName),
