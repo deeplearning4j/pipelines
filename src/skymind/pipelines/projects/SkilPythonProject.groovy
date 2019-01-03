@@ -81,15 +81,28 @@ class SkilPythonProject extends Project {
                             }
 
                             if (!branchName.contains(releaseBranchPattern)) {
+                                script.stage('Install required dependencies') {
+                                    script.sh """\
+                                        pip install --user Cython --install-option=\"--no-cython-compile\"
+                                        pip install --user -e .[tests]
+                                    """.stripIndent()
+                                }
+
                                 script.stage('Test') {
                                     runTestLogic()
+                                }
+
+                                script.stage('Run integration tests') {
+                                    runIntegrationTests()
                                 }
                             }
                         }
                         finally {
+                            def tr = script.junit allowEmptyResults: true, testResults: '**/test_reports/*.xml'
+
                             testResults.add([
-                                    platform: streamName,
-                                    testResults: ''
+                                    platform   : streamName,
+                                    testResults: parseTestResults(tr)
                             ])
                             script.cleanWs deleteDirs: true
                         }
@@ -102,10 +115,30 @@ class SkilPythonProject extends Project {
     }
 
     protected void runTestLogic() {
-        script.sh """\
-            pip install --user Cython --install-option=\"--no-cython-compile\"
-            pip install --user -e .[tests]
-            python -m pytest --pep8 -m pep8 tests/mock/
-        """.stripIndent()
+        script.sh 'python -m pytest --junitxml test_reports/unit_test_results.xml --pep8 -m pep8 tests/mock/'
+    }
+
+    protected void runIntegrationTests() {
+        script.sh 'python -m pytest --junitxml test_reports/integration_test_results.xml --pep8 -m pep8 tests/integration/'
+    }
+
+    private String parseTestResults(testResults) {
+        String testResultsDetails = ''
+
+        if (testResults != null) {
+            def total = testResults.totalCount
+            def failed = testResults.failCount
+            def skipped = testResults.skipCount
+            def passed = total - failed - skipped
+
+            testResultsDetails += ("Total: " + total)
+            testResultsDetails += (", Passed: " + passed)
+            testResultsDetails += (", Failed: " + failed)
+            testResultsDetails += (", Skipped: " + skipped)
+        } else {
+            testResultsDetails = 'No test results found'
+        }
+
+        return testResultsDetails
     }
 }
