@@ -497,8 +497,9 @@ class Module implements Serializable {
                 // FIXME: -e -B -V not picked by Windows from withMaven pipeline step
                 // -T 1C set to run maven build in parallel
                 // FIXME: Temporary disable maven parallel builds -T 1C
+                // -Dmaven.javadoc.skip=true
                 'mvn -B -V',
-                (stageName == 'build') ? '-U clean install -Dmaven.javadoc.skip=true' :
+                (stageName == 'build') ? '-U clean install' :
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
                 getMavenProjects(stageName),
