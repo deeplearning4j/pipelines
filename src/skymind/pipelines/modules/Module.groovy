@@ -94,7 +94,7 @@ class Module implements Serializable {
         streamName = args.containsKey('streamName') ? args.streamName : ''
         // FIXME: Workaround for master and release builds
         streamName = (streamName == 'linux-x86_64-cpu-centos6') ? 'linux-x86_64-cpu' : streamName
-        localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
+        localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2/repository'
     }
 
     private void runBuildLogic() {
