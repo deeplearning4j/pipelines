@@ -244,8 +244,10 @@ class Module implements Serializable {
                     mavenArguments.push("-Dlibnd4j.compute=37")
                 }
 
-//                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
-//                mavenArguments.push('-Dlibnd4j.test.skip=true')
+                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
+                if (!(streamName in streamsToExclude)) {
+                    mavenArguments.push('-Dlibnd4j.test.skip=true')
+                }
 
                 // FIXME: Workaround to fix dependencies problem if there is nd4j, datavec or deeplearning4j in project reactor, but changes were made only for libnd4j
                 mavenArguments.push("-Djavacpp.platform=${platformName}")
@@ -361,7 +363,7 @@ class Module implements Serializable {
         if (modules.any { it =~ /deeplearning4j|nd4j|libnd4j/ } ||
                 (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
-            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec|^pydl4j/})) {
+            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec|^pydl4j/ })) {
                 mavenArguments.push('-P testresources')
             }
 
@@ -371,8 +373,8 @@ class Module implements Serializable {
             }
         }
 
-        if (modules.any { it =~ /^datavec/}) {
-            if (!modules.any { it =~ /^nd4j/}) {
+        if (modules.any { it =~ /^datavec/ }) {
+            if (!modules.any { it =~ /^nd4j/ }) {
                 mavenArguments.push("-Djavacpp.platform=${platformName}")
                 mavenArguments.push('-P libnd4j-assembly')
             }
@@ -410,7 +412,7 @@ class Module implements Serializable {
                 '!deeplearning4j/deeplearning4j-cuda'
         ]
 
-        if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
+        if (modulesToBuild.any { it =~ /^deeplearning4j/ }) {
             if (streamName == 'linux-x86_64-cpu' && libnd4jBuildMode == 'release') {
                 projects.addAll(mavenExcludesForDeeplearning4jNative)
             }
@@ -451,7 +453,9 @@ class Module implements Serializable {
                 if (backend?.contains('cuda')) {
                     /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
                     if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) } &&
-                            !modulesToBuild.any { mavenExcludesForDeeplearning4jNative.contains(it) }
+                            !modulesToBuild.any {
+                                mavenExcludesForDeeplearning4jNative.contains(it)
+                            }
                     ) {
                         projects.addAll(mavenExcludesForNd4jCuda)
                     }
@@ -572,9 +576,15 @@ class Module implements Serializable {
                         pushd "\${item}"
 
                         sed -i "s/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${version}<\\/nd4j.version>/" pom.xml
-                        sed -i "s/<datavec.version>.*<\\/datavec.version>/<datavec.version>${version}<\\/datavec.version>/" pom.xml
-                        sed -i "s/<deeplearning4j.version>.*<\\/deeplearning4j.version>/<deeplearning4j.version>${version}<\\/deeplearning4j.version>/" pom.xml
-                        sed -i "s/<dl4j-test-resources.version>.*<\\/dl4j-test-resources.version>/<dl4j-test-resources.version>${version}<\\/dl4j-test-resources.version>/" pom.xml
+                        sed -i "s/<datavec.version>.*<\\/datavec.version>/<datavec.version>${
+                    version
+                }<\\/datavec.version>/" pom.xml
+                        sed -i "s/<deeplearning4j.version>.*<\\/deeplearning4j.version>/<deeplearning4j.version>${
+                    version
+                }<\\/deeplearning4j.version>/" pom.xml
+                        sed -i "s/<dl4j-test-resources.version>.*<\\/dl4j-test-resources.version>/<dl4j-test-resources.version>${
+                    version
+                }<\\/dl4j-test-resources.version>/" pom.xml
 
                         #Spark versions, like <version>xxx_spark_2-SNAPSHOT</version>
                         for f in \$(find . -name 'pom.xml' -not -path '*target*'); do
@@ -643,7 +653,7 @@ class Module implements Serializable {
     }
 
     private void getFancyStageDecorator(String text) {
-        int charsNumber = Math.round((78-text.length())/2)
+        int charsNumber = Math.round((78 - text.length()) / 2)
 
         script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
