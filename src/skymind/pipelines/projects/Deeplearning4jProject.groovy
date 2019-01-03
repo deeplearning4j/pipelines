@@ -405,7 +405,7 @@ class Deeplearning4jProject implements Serializable {
         switch (module) {
             case ['libnd4j', 'nd4j']:
                 platforms = [
-                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
+//                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
 //                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
 //                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
 //                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
@@ -430,7 +430,7 @@ class Deeplearning4jProject implements Serializable {
 //                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'] :
 //                                [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
 //
-//                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
 //                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
 //                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
 //
@@ -450,7 +450,7 @@ class Deeplearning4jProject implements Serializable {
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
 //                        /* FIXME: avx512 */
 ////                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
 //                        [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']

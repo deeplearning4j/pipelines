@@ -32,10 +32,10 @@ class Module implements Serializable {
             'linux-ppc64le-cuda-9.0',
             'linux-ppc64le-cuda-9.2',
             'linux-ppc64le-cuda-10.0',
-            'linux-x86_64-cuda-9.0',
+//            'linux-x86_64-cuda-9.0',
             'linux-x86_64-cuda-9.2',
             'linux-x86_64-cuda-10.0',
-            'windows-x86_64-cuda-9.0',
+//            'windows-x86_64-cuda-9.0',
             'windows-x86_64-cuda-9.2',
             'windows-x86_64-cuda-10.0',
             'linux-armhf-cpu'
