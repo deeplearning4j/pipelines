@@ -80,10 +80,8 @@ class PyDl4jProject extends Project {
                                 isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
                             }
 
-                            if (!branchName.contains(releaseBranchPattern)) {
-                                script.stage('Test') {
-                                    runTestLogic()
-                                }
+                            script.stage('Test') {
+                                runTestLogic()
                             }
                         }
                         finally {

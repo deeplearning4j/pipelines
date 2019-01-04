@@ -80,21 +80,19 @@ class SkilPythonProject extends Project {
                                 isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
                             }
 
-                            if (!branchName.contains(releaseBranchPattern)) {
-                                script.stage('Install required dependencies') {
-                                    script.sh """\
-                                        pip install --user Cython --install-option=\"--no-cython-compile\"
-                                        pip install --user -e .[tests]
-                                    """.stripIndent()
-                                }
+                            script.stage('Install required dependencies') {
+                                script.sh """\
+                                    pip install --user Cython --install-option=\"--no-cython-compile\"
+                                    pip install --user -e .[tests]
+                                """.stripIndent()
+                            }
 
-                                script.stage('Test') {
-                                    runTestLogic()
-                                }
+                            script.stage('Test') {
+                                runTestLogic()
+                            }
 
-                                script.stage('Run integration tests') {
-                                    runIntegrationTests()
-                                }
+                            script.stage('Run integration tests') {
+                                runIntegrationTests()
                             }
                         }
                         finally {
