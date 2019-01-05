@@ -17,7 +17,7 @@ Below, you can find general view of all CI/CD tools that are currently in use (P
 <p align="center">
     <img src="imgs/ci_cd_infrastructure.png" alt="General view of CI/CD infrastructure">
     <br>
-    *Pic.1 - General view of CI/CD infrastructure*
+    <b>Pic.1 - General view of CI/CD infrastructure</b>
 </p>
 
 ## Kubernetes
