@@ -15,11 +15,9 @@ whereas `ppc64le(GPU)` is using Jenkins `SGE plugin` to create and connect Jenki
 Below, you can find general view of all CI/CD tools that are currently in use (Pic. 1).
 
 <p align="center">
-    <figure>
-        <img src="imgs/ci_cd_infrastructure.png" alt="General view of CI/CD infrastructure">
-        <br>
-        <figcaption>Pic.1 - General view of CI/CD infrastructure</figcaption>
-    </figure>
+    <img src="imgs/ci_cd_infrastructure.png" alt="General view of CI/CD infrastructure">
+    <br>
+    *Pic.1 - General view of CI/CD infrastructure*
 </p>
 
 ## Kubernetes
