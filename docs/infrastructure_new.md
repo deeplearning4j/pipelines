@@ -12,13 +12,11 @@ Also, we do have:
 `macOS` and `ppc64le(CPU)` boxes connected to Jenkins instance via `ssh`,
 whereas `ppc64le(GPU)` is using Jenkins `SGE plugin` to create and connect Jenkins `ppc64l-gpu` agents.
 
-Below, you can find general view of all CI/CD tools that are currently in use ([Pic. 1](######pic1---general-view-of-cicd-infrastructure)).
+Below, you can find general view of all CI/CD tools that are currently in use (Pic.1).
 
-<p align="center">
-    <img src="imgs/ci_cd_infrastructure.png" alt="General view of CI/CD infrastructure">
-    <br>
-    ###### Pic.1 - General view of CI/CD infrastructure
-</p>
+![Pic.1 - General view of CI/CD infrastructure](imgs/ci_cd_infrastructure.png)
+
+###### Pic.1 - General view of CI/CD infrastructure
 
 ## Kubernetes
 
