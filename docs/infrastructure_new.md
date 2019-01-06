@@ -5,12 +5,12 @@ Currently, our CI/CD infrastructure consists of private k8s cluster that hosts a
 
 Also, we do have:
 * `macOS boxes`, hosted at [Macminivault](https://www.macminivault.com);
-* `ppc64le boxes`, provided by [OSU Open Source Lab](https://oregonstate.edu/);
-* `windows box`, deployed on Azure, in the same private network as kubernetes cluster;
-* `linux (GPU) box` deployed on Azure, in the same private network as kubernetes cluster.
+* `PPC64LE boxes`, provided by [OSU Open Source Lab](https://oregonstate.edu/);
+* `Windows box`, deployed on Azure, in the same private network as kubernetes cluster;
+* `Linux(GPU) box` deployed on Azure, in the same private network as kubernetes cluster.
 
-`macOS` and `ppc64le(CPU)` boxes connected to Jenkins instance via `ssh`,
-whereas `ppc64le(GPU)` is using Jenkins `SGE plugin` to create and connect Jenkins `ppc64l-gpu` agents.
+`macOS` and `PPC64LE(CPU)` boxes connected to Jenkins instance via `ssh`,
+whereas `PPC64LE(GPU)` is using Jenkins `SGE plugin` to create and connect Jenkins `PPC64LE(GPU)` agents.
 
 Below, you can find general view of all CI/CD tools that are currently in use ([Pic.1](#pic1---general-view-of-cicd-infrastructure)).
 
