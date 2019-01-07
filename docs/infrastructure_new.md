@@ -61,7 +61,7 @@ More details about how to run provisioning scripts can be found [here](cicd-infr
 ### Linux(GPU) build agent
 Currently, `Linux(GPU) build agent` was manually configured by administrator.
 
-In general `Linux(GPU) build agent` requires only latest `Nvidia` drivers and `Docker` to be installed on the VM.
+In general, `Linux(GPU) build agent` requires only latest `Nvidia` drivers and `Docker` to be installed on the VM.
 
 ### Windows build agent
 
