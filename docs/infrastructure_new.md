@@ -69,7 +69,7 @@ Every time when Jenkins master version is updated, you need to
 <br>
 update tunnel value in Jenkins <b>config-prod.yml</b> for
 <br>
-<b>Windows build agent<b> and restart Jenkins agent service!
+<b>Windows build agent</b> and restart Jenkins agent service!
 </aside>
 
 Currently, `Windows build agent` was manually configured by administrator.
@@ -109,5 +109,5 @@ skymind in snippet below is the name of shared library defined in Jenkins global
 ```
 
 ## Nexus
-OSS Nexus instance is used for  
+OSS Nexus instance is used for
 
