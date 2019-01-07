@@ -162,7 +162,7 @@ More details about Jenkins instance deployment process and maintenance can be fo
 OSS Nexus instance is used for:
 1. Maven dependencies caching;
 2. Docker images caching;
-3. dl4j-test-resources hosting.
+3. `dl4j-test-resources` hosting.
 
 
 
