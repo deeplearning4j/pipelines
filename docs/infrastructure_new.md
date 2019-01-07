@@ -65,9 +65,7 @@ In general `Linux(GPU) build agent` requires only latest `Nvidia` drivers and `D
 
 ### Windows build agent
 
-_**Every time when Jenkins master version is updated, you need to<br>
-update tunnel value in Jenkins <b>config-prod.yml</b> for<br>
-<b>Windows build agent</b> and restart Jenkins agent service!**_
+_**Every time when Jenkins master version is updated, you need to update tunnel value in Jenkins <b>config-prod.yml</b> for <b>Windows build agent</b> and restart Jenkins agent service!**_
 
 Currently, `Windows build agent` was manually configured by administrator.
 
