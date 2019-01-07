@@ -4,12 +4,12 @@
 Currently, our CI/CD infrastructure consists of private k8s cluster that hosts all required CI/CD tools, and build agents.
 
 Also, we do have:
-* `macOS boxes`, hosted at [Macminivault](https://www.macminivault.com);
+* `MacOS boxes`, hosted at [Macminivault](https://www.macminivault.com);
 * `PPC64LE boxes`, provided by [OSU Open Source Lab](https://oregonstate.edu/);
 * `Windows box`, deployed on Azure, in the same private network as kubernetes cluster;
 * `Linux(GPU) box` deployed on Azure, in the same private network as kubernetes cluster.
 
-`macOS` and `PPC64LE(CPU)` boxes connected to Jenkins instance via `ssh`,
+`MacOS` and `PPC64LE(CPU)` boxes connected to Jenkins instance via `ssh`,
 whereas `PPC64LE(GPU)` is using Jenkins `SGE plugin` to create and connect Jenkins `PPC64LE(GPU)` agents.
 
 Below, you can find general view of all CI/CD tools that are currently in use ([Pic.1](#pic1---general-view-of-cicd-infrastructure)).
@@ -50,10 +50,10 @@ More details about Jenkins instance deployment process and maintenance can be fo
 ## Jenkins static build agents
 All configuration that needs to be done on Jenkins master side is stored in `SCM` and stored [here](k8s/ci-skymind/jenkins/configs/config-prod.yml).
 
-### macOS build agent
-`macOS build agent` provisioning has been done with `Ansible` scripts that can be found [here](cicd-infrastructure/ansible).
+### MacOS build agent
+`MacOS build agent` provisioning has been done with `Ansible` scripts that can be found [here](cicd-infrastructure/ansible).
 
-Every time when new `macOS build agent` needs to be added to the Jenkins agents pool, \
+Every time when new `MacOS build agent` needs to be added to the Jenkins agents pool, \
 administrator need to add endpoint of a new build agent to [production](cicd-infrastructure/ansible/production) inventory file.
 
 More details about how to run provisioning scripts can be found [here](cicd-infrastructure/ansible/README.md)
@@ -65,7 +65,7 @@ In general `Linux(GPU) build agent` requires only latest `Nvidia` drivers and `D
 
 ### Windows build agent
 
-_**Every time when Jenkins master version is updated, you need to update tunnel value in Jenkins <b>config-prod.yml</b> for <b>Windows build agent</b> and restart Jenkins agent service!**_
+<span style="color:orange">_**Every time when Jenkins master version is updated, you need to update tunnel value in Jenkins <b>config-prod.yml</b> for <b>Windows build agent</b> and restart Jenkins agent service!**_</span>
 
 Currently, `Windows build agent` was manually configured by administrator.
 
@@ -82,13 +82,63 @@ To have more secure environment, separate `Jenkins user` should be created in th
 
 More details about builds on Windows can be found [here](https://github.com/bytedeco/javacpp-presets/wiki/Building-on-Windows).
 
-## List of the build tools that are installed on Jenkins build agents
-| Tool name | Version | Description |
-| --------- | :-----: | ----------- |
-||                 *macOS*         ||
-||||
+## List of the build tools
+List of the build tools and their versions, that are installed on Jenkins build agents
 
-
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th colspan=4>OS</th>
+        </tr>
+    </thead>
+    <thead>
+        <tr>
+            <th colspan=1>Tool/Version</td>
+            <th>Android</td>
+            <th>Linux</td>
+            <th>MacOS</td>
+            <th>Windows</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>git</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>cmake</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>gcc/g++</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>JDK</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>maven</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 
 ## Jenkins pipeline scripts for CI/CD
 CI/CD scripts are written with the help of [Jenkins Shared Libraries](https://jenkins.io/doc/book/pipeline/shared-libraries/) to simplify codebase support, reuse, versioning and extending.
@@ -97,12 +147,22 @@ Skymind Shared Library for CI/CD is defined on global level in `Manage Jenkins >
 
 Default branch is `develop`. To change branch for testing changes in CI/CD scripts, developer needs add following line at the begging of the `Jenkinsfile`:
 
-_**skymind in snippet below is the name of shared library defined in Jenkins global config**_
+<span style="color:orange">_**skymind in snippet below is the name of shared library defined in Jenkins global config**_</span>
 
 ```
 @Library('skymind@<branch-name>') _
 ```
 
 ## Nexus
-OSS Nexus instance is used for
+OSS Nexus instance deployed on Kubernetes cluster as `StatefulSet` [object](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+Manifest file required for deployment located [here](k8s/ci-skymind/nexus/nexus-prod.yml).
+
+More details about Jenkins instance deployment process and maintenance can be found [here](docs/nexus.md).
+
+OSS Nexus instance is used for:
+1. Maven dependencies caching;
+2. Docker images caching;
+3. dl4j-test-resources hosting.
+
+
 
