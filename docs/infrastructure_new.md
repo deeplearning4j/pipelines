@@ -23,8 +23,8 @@ Kubernetes cluster for CI/CD infrastructure was deployed on Azure with the help 
 
 Azure resource group name for deployed cluster: `ci-skymind-prod-acs-cluster-03`.
 
-|Name|Version|
-|----|-------|
+| Name | Version |
+| ---- | ------- |
 |ACS engine|v0.26.2|
 |Kubernetes|v1.11.5|
 
@@ -32,8 +32,8 @@ Private Kubernetes cluster ACS engine template was used for current deployment, 
 
 Cluster has following agent pools:
 
-|Pool name|Azure instance type|Pool description|
-|:---------:|:-------------------:|----------------|
+| Pool name | Azure instance type | Pool description |
+| :-------: | :-----------------: | ---------------- |
 |citools|Standard_D4s_v3|Used for CI tools deployment. Currently contains `Jenkins` and `OSS Nexus` instances|
 |linuxcpu1|Standard_D4_v3|Used for most of the `Jenkins` build agents.|
 |linuxcpu2|Standard_F8s_v2|Used only for `Jenkins` linux `avx512` build agents.|
@@ -64,13 +64,10 @@ Currently, `Linux(GPU) build agent` was manually configured by administrator.
 In general `Linux(GPU) build agent` requires only latest `Nvidia` drivers and `Docker` to be installed on the VM.
 
 ### Windows build agent
-<aside class="warning">
-Every time when Jenkins master version is updated, you need to
-<br>
-update tunnel value in Jenkins <b>config-prod.yml</b> for
-<br>
-<b>Windows build agent</b> and restart Jenkins agent service!
-</aside>
+
+_**Every time when Jenkins master version is updated, you need to<br>
+update tunnel value in Jenkins <b>config-prod.yml</b> for<br>
+<b>Windows build agent</b> and restart Jenkins agent service!**_
 
 Currently, `Windows build agent` was manually configured by administrator.
 
@@ -88,10 +85,12 @@ To have more secure environment, separate `Jenkins user` should be created in th
 More details about builds on Windows can be found [here](https://github.com/bytedeco/javacpp-presets/wiki/Building-on-Windows).
 
 ## List of the build tools that are installed on Jenkins build agents
-|Tool name|Version|Description|
-|---------|-------|-----------|
-|Platform|
-|||
+| Tool name | Version | Description |
+| --------- | :-----: | ----------- |
+||                 *macOS*         ||
+||||
+
+
 
 ## Jenkins pipeline scripts for CI/CD
 CI/CD scripts are written with the help of [Jenkins Shared Libraries](https://jenkins.io/doc/book/pipeline/shared-libraries/) to simplify codebase support, reuse, versioning and extending.
@@ -100,9 +99,7 @@ Skymind Shared Library for CI/CD is defined on global level in `Manage Jenkins >
 
 Default branch is `develop`. To change branch for testing changes in CI/CD scripts, developer needs add following line at the begging of the `Jenkinsfile`:
 
-<aside class="notice">
-skymind in snippet below is the name of shared library defined in Jenkins global config
-</aside>
+_**skymind in snippet below is the name of shared library defined in Jenkins global config**_
 
 ```
 @Library('skymind@<branch-name>') _
