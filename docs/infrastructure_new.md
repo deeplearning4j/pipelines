@@ -14,7 +14,7 @@ whereas `PPC64LE(GPU)` is using Jenkins `SGE plugin` to create and connect Jenki
 
 Below, you can find general view of all CI/CD tools that are currently in use ([Pic.1](#pic1---general-view-of-cicd-infrastructure)).
 
-![Pic.1 - General view of CI/CD infrastructure](imgs/ci_cd_infrastructure.png)
+![Pic.1 - General view of CI/CD infrastructure](imgs/ci-cd-infrastructure.png)
 
 ###### Pic.1 - General view of CI/CD infrastructure
 
@@ -38,10 +38,17 @@ Cluster has following agent pools:
 |linuxcpu1|Standard_D4_v3|Used for most of the `Jenkins` build agents.|
 |linuxcpu2|Standard_F8s_v2|Used only for `Jenkins` linux `avx512` build agents.|
 
-## Jenkins
+More details about cluster deployment process and maintenance can be found [here](docs/kubernetes.md).
 
-## Nexus
+## Jenkins master
 
-## Build agents
+Jenkins master instance deployed on Kubernetes cluster as `StatefulSet` [object](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+Manifest file required for deployment located [here](k8s/ci-skymind/jenkins/deployments/jenkins-prod.yml).
+
+More details about Jenkins instance deployment process and maintenance can be found [here](docs/jenkins.md).
+
+## Jenkins static build agents
 
 ## Jenkins pipeline scripts for CI/CD
+
+## Nexus
