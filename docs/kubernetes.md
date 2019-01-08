@@ -7,6 +7,48 @@ To be able to deploy new k8s cluster instance following tools should be present 
 
 ## Cluster deployment
 
+All deployment process of fresh Kubernetes cluster is done according with tool's instruction [here](https://github.com/Azure/acs-engine/blob/master/docs/kubernetes/deploy.md).
+
+Below, you can find shortened set of steps that are required for cluster deployment:
+1. Create cluster resource group, naming convention is following: `ci-skymind-<env-name>-acs-cluster-<cluster-number>`
+
+    <span style="color:orange">_**Step 2 can be omitted, if cluster doesn't need nodes autoscaling**_</span>
+2. Create `service principal` for `cluster-autoscaler` (tool that automatically adjusts the size of the Kubernetes cluster node pools).
+3. Run `acs-engine deploy` with following options:
+    * subscription-id - Azure subscription id;
+    * location - Azure region;
+    * api-model - path to cluster definition template;
+    * resource-group - Azure resource group;
+    * force-overwrite - this option is required if `acs-engine deploy` command triggered several times.
+
+   Service principal for cluster will be created automatically.
+4. Move (from previous cluster deployment) or create new Azure public IP address for [Kubernetes ingress controller](https://kubernetes.io/docs/concepts/services-networking/ingress/).
+   If public IP address has been created from scratch, DNS record should be updated at [Cloudflare](https://www.cloudflare.com/).
+
+
+## Cluster version upgrade
+
+To upgrade Kubernetes version of already deployed cluster you can use `acs-engine upgrade` command with following options:
+* subscription-id - Azure subscription id;
+* deployment-dir - ACS-engine output directory (_output/<cluster id>);
+* location - Azure region;
+* resource-group - Azure resource group;
+* upgrade-version - desired Kubernetes version;
+* auth-method - value is `client_secret`;
+* client-id - client id from cluster definition JSON;
+* client-secret - client secret from cluster definition.
+
 ## Cluster update
+To update separate parts of already deployed cluster (change instance type for the pool, add new pool, remove existing pool) following steps should be applied:
+1. Update `cluster definition template`.
+2. Run `acs-engine generate --api-model <path-to-the-cluster-definition-template>`, to update previously generated ARM template.
+3. Schedule ARM deployment, to apply changes with following command:
+    ```
+    az group deployment create \
+        --name "${CLUSTER_DEPLOYMENT_NAME}" \
+        --resource-group "${CLUSTER_RESOURCE_GROUP_NAME}" \
+        --template-file "./_output/${CLUSTER_NAME}/azuredeploy.json" \
+        --parameters "./_output/${CLUSTER_NAME}/azuredeploy.parameters.json"
+    ```
 
 ## Issues/Improvements
