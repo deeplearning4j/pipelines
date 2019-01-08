@@ -50,6 +50,6 @@ To update separate parts of already deployed cluster (change instance type for t
 
 ## Issues/Improvements
 1. Switch to [kubespray](http://kubespray.io/) or similar tool, to be able to deploy Kubernetes cluster to other clouds or on premise.
-2. Add monitoring.
+2. Add monitoring/logging.
 3. Add Windows pool.
 4. Add Linux GPU pool.
