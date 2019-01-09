@@ -94,7 +94,9 @@ class Module implements Serializable {
         streamName = args.containsKey('streamName') ? args.streamName : ''
         // FIXME: Workaround for master and release builds
         streamName = (streamName == 'linux-x86_64-cpu-centos6') ? 'linux-x86_64-cpu' : streamName
-        localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
+//        FIXME: .m2\\repository not working for Windows...
+//        localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
+        localRepositoryPath = '.m2/repository'
     }
 
     private void runBuildLogic() {
@@ -277,8 +279,6 @@ class Module implements Serializable {
 
                 if (stageName == 'test') {
                     mavenArguments.push('-P test-nd4j-native')
-                    // FIXME: Workaround for skipping tests for nd4j-parameter-server-node failing tests
-                    mavenArguments.push('-P ciSkipTests')
                 }
 
                 if (cpuExtension) {
@@ -393,21 +393,21 @@ class Module implements Serializable {
         List mavenExcludesForNd4jNative = [
                 (platformName.contains('ios')) ?
                         '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform' : '',
-                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda',
-                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform',
+//                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda',
+//                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda-platform',
                 '!jumpy',
                 '!pydatavec',
                 '!pydl4j'
         ]
         List mavenExcludesForNd4jCuda = [
-                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
-                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform',
+//                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native',
+//                '!nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native-platform',
                 '!jumpy',
                 '!pydatavec',
                 '!pydl4j'
         ]
         List mavenExcludesForDeeplearning4jNative = [
-                '!deeplearning4j/deeplearning4j-cuda'
+//                '!deeplearning4j/deeplearning4j-cuda'
         ]
 
         if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
