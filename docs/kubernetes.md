@@ -13,7 +13,7 @@ All deployment process of fresh Kubernetes cluster is done according with tool's
 Below, you can find shortened set of steps that are required for cluster deployment:
 1. Create cluster resource group, naming convention is following: `ci-skymind-<env-name>-acs-cluster-<cluster-number>`
 
-    <span style="color:orange">_**Step 2 can be omitted, if cluster doesn't need nodes autoscaling**_</span>
+   <span style="color:orange">_**Step 2 can be omitted, if cluster doesn't need nodes autoscaling**_</span>
 2. Create `service principal` for `cluster-autoscaler` (tool that automatically adjusts the size of the Kubernetes cluster node pools).
 3. Run `acs-engine deploy` with following options:
     * subscription-id - Azure subscription id;
