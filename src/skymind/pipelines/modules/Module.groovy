@@ -163,12 +163,12 @@ class Module implements Serializable {
             }
         } else {
             if (streamName == 'linux-x86_64-cpu') {
-                script.stage('Test libnd4j in debug mode') {
-                    libnd4jBuildMode = 'debug'
-                    getFancyStageDecorator('Test libnd4j in debug mode stage')
-                    runTestLogic()
-                    libnd4jBuildMode = 'release'
-                }
+//                script.stage('Test libnd4j in debug mode') {
+//                    libnd4jBuildMode = 'debug'
+//                    getFancyStageDecorator('Test libnd4j in debug mode stage')
+//                    runTestLogic()
+//                    libnd4jBuildMode = 'release'
+//                }
 
                 script.stage('Build') {
                     getFancyStageDecorator('Build stage')
