@@ -23,10 +23,12 @@ To deploy new Jenkins master instance on Kubernetes cluster, following set of st
    * configuration-as-code.hpi
    * github-skip-pr-by-title.hpi
 
-   These plugins are installed during the Jenkins master Docker image build.
+   `cicd-infrastructure/k8s/ci-skymind/jenkins/configs/plugins` folder contains two versions of Jenkins plugins list, that are available at `Jenkins Update site`.
+   One of them (`plugins_latest.txt`) has list of all required plugins, but with **latest** version of the plugin.
+   Second one (`plugins_locked.txt`), has list of all required plugins, but with **locked** version of the plugin.
 
-
-   TODO: describe plugins folder!
+   By default, during the baking Docker image for Jenkins master, `plugins_locked.txt` version or required plugins is picked.
+   All plugins in the list and custom/not supported plugins are installed during the Jenkins master Docker image build.
 
 2. Create Kubernetes namespaces required for Jenkins operation, with following command:
    `kubectl apply -f k8s/ci-skymind/namespaces/namespaces.yml`.
