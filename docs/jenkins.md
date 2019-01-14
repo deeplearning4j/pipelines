@@ -39,6 +39,9 @@ To deploy new Jenkins master instance on Kubernetes cluster, following set of st
 
 3. Run `kubectl apply -f k8s/ci-skymind/jenkins/secrets/secrets_prod.yml` to create all required secrets (Jenkins credentials, static agents login/passwords, etc) that will be used by Jenkins.
    Inside the container, secrets are stored as simple text files under `/secrets/jenkins/casc/values`.
+   Currently, all *Secret* manifests are stored on administrator development VM.
+
+   <span style="color:orange">_**Kubernetes Secret manifest files should never be committed to git!**_</span>
 
 4. Run `kubectl apply -f k8s/ci-skymind/jenkins/configs/config-prod.yml` to create a Kubernetes `ConfigMap` object to stores whole Jenkins configuration, that will be used by `Jenkins configuration-as-code` plugin, to bring Jenkins to the desired state.
 5. Run `kubectl apply -f k8s/ci-skymind/jenkins/deployments/jenkins-prod.yml`.
@@ -49,10 +52,19 @@ To deploy new Jenkins master instance on Kubernetes cluster, following set of st
    * `jenkins-master` *StatefulSet* describes Jenkins master instance deployment (required volumes, containers in pod, pod affinity);
    * Two *Service* objects. `jenkins-ui service` provides an endpoint for reaching Jenkins Master pod from outside (via ingress controller). `jenkins-slaves service` used as an endpoint for Jenkins agent connections.
 
-   TODO: describe storage pitfalls
-   TODO: describe where to store secrets
+   When a fresh instance of Jenkins master deployed, *Kubernetes Persistent Volume Claim* object should be used for Jenkins home folder.
 
 ## Update
+To update Jenkins master instance a set of manual steps are required:
+1. If changes related to Jenkins master version or Jenkins plugins a new Docker image of Jenkins master should be backed.
+2. To apply changes related to Jenkins master Docker image, you need to delete the `jenkins-master-0` *Pod*, which will force Kubernetes to fetch updated image and deploy new *Pod*.
+   In case, when changes are related to Kubernetes objects (*StatefulSets*, *ConfigMaps*, *Secrets*, etc) they should be applied with `kubectl apply` command.
+
+   To update Jenkins master configuration new `config-prod.yml` should be applied with `kubectl apply` command and `Apply new configuration` button in `Configuration as Code` section of Jenkins UI should be triggered.
+
+
+
+TODO: describe storage pitfalls
 
 ## Testing
 
