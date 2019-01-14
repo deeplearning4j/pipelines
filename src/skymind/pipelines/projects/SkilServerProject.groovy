@@ -10,7 +10,7 @@ class SkilServerProject extends Project {
     private String mavenBaseCommand = [
             'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions ' +
                     '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
-            'mvn'
+            'mvn -U'
     ].findAll().join(' ')
 
     protected List getPlatforms() {
