@@ -62,10 +62,25 @@ To update Jenkins master instance a set of manual steps are required:
 
    To update Jenkins master configuration new `config-prod.yml` should be applied with `kubectl apply` command and `Apply new configuration` button in `Configuration as Code` section of Jenkins UI should be triggered.
 
-
-
-TODO: describe storage pitfalls
+In case of migration Jenkins master instance to new cluster and requirement to keep all jobs history, `Azure disk` should be created from a snapshot of `Kubernetes Persistent Volume Claim`.
+`Azure disk` should be created in a new cluster resource group. `jenkins-master StatefulSet` should be updated to user `Azure disk` instead of `Kubernetes Persistent Volume Claim`.
 
 ## Testing
+To test changes related to Jenkins configuration or runtime environment locally (with minikube, kubeadm, etc), please use same order of deployment commands with manifest files that have **-dev** suffix.
 
 ## Issues/Improvements
+1. Switch to `helm` deployments.
+2. Fix issue, with `jenkins-slaves Service` endpoint for static agent connection. Every time when Jenkins master instance has been redeployed you need to specify new `Tunnel connection through` value for static agents.
+3. Add Jenkins master instance monitoring.
+4. Providing gpg key should be done manually.
+5. Credentials for e-mail server should be provided manually.
+6. Mask Passwords - Parameters to automatically mask -> Credentials Parameter flag should be set manually.
+7. Some trais for Organization folder has problems (https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos/jobs):
+    ```
+    navTraits << 'org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait' {
+        strategyId(1)
+        trust(class: "org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTraitTrustPermission")
+    }
+    ```
+8. Skip github PR should be installed and configured manually (Problem with docker hub builds).
+9. GPG keys (secret and public) should be provided manually.
