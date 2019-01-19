@@ -229,6 +229,16 @@ class SkilServerProject extends Project {
                 }
                 finally {
                     script.cleanWs deleteDirs: true
+                    // FIXME: Workaround to clean workspace
+                    script.dir("${script.env.WORKSPACE}@tmp") {
+                        script.deleteDir()
+                    }
+                    script.dir("${script.env.WORKSPACE}@script") {
+                        script.deleteDir()
+                    }
+                    script.dir("${script.env.WORKSPACE}@script@tmp") {
+                        script.deleteDir()
+                    }
 
                     script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
                             checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults

@@ -69,6 +69,16 @@ class ZeppelinProject extends Project {
                             script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
 
                             script.cleanWs deleteDirs: true
+                            // FIXME: Workaround to clean workspace
+                            script.dir("${script.env.WORKSPACE}@tmp") {
+                                script.deleteDir()
+                            }
+                            script.dir("${script.env.WORKSPACE}@script") {
+                                script.deleteDir()
+                            }
+                            script.dir("${script.env.WORKSPACE}@script@tmp") {
+                                script.deleteDir()
+                            }
                         }
                     }
                 }
