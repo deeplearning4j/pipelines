@@ -6,14 +6,15 @@ RUN apk add --no-cache \
         bash \
         shadow
 
-RUN pip install docker-compose
+RUN pip install --upgrade pip && pip install docker-compose
 
 #ENV HOME /home/jenkins
+#
 #RUN addgroup -g 1000 jenkins && \
 #    adduser -D -u 1000 -G jenkins jenkins && \
 #    usermod -aG ping jenkins
 #
 #USER jenkins
-#WORKDIR $HOME
+#WORKDIR ${HOME}
 #
 #CMD ["cat"]
