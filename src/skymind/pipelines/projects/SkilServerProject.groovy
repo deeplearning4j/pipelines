@@ -184,28 +184,27 @@ class SkilServerProject extends Project {
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
                         }
-                    }
 
-                    script.container('docker') {
+
                         script.dir('skil-ui-modules/src/main/typescript/dashboard') {
                             script.stage('Clear cache and build docker image from scratch') {
                                 script.sh '''\
-                                    docker-compose rm -f
-                                    docker-compose build
-                                    # docker-compose build --no-cache --pull
-                                '''.stripIndent()
+                                docker-compose rm -f
+                                docker-compose build
+                                # docker-compose build --no-cache --pull
+                            '''.stripIndent()
                             }
 
                             script.stage('SKIL Dashboard Unit Tests') {
                                 script.sh '''\
-                                    docker-compose run --rm dev yarn run test-teamcity
-                                '''.stripIndent()
+                                docker-compose run --rm dev yarn run test-teamcity
+                            '''.stripIndent()
                             }
 
                             script.stage('SKIL Dashboard E2E Tests') {
                                 script.sh '''\
-                                    docker-compose run --rm dev yarn run e2e-teamcity
-                                '''.stripIndent()
+                                docker-compose run --rm dev yarn run e2e-teamcity
+                            '''.stripIndent()
                             }
                         }
                     }
