@@ -129,7 +129,7 @@ class SkilServerProject extends Project {
                                         '-DskipTests=true',
                                         '-Dmaven.test.skip=true',
                                         '-Dmaven.javadoc.skip=true',
-                                        '-T 1C'
+//                                        '-T 1C'
                                 ].findAll().join(' ')
 
                                 script.mvn buildSkilMavenArguments
