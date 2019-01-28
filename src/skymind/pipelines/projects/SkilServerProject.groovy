@@ -41,6 +41,28 @@ class SkilServerProject extends Project {
                                         checkoutDetails: checkoutDetails, isMember: isMember
                             }
 
+                            script.dir('skil-ui-modules/src/main/typescript/dashboard') {
+                                script.stage('Clear cache and build docker image from scratch') {
+                                    script.sh '''\
+                                docker-compose rm -f
+                                docker-compose build
+                                # docker-compose build --no-cache --pull
+                            '''.stripIndent()
+                                }
+
+                                script.stage('SKIL Dashboard Unit Tests') {
+                                    script.sh '''\
+                                docker-compose run --rm dev yarn run test-teamcity
+                            '''.stripIndent()
+                                }
+
+                                script.stage('SKIL Dashboard E2E Tests') {
+                                    script.sh '''\
+                                docker-compose run --rm dev yarn run e2e-teamcity
+                            '''.stripIndent()
+                                }
+                            }
+
                             script.stage('Build client APIs') {
                                 script.dir('skil-apis') {
                                     String buildClientApiMavenArguments = [
@@ -187,29 +209,6 @@ class SkilServerProject extends Project {
                             script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
 //                            script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
-                        }
-
-
-                        script.dir('skil-ui-modules/src/main/typescript/dashboard') {
-                            script.stage('Clear cache and build docker image from scratch') {
-                                script.sh '''\
-                                docker-compose rm -f
-                                docker-compose build
-                                # docker-compose build --no-cache --pull
-                            '''.stripIndent()
-                            }
-
-                            script.stage('SKIL Dashboard Unit Tests') {
-                                script.sh '''\
-                                docker-compose run --rm dev yarn run test-teamcity
-                            '''.stripIndent()
-                            }
-
-                            script.stage('SKIL Dashboard E2E Tests') {
-                                script.sh '''\
-                                docker-compose run --rm dev yarn run e2e-teamcity
-                            '''.stripIndent()
-                            }
                         }
                     }
                 }
