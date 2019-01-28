@@ -53,6 +53,8 @@ class SkilClientsProject extends Project {
                             }
 
                             script.stage('Build and Test') {
+                                script.sh "cp config/Packaging/java/pom.xml java/pom.xml"
+
                                 script.dir('java') {
                                     String buildClientApiMavenArguments = [
                                             mavenBaseCommand,
