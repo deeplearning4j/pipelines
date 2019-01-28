@@ -56,12 +56,11 @@ class SkilServerProject extends Project {
                                 }
                             }
 
-                            script.stage('Build SKIL DB manager') {
+                            script.stage('Build SKIL') {
                                 String buildSkilAuthMavenArguments = [
                                         mavenBaseCommand,
                                         'clean',
                                         'install',
-                                        '-pl :skil-db-manager',
                                         '--also-make',
                                         '-DskipTests',
                                         '-Dmaven.test.skip=true',
@@ -96,6 +95,7 @@ class SkilServerProject extends Project {
                                             mavenBaseCommand,
                                             'clean',
                                             'install',
+                                            '-Pmodelhistoryserver',
                                             '-Pnative',
                                             '-Ptf-cpu',
                                             '-DskipTests',
@@ -154,6 +154,10 @@ class SkilServerProject extends Project {
                                         'package',
                                         '-Pgenerate-tarball',
                                         '-Pbuilddistro',
+                                        '-Prelease-build',
+                                        '-Pnative',
+                                        '-Pcuda',
+                                        '-Dcuda=10.0',
                                         '-DskipTests=true',
                                         '-Dmaven.test.skip=true',
                                         '-Dmaven.javadoc.skip=true'
