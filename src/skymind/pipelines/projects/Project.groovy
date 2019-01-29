@@ -15,6 +15,8 @@ abstract class Project implements Serializable {
     protected static String releaseBranchPattern = 'release'
     protected static String releaseVersion
     protected static String snapshotVersion
+    protected def configFileName = (script.env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
+            'global_mvn_settings_xml' : 'deeplearning4j-maven-global-settings'
 
     /**
      * Project class constructor
@@ -462,6 +464,8 @@ abstract class Project implements Serializable {
 
         String gitCommitId = shellCommand('git log -1 --pretty=%H')
 
+        script.env.GIT_COMMIT = gitCommitId
+
         return [GIT_BRANCH: script.env.BRANCH_NAME,
                 GIT_COMMIT: gitCommitId,
                 GIT_COMMITER_NAME: shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
@@ -502,5 +506,26 @@ abstract class Project implements Serializable {
         }
 
         return isMember
+    }
+
+    protected withMavenCustom(body) {
+        script.withMaven(
+                /* Maven installation declared in the Jenkins "Global Tool Configuration" */
+                /* -XX:+TieredCompilation -XX:TieredStopAtLevel=1 options should make JVM start a bit faster */
+                mavenOpts: "-Djava.awt.headless=true -XX:+TieredCompilation -XX:TieredStopAtLevel=1",
+                globalMavenSettingsConfig: configFileName,
+                options: [
+                        script.artifactsPublisher(disabled: true),
+                        script.junitPublisher(disabled: true), // This option does not allow to distinguish tests results in parallel step, whereas simple junit step call does.
+                        script.findbugsPublisher(disabled: true),
+                        script.openTasksPublisher(disabled: true),
+                        script.dependenciesFingerprintPublisher(disabled: true),
+                        script.concordionPublisher(disabled: true),
+                        script.invokerPublisher(disabled: true),
+                        script.jgivenPublisher(disabled: true)
+                ]
+        ) {
+            body()
+        }
     }
 }
