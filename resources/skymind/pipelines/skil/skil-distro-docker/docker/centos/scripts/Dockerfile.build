@@ -1,0 +1,74 @@
+ARG SKIL_BASE_IMAGE_NAME
+FROM $SKIL_BASE_IMAGE_NAME as builder
+
+ARG SKIL_VERSION
+ARG SKIL_DOCKER_IMAGE_REVISION
+ARG GIT_COMMIT
+ARG STATIC_PACKAGE_BUILD=false
+ARG MAVEN_SETTINGS
+ARG CUDA_VERSION
+ARG CONDA_VERSION
+ARG HADOOP_VERSION
+ARG PYTHON_VERSION
+ARG PYTHON_PACKAGE_BUILD
+ARG SCALA_VERSION
+ARG SCIENCE_LIBRARIES_INSTALL
+ARG SPARK_VERSION
+ARG STATIC_PACKAGE_BUILD
+ARG OS_NAME
+ARG OS_VERSION
+ARG RELEASE
+
+LABEL maintainer="Skymind Inc <help@skymind.io>" \
+    ai.skymind.skil.description="SKIL Docker build container" \
+    ai.skymind.skil.version="${SKIL_VERSION}" \
+    ai.skymind.skil.git.commit.id="${GIT_COMMIT}" \
+    ai.skymind.skil.docker.image.revision="${SKIL_DOCKER_IMAGE_REVISION}"
+
+ENV SKIL_HOME=/opt/skil \
+    TMP_FOLDER=/tmp \
+    SKIL_BUILD_HOME=/opt/skil/build
+
+RUN groupadd skil -g 1000 && useradd -u 1000 -g 1000 -m skil && mkdir -p ${SKIL_BUILD_HOME}
+
+RUN yum -y install \
+        centos-release-scl-rh \
+        epel-release \
+     && \
+    yum -y install \
+        java-1.8.0-openjdk-devel.x86_64 \
+        openssl \
+        ca-certificates \
+        git \
+        which \
+        rpm-build \
+        redhat-rpm-config \
+     && \
+    yum clean all \
+     && \
+    rm -rf /var/cache/yum
+
+ENV M2_HOME /opt/maven
+RUN mkdir -p ${M2_HOME} && \
+    curl -fsSL http://apache.osuosl.org/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz | \
+        tar -xzC ${M2_HOME} --strip-components=1 && \
+    ln -s /opt/maven/bin/mvn /usr/bin/mvn
+
+COPY --chown=skil:skil . ${SKIL_BUILD_HOME}
+
+
+WORKDIR ${SKIL_BUILD_HOME}
+
+RUN mkdir -p /home/skil/.m2 && mv ${MAVEN_SETTINGS} /home/skil/.m2 && chown -R skil:skil /home/skil
+
+USER skil
+
+RUN ./build-skil.sh
+
+USER root
+
+RUN if [ "${STATIC_PACKAGE_BUILD}" == "true" ]; then bash -c ./build-static-package.sh; fi
+
+USER skil
+
+CMD ["cat"]

@@ -12,7 +12,10 @@ class SkilServerProject extends Project {
                     '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
             'mvn -U'
     ].findAll().join(' ')
-    public Boolean release = false
+    public Boolean release = true
+    def zeppelinBranchName = 'skymind-0.7-skil-1.2.0'
+    def zeppelinGitUrl = 'https://github.com/SkymindIO/zeppelin.git'
+    def releaseBranchPattern = /^release\/(\d+\.)?(\d+\.)?(\*|\d+)?(-\w+)$/
 
     protected def getBuildMappings() {
         if (release) {
@@ -20,14 +23,98 @@ class SkilServerProject extends Project {
                     [
                             osType   : 'Linux',
                             platforms: [
-                                    [name: 'linux-x86_64-generic', osName: 'centos', osVersion: '7', backend: 'cpu', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'centos', osVersion: '7', backend: 'cuda-9.0', cudnnVersion: '7', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'centos', osVersion: '7', backend: 'cuda-9.2', cudnnVersion: '7', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'centos', osVersion: '7', backend: 'cuda-10.0', cudnnVersion: '7', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'ubuntu', osVersion: '16.04', backend: 'cpu', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'ubuntu', osVersion: '16.04', backend: 'cuda-9.0', cudnnVersion: '7', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'ubuntu', osVersion: '16.04', backend: 'cuda-9.2', cudnnVersion: '7', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2'],
-                                    [name: 'linux-x86_64-generic', osName: 'ubuntu', osVersion: '16.04', backend: 'cuda-10.0', cudnnVersion: '7', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2']
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'centos',
+                                            osVersion    : '7',
+                                            backend      : 'cpu',
+                                            sparkVersion : 'spark-1.6',
+                                            scalaVersion : '2.10',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '2'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'centos',
+                                            osVersion    : '7',
+                                            backend      : 'cpu',
+                                            sparkVersion : 'spark-2.2',
+                                            scalaVersion : '2.11',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '3'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'centos',
+                                            osVersion    : '7',
+                                            backend      : 'cuda-10.0',
+                                            cudnnVersion : '7',
+                                            sparkVersion : 'spark-1.6',
+                                            scalaVersion : '2.10',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '2'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'centos',
+                                            osVersion    : '7',
+                                            backend      : 'cuda-10.0',
+                                            cudnnVersion : '7',
+                                            sparkVersion : 'spark-2.2',
+                                            scalaVersion : '2.11',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '3'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'ubuntu',
+                                            osVersion    : '16.04',
+                                            backend      : 'cpu',
+                                            sparkVersion : 'spark-1.6',
+                                            scalaVersion : '2.10',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '2'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'ubuntu',
+                                            osVersion    : '16.04',
+                                            backend      : 'cpu',
+                                            sparkVersion : 'spark-2.2',
+                                            scalaVersion : '2.11',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '3'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'ubuntu',
+                                            osVersion    : '16.04',
+                                            backend      : 'cuda-10.0',
+                                            cudnnVersion : '7',
+                                            sparkVersion : 'spark-1.6',
+                                            scalaVersion : '2.10',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '2'
+                                    ],
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'ubuntu',
+                                            osVersion    : '16.04',
+                                            backend      : 'cuda-10.0',
+                                            cudnnVersion : '7',
+                                            sparkVersion : 'spark-2.2',
+                                            scalaVersion : '2.11',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '3'
+                                    ]
                             ]
                     ]
             ]
@@ -36,7 +123,17 @@ class SkilServerProject extends Project {
                     [
                             osType   : 'Linux',
                             platforms: [
-                                    [name: 'linux-x86_64-generic', osName: 'centos', osVersion: '7', backend: 'cpu', sparkVersion: '1', scalaVersion: '2.10', hadoopVersion: 'hadoop-2.3', pythonVersion: '2']
+                                    [
+                                            name         : 'linux-x86_64-generic',
+                                            osName       : 'centos',
+                                            osVersion    : '7',
+                                            backend      : 'cpu',
+                                            sparkVersion : 'spark-1.6',
+                                            scalaVersion : '2.11',
+                                            hadoopVersion: 'hadoop-2.3',
+                                            condaVersion : '4.3.27',
+                                            pythonVersion: '2'
+                                    ]
                             ]
                     ]
             ]
@@ -55,6 +152,8 @@ class SkilServerProject extends Project {
 
                     script.notifier.sendSlackNotification jobResult: 'STARTED',
                             checkoutDetails: checkoutDetails, isMember: isMember
+
+                    release = (branchName =~ releaseBranchPattern) ? true : false
                 }
             }
 
@@ -97,23 +196,37 @@ class SkilServerProject extends Project {
         for (def p : platforms) {
             def platform = p
             def platformName = platform.get('name')
-            def osName = platform.get('osName')
-            def osVersion = platform.get('osVersion')
+            def osName = platform.get('osName') ?: script.error('Missing osName argument!')
+            def osVersion = platform.get('osVersion') ?: script.error('Missing osVersion argument!')
             def backend = platform.get('backend')
-            def pythonVersion = platform.containsKey('pythonVersion') ?
-                    'python' + '-' + platform.get('pythonVersion') : ''
+
+            def pythonVersion = platform.get('pythonVersion')
+            def pythonPackageBuild = platform.get('pythonPackageBuild') ?: 'false'
+
             def cudaVersion = backend?.contains('cuda') ? backend.split('-')[1] : ''
             def cudnnVersion = platform.get('cudnnVersion')
-            def skilDockerBaseImageTag = (cudaVersion && cudnnVersion) ?
-                    "nvidia/cuda:${cudaVersion}-cudnn${cudnnVersion}-devel-${osName}${osVersion}" :
-                    "${osName}:${osVersion}"
-            def skilDockerImageTag = (cudaVersion && cudnnVersion) ?
-                    "cuda${cudaVersion}-cudnn${cudnnVersion}-devel-${osName}${osVersion}" :
-                    "${osName}${osVersion}"
-            def streamName = [
-                    osName, osVersion, backend, pythonVersion
-            ].findAll().join('-')
+            def sparkVersion = platform.get('sparkVersion')
+            def scalaVersion = platform.get('scalaVersion')
+            def hadoopVersion = platform.get('hadoopVersion')
+            def condaVersion = platform.get('condaVersion')
+
+            def scienceLibrariesInstall = platform.get('scienceLibrariesInstall') ?: 'true'
+            def staticPackageBuild = platform.get('staticPackageBuild') ?: 'false'
+
+            def dockerhubProxy = "docker.ci.skymind.io/"
+
             def skilVersion
+            def skilDockerBaseImageTag = dockerhubProxy + ((cudaVersion && cudnnVersion) ?
+                    "nvidia/cuda:${cudaVersion}-cudnn${cudnnVersion}-devel-${osName}${osVersion}" :
+                    "${osName}:${osVersion}")
+            def skilDockerImageTag = [
+                    (cudaVersion && cudnnVersion) ? "cuda${cudaVersion}" : "cpu",
+                    sparkVersion,
+                    (pythonVersion) ? "python${pythonVersion}" : '',
+                    "${osName}${osVersion}"
+            ].findAll().join('-')
+
+            def streamName = skilDockerImageTag
 
             /* Create stream body */
             streams["$streamName"] = {
@@ -132,9 +245,63 @@ class SkilServerProject extends Project {
                                     script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER = "0.0.1"
                                 }
 
-                                withMavenCustom {
-                                    script.stage('Build SKIL and its dependencies') {
-                                        script.sh 'bash ./build-skil.sh'
+                                if (release) {
+                                    script.stage('Fetch zeppelin') {
+                                        script.dir('zeppelin') {
+                                            script.git branch: zeppelinBranchName,
+                                                    changelog: false,
+                                                    poll: false,
+                                                    url: zeppelinGitUrl
+                                        }
+                                    }
+                                }
+
+                                script.stage('Build SKIL and its dependencies') {
+                                    withMavenCustom {
+//                                    script.configFileProvider([script.configFile(fileId: 'deeplearning4j-maven-global-settings', targetLocation: 'settings.xml', variable: '')]) {
+                                        script.withEnv([
+                                                "CUDA_VERSION=${cudaVersion}",
+                                                "CONDA_VERSION=${condaVersion}",
+                                                "HADOOP_VERSION=${hadoopVersion}",
+                                                "PYTHON_VERSION=${pythonVersion}",
+                                                "PYTHON_PACKAGE_BUILD=${pythonPackageBuild}",
+                                                "SCALA_VERSION=${scalaVersion}",
+                                                "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
+                                                "SPARK_VERSION=${sparkVersion}",
+                                                "STATIC_PACKAGE_BUILD=${staticPackageBuild}",
+                                                "OS_NAME=${osName}",
+                                                "OS_VERSION=${osVersion}",
+                                                "RELEASE=${release}"
+                                        ]) {
+//                                            def buildFiles = ['build-static-package.sh', 'Dockerfile.build']
+//
+//                                            for (f in buildFiles) {
+//                                                def buildFile = f
+//                                                def fileContent = script.libraryResource 'skymind/pipelines/skil/skil-distro-docker/docker' + '/' + osName + '/scripts/' + buildFile
+//                                                script.writeFile file: buildFile, text: fileContent
+//                                            }
+
+//                                            script.sh """
+//                                                docker build -t skil:${skilVersion}-${skilDockerImageTag} -f Dockerfile.build \
+//                                                    --build-arg SKIL_BASE_IMAGE_NAME=${skilDockerBaseImageTag} \
+//                                                    --build-arg MAVEN_SETTINGS=settings.xml \
+//                                                    --build-arg CUDA_VERSION=${cudaVersion} \
+//                                                    --build-arg CONDA_VERSION=${script.env.CONDA_VERSION} \
+//                                                    --build-arg HADOOP_VERSION=${script.env.HADOOP_VERSION} \
+//                                                    --build-arg PYTHON_VERSION=${script.env.PYTHON_VERSION} \
+//                                                    --build-arg PYTHON_PACKAGE_BUILD=${script.env.PYTHON_PACKAGE_BUILD} \
+//                                                    --build-arg SCALA_VERSION=${script.env.SCALA_VERSION} \
+//                                                    --build-arg SCIENCE_LIBRARIES_INSTALL=${script.env.SCIENCE_LIBRARIES_INSTALL} \
+//                                                    --build-arg SPARK_VERSION=${script.env.SPARK_VERSION} \
+//                                                    --build-arg STATIC_PACKAGE_BUILD=${script.env.STATIC_PACKAGE_BUILD} \
+//                                                    --build-arg OS_NAME=${script.env.OS_NAME} \
+//                                                    --build-arg OS_VERSION=${script.env.OS_VERSION} \
+//                                                    --build-arg RELEASE=${script.env.RELEASE} .
+//                                            """
+
+                                            script.sh 'bash -x ./build-skil.sh'
+                                        }
+//                                    }
                                     }
                                 }
 
@@ -161,7 +328,7 @@ class SkilServerProject extends Project {
                                                     'test',
                                                     '-P ci',
                                                     '-P ci-nexus',
-                                                    '-P spark-1.6'
+                                                    "-P spark-${sparkVersion}"
                                             ].findAll().join(' ')
 
                                             script.mvn runTestsMavenArguments
@@ -192,54 +359,6 @@ class SkilServerProject extends Project {
 
                                 if (release) {
                                     script.stage('Generate artifacts') {
-                                        def pythonPackageBuild = (script.env.PATHON_PACKAGE_BUILD) ?: false
-
-                                        def generateSkilTarballMavenArguments = [
-                                                mavenBaseCommand,
-                                                'package',
-                                                '-DskipTests=true',
-                                                '-Dmaven.test.skip=true',
-                                                '-Dmaven.javadoc.skip=true',
-                                                '-Pbuilddistro',
-                                                '-Pmodelserver',
-                                                '-Pgenerate-tarball',
-                                                (pythonPackageBuild) ? '-Ppython-rpm' : ''
-                                        ].findAll().join(' ')
-
-                                        script.mvn generateSkilTarballMavenArguments
-
-                                        if (osName == 'centos') {
-                                            def generateSkilRpmMavenArguments = [
-                                                    mavenBaseCommand,
-                                                    'package',
-                                                    '-DskipTests=true',
-                                                    '-Dmaven.test.skip=true',
-                                                    '-Dmaven.javadoc.skip=true',
-                                                    '-Pbuilddistro',
-                                                    '-Pmodelserver',
-                                                    '-Pgenerate-rpm',
-                                                    '-Prpm',
-                                                    (pythonPackageBuild) ? '-Ppython-rpm' : ''
-                                            ].findAll().join(' ')
-
-                                            script.mvn generateSkilRpmMavenArguments
-                                        } else if (osName == 'ubuntu') {
-                                            def generateSkilDebMavenArguments = [
-                                                    mavenBaseCommand,
-                                                    'package',
-                                                    '-DskipTests=true',
-                                                    '-Dmaven.test.skip=true',
-                                                    '-Dmaven.javadoc.skip=true',
-                                                    '-Pbuilddistro',
-                                                    '-Pmodelserver',
-                                                    '-Pgenerate-deb',
-                                                    '-Pdeb',
-                                                    (pythonPackageBuild) ? '-Ppython-rpm' : ''
-                                            ].findAll().join(' ')
-
-                                            script.mvn generateSkilDebMavenArguments
-                                        }
-
                                         // Set required environment variables
                                         script.withEnv([
                                                 "OS_NAME=${osName}",
@@ -248,9 +367,8 @@ class SkilServerProject extends Project {
                                                 "SKIL_DOCKER_IMAGE_REVISION=${script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER}-${script.env.GIT_COMMIT[0..7]}",
                                                 "PYTHON_VERSION=${pythonVersion}"
                                         ]) {
-                                            def findArtifactsScriptContent = script.libraryResource 'skymind/pipelines/skil/skil-distro-docker/find_artifacts.sh'
-                                            script.writeFile file: 'find_artifacts.sh', text: findArtifactsScriptContent
-                                            script.sh "bash ./find_artifacts.sh"
+                                            script.sh "ls -la ."
+                                            script.sh "ls -lRa ./docker"
 
                                             script.dir('docker') {
                                                 def scriptFilesList = ['build-skil.sh', 'install-build-packages.sh', 'install-skil-python.sh', 'start-skil.sh']
@@ -286,6 +404,131 @@ class SkilServerProject extends Project {
 
                                             script.sh 'docker images'
                                             script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
+
+                                            script.sh """\
+                                                mv docker/${osName} docker/${skilDockerImageTag}
+                                            """.stripIndent()
+
+                                            /* FIXME: Place archiveArtifacts after mv command call,
+                                                to not overwrite artifacts in case of build failure.
+                                             */
+                                            script.archiveArtifacts artifacts: "docker/**/*.${getPackageExtension(osName)}"
+                                        }
+                                    }
+
+                                    script.stage('Publish artifacts') {
+                                        def repoUrl
+                                        def repoPath
+                                        def baseArch = 'x86_64'
+                                        def packageExtension = getPackageExtension(osName)
+
+                                        if (osName == 'centos') {
+                                            repoUrl  = "https://nexus-ci.skymind.io/repository/rpms"
+
+                                            switch(branchName) {
+                                                case ~releaseBranchPattern:
+                                                case 'master':
+                                                    repoPath = [
+                                                            osName,
+                                                            '7',
+                                                            '7.6',
+                                                            'os', // a.k.a base
+                                                            baseArch,
+                                                            'Packages'
+                                                    ].findAll().join('/')
+                                                    break
+                                                default:
+                                                    repoPath = [
+                                                            osName,
+                                                            '7',
+                                                            'dev',
+                                                            'os', // a.k.a base
+                                                            baseArch,
+                                                            'Packages'
+                                                    ].findAll().join('/')
+                                                    break
+                                            }
+
+                                            def artifacts = script.findFiles glob: "docker/${skilDockerImageTag}/artifacts/*.${packageExtension}"
+
+                                            for (def art : artifacts) {
+                                                def artifact = art
+                                                def artifactName = artifact.name
+                                                def artifactPath = artifact.path
+
+                                                script.withCredentials([
+                                                        script.usernameColonPassword(
+                                                                credentialsId: 'skymind-docker-registry',
+                                                                variable: 'RPM_REPO_CREDS'
+                                                        )
+                                                ]) {
+                                                    script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
+                                                }
+                                            }
+                                        }
+
+//                                        def baseArch = 'x86_64'
+//                                        def packageExtension = getPackageExtension(osName)
+//                                        def artifactDistribution
+//                                        def components
+//
+//                                        switch (osName) {
+//                                            case 'centos':
+//                                                artifactDistribution = 'os'
+//                                                components = 'os'
+//                                                break
+//                                            case 'ubuntu':
+//                                                artifactDistribution = 'xenial'
+//                                                components = 'main'
+//                                                break
+//                                            case 'windows':
+//                                                break
+//                                            default:
+//                                                script.error('Unsupported OS name!')
+//                                                break
+//                                        }
+//
+//                                        def artifacts = script.findFiles(glob: "docker/${osName}/artifacts/*.${packageExtension}")
+//                                        def repoUrl = "https://nexus.ci.skymind.io/repository/${osName}/"
+//                                        def repoPath = "${osVersion}.${artifactDistribution}.${baseArch}.Packages"
+//
+//                                        //TODO: Debian :(
+//                                        script.echo "${artifacts}"
+//                                        script.echo """${artifacts[0].name} ${artifacts[0].path} ${artifacts[0].directory} ${artifacts[0].length} ${artifacts[0].lastModified}"""
+//
+//                                        for (def art : artifacts) {
+//                                            def artifact = art
+//                                            def artifactName = artifact.name
+//                                            def artifactPath = artifact.path
+//                                            def artifactVersion = skilVersion
+//
+//                                            def mavenDeployArgs = [
+//                                                    "-DgroupId=${repoPath}",
+//                                                    "-DartifactId=${artifactName}",
+//                                                    "-Dversion=${artifactVersion}",
+//                                                    "-DgeneratePom=true",
+//                                                    "-Dpackaging=rpm",
+//                                                    "-DrepositoryId=skymind-packages",
+//                                                    "-Durl=${repoUrl}",
+//                                                    "-Dfile=${artifactPath}",
+//                                            ].findAll().join(' ')
+//
+//                                            script.echo "${mavenDeployArgs}"
+////                                            script.sh "mvn -B -e mvn deploy:deploy-file ${mavenDeployArgs}"
+//
+//                                        }
+
+                                        def dockerRegistryUrl = "https://docker-ci.skymind.io"
+                                        def dockerRegistryCredentialsId = "skymind-docker-registry"
+                                        def skilDockerImageName = "skil:${skilVersion}-${skilDockerImageTag}"
+
+                                        script.docker.withRegistry(
+                                                "${dockerRegistryUrl}",
+                                                "${dockerRegistryCredentialsId}"
+                                        ) {
+                                            def skilDockerImage = script.docker.image(skilDockerImageName)
+
+                                            skilDockerImage.push()
                                         }
                                     }
                                 }
@@ -297,9 +540,9 @@ class SkilServerProject extends Project {
                                         testResults: parseTestResults(tr)
                                 ])
 
-                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-//                                    script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
-//                                    script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
+//                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
+//                                script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
+//                                script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
 
                                 script.cleanWs deleteDirs: true
                                 // FIXME: Workaround to clean workspace
@@ -340,5 +583,26 @@ class SkilServerProject extends Project {
         }
 
         return testResultsDetails
+    }
+
+    private String getPackageExtension(osName) {
+        String packageExtension
+
+        switch (osName) {
+            case 'centos':
+                packageExtension = 'rpm'
+                break
+            case 'ubuntu':
+                packageExtension = 'deb'
+                break
+            case 'windows':
+                packageExtension = 'msi'
+                break
+            default:
+                script.error('Unsupported OS name!')
+                break
+        }
+
+        packageExtension
     }
 }
