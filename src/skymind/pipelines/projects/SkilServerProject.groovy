@@ -161,6 +161,7 @@ class SkilServerProject extends Project {
                                                     'test',
                                                     '-P ci',
                                                     '-P ci-nexus',
+                                                    '-P spark-1.6'
                                             ].findAll().join(' ')
 
                                             script.mvn runTestsMavenArguments
