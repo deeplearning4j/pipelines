@@ -2,6 +2,48 @@ version: '3.3'
 services:
   skil-build:
     build:
+      context: .
+      dockerfile: ./Dockerfile.build
+      args:
+        SKIL_BASE_IMAGE_NAME: ${SKIL_BASE_IMAGE_NAME}
+        MAVEN_SETTINGS: .m2/settings.xml
+        CUDA_VERSION: ${CUDA_VERSION}
+        CONDA_VERSION: ${CONDA_VERSION}
+        HADOOP_VERSION: ${HADOOP_VERSION}
+        PYTHON_VERSION: ${PYTHON_VERSION}
+        PYTHON_PACKAGE_BUILD: ${PYTHON_PACKAGE_BUILD}
+        SCALA_VERSION: ${SCALA_VERSION}
+        SCIENCE_LIBRARIES_INSTALL: ${SCIENCE_LIBRARIES_INSTALL}
+        SPARK_VERSION: ${SPARK_VERSION}
+        STATIC_PACKAGE_BUILD: ${STATIC_PACKAGE_BUILD}
+        OS_NAME: ${OS_NAME}
+        OS_VERSION: ${OS_VERSION}
+        RELEASE: ${RELEASE}
+    image: skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}-builder
+    volumes:
+      - type: bind
+        source: .
+        target: /opt/skil/build
+      - type: bind
+        source: ./.m2 # Maven settings.xml should be provided before run
+        target: /home/skil/.m2
+    container_name: skil_builder
+    command: ["sh", "-c", "./build-skil.sh"]
+    environment:
+      - CUDA_VERSION
+      - CONDA_VERSION
+      - HADOOP_VERSION
+      - PYTHON_VERSION
+      - PYTHON_PACKAGE_BUILD
+      - SCALA_VERSION
+      - SCIENCE_LIBRARIES_INSTALL
+      - SPARK_VERSION
+      - STATIC_PACKAGE_BUILD
+      - OS_NAME
+      - OS_VERSION
+      - RELEASE
+  skil:
+    build:
       context: ./docker/${OS_NAME}
       dockerfile: ./Dockerfile
       args:
@@ -11,39 +53,9 @@ services:
         GIT_COMMIT: ${GIT_COMMIT}
     image: skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}
     container_name: skil_server
+#    init: /usr/libexec/docker-init
     ports:
     # DL4J UI first port
     - "8080:8080"
     # PLD port
     - "9008:9008"
-
-#  skil-centos:
-#    build:
-#      context: ./docker/centos
-#      dockerfile: ./Dockerfile
-#      args:
-#        SKIL_BASE_IMAGE_NAME: ${SKIL_CENTOS_BASE_IMAGE_NAME}
-#        SKIL_VERSION: ${SKIL_VERSION}
-#        SKIL_DOCKER_IMAGE_REVISION: ${SKIL_DOCKER_IMAGE_REVISION_NUMBER}
-#    image: skil:${SKIL_VERSION}-${SKIL_CENTOS_DOCKER_IMAGE_TAG}
-#    container_name: skil_server
-#    ports:
-#    # DL4J UI first port
-#    - "8080:8080"
-#    # PLD port
-#    - "9008:9008"
-#  skil-ubuntu:
-#    build:
-#      context: ./docker/ubuntu
-#      dockerfile: ./Dockerfile
-#      args:
-#        SKIL_BASE_IMAGE_NAME: ${SKIL_UBUNTU_BASE_IMAGE_NAME}
-#        SKIL_VERSION: ${SKIL_VERSION}
-#        SKIL_DOCKER_IMAGE_REVISION: ${SKIL_DOCKER_IMAGE_REVISION_NUMBER}
-#    image: skil:${SKIL_VERSION}-${SKIL_UBUNTU_DOCKER_IMAGE_TAG}
-#    container_name: skil_server
-#    ports:
-#    # DL4J UI first port
-#    - "8080:8080"
-#    # PLD port
-#    - "9008:9008"

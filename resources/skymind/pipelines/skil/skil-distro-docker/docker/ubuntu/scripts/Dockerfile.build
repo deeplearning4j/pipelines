@@ -33,22 +33,19 @@ ENV SKIL_HOME=/opt/skil \
 
 RUN groupadd skil -g 1000 && useradd -u 1000 -g 1000 -m skil
 
-RUN yum -y install \
-        centos-release-scl-rh \
-        epel-release \
-     && \
-    yum -y install \
-        java-1.8.0-openjdk-devel.x86_64 \
-        openssl \
+RUN apt-get update && \
+    apt-get -y --no-install-recommends install \
+        wget \
+        curl \
         ca-certificates \
+        software-properties-common \
+        build-essential \
         git \
-        which \
-        rpm-build \
-        redhat-rpm-config \
-     && \
-    yum clean all \
-     && \
-    rm -rf /var/cache/yum
+        openjdk-8-jdk-headless \
+        debsigs \
+        && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV M2_HOME /opt/maven
 RUN mkdir -p ${M2_HOME} && \
@@ -59,8 +56,6 @@ RUN mkdir -p ${M2_HOME} && \
 #COPY --chown=skil:skil . ${SKIL_BUILD_HOME}
 
 WORKDIR ${SKIL_BUILD_HOME}
-
-#VOLUME ["/home/skil/.m2"]
 
 #RUN mkdir -p /home/skil/.m2 && \
 #    mv ${MAVEN_SETTINGS} /home/skil/.m2 && \
