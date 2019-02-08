@@ -1,16 +1,16 @@
 ---
-- name: Darwin | Include Xcode tasks
-  include_tasks: "{{ ansible_os_family }}/xcode.yml"
-  vars:
-    xcode_version: "{{ xcode_version_item.key }}"
-    xcode_binary_local_path: "{{ xcode_version_item.value.binary_local_path }}"
-    xcode_binary_name: "{{ xcode_version_item.value.binary_name }}"
-    xcode_binary_extension: "{{ xcode_version_item.value.binary_extension }}"
-  with_dict: "{{ xcode_versions }}"
-  loop_control:
-    loop_var: xcode_version_item
-  tags:
-    - jenkins-slave-xcode
+#- name: Darwin | Include Xcode tasks
+#  include_tasks: "{{ ansible_os_family }}/xcode.yml"
+#  vars:
+#    xcode_version: "{{ xcode_version_item.key }}"
+#    xcode_binary_local_path: "{{ xcode_version_item.value.binary_local_path }}"
+#    xcode_binary_name: "{{ xcode_version_item.value.binary_name }}"
+#    xcode_binary_extension: "{{ xcode_version_item.value.binary_extension }}"
+#  with_dict: "{{ xcode_versions }}"
+#  loop_control:
+#    loop_var: xcode_version_item
+#  tags:
+#    - jenkins-slave-xcode
 
 #- name: Darwin | Install Xcode Command Line Tools
 #  import_role:
