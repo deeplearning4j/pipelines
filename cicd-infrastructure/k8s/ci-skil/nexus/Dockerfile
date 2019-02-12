@@ -1,11 +1,11 @@
-ARG NEXUS_VERSION=3.14.0
+ARG NEXUS_VERSION=3.15.0
 
 FROM sonatype/nexus3:$NEXUS_VERSION
 
-ARG NEXUS_VERSION=3.14.0
-ARG NEXUS_BUILD=04
+ARG NEXUS_VERSION=3.15.0
+ARG NEXUS_BUILD=01
 # Will not seem to work in sed without some magick
-ARG APT_VERSION=1.0.9
+ARG APT_VERSION=1.0.10
 ARG COMP_VERSION=1.18
 ARG XZ_VERSION=1.8
 ARG APT_TARGET=/opt/sonatype/nexus/system/net/staticsnow/nexus-repository-apt/${APT_VERSION}/
