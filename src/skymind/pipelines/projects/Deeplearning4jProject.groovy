@@ -452,9 +452,10 @@ class Deeplearning4jProject implements Serializable {
                          which means that we can't enable avx512 builds at the moment
                         */
 //                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        // FIXME: CUDA for macOS has been disabled, because of https://github.com/deeplearning4j/deeplearning4j/issues/7186 issue
+//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
 
                         [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
                         [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
