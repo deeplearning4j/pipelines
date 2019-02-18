@@ -155,6 +155,7 @@ class SkilServerProject extends Project {
                             checkoutDetails: checkoutDetails, isMember: isMember
 
                     release = (branchName =~ releaseBranchPattern) ? true : false
+                    release = true
                 }
             }
 
@@ -253,11 +254,23 @@ class SkilServerProject extends Project {
                                                     changelog: false,
                                                     poll: false,
                                                     url: zeppelinGitUrl
+
+                                            // Workaround for skil
+                                            def zeppelinPom = script.readMavenPom(file: 'pom.xml')
+                                            zeppelinPom.properties.'skil.version' = skilVersion
+                                            script.writeMavenPom model: zeppelinPom, file: 'pom.xml'
+                                            script.sh 'cat pom.xml'
                                         }
                                     }
                                 }
 
-                                script.configFileProvider([script.configFile(fileId: 'global_mvn_settings_xml', targetLocation: '/home/jenkins/.m2/settings.xml', variable: '')]) {
+                                script.configFileProvider([
+                                        script.configFile(
+                                                fileId: 'global_mvn_settings_xml',
+                                                targetLocation: '/home/jenkins/.m2/settings.xml',
+                                                variable: ''
+                                        )
+                                ]) {
                                     script.withEnv([
                                             "OS_NAME=${osName}",
                                             "OS_VERSION=${osVersion}",
@@ -273,32 +286,24 @@ class SkilServerProject extends Project {
                                             "PYTHON_PACKAGE_BUILD=${pythonPackageBuild}",
                                             "SCALA_VERSION=${scalaVersion}",
                                             "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
-                                            "SPARK_VERSION=${sparkVersion}",
-                                            "STATIC_PACKAGE_BUILD=${staticPackageBuild}"
+                                            "SPARK_VERSION=${sparkVersion}"
                                     ]) {
                                         script.stage('Build SKIL and its dependencies') {
                                             script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
                                                 script.sh """\
-                                                docker-compose \
-                                                -f skil-build/docker/docker-compose.yml \
-                                                --project-directory ./skil-build/docker run \
-                                                -v \${GPG_KEYRING_PATH}:/home/skil/.gnupg/secring.gpg \
-                                                -v \${HOME}/.m2:/home/skil/.m2 \
-                                                -v \$(pwd):/opt/skil/build \
-                                                --rm \
-                                                skil-build
-                                            """
+                                                    docker-compose \
+                                                    -f skil-build/docker/docker-compose.yml \
+                                                    run \
+                                                    -v \${GPG_KEYRING_PATH}:/home/skil/.gnupg/secring.gpg \
+                                                    -v \${HOME}/.m2:/home/skil/.m2 \
+                                                    -v \$(pwd):/opt/skil/build \
+                                                    --rm \
+                                                    skil-build
+                                                """
                                             }
 
-//                                            if (staticPackageBuild) {
-//                                                script.sh 'ls -la .'
-//                                                script.sh 'chmod +x ./build-static-package.sh'
-//                                                script.sh "docker-compose run -u root --rm skil-build ./build-static-package.sh"
-//                                                script.sh 'ls -la .'
-//                                            }
-
                                             if (release) {
-                                                script.stage('Bake SKIL docker image') {
+                                                script.stage('Build SKIL docker image') {
                                                     script.sh """\
                                                         docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
                                                     """.stripIndent()
@@ -306,16 +311,45 @@ class SkilServerProject extends Project {
                                                     script.sh 'docker images'
                                                     script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
 
-                                                    // Fix for archiving artifacts by Jenkins
+                                                    if (staticPackageBuild) {
+//                                                        script.configFileProvider([
+//                                                                script.configFile(
+//                                                                        fileId: 'skil-static-packages-maven-settings',
+//                                                                        targetLocation: '/home/jenkins/.m2/static-packages-maven-settings.xml', variable: ''
+//                                                                )
+//                                                        ]) {
+                                                            if (osName == 'centos') {
+                                                                script.sh """
+                                                                   docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
+                                                                    run \
+                                                                    -u root \
+                                                                    -v \${HOME}/.m2:/root/.m2 \
+                                                                    -v \$(pwd):/opt/skil/build \
+                                                                    -e STATIC_PACKAGE_BUILD=${staticPackageBuild} \
+                                                                    --rm \
+                                                                    --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
+                                                                    --workdir=/opt/skil/build \
+                                                                    skil
+                                                                """
+//                                                              FIXME: Logic below didn't work because of root permissions on conf folder
+//                                                              -v \${HOME}/.m2/static-packages-maven-settings.xml:/opt/maven/conf/settings.xml:ro \
+//                                                              -v \${HOME}/.m2/repository:/opt/maven/repository \
+
+                                                                script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
+                                                            } else {
+                                                                script.echo "[WARNING] OS is not supported."
+                                                            }
+//                                                        }
+                                                    }
+
+                                                    // Workaround for archiving artifacts by Jenkins
                                                     script.sh """\
                                                         mv ${buildArtifactsPath}/${osName} ${buildArtifactsPath}/${skilDockerImageTag}
                                                     """.stripIndent()
-//                                                  mv docker/${osName} docker/${skilDockerImageTag}
 
                                                     /* FIXME: Place archiveArtifacts after mv command call,
                                                         to not overwrite artifacts in case of build failure.
                                                      */
-//                                                  script.archiveArtifacts artifacts: "docker/**/*.${getPackageExtension(osName)}"
 //                                                  script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
 
                                                 }
@@ -353,7 +387,6 @@ class SkilServerProject extends Project {
                                                                 break
                                                         }
 
-//                                                      def artifacts = script.findFiles glob: "docker/${skilDockerImageTag}/artifacts/*.${packageExtension}"
                                                         def artifacts = script.findFiles glob: "${buildArtifactsPath}/${skilDockerImageTag}/*.${packageExtension}"
 
                                                         for (def art : artifacts) {
@@ -388,7 +421,6 @@ class SkilServerProject extends Project {
                                                                 break
                                                         }
 
-//                                                      def artifacts = script.findFiles glob: "docker/${skilDockerImageTag}/artifacts/*.${packageExtension}"
                                                         def artifacts = script.findFiles glob: "${buildArtifactsPath}/${skilDockerImageTag}/*.${packageExtension}"
 
                                                         for (def art : artifacts) {
