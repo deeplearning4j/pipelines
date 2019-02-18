@@ -254,12 +254,6 @@ class SkilServerProject extends Project {
                                                     changelog: false,
                                                     poll: false,
                                                     url: zeppelinGitUrl
-
-                                            // Workaround for skil
-                                            def zeppelinPom = script.readMavenPom(file: 'pom.xml')
-                                            zeppelinPom.properties.'skil.version' = skilVersion
-                                            script.writeMavenPom model: zeppelinPom, file: 'pom.xml'
-                                            script.sh 'cat pom.xml'
                                         }
                                     }
                                 }
