@@ -155,7 +155,6 @@ class SkilServerProject extends Project {
                             checkoutDetails: checkoutDetails, isMember: isMember
 
                     release = (branchName =~ releaseBranchPattern) ? true : false
-                    release = true
                 }
             }
 
