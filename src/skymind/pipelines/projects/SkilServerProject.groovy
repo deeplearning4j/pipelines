@@ -319,8 +319,14 @@ class SkilServerProject extends Project {
                                                                     -u root \
                                                                     -v \${HOME}/.m2:/root/.m2 \
                                                                     -v \$(pwd):/opt/skil/build \
+                                                                    -e OS_NAME=${osName} \
+                                                                    -e OS_VERSION=${osVersion} \
                                                                     -e STATIC_PACKAGE_BUILD=${staticPackageBuild} \
                                                                     -e PYTHON_VERSION=${pythonVersion} \
+                                                                    -e CUDA_VERSION=${cudaVersion} \
+                                                                    -e CONDA_VERSION=${condaVersion} \
+                                                                    -e HADOOP_VERSION=${hadoopVersion} \
+                                                                    -e SCALA_VERSION=${scalaVersion} \
                                                                     --rm \
                                                                     --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
                                                                     --workdir=/opt/skil/build \
