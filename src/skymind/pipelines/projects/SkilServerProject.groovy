@@ -320,6 +320,7 @@ class SkilServerProject extends Project {
                                                                     -v \${HOME}/.m2:/root/.m2 \
                                                                     -v \$(pwd):/opt/skil/build \
                                                                     -e STATIC_PACKAGE_BUILD=${staticPackageBuild} \
+                                                                    -e PYTHON_VERSION=${pythonVersion} \
                                                                     --rm \
                                                                     --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
                                                                     --workdir=/opt/skil/build \
