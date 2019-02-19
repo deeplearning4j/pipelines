@@ -14,7 +14,7 @@ More details regarding configuring and benefits of storing CI/CD pipelines scrip
 
 Default branch (version) of Shared Library is set to `develop`. To change branch (version) for testing changes in CI/CD scripts, developer needs add following line at the begging of the `Jenkinsfile`:
 
-<span style="color:orange">_**skymind in snippet below is the name of shared library defined in Jenkins global config**_</span>
+<span style="color:red">_**skymind in snippet below is the name of shared library defined in Jenkins global config**_</span>
 
 ```
 @Library('skymind@<branch-name>') _

@@ -13,7 +13,7 @@ All deployment process of fresh Kubernetes cluster is done according with tool's
 Below, you can find shortened set of steps that are required for cluster deployment:
 1. Create cluster resource group, naming convention is following: `ci-skymind-<env-name>-acs-cluster-<cluster-number>`
 
-   <span style="color:orange">_**Step 2 can be omitted, if cluster doesn't need nodes autoscaling**_</span>
+   <span style="color:red">_**Step 2 can be omitted, if cluster doesn't need nodes autoscaling**_</span>
 2. Create `service principal` for `cluster-autoscaler` (tool that automatically adjusts the size of the Kubernetes cluster node pools).
 3. Run `acs-engine deploy` with following options:
     * subscription-id - Azure subscription id;
@@ -25,7 +25,6 @@ Below, you can find shortened set of steps that are required for cluster deploym
    Service principal for cluster will be created automatically.
 4. Move (from previous cluster deployment) or create new Azure public IP address for [Kubernetes ingress controller](https://kubernetes.io/docs/concepts/services-networking/ingress/).
    If public IP address has been created from scratch, DNS record should be updated at [Cloudflare](https://www.cloudflare.com/).
-
 
 ## Cluster version upgrade
 To upgrade Kubernetes version of already deployed cluster you can use `acs-engine upgrade` command with following options:

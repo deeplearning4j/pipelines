@@ -1,6 +1,6 @@
 # Jenkins master deployment on Kubernetes cluster
 
-<span style="color:orange">_**For production deployment, please use manifest files with `-prod` suffix.**_</span>
+<span style="color:red">_**For production deployment, please use manifest files with `-prod` suffix.**_</span>
 
 ## Prerequisites
 1. `kubectl` installed on host.
@@ -15,6 +15,7 @@ To deploy new Jenkins master instance on Kubernetes cluster, following set of st
    ```
    cd k8s/ci-skymind/jenkins && \
    docker build -t skymindops/pipelines:jenkins-master-skymind
+   docker push skymindops/pipelines:jenkins-master-skymind
    ```
 
    Custom or not supported (plugins that can't be fetched from `Jenkins Update site`) Jenkins plugins located in `k8s/ci-skymind/jenkins/plugins`.
