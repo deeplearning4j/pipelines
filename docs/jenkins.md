@@ -64,7 +64,7 @@ To update Jenkins master instance a set of manual steps are required:
    To update Jenkins master configuration new `config-prod.yml` should be applied with `kubectl apply` command and `Apply new configuration` button in `Configuration as Code` section of Jenkins UI should be triggered.
 
 In case of migration Jenkins master instance to new cluster and requirement to keep all jobs history, `Azure disk` should be created from a snapshot of `Kubernetes Persistent Volume Claim`.
-`Azure disk` should be created in a new cluster resource group. `jenkins-master StatefulSet` should be updated to user `Azure disk` instead of `Kubernetes Persistent Volume Claim`.
+`Azure disk` should be created in a new cluster resource group. `jenkins-master` *StatefulSet* should be updated to user `Azure disk` instead of `Kubernetes Persistent Volume Claim`.
 
 ## Testing
 To test changes related to Jenkins configuration or runtime environment locally (with minikube, kubeadm, etc), please use same order of deployment commands with manifest files that have **-dev** suffix.

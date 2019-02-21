@@ -33,23 +33,35 @@ To deploy new Nexus instance on Kubernetes cluster, following set of steps is re
 
    `nexus-prod.yml` manifest file contains following Kubernetes objects:
    * `ci-nexus` *StatefulSet* describes Nexus master instance deployment (required volumes, containers in pod, pod affinity);
-   * `ci-nexus` service provides an endpoint for reaching Nexus pod from outside (via ingress controller).
+   * `ci-nexus` *Service* provides an endpoint for reaching Nexus pod from outside (via ingress controller).
 
    When a fresh instance of Nexus deployed, *Kubernetes Persistent Volume Claim* objects should be used for Nexus home and backup folders.
 
 ## Update
 To update Nexus instance a set of manual steps are required:
 1. If changes related to Nexus version or Nexus extensions a new Docker image of Nexus should be baked.
-2. To apply changes related to Jenkins master Docker image, you need to delete the `jenkins-master-0` *Pod*, which will force Kubernetes to fetch updated image and deploy new *Pod*.
+2. To apply changes related to Nexus Docker image, you need to delete the `ci-nexus-0` *Pod*, which will force Kubernetes to fetch updated image and deploy new *Pod*.
    In case, when changes are related to Kubernetes objects (*StatefulSets*, *ConfigMaps*, *Secrets*, etc) they should be applied with `kubectl apply` command.
 
-   To update Jenkins master configuration new `config-prod.yml` should be applied with `kubectl apply` command and `Apply new configuration` button in `Configuration as Code` section of Jenkins UI should be triggered.
+In case of migration Nexus instance to new cluster and requirement to keep all jobs history, `Azure disk` should be created from a snapshot of `Kubernetes Persistent Volume Claim`.
+`Azure disk` should be created in a new cluster resource group. `ci-nexus` *StatefulSet* should be updated to user `Azure disk` instead of `Kubernetes Persistent Volume Claim`.
 
-In case of migration Jenkins master instance to new cluster and requirement to keep all jobs history, `Azure disk` should be created from a snapshot of `Kubernetes Persistent Volume Claim`.
-`Azure disk` should be created in a new cluster resource group. `jenkins-master StatefulSet` should be updated to user `Azure disk` instead of `Kubernetes Persistent Volume Claim`.
+### Increase volume size
+<span style="color:red">_**Please note, at the moment Azure allows only increase the volume size, decrease is not allowed.**_</span>
+
+To increase the volume size of existing Nexus deployment, following set of steps are required:
+1. Delete `ci-nexus` *StatefulSet*, to release attached to `ci-nexus-0` *Pod* volume.
+2. Increase volume size, either from `Azure UI` or `Azure CLI`.
+3. Delete `nexus-data-volume-ci-nexus-0` *Persistent Volume Claim*, which will trigger allocated (old) *Persistent Volume* removal.
+4. Redeploy Nexus `ci-nexus` *StatefulSet*, all settings will be lost at this point (you should user default user and password).
+5. Restore Nexus configuration from backup, mode details can be found at [nexus restore from backup docs](https://help.sonatype.com/repomanager3/backup-and-restore/restore-exported-databases).
 
 ## Testing
-To test changes related to Jenkins configuration or runtime environment locally (with minikube, kubeadm, etc), please use same order of deployment commands with manifest files that have **-dev** suffix.
+To test changes related to Nexus configuration or runtime environment locally (with minikube, kubeadm, etc), please use same order of deployment commands with manifest files that have **-dev** suffix.
 
 ## Issues/Improvements
-1.
+1. Missing base Nexus configuration in git, only daily backups are stored on separate volume.
+2. Add monitoring of Nexus instance and uploads/downloads.
+3. Add artifacts security scan.
+4. Add scaling of read only Nexus nodes.
+5. Combine all Nexus instances into one (SKIL, CI, SKIL CI).

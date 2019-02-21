@@ -8,7 +8,7 @@ If you need to create a job for new project, you simply need to add `Jenkinsfile
 
 Scripts are stored in Github, according with `Jenkins Pipeline Shared Library` project structure.
 
-More details regarding configuring and benefits of storing CI/CD pipelines script as Share Library can be found [here](https://jenkins.io/doc/book/pipeline/shared-libraries/).
+More details regarding configuring and benefits of storing CI/CD pipelines script as Share Library can be found at [shared-libraries docs](https://jenkins.io/doc/book/pipeline/shared-libraries/).
 
 ## Testing new logic in scripts
 
