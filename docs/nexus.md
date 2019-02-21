@@ -38,8 +38,8 @@ To deploy new Nexus instance on Kubernetes cluster, following set of steps is re
    When a fresh instance of Nexus deployed, *Kubernetes Persistent Volume Claim* objects should be used for Nexus home and backup folders.
 
 ## Update
-To update Jenkins master instance a set of manual steps are required:
-1. If changes related to Jenkins master version or Jenkins plugins a new Docker image of Jenkins master should be backed.
+To update Nexus instance a set of manual steps are required:
+1. If changes related to Nexus version or Nexus extensions a new Docker image of Nexus should be baked.
 2. To apply changes related to Jenkins master Docker image, you need to delete the `jenkins-master-0` *Pod*, which will force Kubernetes to fetch updated image and deploy new *Pod*.
    In case, when changes are related to Kubernetes objects (*StatefulSets*, *ConfigMaps*, *Secrets*, etc) they should be applied with `kubectl apply` command.
 
