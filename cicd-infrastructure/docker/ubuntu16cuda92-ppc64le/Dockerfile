@@ -45,8 +45,8 @@ RUN curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/proto
 ENV CUDA_VERSION 9-2
 RUN apt-get -qqy update && \
     apt-get -qqy install --no-install-recommends \
-        gcc \
-        g++ \
+        gcc-7 \
+        g++-7 \
         cuda-${CUDA_VERSION} \
         openjdk-8-jdk-headless \
         maven \
@@ -56,8 +56,8 @@ RUN apt-get -qqy update && \
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 100 && \
     rm -f /etc/alternatives/java /usr/bin/gcc /usr/bin/g++ && \
     ln -s /usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java /etc/alternatives/java && \
-    ln -s /usr/bin/gcc-5 /usr/bin/gcc && \
-    ln -s /usr/bin/g++-5 /usr/bin/g++ && \
+    ln -s /usr/bin/gcc-7 /usr/bin/gcc && \
+    ln -s /usr/bin/g++-7 /usr/bin/g++ && \
     ln -s ${CMAKE_HOME}/bin/* /usr/local/bin && \
     ln -s ${PROTOBUF_HOME}/bin/* /usr/local/bin
 
@@ -76,8 +76,8 @@ RUN curl -fsSL "https://dl.google.com/go/go1.10.2.linux-ppc64le.tar.gz" \
 
 RUN groupadd jenkins -g 1000 && useradd -u 1000 -g 1000 -m jenkins
 
-ENV PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}} \
-    LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+ENV PATH=/usr/local/cuda-9.2/bin${PATH:+:${PATH}} \
+    LD_LIBRARY_PATH=/usr/local/cuda-9.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 USER jenkins
 

@@ -42,11 +42,12 @@ RUN curl -fsSL https://github.com/google/protobuf/releases/download/v3.5.1/proto
     cd .. && \
     rm -r protobuf-3.5.1
 
+# gcc/g++-6 is required for CUDA 9.0 only!
 ENV CUDA_VERSION 9-0
 RUN apt-get -qqy update && \
     apt-get -qqy install --no-install-recommends \
-        gcc \
-        g++ \
+        gcc-6 \
+        g++-6 \
         cuda-${CUDA_VERSION} \
         openjdk-8-jdk-headless \
         maven \
@@ -56,8 +57,8 @@ RUN apt-get -qqy update && \
     update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java" 100 && \
     rm -f /etc/alternatives/java /usr/bin/gcc /usr/bin/g++ && \
     ln -s /usr/lib/jvm/java-8-openjdk-ppc64el/jre/bin/java /etc/alternatives/java && \
-    ln -s /usr/bin/gcc-5 /usr/bin/gcc && \
-    ln -s /usr/bin/g++-5 /usr/bin/g++ && \
+    ln -s /usr/bin/gcc-6 /usr/bin/gcc && \
+    ln -s /usr/bin/g++-6 /usr/bin/g++ && \
     ln -s ${CMAKE_HOME}/bin/* /usr/local/bin && \
     ln -s ${PROTOBUF_HOME}/bin/* /usr/local/bin
 
