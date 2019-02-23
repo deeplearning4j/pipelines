@@ -32,6 +32,9 @@ class ProjectFactory implements Serializable {
             case 'skil-clients':
                 new SkilClientsProject(script, projectName, jobConfig).initPipeline()
                 break
+            case 'skil-java':
+                new SkilJavaProject(script, projectName, jobConfig).initPipeline()
+                break
             case 'zeppelin':
                 new ZeppelinProject(script, projectName, jobConfig).initPipeline()
                 break
