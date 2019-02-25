@@ -100,8 +100,6 @@ class Module implements Serializable {
     }
 
     private void runBuildLogic() {
-
-
         if (platformName in ['linux-x86_64', 'linux-x86_64-generic']) {
             if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
                 updateVersion('scala', scalaVersion)
@@ -144,25 +142,31 @@ class Module implements Serializable {
             script.checkout script.scm
         }
 
-        if (branchName.contains(releaseBranchPattern)) {
-            script.stage("Prepare for Release") {
-                getFancyStageDecorator('Prepare for Release stage')
-                setupEnvForRelease()
-            }
-        }
-
-        if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-            script.stage('Build') {
-                getFancyStageDecorator('Build stage')
-                runBuildLogic()
-            }
-
-            script.stage('Deploy') {
-                getFancyStageDecorator('Deploy stage')
-                runDeployLogic()
+        if (modulesToBuild.contains('docs')) {
+            script.stage('Release docs') {
+                getFancyStageDecorator('Release docs stage')
+                releaseDocs()
             }
         } else {
-            if (streamName == 'linux-x86_64-cpu') {
+            if (branchName.contains(releaseBranchPattern)) {
+                script.stage("Prepare for Release") {
+                    getFancyStageDecorator('Prepare for Release stage')
+                    setupEnvForRelease()
+                }
+            }
+
+            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                script.stage('Build') {
+                    getFancyStageDecorator('Build stage')
+                    runBuildLogic()
+                }
+
+                script.stage('Deploy') {
+                    getFancyStageDecorator('Deploy stage')
+                    runDeployLogic()
+                }
+            } else {
+                if (streamName == 'linux-x86_64-cpu') {
 //                script.stage('Test libnd4j in debug mode') {
 //                    libnd4jBuildMode = 'debug'
 //                    getFancyStageDecorator('Test libnd4j in debug mode stage')
@@ -170,28 +174,28 @@ class Module implements Serializable {
 //                    libnd4jBuildMode = 'release'
 //                }
 
-                script.stage('Build') {
-                    getFancyStageDecorator('Build stage')
-                    runBuildLogic()
-                }
+                    script.stage('Build') {
+                        getFancyStageDecorator('Build stage')
+                        runBuildLogic()
+                    }
 
-                script.stage('Test') {
-                    getFancyStageDecorator('Test stage')
-                    runTestLogic()
-                }
-            } else {
-                script.stage('Build') {
-                    getFancyStageDecorator('Build stage')
-                    runBuildLogic()
-                }
-
-                if (!(streamName in streamsToExclude)) {
                     script.stage('Test') {
                         getFancyStageDecorator('Test stage')
                         runTestLogic()
                     }
+                } else {
+                    script.stage('Build') {
+                        getFancyStageDecorator('Build stage')
+                        runBuildLogic()
+                    }
+
+                    if (!(streamName in streamsToExclude)) {
+                        script.stage('Test') {
+                            getFancyStageDecorator('Test stage')
+                            runTestLogic()
+                        }
+                    }
                 }
-            }
 
 //            script.stage('Static code analysis') {
 //                runStaticCodeAnalysisLogic()
@@ -200,6 +204,7 @@ class Module implements Serializable {
 //            script.stage('Security scan') {
 //                runSecurityScanLogic()
 //            }
+            }
         }
     }
 
@@ -361,7 +366,7 @@ class Module implements Serializable {
         if (modules.any { it =~ /deeplearning4j|nd4j|libnd4j/ } ||
                 (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
-            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec|^pydl4j/})) {
+            if (stageName == 'test' && !(modules.any { it =~ /^jumpy|^pydatavec|^pydl4j/ })) {
                 mavenArguments.push('-P testresources')
             }
 
@@ -371,8 +376,8 @@ class Module implements Serializable {
             }
         }
 
-        if (modules.any { it =~ /^datavec/}) {
-            if (!modules.any { it =~ /^nd4j/}) {
+        if (modules.any { it =~ /^datavec/ }) {
+            if (!modules.any { it =~ /^nd4j/ }) {
                 mavenArguments.push("-Djavacpp.platform=${platformName}")
                 mavenArguments.push('-P libnd4j-assembly')
             }
@@ -388,7 +393,7 @@ class Module implements Serializable {
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
                 'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
-                'pydl4j'
+                'pydl4j', 'docs'
         ]
         List mavenExcludesForNd4jNative = [
                 (platformName.contains('ios')) ?
@@ -410,7 +415,7 @@ class Module implements Serializable {
 //                '!deeplearning4j/deeplearning4j-cuda'
         ]
 
-        if (modulesToBuild.any { it =~ /^deeplearning4j/}) {
+        if (modulesToBuild.any { it =~ /^deeplearning4j/ }) {
             if (streamName == 'linux-x86_64-cpu' && libnd4jBuildMode == 'release') {
                 projects.addAll(mavenExcludesForDeeplearning4jNative)
             }
@@ -451,7 +456,9 @@ class Module implements Serializable {
                 if (backend?.contains('cuda')) {
                     /* FIXME: Add this filter for now to not break the build when changes related to modules in excludes */
                     if (!modulesToBuild.any { mavenExcludesForNd4jCuda.contains(it) } &&
-                            !modulesToBuild.any { mavenExcludesForDeeplearning4jNative.contains(it) }
+                            !modulesToBuild.any {
+                                mavenExcludesForDeeplearning4jNative.contains(it)
+                            }
                     ) {
                         projects.addAll(mavenExcludesForNd4jCuda)
                     }
@@ -571,9 +578,15 @@ class Module implements Serializable {
                         pushd "\${item}"
 
                         sed -i "s/<nd4j.version>.*<\\/nd4j.version>/<nd4j.version>${version}<\\/nd4j.version>/" pom.xml
-                        sed -i "s/<datavec.version>.*<\\/datavec.version>/<datavec.version>${version}<\\/datavec.version>/" pom.xml
-                        sed -i "s/<deeplearning4j.version>.*<\\/deeplearning4j.version>/<deeplearning4j.version>${version}<\\/deeplearning4j.version>/" pom.xml
-                        sed -i "s/<dl4j-test-resources.version>.*<\\/dl4j-test-resources.version>/<dl4j-test-resources.version>${version}<\\/dl4j-test-resources.version>/" pom.xml
+                        sed -i "s/<datavec.version>.*<\\/datavec.version>/<datavec.version>${
+                    version
+                }<\\/datavec.version>/" pom.xml
+                        sed -i "s/<deeplearning4j.version>.*<\\/deeplearning4j.version>/<deeplearning4j.version>${
+                    version
+                }<\\/deeplearning4j.version>/" pom.xml
+                        sed -i "s/<dl4j-test-resources.version>.*<\\/dl4j-test-resources.version>/<dl4j-test-resources.version>${
+                    version
+                }<\\/dl4j-test-resources.version>/" pom.xml
 
                         #Spark versions, like <version>xxx_spark_2-SNAPSHOT</version>
                         for f in \$(find . -name 'pom.xml' -not -path '*target*'); do
@@ -642,7 +655,7 @@ class Module implements Serializable {
     }
 
     private void getFancyStageDecorator(String text) {
-        int charsNumber = Math.round((78-text.length())/2)
+        int charsNumber = Math.round((78 - text.length()) / 2)
 
         script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
@@ -665,5 +678,54 @@ class Module implements Serializable {
         }
 
         return testResultsDetails
+    }
+
+    private void releaseDocs() {
+        String dl4jDocsDir
+        String dl4jVersion = (branchName.contains(releaseBranchPattern)) ? 'release' : 'snapshot'
+
+        script.dir('deeplearning4j-docs') {
+            script.echo "Checkout deeplearning4j-docs source code"
+            script.git url: "git@github.com:deeplearning4j/deeplearning4j-docs.git",
+                    credentialsId: 'github-username-and-ssh-key',
+                    branch: 'master'
+
+            dl4jDocsDir = (script.sh(script: 'pwd', returnStdout: true).trim()) ?:
+                    script.error('DL4J_DOCS_DIR value is empty!')
+        }
+
+        script.dir('docs') {
+            script.echo "Generate all docs"
+            script.sh "bash ./gen_all_docs.sh"
+
+            script.echo "Copy generated docs"
+            script.sh """\
+                export DL4J_DOCS_DIR=${dl4jDocsDir}
+                export DL4J_VERSION=${dl4jVersion}
+                bash ./copy-to-dl4j-docs.sh
+            """
+        }
+
+        script.dir('deeplearning4j-docs') {
+            def currentTime = new Date()?.format("yyyyMMdd-HH:mm:ss", TimeZone.getTimeZone('UTC'))
+            String commitMessage = "Auto-update docs ${currentTime}"
+            String targetBranchName = ((branchName.contains(releaseBranchPattern)) ? 'feature' : 'bugfix') +
+                    "/" +
+                    "jenkins-docs-update-${currentTime.replaceAll(':','-')}"
+            String gitHubUsername = "Skymind CI"
+            String gitHubUserEmail = "34909009+skymindops@users.noreply.github.com"
+
+            script.sshagent(['github-username-and-ssh-key']) {
+                script.sh """\
+                    git config --global user.name "${gitHubUsername}"
+                    git config --global user.email "${gitHubUserEmail}"
+                    git status
+                    git checkout -b "${targetBranchName}"
+                    git add -A
+                    git commit -am "${commitMessage}"
+                    git push origin "${targetBranchName}"
+                """.stripIndent()
+            }
+        }
     }
 }
