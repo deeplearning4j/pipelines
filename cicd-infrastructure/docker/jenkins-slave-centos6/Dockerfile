@@ -45,6 +45,14 @@ RUN source /opt/rh/devtoolset-6/enable && \
     cd .. && \
     rm -rf protobuf-3.5.1
 
+RUN source /opt/rh/devtoolset-6/enable && \
+    curl -fsSL https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz \
+    | tar xz && \
+    cd Python-2.7.13 && \
+    ./configure --prefix=/opt/python27 && \
+    make -j2 && \
+    make altinstall
+
 FROM BASEIMAGE AS BASE_BUILDER_IMAGE
 
 COPY --from=BUILD_TOOLS /opt /opt
@@ -75,7 +83,8 @@ RUN yum install -y \
         # Required for DL4J docs generation
         python-argparse && \
     yum clean all && rm -rf /var/cache/yum && \
-    ln -s /opt/maven/bin/mvn /usr/bin/mvn
+    ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
+    ln -s /opt/python27/bin/python2.7 /usr/local/bin/python
 
 ENV HOME /home/jenkins
 # FIXME: WORKAROUND FOR WRONG JENKINS USER ID IN JNLP CONTAINER
