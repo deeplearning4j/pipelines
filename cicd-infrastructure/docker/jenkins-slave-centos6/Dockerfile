@@ -71,7 +71,9 @@ RUN yum install -y \
         # Required for libnd4j CPU tests (minifier)
         which \
         # Required for Datavec NativeImageLoader
-        gtk2-devel && \
+        gtk2-devel \
+        # Required for DL4J docs generation
+        python-argparse && \
     yum clean all && rm -rf /var/cache/yum && \
     ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
