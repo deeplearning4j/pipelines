@@ -301,9 +301,6 @@ class SkilServerProject extends Project {
                                                         docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
                                                     """.stripIndent()
 
-                                                    script.sh 'docker images'
-                                                    script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
-
                                                     if (staticPackageBuild) {
 //                                                        script.configFileProvider([
 //                                                                script.configFile(
@@ -335,12 +332,18 @@ class SkilServerProject extends Project {
 //                                                              -v \${HOME}/.m2/static-packages-maven-settings.xml:/opt/maven/conf/settings.xml:ro \
 //                                                              -v \${HOME}/.m2/repository:/opt/maven/repository \
 
-                                                                script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
+                                                                script.sh """\
+                                                                    docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                                """.stripIndent()
                                                             } else {
                                                                 script.echo "[WARNING] OS is not supported."
                                                             }
 //                                                        }
                                                     }
+
+                                                    script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
+                                                    script.sh 'docker images'
+                                                    script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
 
                                                     // Workaround for archiving artifacts by Jenkins
                                                     script.sh """\
@@ -601,5 +604,11 @@ class SkilServerProject extends Project {
         }
 
         packageExtension
+    }
+
+    private void getFancyStageDecorator(String text) {
+        int charsNumber = Math.round((78-text.length())/2)
+
+        script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
 }
