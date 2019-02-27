@@ -32,7 +32,7 @@ class SkilJavaProject extends Project {
                 try {
                     script.container('skil') {
                         script.withCredentials([script.string(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
-                            script.sh "cp \${SKIL_LICENSE_PATH} /etc/skil/license.txt"
+                            script.sh "cat \${SKIL_LICENSE_PATH} > /etc/skil/license.txt"
                         }
                     }
 
