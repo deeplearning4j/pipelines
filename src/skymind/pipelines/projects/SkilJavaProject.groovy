@@ -30,12 +30,6 @@ class SkilJavaProject extends Project {
 
             script.ws(wsFolderName) {
                 try {
-                    script.container('skil') {
-                        script.withCredentials([script.string(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
-                            script.sh "cat \${SKIL_LICENSE_PATH} > /etc/skil/license.txt"
-                        }
-                    }
-
                     script.container('jnlp') {
                         try {
                             script.stage('Checkout') {
@@ -59,6 +53,13 @@ class SkilJavaProject extends Project {
                             }
 
                             script.stage('Build and Test') {
+                                script.container('skil') {
+                                    script.withCredentials([script.string(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
+                                        script.sh "cat \${SKIL_LICENSE_PATH} > /etc/skil/license.txt"
+                                    }
+                                }
+
+
                                 String buildClientApiMavenArguments = [
                                         mavenBaseCommand,
                                         'clean',
