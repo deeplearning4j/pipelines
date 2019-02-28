@@ -24,102 +24,95 @@ class SkilJavaProject extends Project {
         String platform = getPlatforms()[0].name
 
         script.node(platform) {
-            String wsFolderName = 'workspace' + '/' + [
-                    projectName, branchName
-            ].join('-').replaceAll('/', '-')
+            try {
+                script.container('skil') {
+                    script.sh 'ls -la /etc/skil/license.txt'
+                    script.withCredentials([script.file(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
+                        script.sh "cp \${SKIL_LICENSE_PATH} /etc/skil/license.txt"
+                    }
+                }
 
-            script.ws(wsFolderName) {
-                try {
-                    script.container('jnlp') {
-                        try {
-                            script.stage('Checkout') {
-                                script.checkout script.scm
+                script.container('jnlp') {
+                    try {
+                        script.stage('Checkout') {
+                            script.checkout script.scm
 
-                                checkoutDetails = parseCheckoutDetails()
-                                isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, 'skymindio')
+                            checkoutDetails = parseCheckoutDetails()
+                            isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, 'skymindio')
 
-                                script.notifier.sendSlackNotification jobResult: 'STARTED',
-                                        checkoutDetails: checkoutDetails, isMember: isMember
+                            script.notifier.sendSlackNotification jobResult: 'STARTED',
+                                    checkoutDetails: checkoutDetails, isMember: isMember
+                        }
+
+                        if (branchName.contains(releaseBranchPattern)) {
+                            script.stage("Perform Release") {
+                                getReleaseParameters()
                             }
 
-                            if (branchName.contains(releaseBranchPattern)) {
-                                script.stage("Perform Release") {
-                                    getReleaseParameters()
-                                }
-
-                                script.stage("Prepare for Release") {
-                                    setupEnvForRelease()
-                                }
-                            }
-
-                            script.stage('Build and Test') {
-                                script.container('skil') {
-                                    script.sh 'ls -la /etc/skil/license.txt'
-                                    script.withCredentials([script.file(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
-                                        script.sh "cp \${SKIL_LICENSE_PATH} /etc/skil/license.txt"
-                                    }
-                                }
-
-
-                                String buildClientApiMavenArguments = [
-                                        mavenBaseCommand,
-                                        'clean',
-                                        (branchName == 'master') ? 'deploy' : 'install'
-                                ].findAll().join(' ')
-
-                                script.mvn buildClientApiMavenArguments
-                            }
-
-                            if (branchName.contains(releaseBranchPattern)) {
-                                script.stage('Release') {
-
-                                }
+                            script.stage("Prepare for Release") {
+                                setupEnvForRelease()
                             }
                         }
-                        finally {
-                            def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
 
-                            testResults.add([
-                                    testResults: parseTestResults(tr)
-                            ])
+                        script.stage('Build and Test') {
+                            String buildClientApiMavenArguments = [
+                                    mavenBaseCommand,
+                                    'clean',
+                                    (branchName == 'master') ? 'deploy' : 'install'
+                            ].findAll().join(' ')
 
-                            script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
+                            script.mvn buildClientApiMavenArguments
+                        }
+
+                        if (branchName.contains(releaseBranchPattern)) {
+                            script.stage('Release') {
+
+                            }
                         }
                     }
-                }
-                catch (error) {
-                    if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
-                            error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
-                            error instanceof java.lang.InterruptedException ||
-                            (error instanceof hudson.AbortException &&
-                                    (error?.message?.contains('script returned exit code 143') ||
-                                            error?.message?.contains('Queue task was cancelled')))
-                    ) {
-                        script.currentBuild.result = 'ABORTED'
-                    } else {
-                        script.currentBuild.result = 'FAILURE'
-                    }
+                    finally {
+                        def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
 
-                    script.echo "[ERROR] ${error}" +
-                            (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
-                            (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
-                }
-                finally {
-                    script.cleanWs deleteDirs: true
-                    // FIXME: Workaround to clean workspace
-                    script.dir("${script.env.WORKSPACE}@tmp") {
-                        script.deleteDir()
-                    }
-                    script.dir("${script.env.WORKSPACE}@script") {
-                        script.deleteDir()
-                    }
-                    script.dir("${script.env.WORKSPACE}@script@tmp") {
-                        script.deleteDir()
-                    }
+                        testResults.add([
+                                testResults: parseTestResults(tr)
+                        ])
 
-                    script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
-                            checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
+                        script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
+                    }
                 }
+            }
+            catch (error) {
+                if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
+                        error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
+                        error instanceof java.lang.InterruptedException ||
+                        (error instanceof hudson.AbortException &&
+                                (error?.message?.contains('script returned exit code 143') ||
+                                        error?.message?.contains('Queue task was cancelled')))
+                ) {
+                    script.currentBuild.result = 'ABORTED'
+                } else {
+                    script.currentBuild.result = 'FAILURE'
+                }
+
+                script.echo "[ERROR] ${error}" +
+                        (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
+                        (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
+            }
+            finally {
+                script.cleanWs deleteDirs: true
+                // FIXME: Workaround to clean workspace
+                script.dir("${script.env.WORKSPACE}@tmp") {
+                    script.deleteDir()
+                }
+                script.dir("${script.env.WORKSPACE}@script") {
+                    script.deleteDir()
+                }
+                script.dir("${script.env.WORKSPACE}@script@tmp") {
+                    script.deleteDir()
+                }
+
+                script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
+                        checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
             }
         }
     }
