@@ -54,8 +54,8 @@ class SkilJavaProject extends Project {
 
                             script.stage('Build and Test') {
                                 script.container('skil') {
-                                    script.withCredentials([script.string(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
-                                        script.sh "cat \${SKIL_LICENSE_PATH} > /etc/skil/license.txt"
+                                    script.withCredentials([script.file(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
+                                        script.sh "cp \${SKIL_LICENSE_PATH} > /etc/skil/license.txt"
                                     }
                                 }
 
