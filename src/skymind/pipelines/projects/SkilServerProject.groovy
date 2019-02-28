@@ -31,7 +31,7 @@ class SkilServerProject extends Project {
                                             backend      : 'cpu',
                                             sparkVersion : 'spark-1.6',
                                             scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.6',
+                                            hadoopVersion: 'hadoop-2.7',
                                             condaVersion : '4.3.27',
                                             pythonVersion: '2'
                                     ],
@@ -42,7 +42,7 @@ class SkilServerProject extends Project {
 //                                            backend      : 'cpu',
 //                                            sparkVersion : 'spark-2.2',
 //                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.6',
+//                                            hadoopVersion: 'hadoop-2.7',
 //                                            condaVersion : '4.3.27',
 //                                            pythonVersion: '3'
 //                                    ],
@@ -54,7 +54,7 @@ class SkilServerProject extends Project {
                                             cudnnVersion : '7',
                                             sparkVersion : 'spark-1.6',
                                             scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.6',
+                                            hadoopVersion: 'hadoop-2.7',
                                             condaVersion : '4.3.27',
                                             pythonVersion: '2'
                                     ],
@@ -66,7 +66,7 @@ class SkilServerProject extends Project {
 //                                            cudnnVersion : '7',
 //                                            sparkVersion : 'spark-2.2',
 //                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.6',
+//                                            hadoopVersion: 'hadoop-2.7',
 //                                            condaVersion : '4.3.27',
 //                                            pythonVersion: '3'
 //                                    ],
@@ -77,7 +77,7 @@ class SkilServerProject extends Project {
                                             backend      : 'cpu',
                                             sparkVersion : 'spark-1.6',
                                             scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.6',
+                                            hadoopVersion: 'hadoop-2.7',
                                             condaVersion : '4.3.27',
                                             pythonVersion: '2'
                                     ],
@@ -88,7 +88,7 @@ class SkilServerProject extends Project {
 //                                            backend      : 'cpu',
 //                                            sparkVersion : 'spark-2.2',
 //                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.6',
+//                                            hadoopVersion: 'hadoop-2.7',
 //                                            condaVersion : '4.3.27',
 //                                            pythonVersion: '3'
 //                                    ],
@@ -100,7 +100,7 @@ class SkilServerProject extends Project {
                                             cudnnVersion : '7',
                                             sparkVersion : 'spark-1.6',
                                             scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.6',
+                                            hadoopVersion: 'hadoop-2.7',
                                             condaVersion : '4.3.27',
                                             pythonVersion: '2'
                                     ],
@@ -112,7 +112,7 @@ class SkilServerProject extends Project {
 //                                            cudnnVersion : '7',
 //                                            sparkVersion : 'spark-2.2',
 //                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.6',
+//                                            hadoopVersion: 'hadoop-2.7',
 //                                            condaVersion : '4.3.27',
 //                                            pythonVersion: '3'
 //                                    ]
@@ -131,7 +131,7 @@ class SkilServerProject extends Project {
                                             backend      : 'cpu',
                                             sparkVersion : 'spark-1.6',
                                             scalaVersion : '2.11',
-                                            hadoopVersion: 'hadoop-2.6',
+                                            hadoopVersion: 'hadoop-2.7',
                                             condaVersion : '4.3.27',
                                             pythonVersion: '2'
                                     ]
