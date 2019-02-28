@@ -25,12 +25,12 @@ class SkilJavaProject extends Project {
 
         script.node(platform) {
             try {
-                script.container('skil') {
-                    script.sh 'ls -la /etc/skil/license.txt'
-                    script.withCredentials([script.file(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
-                        script.sh "cp \${SKIL_LICENSE_PATH} /etc/skil/license.txt"
-                    }
-                }
+//                script.container('skil') {
+//                    script.sh 'ls -la /etc/skil/license.txt'
+//                    script.withCredentials([script.file(credentialsId: 'skil-unlim-test-license', variable: 'SKIL_LICENSE_PATH')]) {
+//                        script.sh "cp \${SKIL_LICENSE_PATH} /etc/skil/license.txt"
+//                    }
+//                }
 
                 script.container('jnlp') {
                     try {
