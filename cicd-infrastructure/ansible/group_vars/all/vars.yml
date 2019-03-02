@@ -2,7 +2,7 @@
 jenkins_user_group: "jenkins"
 jenkins_user_name: "jenkins"
 jenkins_user_shell: "/bin/bash"
-jenkins_user_passphrase: "{{ jenkins_user_passphrase }}"
+jenkins_user_passphrase: "{{ vault_jenkins_user_passphrase }}"
 jenkins_user_home: "/Users/{{ jenkins_user_name }}"
 
 #jenkins_user_id: "1010"
@@ -10,5 +10,5 @@ jenkins_user_home: "/Users/{{ jenkins_user_name }}"
 
 #ansible_download_path: "{{ jenkins_slave_user.home }}/Install"
 
-jenkins_master_api_user_name: "{{ jenkins_master_api_user_name }}"
-jenkins_master_api_user_token: "{{ jenkins_master_api_user_token }}"
+jenkins_master_api_user_name: "{{ vault_jenkins_master_api_user_name }}"
+jenkins_master_api_user_token: "{{ vault_jenkins_master_api_user_token }}"

@@ -1,9 +1,10 @@
 ---
 # default vars file for jenkins-slave
 
-jenkins_master_protocol: "http"
+jenkins_master_protocol: "https"
 jenkins_master_hostname: "{{ groups['jenkins-master'][0] }}"
-jenkins_master_listen_port: "8080"
+#jenkins_master_listen_port: "8080"
+jenkins_master_listen_port: ""
 jenkins_master_base_url: "{{ jenkins_master_protocol }}://{{ jenkins_master_hostname }}{{ jenkins_master_listen_port | ternary(':' + jenkins_master_listen_port, '') }}"
 jenkins_master_script_text_url:
   - "{{ jenkins_master_base_url }}"

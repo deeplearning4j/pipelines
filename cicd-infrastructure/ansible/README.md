@@ -19,10 +19,10 @@ ansible-playbook -i development site.yml --check
 Run following commands to run scripts on real hosts:
 
 ```
-git clone git@github.com:deeplearning4j/pipelines.git && cd cicd-infrastructure/ansible
-vagrant up
+git clone git@github.com:deeplearning4j/pipelines.git && cd pipelines/cicd-infrastructure/ansible
 export ANSIBLE_VAULT_PASSWORD=<vault_password>
-ansible-playbook -i production site.yml
+ssh-copy-id -i ~/.ssh/id_rsa.pub <host>
+ansible-playbook -i production --ask-vault-pass site.yml
 ```
 
 # Issues/Limitations

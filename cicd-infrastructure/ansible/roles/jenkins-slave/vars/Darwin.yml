@@ -23,12 +23,16 @@ homebrew_installed_packages:
 #  - tinc
   - openssl
   - htop
-  - gcc5
+  - 'gcc@5'
+  - 'gcc@7'
   - cmake
+  - maven
+  - gpg1
 homebrew_taps:
   - homebrew/core
   - homebrew/cask
   - homebrew/cask-versions
+  - homebrew/caskroom/versions
 homebrew_cask_apps:
   - java8
 
@@ -55,13 +59,13 @@ tinc_rsa_key_names:
 cuda_base_url: "https://developer.nvidia.com/compute/cuda"
 # TODO: add logic to fetch and parse md5 for every binary from https://developer.download.nvidia.com/compute/cuda/<cuda.version>/Prod/docs/sidebar/md5sum.txt
 cuda_versions:
-  "8.0":
-    binary_name: "cuda_8.0.61_mac-dmg"
-    url_prefix: "Prod2/local_installers"
-    md5: "5217de8bfde0ca5d8d7f9e48588df706"
-    mount_point: "/Volumes/CUDAMacOSXInstaller_8.0"
-    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
-    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+#  "8.0":
+#    binary_name: "cuda_8.0.61_mac-dmg"
+#    url_prefix: "Prod2/local_installers"
+#    md5: "5217de8bfde0ca5d8d7f9e48588df706"
+#    mount_point: "/Volumes/CUDAMacOSXInstaller_8.0"
+#    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+#    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
   "9.0":
     binary_name: "cuda_9.0.176_mac-dmg"
     url_prefix: "Prod/local_installers"
@@ -69,13 +73,13 @@ cuda_versions:
     mount_point: "/Volumes/CUDAMacOSXInstaller_9.0"
     installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
     installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
-  "9.1":
-    binary_name: "cuda_9.1.85_mac"
-    url_prefix: "Prod/local_installers"
-    md5: "af2a4c1078ea65500318ed5ed9ec0d07"
-    mount_point: "/Volumes/CUDAMacOSXInstaller_9.1"
-    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
-    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+#  "9.1":
+#    binary_name: "cuda_9.1.85_mac"
+#    url_prefix: "Prod/local_installers"
+#    md5: "af2a4c1078ea65500318ed5ed9ec0d07"
+#    mount_point: "/Volumes/CUDAMacOSXInstaller_9.1"
+#    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+#    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
   "9.2":
     binary_name: "cuda_9.2.64_mac"
     url_prefix: "Prod/local_installers"
@@ -83,12 +87,24 @@ cuda_versions:
     mount_point: "/Volumes/CUDAMacOSXInstaller_9.2"
     installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
     installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
+  "10.0":
+    binary_name: "cuda_10.0.130_mac"
+    url_prefix: "Prod/local_installers"
+    md5: "6c13d1b57595463ae287940f11fccb2a"
+    mount_point: "/Volumes/CUDAMacOSXInstaller_10.0"
+    installer_path: "CUDAMacOSXInstaller.app/Contents/MacOS/CUDAMacOSXInstaller"
+    installer_options: "--accept-eula --silent --no-window --install-package=cuda-toolkit --install-package=cuda-driver"
 
 # Xcode variables
+#xcode_versions:
+#  "8":
+#    binary_local_path: "Darwin/Xcode"
+#    binary_name: "Xcode_8"
+#    binary_extension: "xip"
 xcode_versions:
-  "8":
+  "9.4.1":
     binary_local_path: "Darwin/Xcode"
-    binary_name: "Xcode_8"
+    binary_name: "Xcode_9.4.1"
     binary_extension: "xip"
 xcode_additional_packages:
   - 'MobileDevice.pkg'
