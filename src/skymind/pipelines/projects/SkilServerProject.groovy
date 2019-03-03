@@ -21,122 +21,185 @@ class SkilServerProject extends Project {
     protected def getBuildMappings() {
         if (release) {
             return [
-                    [
-                            osType   : 'Linux',
-                            platforms: [
-                                    [
-                                            name         : 'linux-x86_64-generic',
-                                            osName       : 'centos',
-                                            osVersion    : '7',
-                                            backend      : 'cpu',
-                                            sparkVersion : 'spark-1.6',
-                                            scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.7',
-                                            condaVersion : '4.3.27',
-                                            pythonVersion: '2'
-                                    ],
-//                                    [
-//                                            name         : 'linux-x86_64-generic',
-//                                            osName       : 'centos',
-//                                            osVersion    : '7',
-//                                            backend      : 'cpu',
-//                                            sparkVersion : 'spark-2.2',
-//                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.7',
-//                                            condaVersion : '4.3.27',
-//                                            pythonVersion: '3'
-//                                    ],
-                                    [
-                                            name         : 'linux-x86_64-generic',
-                                            osName       : 'centos',
-                                            osVersion    : '7',
-                                            backend      : 'cuda-10.0',
-                                            cudnnVersion : '7',
-                                            sparkVersion : 'spark-1.6',
-                                            scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.7',
-                                            condaVersion : '4.3.27',
-                                            pythonVersion: '2'
-                                    ],
-//                                    [
-//                                            name         : 'linux-x86_64-generic',
-//                                            osName       : 'centos',
-//                                            osVersion    : '7',
-//                                            backend      : 'cuda-10.0',
-//                                            cudnnVersion : '7',
-//                                            sparkVersion : 'spark-2.2',
-//                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.7',
-//                                            condaVersion : '4.3.27',
-//                                            pythonVersion: '3'
-//                                    ],
-                                    [
-                                            name         : 'linux-x86_64-generic',
-                                            osName       : 'ubuntu',
-                                            osVersion    : '16.04',
-                                            backend      : 'cpu',
-                                            sparkVersion : 'spark-1.6',
-                                            scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.7',
-                                            condaVersion : '4.3.27',
-                                            pythonVersion: '2'
-                                    ],
-//                                    [
-//                                            name         : 'linux-x86_64-generic',
-//                                            osName       : 'ubuntu',
-//                                            osVersion    : '16.04',
-//                                            backend      : 'cpu',
-//                                            sparkVersion : 'spark-2.2',
-//                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.7',
-//                                            condaVersion : '4.3.27',
-//                                            pythonVersion: '3'
-//                                    ],
-                                    [
-                                            name         : 'linux-x86_64-generic',
-                                            osName       : 'ubuntu',
-                                            osVersion    : '16.04',
-                                            backend      : 'cuda-10.0',
-                                            cudnnVersion : '7',
-                                            sparkVersion : 'spark-1.6',
-                                            scalaVersion : '2.10',
-                                            hadoopVersion: 'hadoop-2.7',
-                                            condaVersion : '4.3.27',
-                                            pythonVersion: '2'
-                                    ],
-//                                    [
-//                                            name         : 'linux-x86_64-generic',
-//                                            osName       : 'ubuntu',
-//                                            osVersion    : '16.04',
-//                                            backend      : 'cuda-10.0',
-//                                            cudnnVersion : '7',
-//                                            sparkVersion : 'spark-2.2',
-//                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.7',
-//                                            condaVersion : '4.3.27',
-//                                            pythonVersion: '3'
-//                                    ]
-                            ]
+                    platforms: [
+                            [
+                                    name         : 'linux-x86_64-generic',
+                                    osName       : 'centos',
+                                    osVersion    : '7',
+                                    backend      : 'cpu',
+                                    sparkVersion : 'spark-1.6',
+                                    scalaVersion : '2.10',
+                                    hadoopVersion: 'hadoop-2.7',
+                                    condaVersion : '4.3.27',
+                                    pythonVersion: '2'
+                            ],
+//                      [
+//                              name         : 'linux-x86_64-generic',
+//                              osName       : 'centos',
+//                              osVersion    : '7',
+//                              backend      : 'cpu',
+//                              sparkVersion : 'spark-2.2',
+//                              scalaVersion : '2.11',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '3'
+//                      ],
+                            [
+                                    name         : 'linux-x86_64-generic',
+                                    osName       : 'centos',
+                                    osVersion    : '7',
+                                    backend      : 'cuda-10.0',
+                                    cudnnVersion : '7',
+                                    sparkVersion : 'spark-1.6',
+                                    scalaVersion : '2.10',
+                                    hadoopVersion: 'hadoop-2.7',
+                                    condaVersion : '4.3.27',
+                                    pythonVersion: '2'
+                            ],
+//                      [
+//                              name         : 'linux-x86_64-generic',
+//                              osName       : 'centos',
+//                              osVersion    : '7',
+//                              backend      : 'cuda-10.0',
+//                              cudnnVersion : '7',
+//                              sparkVersion : 'spark-2.2',
+//                              scalaVersion : '2.11',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '3'
+//                      ],
+                            [
+                                    name         : 'linux-x86_64-generic',
+                                    osName       : 'ubuntu',
+                                    osVersion    : '16.04',
+                                    backend      : 'cpu',
+                                    sparkVersion : 'spark-1.6',
+                                    scalaVersion : '2.10',
+                                    hadoopVersion: 'hadoop-2.7',
+                                    condaVersion : '4.3.27',
+                                    pythonVersion: '2'
+                            ],
+//                      [
+//                              name         : 'linux-x86_64-generic',
+//                              osName       : 'ubuntu',
+//                              osVersion    : '16.04',
+//                              backend      : 'cpu',
+//                              sparkVersion : 'spark-2.2',
+//                              scalaVersion : '2.11',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '3'
+//                      ],
+                            [
+                                    name         : 'linux-x86_64-generic',
+                                    osName       : 'ubuntu',
+                                    osVersion    : '16.04',
+                                    backend      : 'cuda-10.0',
+                                    cudnnVersion : '7',
+                                    sparkVersion : 'spark-1.6',
+                                    scalaVersion : '2.10',
+                                    hadoopVersion: 'hadoop-2.7',
+                                    condaVersion : '4.3.27',
+                                    pythonVersion: '2'
+                            ],
+//                      [
+//                              name         : 'linux-x86_64-generic',
+//                              osName       : 'ubuntu',
+//                              osVersion    : '16.04',
+//                              backend      : 'cuda-10.0',
+//                              cudnnVersion : '7',
+//                              sparkVersion : 'spark-2.2',
+//                              scalaVersion : '2.11',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '3'
+//                      ],
+                            [
+                                    name         : 'windows-x86_64-cpu',
+                                    osName       : 'windows',
+                                    osVersion    : 'server-2016',
+                                    backend      : 'cpu',
+                                    sparkVersion : 'spark-1.6',
+                                    scalaVersion : '2.10',
+                                    hadoopVersion: 'hadoop-2.7',
+                                    condaVersion : '4.3.27',
+                                    pythonVersion: '2'
+                            ],
+//                      [
+//                              name         : 'windows-x86_64-cuda-10.0',
+//                              osName       : 'windows',
+//                              osVersion    : 'server-2016',
+//                              backend      : 'cuda-10.0',
+//                              cudnnVersion : '7',
+//                              sparkVersion : 'spark-1.6',
+//                              scalaVersion : '2.10',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '2'
+//                      ]
                     ]
             ]
         } else {
             return [
-                    [
-                            osType   : 'Linux',
-                            platforms: [
-                                    [
-                                            name         : 'linux-x86_64-generic',
-                                            osName       : 'centos',
-                                            osVersion    : '7',
-                                            backend      : 'cpu',
-                                            sparkVersion : 'spark-1.6',
-                                            scalaVersion : '2.11',
-                                            hadoopVersion: 'hadoop-2.7',
-                                            condaVersion : '4.3.27',
-                                            pythonVersion: '2'
-                                    ]
-                            ]
-                    ]
+//                    [
+//                            osType   : 'Linux',
+//                            platforms: [
+//                                    [
+//                                            name         : 'linux-x86_64-generic',
+//                                            osName       : 'centos',
+//                                            osVersion    : '7',
+//                                            backend      : 'cpu',
+//                                            sparkVersion : 'spark-1.6',
+//                                            scalaVersion : '2.11',
+//                                            hadoopVersion: 'hadoop-2.7',
+//                                            condaVersion : '4.3.27',
+//                                            pythonVersion: '2'
+//                                    ]
+//                            ]
+//                    ],
+//                    [
+//                            osType   : 'Windows',
+//                            platforms: [
+//                                    [
+//                                            name         : 'windows-x86_64-cpu',
+//                                            osName       : 'windows',
+//                                            osVersion    : '-server-2016',
+//                                            backend      : 'cpu',
+//                                            sparkVersion : 'spark-1.6',
+//                                            scalaVersion : '2.10',
+//                                            hadoopVersion: 'hadoop-2.7',
+//                                            condaVersion : '4.3.27',
+//                                            pythonVersion: '2'
+//                                    ]
+//                            ]
+//                    ]
+[
+
+        platforms: [
+                [
+                        name         : 'linux-x86_64-generic',
+                        osName       : 'centos',
+                        osVersion    : '7',
+                        backend      : 'cpu',
+                        sparkVersion : 'spark-1.6',
+                        scalaVersion : '2.11',
+                        hadoopVersion: 'hadoop-2.7',
+                        condaVersion : '4.3.27',
+                        pythonVersion: '2'
+                ],
+                [
+                        name         : 'windows-x86_64-cpu',
+                        osName       : 'windows',
+                        osVersion    : '-server-2016',
+                        backend      : 'cpu',
+                        sparkVersion : 'spark-1.6',
+                        scalaVersion : '2.10',
+                        hadoopVersion: 'hadoop-2.7',
+                        condaVersion : '4.3.27',
+                        pythonVersion: '2'
+                ]
+        ]
+]
             ]
         }
     }
@@ -160,12 +223,13 @@ class SkilServerProject extends Project {
 
             for (def m : buildMappings) {
                 def mapping = m
-                def osType = mapping.osType
+//                def osType = mapping.osType
                 def platforms = mapping.platforms
 
-                script.stage(osType) {
-                    script.parallel getBuildStreams(platforms)
-                }
+//                script.stage(osType) {
+                script.parallel getBuildStreams(platforms)
+//                    script.parallel getBuildStreams(platforms, osType)
+//                }
             }
         }
         catch (error) {
@@ -233,83 +297,85 @@ class SkilServerProject extends Project {
             streams["$streamName"] = {
                 script.stage(streamName) {
                     script.node(platformName) {
-                        script.container('jnlp') {
-                            try {
-                                script.stage('Checkout') {
-                                    script.checkout script.scm
+//                        script.container('jnlp') line was commented, to support windwos builds,
+//                        in general this line is not required,
+//                        because when you have multiple containers in pod Jenkins will pick jnlp by default.
+//                        script.container('jnlp') {
+                        try {
+                            script.stage('Checkout') {
+                                script.checkout script.scm
 
-                                    def skilPom = script.readMavenPom(file: 'pom.xml')
-                                    skilVersion = skilPom?.version
+                                def skilPom = script.readMavenPom(file: 'pom.xml')
+                                skilVersion = skilPom?.version
 
-                                    // Expose gathered values as environment variables
-                                    script.env.SKIL_VERSION = skilVersion
-                                    script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER = "0.0.1"
-                                }
+                                // Expose gathered values as environment variables
+                                script.env.SKIL_VERSION = skilVersion
+                                script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER = "0.0.1"
+                            }
 
-                                if (release) {
-                                    script.stage('Fetch zeppelin') {
-                                        script.dir('zeppelin') {
-                                            script.git branch: zeppelinBranchName,
-                                                    changelog: false,
-                                                    poll: false,
-                                                    url: zeppelinGitUrl
-                                        }
+                            if (release) {
+                                script.stage('Fetch zeppelin') {
+                                    script.dir('zeppelin') {
+                                        script.git branch: zeppelinBranchName,
+                                                changelog: false,
+                                                poll: false,
+                                                url: zeppelinGitUrl
                                     }
                                 }
+                            }
 
-                                script.configFileProvider([
-                                        script.configFile(
-                                                fileId: 'global_mvn_settings_xml',
-                                                targetLocation: '/home/jenkins/.m2/settings.xml',
-                                                variable: ''
-                                        )
+                            script.configFileProvider([
+                                script.configFile(
+                                        fileId: 'global_mvn_settings_xml',
+                                        targetLocation: '/home/jenkins/.m2/settings.xml',
+                                        variable: ''
+                                )
+                            ]) {
+                                script.withEnv([
+                                        "OS_NAME=${osName}",
+                                        "OS_VERSION=${osVersion}",
+                                        "GIT_COMMIT=${script.env.GIT_COMMIT}",
+                                        "RELEASE=${release}",
+                                        "SKIL_BASE_IMAGE_NAME=${skilDockerBaseImageTag}",
+                                        "SKIL_DOCKER_IMAGE_TAG=${skilDockerImageTag}",
+                                        "SKIL_DOCKER_IMAGE_REVISION=${script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER}-${script.env.GIT_COMMIT[0..7]}",
+                                        "CUDA_VERSION=${cudaVersion}",
+                                        "CONDA_VERSION=${condaVersion}",
+                                        "HADOOP_VERSION=${hadoopVersion}",
+                                        "PYTHON_VERSION=${pythonVersion}",
+                                        "PYTHON_PACKAGE_BUILD=${pythonPackageBuild}",
+                                        "SCALA_VERSION=${scalaVersion}",
+                                        "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
+                                        "SPARK_VERSION=${sparkVersion}"
                                 ]) {
-                                    script.withEnv([
-                                            "OS_NAME=${osName}",
-                                            "OS_VERSION=${osVersion}",
-                                            "GIT_COMMIT=${script.env.GIT_COMMIT}",
-                                            "RELEASE=${release}",
-                                            "SKIL_BASE_IMAGE_NAME=${skilDockerBaseImageTag}",
-                                            "SKIL_DOCKER_IMAGE_TAG=${skilDockerImageTag}",
-                                            "SKIL_DOCKER_IMAGE_REVISION=${script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER}-${script.env.GIT_COMMIT[0..7]}",
-                                            "CUDA_VERSION=${cudaVersion}",
-                                            "CONDA_VERSION=${condaVersion}",
-                                            "HADOOP_VERSION=${hadoopVersion}",
-                                            "PYTHON_VERSION=${pythonVersion}",
-                                            "PYTHON_PACKAGE_BUILD=${pythonPackageBuild}",
-                                            "SCALA_VERSION=${scalaVersion}",
-                                            "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
-                                            "SPARK_VERSION=${sparkVersion}"
-                                    ]) {
-                                        script.stage('Build SKIL and its dependencies') {
-                                            script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
+                                    script.stage('Build SKIL and its dependencies') {
+                                        script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
+                                            if (osName in ['centos', 'ubuntu']) {
                                                 script.sh """\
                                                     docker-compose \
-                                                    -f skil-build/docker/docker-compose.yml \
-                                                    run \
-                                                    -v \${GPG_KEYRING_PATH}:/home/skil/.gnupg/secring.gpg \
-                                                    -v \${HOME}/.m2:/home/skil/.m2 \
-                                                    -v \$(pwd):/opt/skil/build \
-                                                    --rm \
-                                                    skil-build
+                                                     -f skil-build/docker/docker-compose.yml \
+                                                     run \
+                                                     -v \${GPG_KEYRING_PATH}:/home/skil/.gnupg/secring.gpg \
+                                                     -v \${HOME}/.m2:/home/skil/.m2 \
+                                                     -v \$(pwd):/opt/skil/build \
+                                                     --rm \
+                                                     skil-build
                                                 """
+                                            } else {
+                                                script.sh "./build-skil.sh"
                                             }
+                                        }
 
+                                        if (osName in ['centos', 'ubuntu']) {
                                             if (release) {
                                                 script.stage('Build SKIL docker image') {
                                                     script.sh """\
-                                                        docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-                                                    """.stripIndent()
+                                                            docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                        """.stripIndent()
 
                                                     if (staticPackageBuild) {
-//                                                        script.configFileProvider([
-//                                                                script.configFile(
-//                                                                        fileId: 'skil-static-packages-maven-settings',
-//                                                                        targetLocation: '/home/jenkins/.m2/static-packages-maven-settings.xml', variable: ''
-//                                                                )
-//                                                        ]) {
-                                                            if (osName == 'centos') {
-                                                                script.sh """
+                                                        if (osName == 'centos') {
+                                                            script.sh """\
                                                                    docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
                                                                     run \
                                                                     -u root \
@@ -328,17 +394,13 @@ class SkilServerProject extends Project {
                                                                     --workdir=/opt/skil/build \
                                                                     skil
                                                                 """
-//                                                              FIXME: Logic below didn't work because of root permissions on conf folder
-//                                                              -v \${HOME}/.m2/static-packages-maven-settings.xml:/opt/maven/conf/settings.xml:ro \
-//                                                              -v \${HOME}/.m2/repository:/opt/maven/repository \
 
-                                                                script.sh """\
+                                                            script.sh """\
                                                                     docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
                                                                 """.stripIndent()
-                                                            } else {
-                                                                script.echo "[WARNING] OS is not supported."
-                                                            }
-//                                                        }
+                                                        } else {
+                                                            script.echo "[WARNING] OS is not supported."
+                                                        }
                                                     }
 
                                                     script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
@@ -347,14 +409,15 @@ class SkilServerProject extends Project {
 
                                                     // Workaround for archiving artifacts by Jenkins
                                                     script.sh """\
-                                                        mv ${buildArtifactsPath}/${osName} ${buildArtifactsPath}/${skilDockerImageTag}
-                                                    """.stripIndent()
+                                                            mv ${buildArtifactsPath}/${osName} ${
+                                                        buildArtifactsPath
+                                                    }/${skilDockerImageTag}
+                                                        """.stripIndent()
 
                                                     /* FIXME: Place archiveArtifacts after mv command call,
                                                         to not overwrite artifacts in case of build failure.
-                                                     */
-//                                                  script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
-
+                                                    */
+//                                                      script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
                                                 }
 
                                                 script.stage('Publish artifacts') {
@@ -370,22 +433,22 @@ class SkilServerProject extends Project {
                                                             case ~releaseBranchPattern:
                                                             case 'master':
                                                                 repoPath = [
-                                                                        osName,
-                                                                        '7',
-                                                                        'latest',
-                                                                        'os', // a.k.a base
-                                                                        baseArch,
-                                                                        'Packages'
+                                                                    osName,
+                                                                    '7',
+                                                                    'latest',
+                                                                    'os', // a.k.a base
+                                                                    baseArch,
+                                                                    'Packages'
                                                                 ].findAll().join('/')
                                                                 break
                                                             default:
                                                                 repoPath = [
-                                                                        osName,
-                                                                        '7',
-                                                                        'dev',
-                                                                        'os', // a.k.a base
-                                                                        baseArch,
-                                                                        'Packages'
+                                                                    osName,
+                                                                    '7',
+                                                                    'dev',
+                                                                    'os', // a.k.a base
+                                                                    baseArch,
+                                                                    'Packages'
                                                                 ].findAll().join('/')
                                                                 break
                                                         }
@@ -398,10 +461,10 @@ class SkilServerProject extends Project {
                                                             def artifactPath = artifact.path
 
                                                             script.withCredentials([
-                                                                    script.usernameColonPassword(
-                                                                            credentialsId: 'skymind-docker-registry',
-                                                                            variable: 'RPM_REPO_CREDS'
-                                                                    )
+                                                                script.usernameColonPassword(
+                                                                    credentialsId: 'skymind-docker-registry',
+                                                                    variable: 'RPM_REPO_CREDS'
+                                                                )
                                                             ]) {
                                                                 script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
                                                             }
@@ -416,10 +479,10 @@ class SkilServerProject extends Project {
                                                             case 'master':
                                                             default:
                                                                 repoPath = [
-                                                                        osName,
-                                                                        'xenial',
-                                                                        'main',
-                                                                        baseArch
+                                                                    osName,
+                                                                    'xenial',
+                                                                    'main',
+                                                                    baseArch
                                                                 ].findAll().join('/')
                                                                 break
                                                         }
@@ -431,17 +494,17 @@ class SkilServerProject extends Project {
                                                             def artifactPath = artifact.path
 
                                                             script.withCredentials([
-                                                                    script.usernameColonPassword(
-                                                                            credentialsId: 'skymind-docker-registry',
-                                                                            variable: 'RPM_REPO_CREDS'
-                                                                    )
+                                                                script.usernameColonPassword(
+                                                                    credentialsId: 'skymind-docker-registry',
+                                                                    variable: 'RPM_REPO_CREDS'
+                                                                )
                                                             ]) {
                                                                 script.sh """\
-                                                                    curl -v -i --user \${RPM_REPO_CREDS} \
-                                                                    -X POST \
-                                                                    -H 'Content-Type: multipart/form-data' \
-                                                                    --data-binary '@${artifactPath}' ${repoUrl}/
-                                                                """.stripIndent()
+                                                                        curl -v -i --user \${RPM_REPO_CREDS} \
+                                                                        -X POST \
+                                                                        -H 'Content-Type: multipart/form-data' \
+                                                                        --data-binary '@${artifactPath}' ${repoUrl}/
+                                                                    """.stripIndent()
                                                             }
                                                         }
                                                     }
@@ -459,8 +522,7 @@ class SkilServerProject extends Project {
                                                         skilDockerImage.push()
                                                     }
                                                 }
-                                            }
-                                            else {
+                                            } else {
                                                 script.stage('Install test resources') {
                                                     script.dir('skil-test-resources') {
                                                         String installTestResourcesMavenArguments = [
@@ -473,15 +535,17 @@ class SkilServerProject extends Project {
                                                         ].findAll().join(' ')
 
                                                         script.sh """\
-                                                            docker-compose \
-                                                            -f ../skil-build/docker/docker-compose.yml \
-                                                            --project-directory ../skil-build/docker run \
-                                                            -v \${HOME}/.m2:/home/skil/.m2 \
-                                                            -v \$(pwd):/opt/skil/build \
-                                                            --rm \
-                                                            skil-build \
-                                                            sh -c '${installTestResourcesMavenArguments}'
-                                                        """
+                                                                docker-compose \
+                                                                -f ../skil-build/docker/docker-compose.yml \
+                                                                --project-directory ../skil-build/docker run \
+                                                                -v \${HOME}/.m2:/home/skil/.m2 \
+                                                                -v \$(pwd):/opt/skil/build \
+                                                                --rm \
+                                                                skil-build \
+                                                                sh -c '${
+                                                            installTestResourcesMavenArguments
+                                                        }'
+                                                            """
                                                     }
                                                 }
 
@@ -495,36 +559,36 @@ class SkilServerProject extends Project {
                                                     ].findAll().join(' ')
 
                                                     script.sh """\
-                                                        docker-compose \
-                                                        -f ./skil-build/docker/docker-compose.yml \
-                                                        --project-directory ./skil-build/docker run \
-                                                        -v \${HOME}/.m2:/home/skil/.m2 \
-                                                        -v \$(pwd):/opt/skil/build \
-                                                        --rm \
-                                                        skil-build \
-                                                        sh -c '${runTestsMavenArguments}'
-                                                    """
+                                                            docker-compose \
+                                                            -f ./skil-build/docker/docker-compose.yml \
+                                                            --project-directory ./skil-build/docker run \
+                                                            -v \${HOME}/.m2:/home/skil/.m2 \
+                                                            -v \$(pwd):/opt/skil/build \
+                                                            --rm \
+                                                            skil-build \
+                                                            sh -c '${runTestsMavenArguments}'
+                                                        """
                                                 }
 
 
                                                 script.dir('skil-ui-modules/src/main/typescript/dashboard') {
                                                     script.stage('Clear cache and build docker image from scratch') {
                                                         script.sh '''\
-                                                            docker-compose rm -f
-                                                            docker-compose build
-                                                        '''.stripIndent()
+                                                                docker-compose rm -f
+                                                                docker-compose build
+                                                            '''.stripIndent()
                                                     }
 
                                                     script.stage('SKIL Dashboard Unit Tests') {
                                                         script.sh '''\
-                                                            docker-compose run --rm dev yarn run test-teamcity
-                                                        '''.stripIndent()
+                                                                docker-compose run --rm dev yarn run test-teamcity
+                                                            '''.stripIndent()
                                                     }
 
                                                     script.stage('SKIL Dashboard E2E Tests') {
                                                         script.sh '''\
-                                                            docker-compose run --rm dev yarn run e2e-teamcity
-                                                        '''.stripIndent()
+                                                                docker-compose run --rm dev yarn run e2e-teamcity
+                                                            '''.stripIndent()
                                                     }
                                                 }
                                             }
@@ -532,31 +596,33 @@ class SkilServerProject extends Project {
                                     }
                                 }
                             }
-                            finally {
-                                def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                        }
+                        finally {
+                            def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
 
-                                testResults.add([
-                                        platform   : streamName,
-                                        testResults: parseTestResults(tr)
-                                ])
+                            testResults.add([
+                                    platform   : streamName,
+                                    testResults: parseTestResults(tr)
+                            ])
 
 //                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
 //                                script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
 //                                script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
 
-                                script.cleanWs deleteDirs: true
-                                // FIXME: Workaround to clean workspace
-                                script.dir("${script.env.WORKSPACE}@tmp") {
-                                    script.deleteDir()
-                                }
-                                script.dir("${script.env.WORKSPACE}@script") {
-                                    script.deleteDir()
-                                }
-                                script.dir("${script.env.WORKSPACE}@script@tmp") {
-                                    script.deleteDir()
-                                }
+                            script.cleanWs deleteDirs: true
+
+                            // FIXME: Workaround to clean workspace
+                            script.dir("${script.env.WORKSPACE}@tmp") {
+                                script.deleteDir()
+                            }
+                            script.dir("${script.env.WORKSPACE}@script") {
+                                script.deleteDir()
+                            }
+                            script.dir("${script.env.WORKSPACE}@script@tmp") {
+                                script.deleteDir()
                             }
                         }
+//                        }
                     }
                 }
             }
@@ -607,7 +673,7 @@ class SkilServerProject extends Project {
     }
 
     private void getFancyStageDecorator(String text) {
-        int charsNumber = Math.round((78-text.length())/2)
+        int charsNumber = Math.round((78 - text.length()) / 2)
 
         script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
