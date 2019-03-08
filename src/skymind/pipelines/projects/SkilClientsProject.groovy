@@ -63,8 +63,6 @@ class SkilClientsProject extends Project {
                                     ].findAll().join(' ')
 
                                     script.mvn buildClientApiMavenArguments
-
-                                    script.sh "cat pom.xml"
                                 }
                             }
 
