@@ -391,7 +391,7 @@ class Module implements Serializable {
         String mvnArguments
         List supportedModules = [
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
-//                'nd4s',
+                'nd4s',
                 'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
                 'pydl4j', 'docs'
         ]

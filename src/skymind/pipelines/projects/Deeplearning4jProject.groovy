@@ -190,7 +190,7 @@ class Deeplearning4jProject implements Serializable {
     private List getModulesToBuild(List changedFiles) {
         List supportedModules = [
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
-//                'nd4s',
+                'nd4s',
                 'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
                 'pydl4j', 'docs'
         ]
