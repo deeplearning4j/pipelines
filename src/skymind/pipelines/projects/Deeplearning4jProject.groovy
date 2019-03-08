@@ -192,7 +192,7 @@ class Deeplearning4jProject implements Serializable {
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
 //                'nd4s',
                 'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
-                'pydl4j'
+                'pydl4j', 'docs'
         ]
         List changesRelatedToModules = []
         List changesNotRelatedToModules = []
@@ -243,6 +243,7 @@ class Deeplearning4jProject implements Serializable {
                 multi    : [modules: [], platforms: getPlatforms('libnd4j')],
                 gpu      : [modules: [], platforms: getPlatforms('deeplearning4j')],
                 pymodules: [modules: [], platforms: getPlatforms('jumpy')],
+                docs:      [modules: [], platforms: getPlatforms('docs')],
                 generic  : [modules: [], platforms: getPlatforms()]
         ]
 
@@ -255,6 +256,8 @@ class Deeplearning4jProject implements Serializable {
                 mappings.gpu.modules.push(module)
             } else if (module =~ /^pydatavec|^jumpy|^pydl4j/) {
                 mappings.pymodules.modules.push(module)
+            } else if (module =~ /^docs/) {
+                mappings.docs.modules.push(module)
             } else {
                 mappings.generic.modules.push(module)
             }
@@ -478,6 +481,11 @@ class Deeplearning4jProject implements Serializable {
                 platforms = [
                         [name: 'linux-x86_64', pythonVersion: '2'],
                         [name: 'linux-x86_64', pythonVersion: '3']
+                ]
+                break
+            case ['docs']:
+                platforms = [
+                        [name: 'linux-x86_64-generic', sparkVersion: '1', scalaVersion: '2.10']
                 ]
                 break
             default:
