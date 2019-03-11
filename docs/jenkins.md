@@ -76,12 +76,10 @@ To test changes related to Jenkins configuration or runtime environment locally 
 4. Providing gpg key should be done manually.
 5. Credentials for e-mail server should be provided manually.
 6. Mask Passwords - Parameters to automatically mask -> Credentials Parameter flag should be set manually.
-7. Some trais for Organization folder has problems (https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos/jobs):
+7. Some traits for Organization folder has problems (https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos/jobs):
     ```
     navTraits << 'org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait' {
         strategyId(1)
         trust(class: "org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTraitTrustPermission")
     }
     ```
-8. Skip github PR should be installed and configured manually (Problem with docker hub builds).
-9. GPG keys (secret and public) should be provided manually.
