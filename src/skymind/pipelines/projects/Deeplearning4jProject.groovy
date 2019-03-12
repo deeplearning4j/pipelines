@@ -282,7 +282,7 @@ class Deeplearning4jProject implements Serializable {
 
         result.collect { key, value ->
             value
-        }
+        }.reverse()
     }
 
     private Map getBuildStreams(List modulesToBuild, List platforms) {
