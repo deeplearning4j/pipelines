@@ -555,7 +555,8 @@ class SkilServerProject extends Project {
                                                             'test',
                                                             '-P ci',
                                                             '-P ci-nexus',
-                                                            "-P ${sparkVersion}"
+                                                            "-P ${sparkVersion}",
+                                                            "-P test"
                                                     ].findAll().join(' ')
 
                                                     script.sh """\
