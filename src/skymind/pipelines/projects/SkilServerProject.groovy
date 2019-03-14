@@ -593,6 +593,92 @@ class SkilServerProject extends Project {
                                                     }
                                                 }
                                             }
+                                        } else {
+                                            if (release) {
+                                                script.stage('Publish artifacts') {
+                                                    def repoUrl
+                                                    def repoPath
+                                                    def baseArch = 'x86_64'
+                                                    def packageExtension = getPackageExtension(osName)
+
+                                                    if (osName == 'windows') {
+                                                        repoUrl = "https://nexus-ci.skymind.io/repository/tarballs"
+
+                                                        switch (branchName) {
+                                                            case ~releaseBranchPattern:
+                                                            case 'master':
+                                                                repoPath = [
+                                                                        osName,
+                                                                        'server-2016',
+                                                                        'latest',
+                                                                        'os', // a.k.a base
+                                                                        baseArch,
+                                                                        'Packages'
+                                                                ].findAll().join('/')
+                                                                break
+                                                            default:
+                                                                repoPath = [
+                                                                        osName,
+                                                                        'server-2016',
+                                                                        'dev',
+                                                                        'os', // a.k.a base
+                                                                        baseArch,
+                                                                        'Packages'
+                                                                ].findAll().join('/')
+                                                                break
+                                                        }
+
+                                                        def artifacts = script.findFiles glob: "${buildArtifactsPath}/${skilDockerImageTag}/*.${packageExtension}"
+
+                                                        for (def art : artifacts) {
+                                                            def artifact = art
+                                                            def artifactName = artifact.name
+                                                            def artifactPath = artifact.path
+
+                                                            script.withCredentials([
+                                                                    script.usernameColonPassword(
+                                                                            credentialsId: 'skymind-docker-registry',
+                                                                            variable: 'RPM_REPO_CREDS'
+                                                                    )
+                                                            ]) {
+                                                                script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                script.stage('Install test resources') {
+                                                    script.dir('skil-test-resources') {
+                                                        String installTestResourcesMavenArguments = [
+                                                                mavenBaseCommand,
+                                                                'clean',
+                                                                'install',
+                                                                '-DskipTests',
+                                                                '-Dmaven.test.skip=true',
+                                                                '-Dmaven.javadoc.skip=true'
+                                                        ].findAll().join(' ')
+
+                                                        script.sh """\
+                                                            ${installTestResourcesMavenArguments}
+                                                        """
+                                                    }
+                                                }
+
+                                                script.stage('Run tests') {
+                                                    String runTestsMavenArguments = [
+                                                            mavenBaseCommand,
+                                                            'test',
+                                                            '-P ci',
+                                                            '-P ci-nexus',
+                                                            "-P ${sparkVersion}",
+                                                            "-P test"
+                                                    ].findAll().join(' ')
+
+                                                    script.sh """\
+                                                        ${runTestsMavenArguments}
+                                                    """
+                                                }
+                                            }
                                         }
                                     }
                                 }
