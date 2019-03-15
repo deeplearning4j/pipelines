@@ -15,7 +15,8 @@ class SkilServerProject extends Project {
     public boolean release = true
     String zeppelinBranchName = 'skymind-0.7-skil-1.2.0'
     String zeppelinGitUrl = 'https://github.com/SkymindIO/zeppelin.git'
-    String releaseBranchPattern = /^release\/(\d+\.)?(\d+\.)?(\*|\d+)?(-\w+)$/
+//    String releaseBranchPattern = /^release\/(\d+\.)?(\d+\.)?(\*|\d+)?(-\w+)$/
+    String releaseBranchPattern = /^v[\d.]+?[-]?[\w]+$/
     String buildArtifactsPath = 'skil-distro-parent/skil-distro-docker/build-artifacts'
 
     protected def getBuildMappings() {
@@ -217,7 +218,7 @@ class SkilServerProject extends Project {
                     script.notifier.sendSlackNotification jobResult: 'STARTED',
                             checkoutDetails: checkoutDetails, isMember: isMember
 
-                    release = (branchName =~ releaseBranchPattern) ? true : false
+                    release = branchName ==~ releaseBranchPattern
                 }
             }
 
@@ -311,6 +312,10 @@ class SkilServerProject extends Project {
                                 // Expose gathered values as environment variables
                                 script.env.SKIL_VERSION = skilVersion
                                 script.env.SKIL_DOCKER_IMAGE_REVISION_NUMBER = "0.0.1"
+
+                                if (release) {
+                                    script.echo "[INFO] Releasing new version of skil-server (v${skilVersion})..."
+                                }
                             }
 
                             if (release) {
