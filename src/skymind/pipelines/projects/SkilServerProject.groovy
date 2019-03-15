@@ -22,18 +22,19 @@ class SkilServerProject extends Project {
     protected def getBuildMappings() {
         if (release) {
             return [
+                [
                     platforms: [
-                            [
-                                    name         : 'linux-x86_64-generic',
-                                    osName       : 'centos',
-                                    osVersion    : '7',
-                                    backend      : 'cpu',
-                                    sparkVersion : 'spark-1.6',
-                                    scalaVersion : '2.10',
-                                    hadoopVersion: 'hadoop-2.7',
-                                    condaVersion : '4.3.27',
-                                    pythonVersion: '2'
-                            ],
+                        [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'centos',
+                                osVersion    : '7',
+                                backend      : 'cpu',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
 //                      [
 //                              name         : 'linux-x86_64-generic',
 //                              osName       : 'centos',
@@ -45,18 +46,18 @@ class SkilServerProject extends Project {
 //                              condaVersion : '4.3.27',
 //                              pythonVersion: '3'
 //                      ],
-                            [
-                                    name         : 'linux-x86_64-generic',
-                                    osName       : 'centos',
-                                    osVersion    : '7',
-                                    backend      : 'cuda-10.0',
-                                    cudnnVersion : '7',
-                                    sparkVersion : 'spark-1.6',
-                                    scalaVersion : '2.10',
-                                    hadoopVersion: 'hadoop-2.7',
-                                    condaVersion : '4.3.27',
-                                    pythonVersion: '2'
-                            ],
+                        [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'centos',
+                                osVersion    : '7',
+                                backend      : 'cuda-10.0',
+                                cudnnVersion : '7',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
 //                      [
 //                              name         : 'linux-x86_64-generic',
 //                              osName       : 'centos',
@@ -69,17 +70,17 @@ class SkilServerProject extends Project {
 //                              condaVersion : '4.3.27',
 //                              pythonVersion: '3'
 //                      ],
-                            [
-                                    name         : 'linux-x86_64-generic',
-                                    osName       : 'ubuntu',
-                                    osVersion    : '16.04',
-                                    backend      : 'cpu',
-                                    sparkVersion : 'spark-1.6',
-                                    scalaVersion : '2.10',
-                                    hadoopVersion: 'hadoop-2.7',
-                                    condaVersion : '4.3.27',
-                                    pythonVersion: '2'
-                            ],
+                        [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'ubuntu',
+                                osVersion    : '16.04',
+                                backend      : 'cpu',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
 //                      [
 //                              name         : 'linux-x86_64-generic',
 //                              osName       : 'ubuntu',
@@ -91,18 +92,18 @@ class SkilServerProject extends Project {
 //                              condaVersion : '4.3.27',
 //                              pythonVersion: '3'
 //                      ],
-                            [
-                                    name         : 'linux-x86_64-generic',
-                                    osName       : 'ubuntu',
-                                    osVersion    : '16.04',
-                                    backend      : 'cuda-10.0',
-                                    cudnnVersion : '7',
-                                    sparkVersion : 'spark-1.6',
-                                    scalaVersion : '2.10',
-                                    hadoopVersion: 'hadoop-2.7',
-                                    condaVersion : '4.3.27',
-                                    pythonVersion: '2'
-                            ],
+                        [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'ubuntu',
+                                osVersion    : '16.04',
+                                backend      : 'cuda-10.0',
+                                cudnnVersion : '7',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
 //                      [
 //                              name         : 'linux-x86_64-generic',
 //                              osName       : 'ubuntu',
@@ -115,17 +116,17 @@ class SkilServerProject extends Project {
 //                              condaVersion : '4.3.27',
 //                              pythonVersion: '3'
 //                      ],
-                            [
-                                    name         : 'windows-x86_64-cpu',
-                                    osName       : 'windows',
-                                    osVersion    : 'server-2016',
-                                    backend      : 'cpu',
-                                    sparkVersion : 'spark-1.6',
-                                    scalaVersion : '2.10',
-                                    hadoopVersion: 'hadoop-2.7',
-                                    condaVersion : '4.3.27',
-                                    pythonVersion: '2'
-                            ],
+                        [
+                                name         : 'windows-x86_64-cpu',
+                                osName       : 'windows',
+                                osVersion    : 'server-2016',
+                                backend      : 'cpu',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
 //                      [
 //                              name         : 'windows-x86_64-cuda-10.0',
 //                              osName       : 'windows',
@@ -139,6 +140,7 @@ class SkilServerProject extends Project {
 //                              pythonVersion: '2'
 //                      ]
                     ]
+                ]
             ]
         } else {
             return [
@@ -174,33 +176,33 @@ class SkilServerProject extends Project {
 //                                    ]
 //                            ]
 //                    ]
-[
+                [
 
-        platforms: [
-                [
-                        name         : 'linux-x86_64-generic',
-                        osName       : 'centos',
-                        osVersion    : '7',
-                        backend      : 'cpu',
-                        sparkVersion : 'spark-1.6',
-                        scalaVersion : '2.11',
-                        hadoopVersion: 'hadoop-2.7',
-                        condaVersion : '4.3.27',
-                        pythonVersion: '2'
-                ],
-                [
-                        name         : 'windows-x86_64-cpu',
-                        osName       : 'windows',
-                        osVersion    : '-server-2016',
-                        backend      : 'cpu',
-                        sparkVersion : 'spark-1.6',
-                        scalaVersion : '2.10',
-                        hadoopVersion: 'hadoop-2.7',
-                        condaVersion : '4.3.27',
-                        pythonVersion: '2'
+                    platforms: [
+                        [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'centos',
+                                osVersion    : '7',
+                                backend      : 'cpu',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.11',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
+                        [
+                                name         : 'windows-x86_64-cpu',
+                                osName       : 'windows',
+                                osVersion    : '-server-2016',
+                                backend      : 'cpu',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ]
+                    ]
                 ]
-        ]
-]
             ]
         }
     }
