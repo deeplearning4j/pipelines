@@ -563,7 +563,7 @@ class SkilServerProject extends Project {
                                                             '-P ci',
                                                             '-P ci-nexus',
                                                             "-P ${sparkVersion}",
-                                                            "-P test"
+//                                                            "-P test"
                                                     ].findAll().join(' ')
 
                                                     script.sh """\
@@ -678,7 +678,7 @@ class SkilServerProject extends Project {
                                                             '-P ci',
                                                             '-P ci-nexus',
                                                             "-P ${sparkVersion}",
-                                                            "-P test"
+//                                                            "-P test"
                                                     ].findAll().join(' ')
 
                                                     script.sh """\
