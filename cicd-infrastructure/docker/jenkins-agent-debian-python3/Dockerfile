@@ -31,7 +31,7 @@ RUN conda config --set always_yes yes --set changeps1 no && \
     conda info -a && \
     conda create -q -n test-environment python=3.6 nose
 
-ARG JENKINS_AGENT_VERSION=3.27
+ARG JENKINS_AGENT_VERSION=3.29
 RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar \
     https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${JENKINS_AGENT_VERSION}/remoting-${JENKINS_AGENT_VERSION}.jar && \
     chmod 755 /usr/share/jenkins && \
