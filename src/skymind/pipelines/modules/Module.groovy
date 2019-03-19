@@ -120,37 +120,36 @@ class Module implements Serializable {
     }
 
     protected void stagesToRun() {
-        script.stage('Checkout') {
-            getFancyStageDecorator('Checkout stage')
-            script.checkout script.scm
-        }
+//        script.stage('Checkout') {
+//            getFancyStageDecorator('Checkout stage')
+//            script.checkout script.scm
+//        }
 
-        script.container('builder') {
-            if (modulesToBuild.contains('docs')) {
-                script.stage('Release docs') {
-                    getFancyStageDecorator('Release docs stage')
-                    releaseDocs()
+        if (modulesToBuild.contains('docs')) {
+            script.stage('Release docs') {
+                getFancyStageDecorator('Release docs stage')
+                releaseDocs()
+            }
+        } else {
+            if (branchName.contains(releaseBranchPattern)) {
+                script.stage("Prepare for Release") {
+                    getFancyStageDecorator('Prepare for Release stage')
+                    setupEnvForRelease()
+                }
+            }
+
+            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+                script.stage('Build') {
+                    getFancyStageDecorator('Build stage')
+                    runBuildLogic()
+                }
+
+                script.stage('Deploy') {
+                    getFancyStageDecorator('Deploy stage')
+                    runDeployLogic()
                 }
             } else {
-                if (branchName.contains(releaseBranchPattern)) {
-                    script.stage("Prepare for Release") {
-                        getFancyStageDecorator('Prepare for Release stage')
-                        setupEnvForRelease()
-                    }
-                }
-
-                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                    script.stage('Build') {
-                        getFancyStageDecorator('Build stage')
-                        runBuildLogic()
-                    }
-
-                    script.stage('Deploy') {
-                        getFancyStageDecorator('Deploy stage')
-                        runDeployLogic()
-                    }
-                } else {
-                    if (streamName == 'linux-x86_64-cpu') {
+                if (streamName == 'linux-x86_64-cpu') {
 //                      script.stage('Test libnd4j in debug mode') {
 //                          libnd4jBuildMode = 'debug'
 //                          getFancyStageDecorator('Test libnd4j in debug mode stage')
@@ -158,28 +157,28 @@ class Module implements Serializable {
 //                          libnd4jBuildMode = 'release'
 //                      }
 
-                        script.stage('Build') {
-                            getFancyStageDecorator('Build stage')
-                            runBuildLogic()
-                        }
+                    script.stage('Build') {
+                        getFancyStageDecorator('Build stage')
+                        runBuildLogic()
+                    }
 
+                    script.stage('Test') {
+                        getFancyStageDecorator('Test stage')
+                        runTestLogic()
+                    }
+                } else {
+                    script.stage('Build') {
+                        getFancyStageDecorator('Build stage')
+                        runBuildLogic()
+                    }
+
+                    if (!(streamName in streamsToExclude)) {
                         script.stage('Test') {
                             getFancyStageDecorator('Test stage')
                             runTestLogic()
                         }
-                    } else {
-                        script.stage('Build') {
-                            getFancyStageDecorator('Build stage')
-                            runBuildLogic()
-                        }
-
-                        if (!(streamName in streamsToExclude)) {
-                            script.stage('Test') {
-                                getFancyStageDecorator('Test stage')
-                                runTestLogic()
-                            }
-                        }
                     }
+                }
 
 //                  script.stage('Static code analysis') {
 //                      runStaticCodeAnalysisLogic()
@@ -188,7 +187,6 @@ class Module implements Serializable {
 //                  script.stage('Security scan') {
 //                      runSecurityScanLogic()
 //                  }
-                }
             }
         }
     }

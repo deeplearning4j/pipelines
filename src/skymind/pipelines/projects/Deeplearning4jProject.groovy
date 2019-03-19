@@ -349,7 +349,13 @@ class Deeplearning4jProject implements Serializable {
                         /* Redefine default workspace to fix Windows path length limitation */
                         script.ws(wsFolderName) {
                             try {
-                                module.stagesToRun()
+                                script.stage('Checkout') {
+                                    script.checkout script.scm
+                                }
+
+                                script.container('builder') {
+                                    module.stagesToRun()
+                                }
                             }
                             finally {
                                 testResults.add(module.testResults)
@@ -384,9 +390,17 @@ class Deeplearning4jProject implements Serializable {
                                     String dockerImageParams = dockerConf?.params
 
                                     script.docker.image(dockerImageName).inside(dockerImageParams) {
+                                        script.stage('Checkout') {
+                                            script.checkout script.scm
+                                        }
+
                                         module.stagesToRun()
                                     }
                                 } else {
+                                    script.stage('Checkout') {
+                                        script.checkout script.scm
+                                    }
+
                                     module.stagesToRun()
                                 }
                             }
