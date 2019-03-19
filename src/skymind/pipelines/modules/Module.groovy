@@ -43,19 +43,6 @@ class Module implements Serializable {
     private String javacppCacheFolder = '.javacpp/cache/'
     private static String localRepositoryPath
     public Map testResults
-    private List withMavenDockerFixPlatformsToIgnore = [
-            'android-arm-cpu',
-            'android-arm64-cpu',
-            'android-x86-cpu',
-            'android-x86_64-cpu',
-            'linux-armhf-cpu',
-            'linux-x86_64-centos6-cpu',
-            'linux-x86_64-centos6-cpu-avx2',
-            'linux-x86_64-centos6-cpu-avx512',
-            'linux-x86_64-cpu',
-            'linux-x86_64-cpu-avx2',
-            'linux-x86_64-cpu-avx512'
-    ]
 
     /**
      * Module class constructor
@@ -94,8 +81,6 @@ class Module implements Serializable {
         streamName = args.containsKey('streamName') ? args.streamName : ''
         // FIXME: Workaround for master and release builds
         streamName = (streamName == 'linux-x86_64-cpu-centos6') ? 'linux-x86_64-cpu' : streamName
-//        FIXME: .m2\\repository not working for Windows...
-//        localRepositoryPath = (isUnixNode) ? '.m2/repository' : '.m2\\repository'
         localRepositoryPath = '.m2/repository'
     }
 
@@ -113,9 +98,7 @@ class Module implements Serializable {
             updateVersion('cuda', cudaVersion)
         }
 
-        Boolean inK8s = (withMavenDockerFixPlatformsToIgnore.contains(streamName)) ? true : false
-
-        script.mvn getMvnCommand('build'), inK8s
+        script.mvn getMvnCommand('build')
     }
 
     private void runTestLogic() {
@@ -142,68 +125,70 @@ class Module implements Serializable {
             script.checkout script.scm
         }
 
-        if (modulesToBuild.contains('docs')) {
-            script.stage('Release docs') {
-                getFancyStageDecorator('Release docs stage')
-                releaseDocs()
-            }
-        } else {
-            if (branchName.contains(releaseBranchPattern)) {
-                script.stage("Prepare for Release") {
-                    getFancyStageDecorator('Prepare for Release stage')
-                    setupEnvForRelease()
-                }
-            }
-
-            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
-                script.stage('Build') {
-                    getFancyStageDecorator('Build stage')
-                    runBuildLogic()
-                }
-
-                script.stage('Deploy') {
-                    getFancyStageDecorator('Deploy stage')
-                    runDeployLogic()
+        script.container('builder') {
+            if (modulesToBuild.contains('docs')) {
+                script.stage('Release docs') {
+                    getFancyStageDecorator('Release docs stage')
+                    releaseDocs()
                 }
             } else {
-                if (streamName == 'linux-x86_64-cpu') {
-//                script.stage('Test libnd4j in debug mode') {
-//                    libnd4jBuildMode = 'debug'
-//                    getFancyStageDecorator('Test libnd4j in debug mode stage')
-//                    runTestLogic()
-//                    libnd4jBuildMode = 'release'
-//                }
+                if (branchName.contains(releaseBranchPattern)) {
+                    script.stage("Prepare for Release") {
+                        getFancyStageDecorator('Prepare for Release stage')
+                        setupEnvForRelease()
+                    }
+                }
 
+                if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
                     script.stage('Build') {
                         getFancyStageDecorator('Build stage')
                         runBuildLogic()
                     }
 
-                    script.stage('Test') {
-                        getFancyStageDecorator('Test stage')
-                        runTestLogic()
+                    script.stage('Deploy') {
+                        getFancyStageDecorator('Deploy stage')
+                        runDeployLogic()
                     }
                 } else {
-                    script.stage('Build') {
-                        getFancyStageDecorator('Build stage')
-                        runBuildLogic()
-                    }
+                    if (streamName == 'linux-x86_64-cpu') {
+//                      script.stage('Test libnd4j in debug mode') {
+//                          libnd4jBuildMode = 'debug'
+//                          getFancyStageDecorator('Test libnd4j in debug mode stage')
+//                          runTestLogic()
+//                          libnd4jBuildMode = 'release'
+//                      }
 
-                    if (!(streamName in streamsToExclude)) {
+                        script.stage('Build') {
+                            getFancyStageDecorator('Build stage')
+                            runBuildLogic()
+                        }
+
                         script.stage('Test') {
                             getFancyStageDecorator('Test stage')
                             runTestLogic()
                         }
-                    }
-                }
+                    } else {
+                        script.stage('Build') {
+                            getFancyStageDecorator('Build stage')
+                            runBuildLogic()
+                        }
 
-//            script.stage('Static code analysis') {
-//                runStaticCodeAnalysisLogic()
-//            }
+                        if (!(streamName in streamsToExclude)) {
+                            script.stage('Test') {
+                                getFancyStageDecorator('Test stage')
+                                runTestLogic()
+                            }
+                        }
+                    }
+
+//                  script.stage('Static code analysis') {
+//                      runStaticCodeAnalysisLogic()
+//                  }
 //
-//            script.stage('Security scan') {
-//                runSecurityScanLogic()
-//            }
+//                  script.stage('Security scan') {
+//                      runSecurityScanLogic()
+//                  }
+                }
             }
         }
     }
@@ -263,12 +248,12 @@ class Module implements Serializable {
             mavenArguments.push('-P uberjar')
             mavenArguments.push("-Djavacpp.platform=${platformName}")
 
-//            if (!modules.any { it =~ /^libnd4j/ } &&
-//                    (platformName != 'linux-x86_64' ||
-//                            (platformName == 'linux-x86_64' && cpuExtension))
-//            ) {
-//                mavenArguments.push('-P libnd4j-assembly')
-//            }
+//          if (!modules.any { it =~ /^libnd4j/ } &&
+//                  (platformName != 'linux-x86_64' ||
+//                          (platformName == 'linux-x86_64' && cpuExtension))
+//          ) {
+//              mavenArguments.push('-P libnd4j-assembly')
+//          }
 
             if (backend == 'cpu') {
                 if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
@@ -524,11 +509,11 @@ class Module implements Serializable {
                     "if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
-                    (!(withMavenDockerFixPlatformsToIgnore.contains(streamName))) ?
-                            'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
-                    /* MAVEN_OPTS provided below, should help to effectively use of docker container resources with Java 8 */
-                    (!(platformName in ['macosx-x86_64', 'ios-x86_64', 'ios-arm64', 'windows-x86_64'])) ?
-                            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&' : ''
+//                    (!(withMavenDockerFixPlatformsToIgnore.contains(streamName))) ?
+//                            'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
+//                    /* MAVEN_OPTS provided below, should help to effectively use of docker container resources with Java 8 */
+//                    (!(platformName in ['macosx-x86_64', 'ios-x86_64', 'ios-arm64', 'windows-x86_64'])) ?
+//                            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&' : ''
             ] + commonArguments + [
                     /* Workaround for MacOS/iOS which doesn't honour withMaven options */
                     (platformName.contains('macosx') || platformName.contains('ios')) ?
@@ -541,7 +526,8 @@ class Module implements Serializable {
                     'vcvars64.bat',
                     '&&',
                     'bash -c',
-                    '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&'
+//                    '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&'
+                    '"'
             ] + commonArguments + [
                     /* Workaround for Windows which doesn't honour withMaven options */
                     "-Dmaven.repo.local=${localRepositoryPath}",

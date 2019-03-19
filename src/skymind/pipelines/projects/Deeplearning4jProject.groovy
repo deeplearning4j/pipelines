@@ -346,26 +346,24 @@ class Deeplearning4jProject implements Serializable {
                     ], script)
 
                     if (buildInContainer.contains(streamName)) {
-                        script.container('jnlp') {
-                            /* Redefine default workspace to fix Windows path length limitation */
-                            script.ws(wsFolderName) {
-                                try {
-                                    module.stagesToRun()
+                        /* Redefine default workspace to fix Windows path length limitation */
+                        script.ws(wsFolderName) {
+                            try {
+                                module.stagesToRun()
+                            }
+                            finally {
+                                testResults.add(module.testResults)
+                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
+                                script.cleanWs deleteDirs: true
+                                // FIXME: Workaround to clean workspace
+                                script.dir("${script.env.WORKSPACE}@tmp") {
+                                    script.deleteDir()
                                 }
-                                finally {
-                                    testResults.add(module.testResults)
-                                    script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-                                    script.cleanWs deleteDirs: true
-                                    // FIXME: Workaround to clean workspace
-                                    script.dir("${script.env.WORKSPACE}@tmp") {
-                                        script.deleteDir()
-                                    }
-                                    script.dir("${script.env.WORKSPACE}@script") {
-                                        script.deleteDir()
-                                    }
-                                    script.dir("${script.env.WORKSPACE}@script@tmp") {
-                                        script.deleteDir()
-                                    }
+                                script.dir("${script.env.WORKSPACE}@script") {
+                                    script.deleteDir()
+                                }
+                                script.dir("${script.env.WORKSPACE}@script@tmp") {
+                                    script.deleteDir()
                                 }
                             }
                         }
