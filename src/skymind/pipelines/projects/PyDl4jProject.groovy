@@ -81,7 +81,9 @@ class PyDl4jProject extends Project {
                             }
 
                             script.stage('Test') {
-                                runTestLogic()
+                                script.container('builder'){
+                                    runTestLogic()
+                                }
                             }
                         }
                         finally {
