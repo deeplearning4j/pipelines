@@ -298,7 +298,10 @@ class Deeplearning4jProject implements Serializable {
                 'linux-x86_64-centos6-cpu-avx512',
                 'linux-x86_64-cpu',
                 'linux-x86_64-cpu-avx2',
-                'linux-x86_64-cpu-avx512'
+                'linux-x86_64-cpu-avx512',
+                'linux-x86_64-python-2',
+                'linux-x86_64-python-3',
+                'linux-x86_64-generic'
         ]
 
         for (Map pltm : platforms) {
