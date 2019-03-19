@@ -59,8 +59,7 @@ def call(String command, Boolean inK8s = false) {
         configFileProvider([
                 configFile(
                     fileId: configFileName,
-                    targetLocation: '/home/jenkins/.m2/settings.xml',
-                    variable: ''
+                    targetLocation: "${env.HOME}/.m2/settings.xml"
                 )
         ]) {
             sh command
