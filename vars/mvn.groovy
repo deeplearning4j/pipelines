@@ -59,7 +59,9 @@ def call(String command, Boolean inK8s = false) {
         configFileProvider([
                 configFile(
                     fileId: configFileName,
-                    targetLocation: "${env.HOME}/.m2/settings.xml"
+//                    targetLocation: "${env.HOME}/.m2/settings.xml"
+//                    targetLocation: ".m2/settings.xml"
+                    variable: 'MAVEN_SETTINGS'
                 )
         ]) {
             sh command
