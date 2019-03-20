@@ -53,26 +53,26 @@ Map getDockerConfig(String streamName) {
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cpu']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g -v ${HOME}/.m2:/home/jenkins/.m2']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cuda-9.0']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda90-ppc64le', params: ' --init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda90-ppc64le', params: ' --init --shm-size=8g --tmpfs /tmp:size=8g -v ${HOME}/.m2:/home/jenkins/.m2']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cuda-9.1']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g -v ${HOME}/.m2:/home/jenkins/.m2']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cuda-9.2']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda92-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/pipelines:ubuntu16cuda92-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g -v ${HOME}/.m2:/home/jenkins/.m2']
             break
 
         case ['linux-ppc64le-cuda-10.0']:
-            return [image : 'skymindops/pipelines:ubuntu1604cuda100-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/pipelines:ubuntu1604cuda100-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g -v ${HOME}/.m2:/home/jenkins/.m2']
             break
 
         case ~/^ios.*$/:
@@ -95,12 +95,13 @@ String getNvidiaDockerParams() {
             "&& true || false"
     String dockerInspectResult = sh(script: dockerInspectScript, returnStdout: true).trim()
     String dockerParamsTmpfsNvidia = [
-            "-v ${jenkinsDockerSbtFolder}:/home/jenkins/.ivy2:z",
+//            "-v ${jenkinsDockerSbtFolder}:/home/jenkins/.ivy2:z",
             "--device=/dev/nvidiactl",
             "--device=/dev/nvidia-uvm",
             "--device=/dev/nvidia0",
             "--tmpfs /tmp:rw,mode=1777,size=16g",
-            '--shm-size=8g'
+            '--shm-size=8g',
+            '-v ${HOME}/.m2:/home/jenkins/.m2'
     ].join(' ')
 
     return dockerInspectResult ?
