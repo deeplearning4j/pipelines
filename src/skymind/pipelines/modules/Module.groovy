@@ -524,9 +524,7 @@ class Module implements Serializable {
             mavenCommand = ([
                     'vcvars64.bat',
                     '&&',
-                    'bash -c',
-                    '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&'
-//                    '"'
+                    'bash -c "',
             ] + commonArguments + [
                     /* Workaround for Windows which doesn't honour withMaven options */
                     "-Dmaven.repo.local=${localRepositoryPath}",
