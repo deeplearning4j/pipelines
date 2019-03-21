@@ -76,7 +76,7 @@ def call(String command, Boolean inK8s = false) {
             String mavenSettingsFilePath = env.MAVEN_SETTINGS.replaceAll('\\\\', '/')
 
             withEnv(["MAVEN_SETTINGS=$mavenSettingsFilePath"]) {
-                sh command
+                bat command
             }
         }
     }
