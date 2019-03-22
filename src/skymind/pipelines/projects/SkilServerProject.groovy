@@ -280,6 +280,7 @@ class SkilServerProject extends Project {
 
             def scienceLibrariesInstall = platform.get('scienceLibrariesInstall') ?: true
             def staticPackageBuild = release ? true : false
+            def buildZeppelin = release ? true : false
 
             def dockerhubProxy = "docker.ci.skymind.io/"
 
@@ -353,7 +354,8 @@ class SkilServerProject extends Project {
                                         "PYTHON_PACKAGE_BUILD=${pythonPackageBuild}",
                                         "SCALA_VERSION=${scalaVersion}",
                                         "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
-                                        "SPARK_VERSION=${sparkVersion}"
+                                        "SPARK_VERSION=${sparkVersion}",
+                                        "BUILD_ZEPPELIN=${buildZeppelin}"
                                 ]) {
                                     script.stage('Build SKIL and its dependencies') {
                                         script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
