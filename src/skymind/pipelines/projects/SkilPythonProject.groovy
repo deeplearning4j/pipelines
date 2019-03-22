@@ -102,7 +102,9 @@ class SkilPythonProject extends Project {
                                     platform   : streamName,
                                     testResults: parseTestResults(tr)
                             ])
+
                             script.cleanWs deleteDirs: true
+
                             // FIXME: Workaround to clean workspace
                             script.dir("${script.env.WORKSPACE}@tmp") {
                                 script.deleteDir()
