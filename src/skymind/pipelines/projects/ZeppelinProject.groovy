@@ -10,7 +10,8 @@ class ZeppelinProject extends Project {
     private String mavenBaseCommand = [
             'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions ' +
                     '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
-            'mvn'
+            'mvn -U',
+            '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
 
     protected List getPlatforms() {
