@@ -266,7 +266,7 @@ class SkilServerProject extends Project {
             def platformName = platform.get('name')
             def osName = platform.get('osName') ?: script.error('Missing osName argument!')
             def osVersion = platform.get('osVersion') ?: script.error('Missing osVersion argument!')
-            def backend = platform.get('backend')
+            String backend = platform.get('backend')
 
             def pythonVersion = platform.get('pythonVersion')
             def pythonPackageBuild = platform.get('pythonPackageBuild') ?: 'false'
@@ -478,6 +478,9 @@ class SkilServerProject extends Project {
                                                                 script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
                                                             }
                                                         }
+
+                                                        // Tarball upload
+                                                        publishTarball(skilVersion, backend)
                                                     }
 
                                                     if (osName == 'ubuntu') {
@@ -772,5 +775,44 @@ class SkilServerProject extends Project {
         int charsNumber = Math.round((78 - text.length()) / 2)
 
         script.echo("*" * charsNumber + text + "*" * charsNumber)
+    }
+
+    private void publishTarball(String skilVersion, String backend) {
+        String repoUrl = 'https://nexus-ci.skymind.io/repository/tarballs'
+        String repoPath
+        def tarballs = script.findFiles glob: "skil-distro-parent/skildistro/target/*.tar.gz"
+
+        switch (branchName) {
+            case ~releaseBranchPattern:
+            case 'master':
+                repoPath = [
+                    'releases',
+                    skilVersion,
+                    backend
+                ].findAll().join('/')
+            break
+            default:
+                repoPath = [
+                    'snapshots',
+                    skilVersion,
+                    backend
+                ].findAll().join('/')
+            break
+        }
+
+        script.withCredentials([
+                script.usernameColonPassword(
+                        credentialsId: 'skymind-docker-registry',
+                        variable: 'RPM_REPO_CREDS'
+                )
+        ]) {
+            for (def tr in tarballs) {
+                def tarball = tr
+                def tarballName = tarball.name
+                def tarballPath = tarball.path
+
+                script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${tarballPath} ${repoUrl}/${repoPath}/${tarballName}"
+            }
+        }
     }
 }
