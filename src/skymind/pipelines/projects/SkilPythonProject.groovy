@@ -60,19 +60,7 @@ class SkilPythonProject extends Project {
             /* Create stream body */
             streams["$streamName"] = {
                 script.node(streamName) {
-                    Boolean isUnixNode = script.isUnix()
-                    String separator = isUnixNode ? '/' : '\\'
-                    /* Workaround for Windows path length limitation */
-                    String wsFolderName = ((isUnixNode) ? 'workspace' : 'ws') +
-                            separator +
-                            [(isUnixNode) ?
-                                     projectName :
-                                     (projectName.contains('deeplearning4j') ? 'dl4j' : projectName),
-                             script.env.BRANCH_NAME,
-                             streamName].join('-').replaceAll('/', '-')
-
-                    /* Redefine default workspace to fix Windows path length limitation */
-                    script.ws(wsFolderName) {
+                    script.container('builder') {
                         try {
                             script.stage('Checkout') {
                                 script.checkout script.scm
