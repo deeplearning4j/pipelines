@@ -32,7 +32,7 @@ class SkilJavaProject extends Project {
 //                    }
 //                }
 
-                script.container('jnlp') {
+                script.container('builder') {
                     try {
                         script.stage('Checkout') {
                             script.checkout script.scm

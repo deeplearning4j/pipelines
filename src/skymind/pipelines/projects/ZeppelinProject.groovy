@@ -29,7 +29,7 @@ class ZeppelinProject extends Project {
 
             script.ws(wsFolderName) {
                 try {
-                    script.container('jnlp') {
+                    script.container('builder') {
                         try {
                             script.stage('Checkout') {
                                 script.checkout script.scm
