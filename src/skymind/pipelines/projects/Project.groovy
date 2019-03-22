@@ -224,7 +224,8 @@ abstract class Project implements Serializable {
                             'clean',
                             (branchName == 'master') ? 'deploy' : 'install',
                             "-Dlocal.software.repository=ci-nexus",
-                            (releaseApproved) ? "-P staging" : ''
+                            (releaseApproved) ? "-P staging" : '',
+                            '-s ${MAVEN_SETTINGS}'
                     ].plus(mvnArguments).findAll().join(' ')
                 } else {
                     return [
