@@ -55,6 +55,11 @@ class SkilJavaProject extends Project {
                             }
                         }
 
+                        script.stage('Check SKIL') {
+                            // FIXME: Wokraround for SKIL container readiness check
+                            checkIfSkilIsRunning()
+                        }
+
                         script.stage('Build and Test') {
                             String buildClientApiMavenArguments = [
                                     mavenBaseCommand,
@@ -136,5 +141,30 @@ class SkilJavaProject extends Project {
         }
 
         return testResultsDetails
+    }
+
+    private void checkIfSkilIsRunning() {
+        def started = false
+        def retries = 10
+
+        for (int i = 0; i < retries; i++) {
+            if (!started) {
+                def checkResult = script.sh(
+                        script: 'curl -sS http://localhost:9008/status | grep -o -i \'STARTED\' | wc -l',
+                        returnStdout: true
+                ).trim()
+
+                if (checkResult == '3') {
+                    started = true
+                    script.echo 'SKIL has been started!'
+                } else if (i == 9) {
+                    script.error "SKIL has not been started!"
+                } else {
+                    sleep(60000)
+                }
+            } else {
+                break
+            }
+        }
     }
 }
