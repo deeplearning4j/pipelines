@@ -12,7 +12,7 @@ class SkilServerProject extends Project {
                     '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
             'mvn -U'
     ].findAll().join(' ')
-    public boolean release = true
+    private boolean release = false
     String zeppelinBranchName = 'skymind-0.7-skil-1.2.0'
     String zeppelinGitUrl = 'https://github.com/SkymindIO/zeppelin.git'
 //    String releaseBranchPattern = /^release\/(\d+\.)?(\d+\.)?(\*|\d+)?(-\w+)$/
