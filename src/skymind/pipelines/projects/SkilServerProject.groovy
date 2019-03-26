@@ -335,7 +335,7 @@ class SkilServerProject extends Project {
                             script.configFileProvider([
                                 script.configFile(
                                         fileId: 'global_mvn_settings_xml',
-                                        targetLocation: '/home/jenkins/.m2/settings.xml',
+                                        targetLocation: "${script.env.HOME}/.m2/settings.xml",
                                         variable: ''
                                 )
                             ]) {
