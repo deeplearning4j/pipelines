@@ -454,9 +454,9 @@ class Deeplearning4jProject implements Serializable {
                         [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
                         [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
                         [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
                         [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.1'],
 
                         (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
                                 [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
@@ -470,9 +470,9 @@ class Deeplearning4jProject implements Serializable {
                                 [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'] :
                                 [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
 
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
                         [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
                         [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1'],
 
                         [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
                         [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
@@ -491,17 +491,17 @@ class Deeplearning4jProject implements Serializable {
                         [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
                         /* FIXME: avx512 */
 //                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
                         [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
                         [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.1'],
                         [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
                 ]
                 break
             case 'deeplearning4j':
                 platforms = [
-                        [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cuda-9.0'],
                         [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
+                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1']
                 ]
                 break
             case ['pydatavec', 'jumpy', 'pydl4j']:

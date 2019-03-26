@@ -18,24 +18,6 @@ Map getDockerConfig(String streamName) {
     streamName ?: error("streamName argument can't be null.")
 
     switch (streamName) {
-        case ~/^android.*$/:
-            return [image : 'skymindops/pipelines:android']
-            break
-
-        case ['linux-x86_64', 'linux-x86_64-generic']:
-            /* FIXME: -e HOME is workaround for setting docker user HOME inside container */
-            return [image : 'skymindops/pipelines:centos6cuda80', params: '--init -e HOME=']
-            break
-
-        case ['linux-x86_64-cpu', 'linux-x86_64-cpu-avx2', 'linux-x86_64-cpu-avx512']:
-            return [image : 'skymindops/pipelines:centos6cuda80', params: '--init --shm-size=4g --tmpfs /tmp:size=4g']
-            break
-
-        case ['linux-x86_64-cuda-9.0']:
-            String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/pipelines:centos6cuda90', params: dockerParams]
-            break
-
         case ['linux-x86_64-cuda-9.1']:
             String dockerParams = nvidiaDockerParams()
             return [image: 'skymindops/pipelines:centos6cuda91', params: dockerParams]
@@ -51,14 +33,14 @@ Map getDockerConfig(String streamName) {
             return [image: 'skymindops/pipelines:centos6cuda100', params: dockerParams]
             break
 
-        // --init docker argument required to properly shutdown a container with multiple processes inside it
-        case ['linux-ppc64le-cpu']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda80-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+        case ['linux-x86_64-cuda-10.1']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'skymindops/jenkins-agent:amd64-centos6-cuda10.1-cudnn7', params: dockerParams]
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
-        case ['linux-ppc64le-cuda-9.0']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda90-ppc64le', params: ' --init --shm-size=8g --tmpfs /tmp:size=8g']
+        case ['linux-ppc64le-cpu']:
+            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
@@ -72,7 +54,11 @@ Map getDockerConfig(String streamName) {
             break
 
         case ['linux-ppc64le-cuda-10.0']:
-            return [image : 'skymindops/pipelines:ubuntu1604cuda100-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/jenkins-agent:ppc64le-ubuntu18.04-cuda10.0-cudnn7', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            break
+
+        case ['linux-ppc64le-cuda-10.1']:
+            return [image : 'skymindops/jenkins-agent:ppc64le-ubuntu18.04-cuda10.1-cudnn7', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ~/^ios.*$/:
@@ -96,9 +82,9 @@ String getNvidiaDockerParams() {
     String dockerInspectResult = sh(script: dockerInspectScript, returnStdout: true).trim()
     String dockerParamsTmpfsNvidia = [
 //            "-v ${jenkinsDockerSbtFolder}:/home/jenkins/.ivy2:z",
-            "--device=/dev/nvidiactl",
-            "--device=/dev/nvidia-uvm",
-            "--device=/dev/nvidia0",
+//            "--device=/dev/nvidiactl",
+//            "--device=/dev/nvidia-uvm",
+//            "--device=/dev/nvidia0",
             "--tmpfs /tmp:rw,mode=1777,size=16g",
             '--shm-size=8g'
     ].join(' ')

@@ -26,18 +26,18 @@ class Module implements Serializable {
             'android-x86_64-cpu',
             'ios-arm64-cpu',
             'ios-x86_64-cpu',
-            'macosx-x86_64-cuda-9.0',
             'macosx-x86_64-cuda-9.2',
             'macosx-x86_64-cuda-10.0',
-            'linux-ppc64le-cuda-9.0',
+            'macosx-x86_64-cuda-10.1',
             'linux-ppc64le-cuda-9.2',
             'linux-ppc64le-cuda-10.0',
-            'linux-x86_64-cuda-9.0',
+            'linux-ppc64le-cuda-10.1',
             'linux-x86_64-cuda-9.2',
             'linux-x86_64-cuda-10.0',
-            'windows-x86_64-cuda-9.0',
+            'linux-x86_64-cuda-10.1',
             'windows-x86_64-cuda-9.2',
             'windows-x86_64-cuda-10.0',
+            'windows-x86_64-cuda-10.1',
             'linux-armhf-cpu'
     ]
     private String javacppCacheFolder = '.javacpp/cache/'
