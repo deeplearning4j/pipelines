@@ -42,7 +42,7 @@ class ZeppelinProject extends Project {
                             release = branchName ==~ releaseBranchPattern
 
                             script.dir('skil-server') {
-                                script.git branch: 'master',
+                                script.git branch: 'develop/1.2.1',
                                         changelog: false,
                                         poll: false,
                                         url: 'https://github.com/SkymindIO/skil-server.git',
