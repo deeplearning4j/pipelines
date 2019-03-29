@@ -501,11 +501,11 @@ class Module implements Serializable {
         ]
 
         if (isUnixNode) {
-//            String devtoolsetVersion = backend?.contains('cuda') ? '6' : '7'
+            String devtoolsetVersion = backend?.contains('cuda') ? '6' : '7'
 
             mavenCommand = ([
-//                    "if [ -f /etc/redhat-release ]; " +
-//                            "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
+                    "if [ -f /etc/redhat-release ]; " +
+                            "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
 //                    (!(withMavenDockerFixPlatformsToIgnore.contains(streamName))) ?
 //                            'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
