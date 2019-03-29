@@ -30,12 +30,13 @@ Map getDockerConfig(String streamName) {
 
         case ['linux-x86_64-cuda-10.0']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/pipelines:centos6cuda100', params: dockerParams]
+//            return [image: 'skymindops/pipelines:centos6cuda100', params: dockerParams]
+            return [image: 'skymindops/jenkins-agent:amd64-centos7-cuda10.0-cudnn7', params: dockerParams]
             break
 
         case ['linux-x86_64-cuda-10.1']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/jenkins-agent:amd64-centos6-cuda10.1-cudnn7', params: dockerParams]
+            return [image: 'skymindops/jenkins-agent:amd64-centos7-cuda10.1-cudnn7', params: dockerParams]
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
@@ -75,21 +76,24 @@ Map getDockerConfig(String streamName) {
 }
 
 String getNvidiaDockerParams() {
-    String nvidiaDockerGetVolumeScript = "docker volume ls -f DRIVER=nvidia-docker -q | tail -1"
-    String nvidiaDockerVolume = sh(script: nvidiaDockerGetVolumeScript, returnStdout: true).trim()
-    String dockerInspectScript = "ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidiaDockerVolume}` " +
-            "&& true || false"
-    String dockerInspectResult = sh(script: dockerInspectScript, returnStdout: true).trim()
+//    String nvidiaDockerGetVolumeScript = "docker volume ls -f DRIVER=nvidia-docker -q | tail -1"
+//    String nvidiaDockerVolume = sh(script: nvidiaDockerGetVolumeScript, returnStdout: true).trim()
+//    String dockerInspectScript = "ls -A `docker volume inspect -f \"{{.Mountpoint}}\" ${nvidiaDockerVolume}` " +
+//            "&& true || false"
+//    String dockerInspectResult = sh(script: dockerInspectScript, returnStdout: true).trim()
     String dockerParamsTmpfsNvidia = [
 //            "-v ${jenkinsDockerSbtFolder}:/home/jenkins/.ivy2:z",
 //            "--device=/dev/nvidiactl",
 //            "--device=/dev/nvidia-uvm",
 //            "--device=/dev/nvidia0",
-            "--tmpfs /tmp:rw,mode=1777,size=16g",
+            // FIXME: Change user and group id to match Jenkins user on host, because of permissions issue with protoc-jar-maven-plugin
+            "--tmpfs /tmp:uid=1001,gid=1001,mode=1777,size=16g",
             '--shm-size=8g'
     ].join(' ')
 
-    return dockerInspectResult ?
-            [dockerParamsTmpfsNvidia, "-v=" + nvidiaDockerVolume + ":/usr/local/nvidia:ro"].join(' ') :
-            dockerParamsTmpfsNvidia
+//    return dockerInspectResult ?
+//            [dockerParamsTmpfsNvidia, "-v=" + nvidiaDockerVolume + ":/usr/local/nvidia:ro"].join(' ') :
+//            dockerParamsTmpfsNvidia
+
+    return dockerParamsTmpfsNvidia
 }
