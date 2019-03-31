@@ -1,6 +1,0 @@
-Name = {{ ansible_fqdn }}
-ConnectTo = gateway
-AddressFamily = ipv4
-AutoConnect = yes
-Device = {{ (ansible_os_family == 'Debian') | ternary('/dev/net/tun','/dev/tap0') }}
-LocalDiscovery = yes
