@@ -1,5 +1,0 @@
----
-# TODO: switch to import all requirements per role, at the moment commented out code is not working
-#- include: roles/jenkins-slave/requirements.yml
-- src: elliotweiser.osx-command-line-tools
-  version: 2.0.1

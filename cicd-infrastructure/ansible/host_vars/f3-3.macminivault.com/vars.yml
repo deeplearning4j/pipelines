@@ -1,9 +1,0 @@
----
-ansible_user: "{{ vault_ansible_user }}"
-ansible_become_pass: "{{ vault_ansible_become_pass }}"
-ansible_download_path: "/Users/{{ ansible_user }}/Downloads"
-jenkins_slave_name: "skmd-macos-x86_64-03"
-jenkins_slave_labels: "macosx-x86_64-cuda-10"
-jenkins_slave_root_folder_base_path: "/Volumes/System"
-jenkins_slave_connection_type: "ssh"
-jenkins_slave_number_of_executors: 2

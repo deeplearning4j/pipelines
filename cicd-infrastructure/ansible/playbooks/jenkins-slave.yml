@@ -1,7 +1,0 @@
----
-- name: Provision Jenkins slave
-  hosts: jenkins-slaves
-  roles:
-    - common
-    - jenkins-slave
-  become: true

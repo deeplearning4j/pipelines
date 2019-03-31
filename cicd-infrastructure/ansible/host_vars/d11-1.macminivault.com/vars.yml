@@ -1,9 +1,0 @@
----
-ansible_user: "{{ vault_ansible_user }}"
-ansible_become_pass: "{{ vault_ansible_become_pass }}"
-ansible_download_path: "/Users/{{ ansible_user }}/Downloads"
-jenkins_slave_name: "skmd-macos-x86_64-02"
-jenkins_slave_labels: "ios-arm ios-arm64 ios-x86 ios-x86_64 ios-arm-cpu ios-arm64-cpu ios-x86-cpu ios-x86_64-cpu macosx-x86_64-cpu macosx-x86_64-cpu-avx2 macosx-x86_64-cpu-avx512 macosx-x86_64-cuda-8.0 macosx-x86_64-cuda-9.0 macosx-x86_64-cuda-9.1"
-jenkins_slave_root_folder_base_path: "/Volumes/System"
-jenkins_slave_connection_type: "ssh"
-jenkins_slave_number_of_executors: 1
