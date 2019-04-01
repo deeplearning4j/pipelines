@@ -30,7 +30,7 @@ class Deeplearning4jTestResourcesProject extends Project {
                                 script.checkout script.scm
                             }
 
-                            script.stage("Build") {
+                            script.stage("Build/Deploy") {
                                 String mavenCommand = [
                                         mavenBaseCommand,
                                         'clean',
