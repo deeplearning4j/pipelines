@@ -34,7 +34,7 @@ class Deeplearning4jTestResourcesProject extends Project {
                                 String mavenCommand = [
                                         mavenBaseCommand,
                                         'clean',
-                                        (release) ? 'deploy' : 'install',
+                                        (release) ? 'deploy' : 'package',
                                         '-Dlocal.software.repository=ci-nexus',
                                         '-Dresources.jar.compression=true'
                                 ].findAll().join(' ')
