@@ -15,7 +15,7 @@ abstract class Project implements Serializable {
     protected static String snapshotVersion
     protected Map checkoutDetails
     protected boolean isMember
-    protected List testResults
+    protected List testResults = []
     public boolean release = false
 
     /**
