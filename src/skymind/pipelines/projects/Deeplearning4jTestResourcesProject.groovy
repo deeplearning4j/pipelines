@@ -27,11 +27,7 @@ class Deeplearning4jTestResourcesProject extends Project {
                             }
 
                             script.stage('Checkout') {
-                                script.deleteDir()
-
-                                script.dir(projectName) {
-                                    script.checkout script.scm
-                                }
+                                script.checkout script.scm
                             }
 
                             script.stage("Build") {
