@@ -5,21 +5,10 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class SkilJavaProject extends Project {
-    public List testResults = []
-    private Map checkoutDetails
-    private Boolean isMember
     private String mavenBaseCommand = [
-            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions ' +
-                    '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
             'mvn -U',
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
-
-    protected List getPlatforms() {
-        return [
-                [name: 'linux-x86_64-skil-java']
-        ]
-    }
 
     void initPipeline() {
         String platform = getPlatforms()[0].name

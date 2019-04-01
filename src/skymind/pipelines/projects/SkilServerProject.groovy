@@ -4,12 +4,7 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class SkilServerProject extends Project {
-    public List testResults = []
-    private Map checkoutDetails
-    private Boolean isMember
     private String mavenBaseCommand = [
-            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions ' +
-                    '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
             'mvn -U'
     ].findAll().join(' ')
     private boolean release = false
@@ -177,7 +172,6 @@ class SkilServerProject extends Project {
 //                            ]
 //                    ]
                 [
-
                     platforms: [
                         [
                                 name         : 'linux-x86_64-generic',
@@ -206,7 +200,6 @@ class SkilServerProject extends Project {
             ]
         }
     }
-
 
     void initPipeline() {
         try {

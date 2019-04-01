@@ -4,30 +4,16 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class ZeppelinProject extends Project {
-    public List testResults = []
-    private Map checkoutDetails
-    private Boolean isMember
     private String mavenBaseCommand = [
-            'export MAVEN_OPTS="-XX:+UnlockExperimentalVMOptions ' +
-                    '-XX:+UseCGroupMemoryLimitForHeap ${MAVEN_OPTS}" &&',
             'mvn -U -B -e',
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
 
-    protected List getPlatforms() {
-        return [
-                [name: 'linux-x86_64-generic']
-        ]
-    }
-
-    private boolean release = false
-    private String releaseBranchPattern = /^skymind-[\d.]+-skil-[\d.]+?[-]?[\w]+$/
+    protected releaseBranchPattern = /^skymind-[\d.]+-skil-[\d.]+?[-]?[\w]+$/
 
     void initPipeline() {
-        String platform = getPlatforms()[0].name
-
-        script.node(platform) {
-            try {
+        script.node(platforms[0].name) {
+            pipelineWrapper {
                 script.container('jnlp') {
                     try {
                         script.stage('Checkout') {
