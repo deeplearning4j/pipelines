@@ -47,7 +47,7 @@ class Deeplearning4jProject implements Serializable {
 
         String gitCommitId = shellCommand('git log -1 --pretty=%H')
 
-        return [GIT_BRANCH        : script.env.BRANCH_NAME,
+        return [GIT_BRANCH        : branchName,
                 GIT_COMMIT        : gitCommitId,
                 GIT_COMMITER_NAME : shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
                 GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
@@ -330,7 +330,7 @@ class Deeplearning4jProject implements Serializable {
                             [(isUnixNode) ?
                                      projectName :
                                      (projectName.contains('deeplearning4j') ? 'dl4j' : projectName),
-                             script.env.BRANCH_NAME,
+                             branchName,
                              streamName].join('-').replaceAll('/', '-')
                     /* Get logic for the run, depending on changes */
                     Module module = new Module([
