@@ -301,10 +301,6 @@ class SkilServerProject extends Project {
             streams["$streamName"] = {
                 script.stage(streamName) {
                     script.node(platformName) {
-//                        script.container('jnlp') line was commented, to support windwos builds,
-//                        in general this line is not required,
-//                        because when you have multiple containers in pod Jenkins will pick jnlp by default.
-//                        script.container('jnlp') {
                         try {
                             script.stage('Checkout') {
                                 script.checkout script.scm
@@ -375,38 +371,44 @@ class SkilServerProject extends Project {
                                             }
                                         }
 
-                                        if (osName in ['centos', 'ubuntu']) {
-                                            if (release) {
+                                        if (release) {
+                                            if (osName in ['centos', 'ubuntu']) {
                                                 script.stage('Build SKIL docker image') {
                                                     script.sh """\
-                                                            docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-                                                        """.stripIndent()
+                                                        docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                    """.stripIndent()
 
                                                     if (staticPackageBuild) {
                                                         if (osName == 'centos') {
                                                             script.sh """\
-                                                                   docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
-                                                                    run \
-                                                                    -u root \
-                                                                    -v \${HOME}/.m2:/root/.m2 \
-                                                                    -v \$(pwd):/opt/skil/build \
-                                                                    -e OS_NAME=${osName} \
-                                                                    -e OS_VERSION=${osVersion} \
-                                                                    -e STATIC_PACKAGE_BUILD=${staticPackageBuild} \
-                                                                    -e PYTHON_VERSION=${pythonVersion} \
-                                                                    -e CUDA_VERSION=${cudaVersion} \
-                                                                    -e CONDA_VERSION=${condaVersion} \
-                                                                    -e HADOOP_VERSION=${hadoopVersion} \
-                                                                    -e SCALA_VERSION=${scalaVersion} \
-                                                                    --rm \
-                                                                    --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
-                                                                    --workdir=/opt/skil/build \
-                                                                    skil
-                                                                """
+                                                               docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
+                                                                run \
+                                                                -u root \
+                                                                -v \${HOME}/.m2:/root/.m2 \
+                                                                -v \$(pwd):/opt/skil/build \
+                                                                -e OS_NAME=${osName} \
+                                                                -e OS_VERSION=${osVersion} \
+                                                                -e STATIC_PACKAGE_BUILD=${
+                                                                staticPackageBuild
+                                                            } \
+                                                                -e PYTHON_VERSION=${
+                                                                pythonVersion
+                                                            } \
+                                                                -e CUDA_VERSION=${cudaVersion} \
+                                                                -e CONDA_VERSION=${condaVersion} \
+                                                                -e HADOOP_VERSION=${
+                                                                hadoopVersion
+                                                            } \
+                                                                -e SCALA_VERSION=${scalaVersion} \
+                                                                --rm \
+                                                                --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
+                                                                --workdir=/opt/skil/build \
+                                                                skil
+                                                            """
 
                                                             script.sh """\
-                                                                    docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-                                                                """.stripIndent()
+                                                                docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                            """.stripIndent()
                                                         } else {
                                                             script.echo "[WARNING] OS is not supported."
                                                         }
@@ -418,109 +420,27 @@ class SkilServerProject extends Project {
 
                                                     // Workaround for archiving artifacts by Jenkins
                                                     script.sh """\
-                                                            mv ${buildArtifactsPath}/${osName} ${
+                                                        mv ${buildArtifactsPath}/${osName} ${
                                                         buildArtifactsPath
                                                     }/${skilDockerImageTag}
-                                                        """.stripIndent()
+                                                    """.stripIndent()
 
                                                     /* FIXME: Place archiveArtifacts after mv command call,
                                                         to not overwrite artifacts in case of build failure.
                                                     */
 //                                                      script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
                                                 }
+                                            }
 
-                                                script.stage('Publish artifacts') {
-                                                    def repoUrl
-                                                    def repoPath
-                                                    def baseArch = 'x86_64'
-                                                    def packageExtension = getPackageExtension(osName)
+                                            script.stage('Publish artifacts') {
+                                                publishArtifacts(osName, skilDockerImageTag)
 
-                                                    if (osName == 'centos') {
-                                                        repoUrl = "https://nexus-ci.skymind.io/repository/rpms"
+                                                if (osName == 'centos') {
+                                                    // Tarball upload
+                                                    publishTarball(skilVersion, backend)
+                                                }
 
-                                                        switch (branchName) {
-                                                            case ~releaseBranchPattern:
-                                                            case 'master':
-                                                                repoPath = [
-                                                                    osName,
-                                                                    '7',
-                                                                    'latest',
-                                                                    'os', // a.k.a base
-                                                                    baseArch,
-                                                                    'Packages'
-                                                                ].findAll().join('/')
-                                                                break
-                                                            default:
-                                                                repoPath = [
-                                                                    osName,
-                                                                    '7',
-                                                                    'dev',
-                                                                    'os', // a.k.a base
-                                                                    baseArch,
-                                                                    'Packages'
-                                                                ].findAll().join('/')
-                                                                break
-                                                        }
-
-                                                        def artifacts = script.findFiles glob: "${buildArtifactsPath}/${skilDockerImageTag}/*.${packageExtension}"
-
-                                                        for (def art : artifacts) {
-                                                            def artifact = art
-                                                            def artifactName = artifact.name
-                                                            def artifactPath = artifact.path
-
-                                                            script.withCredentials([
-                                                                script.usernameColonPassword(
-                                                                    credentialsId: 'skymind-docker-registry',
-                                                                    variable: 'RPM_REPO_CREDS'
-                                                                )
-                                                            ]) {
-                                                                script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
-                                                            }
-                                                        }
-
-                                                        // Tarball upload
-                                                        publishTarball(skilVersion, backend)
-                                                    }
-
-                                                    if (osName == 'ubuntu') {
-                                                        repoUrl = "https://nexus-ci.skymind.io/repository/debs"
-
-                                                        switch (branchName) {
-                                                            case ~releaseBranchPattern:
-                                                            case 'master':
-                                                            default:
-                                                                repoPath = [
-                                                                    osName,
-                                                                    'xenial',
-                                                                    'main',
-                                                                    baseArch
-                                                                ].findAll().join('/')
-                                                                break
-                                                        }
-
-                                                        def artifacts = script.findFiles glob: "${buildArtifactsPath}/${skilDockerImageTag}/*.${packageExtension}"
-
-                                                        for (def art : artifacts) {
-                                                            def artifact = art
-                                                            def artifactPath = artifact.path
-
-                                                            script.withCredentials([
-                                                                script.usernameColonPassword(
-                                                                    credentialsId: 'skymind-docker-registry',
-                                                                    variable: 'RPM_REPO_CREDS'
-                                                                )
-                                                            ]) {
-                                                                script.sh """\
-                                                                        curl -v -i --user \${RPM_REPO_CREDS} \
-                                                                        -X POST \
-                                                                        -H 'Content-Type: multipart/form-data' \
-                                                                        --data-binary '@${artifactPath}' ${repoUrl}/
-                                                                    """.stripIndent()
-                                                            }
-                                                        }
-                                                    }
-
+                                                if (osName in ['centos', 'ubuntu']) {
                                                     def dockerRegistryUrl = "https://docker-ci.skymind.io"
                                                     def dockerRegistryCredentialsId = "skymind-docker-registry"
                                                     def skilDockerImageName = "skil:${skilVersion}-${skilDockerImageTag}"
@@ -534,161 +454,82 @@ class SkilServerProject extends Project {
                                                         skilDockerImage.push()
                                                     }
                                                 }
-                                            } else {
-                                                script.stage('Install test resources') {
-                                                    script.dir('skil-test-resources') {
-                                                        String installTestResourcesMavenArguments = [
-                                                                mavenBaseCommand,
-                                                                'clean',
-                                                                'install',
-                                                                '-DskipTests',
-                                                                '-Dmaven.test.skip=true',
-                                                                '-Dmaven.javadoc.skip=true'
-                                                        ].findAll().join(' ')
-
-                                                        script.sh """\
-                                                                docker-compose \
-                                                                -f ../skil-build/docker/docker-compose.yml \
-                                                                --project-directory ../skil-build/docker run \
-                                                                -v \${HOME}/.m2:/home/skil/.m2 \
-                                                                -v \$(pwd):/opt/skil/build \
-                                                                --rm \
-                                                                skil-build \
-                                                                sh -c '${
-                                                            installTestResourcesMavenArguments
-                                                        }'
-                                                            """
-                                                    }
-                                                }
-
-                                                script.stage('Run tests') {
-                                                    String runTestsMavenArguments = [
+                                            }
+                                        } else {
+                                            script.stage('Install test resources') {
+                                                script.dir('skil-test-resources') {
+                                                    String installTestResourcesMavenArguments = [
                                                             mavenBaseCommand,
-                                                            'test',
-                                                            '-P ci',
-                                                            '-P ci-nexus',
-                                                            "-P ${sparkVersion}",
-//                                                            "-P test"
+                                                            'clean',
+                                                            'install',
+                                                            '-DskipTests',
+                                                            '-Dmaven.test.skip=true',
+                                                            '-Dmaven.javadoc.skip=true'
                                                     ].findAll().join(' ')
 
-                                                    script.sh """\
+                                                    if (osName in ['centos', 'ubuntu']) {
+                                                        script.sh """\
                                                             docker-compose \
-                                                            -f ./skil-build/docker/docker-compose.yml \
-                                                            --project-directory ./skil-build/docker run \
+                                                            -f ../skil-build/docker/docker-compose.yml \
+                                                            --project-directory ../skil-build/docker run \
                                                             -v \${HOME}/.m2:/home/skil/.m2 \
                                                             -v \$(pwd):/opt/skil/build \
                                                             --rm \
                                                             skil-build \
-                                                            sh -c '${runTestsMavenArguments}'
+                                                            sh -c '${installTestResourcesMavenArguments}'
                                                         """
+                                                    } else {
+                                                        script.sh "${installTestResourcesMavenArguments}"
+                                                    }
                                                 }
+                                            }
 
+                                            script.stage('Run tests') {
+                                                String runTestsMavenArguments = [
+                                                        mavenBaseCommand,
+                                                        'test',
+                                                        '-P ci',
+                                                        '-P ci-nexus',
+                                                        "-P ${sparkVersion}",
+//                                                            "-P test"
+                                                ].findAll().join(' ')
 
+                                                if (osName in ['centos', 'ubuntu']) {
+                                                    script.sh """\
+                                                        docker-compose \
+                                                        -f ./skil-build/docker/docker-compose.yml \
+                                                        --project-directory ./skil-build/docker run \
+                                                        -v \${HOME}/.m2:/home/skil/.m2 \
+                                                        -v \$(pwd):/opt/skil/build \
+                                                        --rm \
+                                                        skil-build \
+                                                        sh -c '${runTestsMavenArguments}'
+                                                    """
+                                                } else {
+                                                    script.sh "${runTestsMavenArguments}"
+                                                }
+                                            }
+
+                                            if (osName in ['centos', 'ubuntu']) {
                                                 script.dir('skil-ui-modules/src/main/typescript/dashboard') {
                                                     script.stage('Clear cache and build docker image from scratch') {
                                                         script.sh '''\
-                                                                docker-compose rm -f
-                                                                docker-compose build
-                                                            '''.stripIndent()
+                                                            docker-compose rm -f
+                                                            docker-compose build
+                                                        '''.stripIndent()
                                                     }
 
                                                     script.stage('SKIL Dashboard Unit Tests') {
                                                         script.sh '''\
-                                                                docker-compose run --rm dev yarn run test-teamcity
-                                                            '''.stripIndent()
+                                                            docker-compose run --rm dev yarn run test-teamcity
+                                                        '''.stripIndent()
                                                     }
 
                                                     script.stage('SKIL Dashboard E2E Tests') {
                                                         script.sh '''\
-                                                                docker-compose run --rm dev yarn run e2e-teamcity
-                                                            '''.stripIndent()
+                                                            docker-compose run --rm dev yarn run e2e-teamcity
+                                                        '''.stripIndent()
                                                     }
-                                                }
-                                            }
-                                        } else {
-                                            if (release) {
-                                                script.stage('Publish artifacts') {
-                                                    def repoUrl
-                                                    def repoPath
-                                                    def baseArch = 'x86_64'
-                                                    def packageExtension = getPackageExtension(osName)
-
-                                                    if (osName == 'windows') {
-                                                        repoUrl = "https://nexus-ci.skymind.io/repository/tarballs"
-
-                                                        switch (branchName) {
-                                                            case ~releaseBranchPattern:
-                                                            case 'master':
-                                                                repoPath = [
-                                                                        osName,
-                                                                        'server-2016',
-                                                                        'latest',
-                                                                        'os', // a.k.a base
-                                                                        baseArch,
-                                                                        'Packages'
-                                                                ].findAll().join('/')
-                                                                break
-                                                            default:
-                                                                repoPath = [
-                                                                        osName,
-                                                                        'server-2016',
-                                                                        'dev',
-                                                                        'os', // a.k.a base
-                                                                        baseArch,
-                                                                        'Packages'
-                                                                ].findAll().join('/')
-                                                                break
-                                                        }
-
-                                                        def artifacts = script.findFiles glob: "${buildArtifactsPath}/${skilDockerImageTag}/*.${packageExtension}"
-
-                                                        for (def art : artifacts) {
-                                                            def artifact = art
-                                                            def artifactName = artifact.name
-                                                            def artifactPath = artifact.path
-
-                                                            script.withCredentials([
-                                                                    script.usernameColonPassword(
-                                                                            credentialsId: 'skymind-docker-registry',
-                                                                            variable: 'RPM_REPO_CREDS'
-                                                                    )
-                                                            ]) {
-                                                                script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                script.stage('Install test resources') {
-                                                    script.dir('skil-test-resources') {
-                                                        String installTestResourcesMavenArguments = [
-                                                                mavenBaseCommand,
-                                                                'clean',
-                                                                'install',
-                                                                '-DskipTests',
-                                                                '-Dmaven.test.skip=true',
-                                                                '-Dmaven.javadoc.skip=true'
-                                                        ].findAll().join(' ')
-
-                                                        script.sh """\
-                                                            ${installTestResourcesMavenArguments}
-                                                        """
-                                                    }
-                                                }
-
-                                                script.stage('Run tests') {
-                                                    String runTestsMavenArguments = [
-                                                            mavenBaseCommand,
-                                                            'test',
-                                                            '-P ci',
-                                                            '-P ci-nexus',
-                                                            "-P ${sparkVersion}",
-//                                                            "-P test"
-                                                    ].findAll().join(' ')
-
-                                                    script.sh """\
-                                                        ${runTestsMavenArguments}
-                                                    """
                                                 }
                                             }
                                         }
@@ -721,60 +562,12 @@ class SkilServerProject extends Project {
                                 script.deleteDir()
                             }
                         }
-//                        }
                     }
                 }
             }
         }
 
         streams
-    }
-
-    private String parseTestResults(testResults) {
-        String testResultsDetails = ''
-
-        if (testResults != null) {
-            def total = testResults.totalCount
-            def failed = testResults.failCount
-            def skipped = testResults.skipCount
-            def passed = total - failed - skipped
-
-            testResultsDetails += ("Total: " + total)
-            testResultsDetails += (", Passed: " + passed)
-            testResultsDetails += (", Failed: " + failed)
-            testResultsDetails += (", Skipped: " + skipped)
-        } else {
-            testResultsDetails = 'No test results found'
-        }
-
-        return testResultsDetails
-    }
-
-    private String getPackageExtension(osName) {
-        String packageExtension
-
-        switch (osName) {
-            case 'centos':
-                packageExtension = 'rpm'
-                break
-            case 'ubuntu':
-                packageExtension = 'deb'
-                break
-            case 'windows':
-                packageExtension = 'msi'
-                break
-            default:
-                script.error('Unsupported OS name!')
-                break
-        }
-
-        packageExtension
-    }
-
-    private void getFancyStageDecorator(String text) {
-        int charsNumber = Math.round((78 - text.length()) / 2)
-
-        script.echo("*" * charsNumber + text + "*" * charsNumber)
     }
 
     private void publishTarball(String skilVersion, String backend) {
@@ -814,5 +607,125 @@ class SkilServerProject extends Project {
                 script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${tarballPath} ${repoUrl}/${repoPath}/${tarballName}"
             }
         }
+    }
+
+    private void publishArtifacts(String osName, String skilDockerImageTag) {
+        def publishParameters = getPublishParameters(osName, skilDockerImageTag)
+        def artifacts = script.findFiles glob: publishParameters.searchPattern
+        def repoUrl = publishParameters.repoUrl
+        def repoPath = publishParameters.repoPath
+
+        script.withCredentials([
+                script.usernameColonPassword(
+                        credentialsId: 'skymind-docker-registry',
+                        variable: 'RPM_REPO_CREDS'
+                )
+        ]) {
+            for (def art in artifacts) {
+                def artifact = art
+                def artifactName = artifact.name
+                def artifactPath = artifact.path
+
+                script.sh "curl --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
+            }
+        }
+    }
+
+    private getPublishParameters(String osName, String skilDockerImageTag) {
+        def baseArch = 'x86_64'
+        def publishParameters = [:]
+
+        switch (osName) {
+            case 'centos':
+                String repoPath
+
+                switch (branchName) {
+                    case ~releaseBranchPattern:
+                    case 'master':
+                        repoPath = [
+                                osName,
+                                '7',
+                                'latest',
+                                'os', // a.k.a base
+                                baseArch,
+                                'Packages'
+                        ].findAll().join('/')
+                        break
+                    default:
+                        repoPath = [
+                                osName,
+                                '7',
+                                'dev',
+                                'os', // a.k.a base
+                                baseArch,
+                                'Packages'
+                        ].findAll().join('/')
+                        break
+                }
+
+                publishParameters.put('packageExtension', 'rpm')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/rpms')
+                publishParameters.put('repoPath', repoPath)
+                publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.rpm")
+                break
+            case 'ubuntu':
+                String repoPath
+
+                switch (branchName) {
+                    case ~releaseBranchPattern:
+                    case 'master':
+                    default:
+                        repoPath = [
+                                osName,
+                                'xenial',
+                                'main',
+                                baseArch
+                        ].findAll().join('/')
+                        break
+                }
+
+                publishParameters.put('packageExtension','deb')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/debs')
+                publishParameters.put('repoPath', repoPath)
+                publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.deb")
+                break
+            case 'windows':
+                String repoPath
+
+                switch (branchName) {
+                    case ~releaseBranchPattern:
+                    case 'master':
+                        repoPath = [
+                                osName,
+                                'server-2016',
+                                'latest',
+                                'os', // a.k.a base
+                                baseArch,
+                                'Packages'
+                        ].findAll().join('/')
+                        break
+                    default:
+                        repoPath = [
+                                osName,
+                                'server-2016',
+                                'dev',
+                                'os', // a.k.a base
+                                baseArch,
+                                'Packages'
+                        ].findAll().join('/')
+                        break
+                }
+
+                publishParameters.put('packageExtension', 'zip')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/tarballs')
+                publishParameters.put('repoPath', repoPath)
+                publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.zip")
+                break
+            default:
+                script.error('Unsupported OS name!')
+                break
+        }
+
+        return publishParameters
     }
 }
