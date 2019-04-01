@@ -10,15 +10,13 @@ class SkilClientsProject extends Project {
     ].findAll().join(' ')
 
     void initPipeline() {
-        String platform = getPlatforms()[0].name
-
-        script.node(platform) {
+        script.node(platforms[0].name) {
             String wsFolderName = 'workspace' + '/' + [
                     projectName, branchName
             ].join('-').replaceAll('/', '-')
 
             script.ws(wsFolderName) {
-                try {
+                pipelineWrapper {
                     script.container('builder') {
                         try {
                             script.stage('Checkout') {
@@ -72,60 +70,7 @@ class SkilClientsProject extends Project {
                         }
                     }
                 }
-                catch (error) {
-                    if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
-                            error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
-                            error instanceof java.lang.InterruptedException ||
-                            (error instanceof hudson.AbortException &&
-                                    (error?.message?.contains('script returned exit code 143') ||
-                                            error?.message?.contains('Queue task was cancelled')))
-                    ) {
-                        script.currentBuild.result = 'ABORTED'
-                    } else {
-                        script.currentBuild.result = 'FAILURE'
-                    }
-
-                    script.echo "[ERROR] ${error}" +
-                            (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
-                            (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
-                }
-                finally {
-                    script.cleanWs deleteDirs: true
-                    // FIXME: Workaround to clean workspace
-                    script.dir("${script.env.WORKSPACE}@tmp") {
-                        script.deleteDir()
-                    }
-                    script.dir("${script.env.WORKSPACE}@script") {
-                        script.deleteDir()
-                    }
-                    script.dir("${script.env.WORKSPACE}@script@tmp") {
-                        script.deleteDir()
-                    }
-
-                    script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
-                            checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
-                }
             }
         }
-    }
-
-    private String parseTestResults(testResults) {
-        String testResultsDetails = ''
-
-        if (testResults != null) {
-            def total = testResults.totalCount
-            def failed = testResults.failCount
-            def skipped = testResults.skipCount
-            def passed = total - failed - skipped
-
-            testResultsDetails += ("Total: " + total)
-            testResultsDetails += (", Passed: " + passed)
-            testResultsDetails += (", Failed: " + failed)
-            testResultsDetails += (", Skipped: " + skipped)
-        } else {
-            testResultsDetails = 'No test results found'
-        }
-
-        return testResultsDetails
     }
 }

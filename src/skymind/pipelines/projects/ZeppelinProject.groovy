@@ -61,7 +61,6 @@ class ZeppelinProject extends Project {
                                     mavenBaseCommand,
                                     'clean',
                                     (release) ? 'deploy' : 'install',
-//                                    'install',
                                     '-P build-distr',
                                     '-P scala-2.10',
                                     '-P spark-1.6',
@@ -86,6 +85,7 @@ class ZeppelinProject extends Project {
                         ])
 
                         script.cleanWs deleteDirs: true
+
                         // FIXME: Workaround to clean workspace
                         script.dir("${script.env.WORKSPACE}@tmp") {
                             script.deleteDir()
@@ -99,47 +99,6 @@ class ZeppelinProject extends Project {
                     }
                 }
             }
-            catch (error) {
-                if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
-                        error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
-                        error instanceof java.lang.InterruptedException ||
-                        (error instanceof hudson.AbortException &&
-                                (error?.message?.contains('script returned exit code 143') ||
-                                        error?.message?.contains('Queue task was cancelled')))
-                ) {
-                    script.currentBuild.result = 'ABORTED'
-                } else {
-                    script.currentBuild.result = 'FAILURE'
-                }
-
-                script.echo "[ERROR] ${error}" +
-                        (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
-                        (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
-            }
-            finally {
-                script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
-                        checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
-            }
         }
-    }
-
-    private String parseTestResults(testResults) {
-        String testResultsDetails = ''
-
-        if (testResults != null) {
-            def total = testResults.totalCount
-            def failed = testResults.failCount
-            def skipped = testResults.skipCount
-            def passed = total - failed - skipped
-
-            testResultsDetails += ("Total: " + total)
-            testResultsDetails += (", Passed: " + passed)
-            testResultsDetails += (", Failed: " + failed)
-            testResultsDetails += (", Skipped: " + skipped)
-        } else {
-            testResultsDetails = 'No test results found'
-        }
-
-        return testResultsDetails
     }
 }
