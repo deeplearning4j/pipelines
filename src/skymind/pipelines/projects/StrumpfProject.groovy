@@ -4,17 +4,6 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class StrumpfProject extends Project {
-    public List testResults = []
-    private Map checkoutDetails
-    private Boolean isMember
-
-    protected List getPlatforms() {
-        return [
-                [name: 'linux-x86_64', pythonVersion: '2'],
-                [name: 'linux-x86_64', pythonVersion: '3']
-        ]
-    }
-
     void initPipeline() {
         try {
             if (branchName.contains(releaseBranchPattern)) {
