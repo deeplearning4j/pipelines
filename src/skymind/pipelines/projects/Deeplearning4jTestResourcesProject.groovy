@@ -5,7 +5,7 @@ import groovy.transform.InheritConstructors
 @InheritConstructors
 class Deeplearning4jTestResourcesProject extends Project {
     private String mavenBaseCommand = [
-            "source /opt/rh/devtoolset-6/enable ||",
+            "source /opt/rh/devtoolset-6/enable &&",
             'mvn -U -B -e',
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
