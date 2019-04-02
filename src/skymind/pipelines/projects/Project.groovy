@@ -229,6 +229,9 @@ abstract class Project implements Serializable {
 
         String gitCommitId = shellCommand('git log -1 --pretty=%H')
 
+        // Required for skil-server
+        script.env.GIT_COMMIT = gitCommitId
+
         return [GIT_BRANCH        : branchName,
                 GIT_COMMIT        : gitCommitId,
                 GIT_COMMITER_NAME : shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
