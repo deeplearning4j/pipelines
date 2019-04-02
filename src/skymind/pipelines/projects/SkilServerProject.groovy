@@ -205,15 +205,7 @@ class SkilServerProject extends Project {
         try {
             script.node('linux-x86_64-generic') {
                 script.stage('Prepare run') {
-                    script.checkout script.scm
-
-                    checkoutDetails = parseCheckoutDetails()
-                    isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, 'skymindio')
-
-                    script.notifier.sendSlackNotification jobResult: 'STARTED',
-                            checkoutDetails: checkoutDetails, isMember: isMember
-
-                    release = branchName ==~ releaseBranchPattern
+                    runCheckout('skymindio')
                 }
             }
 

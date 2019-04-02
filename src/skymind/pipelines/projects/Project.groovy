@@ -323,4 +323,16 @@ abstract class Project implements Serializable {
 
         return testResultsDetails
     }
+
+    protected void runCheckout(String organization = 'deeplearning4j') {
+        script.checkout script.scm
+
+        checkoutDetails = parseCheckoutDetails()
+        isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, organization)
+
+        script.notifier.sendSlackNotification jobResult: 'STARTED',
+                checkoutDetails: checkoutDetails, isMember: isMember
+
+        release = branchName ==~ releaseBranchPattern
+    }
 }
