@@ -17,16 +17,10 @@ class ZeppelinProject extends Project {
                 script.container('jnlp') {
                     try {
                         script.stage('Checkout') {
-                            script.checkout script.scm
+                            runCheckout('skymindio')
+                        }
 
-                            checkoutDetails = parseCheckoutDetails()
-                            isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, 'skymindio')
-
-                            script.notifier.sendSlackNotification jobResult: 'STARTED',
-                                    checkoutDetails: checkoutDetails, isMember: isMember
-
-                            release = branchName ==~ releaseBranchPattern
-
+                        script.stage('Fetch skil-server sources') {
                             script.dir('skil-server') {
                                 script.git branch: 'develop/1.2.1',
                                         changelog: false,

@@ -16,6 +16,10 @@ class Deeplearning4jTestResourcesProject extends Project {
                 script.container('builder') {
                     try {
                         script.dir(projectName) {
+                            script.stage('Checkout') {
+                                runCheckout()
+                            }
+
                             if (branchName.contains(releaseBranchPattern)) {
                                 script.stage("Perform Release") {
                                     getReleaseParameters()
@@ -26,11 +30,7 @@ class Deeplearning4jTestResourcesProject extends Project {
                                 }
                             }
 
-                            script.stage('Checkout') {
-                                script.checkout script.scm
-                            }
-
-                            script.stage("Build/Deploy") {
+                            script.stage("Build and Deploy") {
                                 String mavenCommand = [
                                         mavenBaseCommand,
                                         'clean',
