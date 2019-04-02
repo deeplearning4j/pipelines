@@ -7,11 +7,11 @@ class SkilServerProject extends Project {
     private String mavenBaseCommand = [
             'mvn -U'
     ].findAll().join(' ')
-    private boolean release = false
+
     String zeppelinBranchName = 'skymind-0.7-skil-1.2.0'
     String zeppelinGitUrl = 'https://github.com/SkymindIO/zeppelin.git'
 //    String releaseBranchPattern = /^release\/(\d+\.)?(\d+\.)?(\*|\d+)?(-\w+)$/
-    String releaseBranchPattern = /^v[\d.]+?[-]?[\w]+$/
+    protected static releaseBranchPattern = /^v[\d.]+?[-]?[\w]+$/
     String buildArtifactsPath = 'skil-distro-parent/skil-distro-docker/build-artifacts'
 
     protected def getBuildMappings() {

@@ -10,6 +10,8 @@ class Deeplearning4jTestResourcesProject extends Project {
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
 
+    protected static releaseBranchPattern = /^master$/
+
     void initPipeline() {
         script.node(platforms[0].name) {
             pipelineWrapper {
@@ -20,7 +22,7 @@ class Deeplearning4jTestResourcesProject extends Project {
                                 runCheckout()
                             }
 
-                            if (branchName.contains(releaseBranchPattern)) {
+                            if (release) {
                                 script.stage("Perform Release") {
                                     getReleaseParameters()
                                 }

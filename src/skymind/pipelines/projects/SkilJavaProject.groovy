@@ -19,7 +19,7 @@ class SkilJavaProject extends Project {
                             runCheckout('skymindio')
                         }
 
-                        if (branchName.contains(releaseBranchPattern)) {
+                        if (release) {
                             script.stage("Perform Release") {
                                 getReleaseParameters()
                             }
@@ -44,7 +44,7 @@ class SkilJavaProject extends Project {
                             script.mvn buildClientApiMavenArguments
                         }
 
-                        if (branchName.contains(releaseBranchPattern)) {
+                        if (release) {
                             script.stage('Release') {
 
                             }
