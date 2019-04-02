@@ -25,7 +25,7 @@ class StrumpfProject extends Project {
                     script.container('builder') {
                         try {
                             script.stage('Checkout') {
-                                runCheckout()
+                                runCheckout('deeplearning4j', true)
                             }
 
                             script.stage('Install required dependencies') {

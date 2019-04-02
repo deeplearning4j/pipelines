@@ -27,7 +27,7 @@ class SkilPythonProject extends Project {
                     script.container('builder') {
                         try {
                             script.stage('Checkout') {
-                                runCheckout('skymindio')
+                                runCheckout('skymindio', true)
                             }
 
                             script.stage('Install required dependencies') {
