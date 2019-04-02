@@ -6,12 +6,6 @@ import groovy.transform.InheritConstructors
 class StrumpfProject extends Project {
     void initPipeline() {
         pipelineWrapper {
-            if (branchName.contains(releaseBranchPattern)) {
-                script.stage("Perform Release") {
-                    getReleaseParameters()
-                }
-            }
-
             script.parallel getBuildStreams(platforms)
         }
     }

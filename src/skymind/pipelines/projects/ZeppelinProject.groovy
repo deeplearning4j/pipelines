@@ -9,7 +9,7 @@ class ZeppelinProject extends Project {
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
 
-    protected releaseBranchPattern = /^skymind-[\d.]+-skil-[\d.]+?[-]?[\w]+$/
+    protected static releaseBranchPattern = /^skymind-[\d.]+-skil-[\d.]+?[-]?[\w]+$/
 
     void initPipeline() {
         script.node(platforms[0].name) {

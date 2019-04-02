@@ -9,6 +9,8 @@ class SkilClientsProject extends Project {
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
 
+    protected static releaseBranchPattern = /^master$/
+
     void initPipeline() {
         script.node(platforms[0].name) {
             String wsFolderName = 'workspace' + '/' + [
@@ -23,7 +25,7 @@ class SkilClientsProject extends Project {
                                 runCheckout('skymindio')
                             }
 
-                            if (branchName.contains(releaseBranchPattern)) {
+                            if (release) {
                                 script.stage("Perform Release") {
                                     getReleaseParameters()
                                 }
@@ -47,7 +49,7 @@ class SkilClientsProject extends Project {
                                 }
                             }
 
-                            if (branchName.contains(releaseBranchPattern)) {
+                            if (release) {
                                 script.stage('Release') {
 
                                 }

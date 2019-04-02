@@ -10,7 +10,7 @@ abstract class Project implements Serializable {
     protected final String projectName
     protected final List jobSpecificProperties = []
     protected boolean releaseApproved = false
-    protected static String releaseBranchPattern = 'release'
+    protected static releaseBranchPattern = /^release\/.*$/
     protected static String releaseVersion
     protected static String snapshotVersion
     protected Map checkoutDetails

@@ -4,14 +4,10 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class SkilPythonProject extends Project {
+    protected static releaseBranchPattern = /^master$/
+
     void initPipeline() {
         pipelineWrapper {
-            if (branchName.contains(releaseBranchPattern)) {
-                script.stage("Perform Release") {
-                    getReleaseParameters()
-                }
-            }
-
             script.parallel getBuildStreams(platforms)
         }
     }
