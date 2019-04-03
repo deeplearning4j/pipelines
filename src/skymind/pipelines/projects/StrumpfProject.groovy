@@ -4,47 +4,9 @@ import groovy.transform.InheritConstructors
 
 @InheritConstructors
 class StrumpfProject extends Project {
-    public List testResults = []
-    private Map checkoutDetails
-    private Boolean isMember
-
-    protected List getPlatforms() {
-        return [
-                [name: 'linux-x86_64', pythonVersion: '2'],
-                [name: 'linux-x86_64', pythonVersion: '3']
-        ]
-    }
-
     void initPipeline() {
-        try {
-            if (branchName.contains(releaseBranchPattern)) {
-                script.stage("Perform Release") {
-                    getReleaseParameters()
-                }
-            }
-
+        pipelineWrapper {
             script.parallel getBuildStreams(platforms)
-        }
-        catch (error) {
-            if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
-                    error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
-                    error instanceof java.lang.InterruptedException ||
-                    (error instanceof hudson.AbortException &&
-                            (error?.message?.contains('script returned exit code 143') ||
-                                    error?.message?.contains('Queue task was cancelled')))
-            ) {
-                script.currentBuild.result = 'ABORTED'
-            } else {
-                script.currentBuild.result = 'FAILURE'
-            }
-
-            script.echo "[ERROR] ${error}" +
-                    (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
-                    (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
-        }
-        finally {
-            script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
-                    checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
         }
     }
 
@@ -63,9 +25,7 @@ class StrumpfProject extends Project {
                     script.container('builder') {
                         try {
                             script.stage('Checkout') {
-                                script.checkout script.scm
-                                checkoutDetails = parseCheckoutDetails()
-                                isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
+                                runCheckout('deeplearning4j', true)
                             }
 
                             script.stage('Install required dependencies') {
@@ -112,25 +72,5 @@ class StrumpfProject extends Project {
         script.sh """\
             python -m pytest --junitxml test_reports/unit_test_results.xm --pep8 -m pep8 tests/
         """.stripIndent()
-    }
-
-    private String parseTestResults(testResults) {
-        String testResultsDetails = ''
-
-        if (testResults != null) {
-            def total = testResults.totalCount
-            def failed = testResults.failCount
-            def skipped = testResults.skipCount
-            def passed = total - failed - skipped
-
-            testResultsDetails += ("Total: " + total)
-            testResultsDetails += (", Passed: " + passed)
-            testResultsDetails += (", Failed: " + failed)
-            testResultsDetails += (", Skipped: " + skipped)
-        } else {
-            testResultsDetails = 'No test results found'
-        }
-
-        return testResultsDetails
     }
 }

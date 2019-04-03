@@ -5,18 +5,18 @@ import groovy.json.JsonSlurper
 
 abstract class Project implements Serializable {
     protected script
-    protected platforms
+    protected List platforms
     protected final String branchName
     protected final String projectName
-    /* Default job properties */
     protected final List jobSpecificProperties = []
-    protected static String gitterEndpointUrl = ''
     protected boolean releaseApproved = false
-    protected static String releaseBranchPattern = 'release'
+    protected static releaseBranchPattern = /^release\/.*$/
     protected static String releaseVersion
     protected static String snapshotVersion
-    protected def configFileName = (script.env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
-            'global_mvn_settings_xml' : 'deeplearning4j-maven-global-settings'
+    protected Map checkoutDetails
+    protected boolean isMember
+    protected List testResults = []
+    public boolean release = false
 
     /**
      * Project class constructor
@@ -70,195 +70,26 @@ abstract class Project implements Serializable {
             pipelineBody()
         }
         catch (error) {
-            script.echo "[ERROR] ${error}"
-            script.currentBuild.result = script.currentBuild.result ?: 'FAILURE'
+            if (script.currentBuild.rawBuild.getAction(jenkins.model.InterruptedBuildAction.class) ||
+                    error instanceof org.jenkinsci.plugins.workflow.steps.FlowInterruptedException ||
+                    error instanceof java.lang.InterruptedException ||
+                    (error instanceof hudson.AbortException &&
+                            (error?.message?.contains('script returned exit code 143') ||
+                                    error?.message?.contains('Queue task was cancelled')))
+            ) {
+                script.currentBuild.result = 'ABORTED'
+            } else {
+                script.currentBuild.result = 'FAILURE'
+            }
+
+            script.echo "[ERROR] ${error}" +
+                    (error.cause ? '\n' + "Cause is ${error.cause}" : '') +
+                    (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
-//            script.notifier.sendEmailNotification(script.currentBuild.result)
+            script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
+                    checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
         }
-    }
-
-    protected void allocateBuildNode(Closure stagesToRun) {
-        for (Map pltm : platforms) {
-            Map platform = pltm
-            String platformName = platform.name
-
-            script.node(platformName) {
-                script.container('builder'){
-                    pipelineWrapper {
-                        try {
-                            script.stage('Checkout') {
-                                script.deleteDir()
-
-                                script.dir(projectName) {
-                                    script.checkout script.scm
-                                }
-                            }
-
-                            stagesToRun()
-                        }
-                        finally {
-                            script.cleanWs deleteDirs: true
-                            // FIXME: Workaround to clean workspace
-                            script.dir("${script.env.WORKSPACE}@tmp") {
-                                script.deleteDir()
-                            }
-                            script.dir("${script.env.WORKSPACE}@script") {
-                                script.deleteDir()
-                            }
-                            script.dir("${script.env.WORKSPACE}@script@tmp") {
-                                script.deleteDir()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected String getMvnCommand(String stageName, List mvnArguments = []) {
-        Boolean unixNode = script.isUnix()
-
-        switch (stageName) {
-            case 'build':
-                if (unixNode) {
-                    return [
-                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable ; fi ;',
-                            /* Pipeline withMaven step requires this line if it runs in Docker container */
-                            'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U -B',
-                            'clean',
-                            'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-Dmaven.test.skip=true',
-                            (releaseApproved) ? "-P staging" : '',
-                    ].plus(mvnArguments).findAll().join(' ')
-                } else {
-                    return [
-                            'vcvars64.bat',
-                            '&&',
-                            'bash -c',
-                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U -B',
-                            'clean',
-                            'install',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            '-Dmaven.test.skip=true',
-                            /* Workaround for Windows which doesn't honour withMaven options */
-                            '-s ${MAVEN_SETTINGS}',
-                            "-Dmaven.repo.local=" +
-                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
-                                    "${script.pipelineEnv.localRepositoryPath}",
-                            (releaseApproved) ? "-P staging" : ''
-                    ].plus(mvnArguments).findAll().join(' ') + '"'
-                }
-                break
-            case 'test':
-                if (unixNode) {
-                    return [
-                            'if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable ; fi ;',
-                            /* Pipeline withMaven step requires this line if it runs in Docker container */
-                            'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -B',
-                            'test',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            (releaseApproved) ? "-P staging" : ''
-                    ].plus(mvnArguments).findAll().join(' ')
-                } else {
-                    return [
-                            'vcvars64.bat',
-                            '&&',
-                            'bash -c',
-                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -B',
-                            'test',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            /* Workaround for Windows which doesn't honour withMaven options */
-                            "-Dmaven.repo.local=${script.pipelineEnv.localRepositoryPath}",
-                            (releaseApproved) ? "-P staging" : ''
-                    ].plus(mvnArguments).findAll().join(' ') + '"'
-                }
-                break
-            case 'deploy':
-                if (unixNode) {
-                    return [
-                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable; fi;",
-                            /* Pipeline withMaven step requires this line if it runs in Docker container */
-                            'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -B',
-                            'deploy',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
-                            (releaseApproved) ? "-DperformRelease" : '',
-                            (releaseApproved) ? "-P staging" : '',
-                            '-Dmaven.test.skip=true'
-                    ].plus(mvnArguments).findAll().join(' ')
-                } else {
-                    return [
-                            'vcvars64.bat',
-                            '&&',
-                            'bash -c',
-                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -B',
-                            'deploy',
-                            "-Dlocal.software.repository=${script.pipelineEnv.mvnProfileActivationName}",
-                            (releaseApproved) ? "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
-                            (releaseApproved) ? "-DperformRelease" : '',
-                            (releaseApproved) ? "-P staging" : '',
-                            '-Dmaven.test.skip=true',
-                            /* Workaround for Windows which doesn't honour withMaven options */
-                            '-s ${MAVEN_SETTINGS}',
-                            "-Dmaven.repo.local=" +
-                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
-                                    "${script.pipelineEnv.localRepositoryPath}",
-                    ].plus(mvnArguments).findAll().join(' ') + '"'
-                }
-                break
-            case 'build-test-resources':
-                if (unixNode) {
-                    return [
-                            "if [ -f /etc/redhat-release ]; then source /opt/rh/devtoolset-6/enable; fi;",
-                            /* Pipeline withMaven step requires this line if it runs in Docker container */
-                            'export PATH=$MVN_CMD_DIR:$PATH &&',
-                            'mvn -U -B',
-                            'clean',
-                            (branchName == 'master') ? 'deploy' : 'install',
-                            "-Dlocal.software.repository=ci-nexus",
-                            (releaseApproved) ? "-P staging" : '',
-                            '-s ${MAVEN_SETTINGS}'
-                    ].plus(mvnArguments).findAll().join(' ')
-                } else {
-                    return [
-                            'vcvars64.bat',
-                            '&&',
-                            'bash -c',
-                            '"' + 'export PATH=$PATH:/c/msys64/mingw64/bin &&',
-                            'mvn -U -B',
-                            'clean',
-                            (branchName == 'master') ? 'deploy' : 'install',
-                            "-Dlocal.software.repository=ci-nexus",
-                            "-Dresources.jar.compression=true",
-                            /* Workaround for Windows which doesn't honour withMaven options */
-                            '-s ${MAVEN_SETTINGS}',
-                            "-Dmaven.repo.local=" +
-                                    "${script.env.WORKSPACE.replaceAll('\\\\', '/')}/" +
-                                    "${script.pipelineEnv.localRepositoryPath}",
-                            (releaseApproved) ? "-P staging" : ''
-                    ].plus(mvnArguments).findAll().join(' ') + '"'
-                }
-                break
-            default:
-                throw new IllegalArgumentException('Stage is not supported yet')
-                break
-        }
-    }
-
-    protected void runBuild() {
-        script.mvn getMvnCommand('build')
-    }
-
-    protected void runTests() {
-        script.mvn getMvnCommand('test')
     }
 
     protected void getReleaseParameters() {
@@ -271,7 +102,7 @@ abstract class Project implements Serializable {
                             script.string(defaultValue: '', description: 'Snapshot version', name: 'snapshotVersion'),
                             script.string(defaultValue: '', description: 'Staging repository ID', name: 'stagingRepository'),
                     ],
-                    submitter: 'sshepel, saudet, agibsonccc',
+                    submitter: 'sshepel, saudet, agibsonccc, wmeddie, maxpumperla, ShamsUlAzeem',
                     submitterParameter: 'approvedBy'
         }
 
@@ -295,42 +126,6 @@ abstract class Project implements Serializable {
             updateGitCredentials()
             updateVersions(releaseVersion)
             script.setProjectVersion(releaseVersion, true)
-        }
-    }
-
-    protected void runDeploy() {
-        script.mvn getMvnCommand('deploy')
-    }
-
-    protected void runBuildTestResources(String platform = 'linux-x86_64') {
-        String dl4jTestResourcesGitFolderName = 'dl4j-test-resources'
-        String dl4jTestResourcesGitUrl = 'https://github.com/deeplearning4j/dl4j-test-resources.git'
-
-        script.checkout([
-                $class                           : 'GitSCM',
-                branches                         : [[name: '*/master']],
-                doGenerateSubmoduleConfigurations: false,
-                extensions                       : [[$class           : 'RelativeTargetDirectory',
-                                                     relativeTargetDir: "$dl4jTestResourcesGitFolderName"],
-                                                    [$class      : 'CloneOption',
-                                                     honorRefspec: true,
-                                                     noTags      : true,
-                                                     reference   : '',
-                                                     shallow     : true]],
-                submoduleCfg                     : [],
-                userRemoteConfigs                : [[url: "$dl4jTestResourcesGitUrl"]]
-        ])
-
-        script.dir(dl4jTestResourcesGitFolderName) {
-            String mvnCommand = getMvnCommand('build-test-resources', [
-                    (platform.contains('macosx') || platform.contains('ios')) ?
-                            "-Dmaven.repo.local=${script.env.WORKSPACE}/${script.pipelineEnv.localRepositoryPath}" :
-                            ''
-            ])
-
-            script.mvn "$mvnCommand"
-
-            script.deleteDir()
         }
     }
 
@@ -399,53 +194,22 @@ abstract class Project implements Serializable {
     @NonCPS
     protected List getDefaultPlatforms(String projectName) {
         List defaultPlatforms
+
         switch (projectName) {
-            case ['libnd4j', 'nd4j']:
+            case ['skil-clients', 'zeppelin', 'dl4j-test-resources']:
                 defaultPlatforms = [
-                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
-
-                        [name: 'ios-arm64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
-
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cpu'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.1'],
-
-                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'linux-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'linux-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
-
-                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        /*
-                             FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                             at the same time for CUDA - Xcode 8 required,
-                             which means that we can't enable avx512 builds at the moment
-                          */
-//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1'],
-
-                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        /* FIXME: avx512 */
-//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cuda-8.0'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.1']
+                        [name: 'linux-x86_64-generic']
                 ]
                 break
-            case 'deeplearning4j':
+            case 'skil-java':
                 defaultPlatforms = [
-                        [name: 'linux-x86_64']
+                        [name: 'linux-x86_64-skil-java']
+                ]
+                break
+            case ['skil-python', 'strumpf']:
+                defaultPlatforms = [
+                        [name: 'linux-x86_64', pythonVersion: '2'],
+                        [name: 'linux-x86_64', pythonVersion: '3']
                 ]
                 break
             default:
@@ -465,17 +229,18 @@ abstract class Project implements Serializable {
 
         String gitCommitId = shellCommand('git log -1 --pretty=%H')
 
+        // Required for skil-server
         script.env.GIT_COMMIT = gitCommitId
 
-        return [GIT_BRANCH: script.env.BRANCH_NAME,
-                GIT_COMMIT: gitCommitId,
-                GIT_COMMITER_NAME: shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
+        return [GIT_BRANCH        : branchName,
+                GIT_COMMIT        : gitCommitId,
+                GIT_COMMITER_NAME : shellCommand("git --no-pager show -s --format='%an' ${gitCommitId}"),
                 GIT_COMMITER_EMAIL: shellCommand("git --no-pager show -s --format='%ae' ${gitCommitId}"),
                 // Change pretty format from -pretty=%B to --pretty=format:'%s%n%n%b' because of old version of git (1.7.1)
                 GIT_COMMIT_MESSAGE: shellCommand("git log -1 --pretty=format:'%s%n%n%b' ${gitCommitId}")]
     }
 
-    protected Boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
+    protected boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
         Boolean isMember = false
         List gitHubUsers = []
         String authCredentialsId = 'github-username-and-token'
@@ -509,7 +274,10 @@ abstract class Project implements Serializable {
         return isMember
     }
 
-    protected withMavenCustom(body) {
+    protected void withMavenCustom(body) {
+        String configFileName = (branchName =~ /^master$|^latest_release$/) ?
+                'global_mvn_settings_xml' : 'deeplearning4j-maven-global-settings'
+
         script.withMaven(
                 /* Maven installation declared in the Jenkins "Global Tool Configuration" */
                 /* -XX:+TieredCompilation -XX:TieredStopAtLevel=1 options should make JVM start a bit faster */
@@ -517,7 +285,7 @@ abstract class Project implements Serializable {
                 globalMavenSettingsConfig: configFileName,
                 options: [
                         script.artifactsPublisher(disabled: true),
-                        script.junitPublisher(disabled: true), // This option does not allow to distinguish tests results in parallel step, whereas simple junit step call does.
+                        script.junitPublisher(disabled: true),
                         script.findbugsPublisher(disabled: true),
                         script.openTasksPublisher(disabled: true),
                         script.dependenciesFingerprintPublisher(disabled: true),
@@ -528,5 +296,45 @@ abstract class Project implements Serializable {
         ) {
             body()
         }
+    }
+
+    protected void getFancyStageDecorator(String text) {
+        int charsNumber = Math.round((78 - text.length()) / 2)
+
+        script.echo("*" * charsNumber + text + "*" * charsNumber)
+    }
+
+    protected String parseTestResults(testResults) {
+        String testResultsDetails = ''
+
+        if (testResults != null) {
+            def total = testResults.totalCount
+            def failed = testResults.failCount
+            def skipped = testResults.skipCount
+            def passed = total - failed - skipped
+
+            testResultsDetails += ("Total: " + total)
+            testResultsDetails += (", Passed: " + passed)
+            testResultsDetails += (", Failed: " + failed)
+            testResultsDetails += (", Skipped: " + skipped)
+        } else {
+            testResultsDetails = 'No test results found'
+        }
+
+        return testResultsDetails
+    }
+
+    protected void runCheckout(String organization = 'deeplearning4j', boolean parallelBuild = false) {
+        script.checkout script.scm
+
+        checkoutDetails = parseCheckoutDetails()
+        isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME, organization)
+
+        if (!parallelBuild) {
+            script.notifier.sendSlackNotification jobResult: 'STARTED',
+                    checkoutDetails: checkoutDetails, isMember: isMember
+        }
+
+        release = branchName ==~ releaseBranchPattern
     }
 }
