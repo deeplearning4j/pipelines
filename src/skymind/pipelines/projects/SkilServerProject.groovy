@@ -476,7 +476,8 @@ class SkilServerProject extends Project {
                                                         '-P ci',
                                                         '-P ci-nexus',
                                                         "-P ${sparkVersion}",
-//                                                            "-P test"
+                                                        '-P test',
+                                                        '-P test-nd4j-native'
                                                 ].findAll().join(' ')
 
                                                 if (osName in ['centos', 'ubuntu']) {
