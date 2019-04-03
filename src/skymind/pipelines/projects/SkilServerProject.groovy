@@ -476,6 +476,7 @@ class SkilServerProject extends Project {
                                                         '-P ci',
                                                         '-P ci-nexus',
                                                         "-P ${sparkVersion}",
+                                                        "-P modelhistoryserver",
                                                         '-P test',
                                                         '-P test-nd4j-native'
                                                 ].findAll().join(' ')
