@@ -2,6 +2,9 @@ package skymind.pipelines.projects
 
 import groovy.json.JsonSlurper
 import skymind.pipelines.modules.Module
+import com.cwctravel.hudson.plugins.extended_choice_parameter.ExtendedChoiceParameterDefinition
+
+import java.security.cert.Extension
 
 /**
  * Step 1: Get changed modules, by searching pom.xml file in the path of changed file.
@@ -19,6 +22,10 @@ class Deeplearning4jProject implements Serializable {
     private static String releaseVersion
     private static String snapshotVersion
     private List testResults = []
+    /* WARNING: user provided platforms are valid only for base deeplearning4j modules, which means,
+        if docs/python module builds will go to provided platform, it may failed because of lack of required tools.
+     */
+    private List userProvidedPlatforms = []
 
     /**
      * Project class constructor
@@ -96,7 +103,6 @@ class Deeplearning4jProject implements Serializable {
 
         try {
             script.stage('Prepare Run') {
-
                 script.node('linux-x86_64-generic') {
                     script.container('jnlp') {
                         script.checkout script.scm
@@ -111,6 +117,8 @@ class Deeplearning4jProject implements Serializable {
                         modulesToBuild = getModulesToBuild(changes)
 
                         script.echo "[INFO] Changed modules: ${modulesToBuild}"
+
+                        userProvidedPlatforms = parseTargetPlatforms(script.params.RELEASE_PLATFORMS.trim())
                     }
                 }
             }
@@ -126,7 +134,9 @@ class Deeplearning4jProject implements Serializable {
             for (map in mappings) {
                 Map mapping = map
                 List modules = mapping.modules ?: script.error('Missing modules!')
-                List platforms = mapping.platforms ?: script.error('Missing platforms!')
+                List platforms = userProvidedPlatforms ?:
+                        mapping.platforms ?:
+                                script.error('Missing platforms!')
 
                 script.parallel getBuildStreams(modules, platforms)
             }
@@ -192,7 +202,7 @@ class Deeplearning4jProject implements Serializable {
                 'libnd4j', 'nd4j', 'datavec', 'deeplearning4j', 'arbiter',
                 'nd4s',
                 'gym-java-client', 'rl4j', 'scalnet', 'jumpy', 'pydatavec',
-                'pydl4j', 'docs'
+                'pydl4j'
         ]
         List changesRelatedToModules = []
         List changesNotRelatedToModules = []
@@ -248,7 +258,7 @@ class Deeplearning4jProject implements Serializable {
                 multi    : [modules: [], platforms: getPlatforms('libnd4j')],
                 gpu      : [modules: [], platforms: getPlatforms('deeplearning4j')],
                 pymodules: [modules: [], platforms: getPlatforms('jumpy')],
-                docs:      [modules: [], platforms: getPlatforms('docs')],
+                docs     : [modules: [], platforms: getPlatforms('docs')],
                 generic  : [modules: [], platforms: getPlatforms()]
         ]
 
@@ -322,7 +332,6 @@ class Deeplearning4jProject implements Serializable {
             String streamName = [
                     platformName, os, backend, cpuExtension, pythonVersion
             ].findAll().join('-')
-
 
             /* Create stream body */
             streams["$streamName"] = {
@@ -438,6 +447,7 @@ class Deeplearning4jProject implements Serializable {
         streams
     }
 
+    @NonCPS
     protected List getPlatforms(String module = '') {
         List platforms
 
@@ -535,13 +545,58 @@ class Deeplearning4jProject implements Serializable {
 
     @NonCPS
     protected void setBuildParameters() {
+        List commonJobParameters = []
         List commonJobProperties = []
 
-        if (script.env.JOB_BASE_NAME == 'master') {
+        if (branchName == 'master') {
             commonJobProperties.addAll([
                     script.pipelineTriggers([script.cron('@midnight')])
             ])
         }
+
+        if (branchName =~ releaseBranchPattern) {
+            def platforms = getPlatforms('libnd4j').collect {
+                it.inspect().replaceAll(', ', '|')
+            }.join(',')
+
+            def platformParameter = new ExtendedChoiceParameterDefinition(
+                    "RELEASE_PLATFORMS",
+                    "PT_MULTI_SELECT",
+                    "${platforms}",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    false,
+                    false,
+                    8,
+                    "platforms to build, you can pick multiple platforms by using CTRL + left mouse button",
+                    ""
+            )
+
+            commonJobParameters << platformParameter
+        }
+
+        commonJobProperties << script.parameters(commonJobParameters)
 
         script.properties(commonJobProperties)
     }
@@ -625,4 +680,16 @@ class Deeplearning4jProject implements Serializable {
 //
 //        script."$shell"(script: "git diff-tree --no-commit-id --name-only -r HEAD", returnStdout: true).trim().tokenize('\n')
 //    }
+
+    private List parseTargetPlatforms(String targetPlatforms) {
+        List platforms = []
+
+        for (tgplt in targetPlatforms.tokenize(',')) {
+            String targetPlatform = tgplt
+            String targetPlatformModifiedString = targetPlatform.replaceAll(/\|/, ', ')
+            platforms.add(Eval.me(targetPlatformModifiedString))
+        }
+
+        platforms
+    }
 }
