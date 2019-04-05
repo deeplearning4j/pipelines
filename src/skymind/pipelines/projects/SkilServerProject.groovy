@@ -112,6 +112,52 @@ class SkilServerProject extends Project {
 //                              pythonVersion: '3'
 //                      ],
                         [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'ubuntu',
+                                osVersion    : '18.04',
+                                backend      : 'cpu',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
+//                      [
+//                              name         : 'linux-x86_64-generic',
+//                              osName       : 'ubuntu',
+//                              osVersion    : '18.04',
+//                              backend      : 'cpu',
+//                              sparkVersion : 'spark-2.2',
+//                              scalaVersion : '2.11',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '3'
+//                      ],
+                        [
+                                name         : 'linux-x86_64-generic',
+                                osName       : 'ubuntu',
+                                osVersion    : '18.04',
+                                backend      : 'cuda-10.0',
+                                cudnnVersion : '7',
+                                sparkVersion : 'spark-1.6',
+                                scalaVersion : '2.10',
+                                hadoopVersion: 'hadoop-2.7',
+                                condaVersion : '4.3.27',
+                                pythonVersion: '2'
+                        ],
+//                      [
+//                              name         : 'linux-x86_64-generic',
+//                              osName       : 'ubuntu',
+//                              osVersion    : '18.04',
+//                              backend      : 'cuda-10.0',
+//                              cudnnVersion : '7',
+//                              sparkVersion : 'spark-2.2',
+//                              scalaVersion : '2.11',
+//                              hadoopVersion: 'hadoop-2.7',
+//                              condaVersion : '4.3.27',
+//                              pythonVersion: '3'
+//                      ],
+                        [
                                 name         : 'windows-x86_64-cpu',
                                 osName       : 'windows',
                                 osVersion    : 'server-2016',
@@ -418,7 +464,7 @@ class SkilServerProject extends Project {
                                             }
 
                                             script.stage('Publish artifacts') {
-                                                publishArtifacts(osName, skilDockerImageTag)
+                                                publishArtifacts(osName, osVersion, skilDockerImageTag)
 
                                                 if (osName == 'centos') {
                                                     // Tarball upload
@@ -618,12 +664,13 @@ class SkilServerProject extends Project {
         }
     }
 
-    private getPublishParameters(String osName, String skilDockerImageTag) {
-        def baseArch = 'x86_64'
+    private getPublishParameters(String osName, String osVersion, String skilDockerImageTag) {
+        String baseArch = 'x86_64'
+        String platform = [osName, osVersion].join('-')
         def publishParameters = [:]
 
-        switch (osName) {
-            case 'centos':
+        switch (platform) {
+            case ~/^centos*/:
                 String repoPath
 
                 switch (branchName) {
@@ -655,7 +702,7 @@ class SkilServerProject extends Project {
                 publishParameters.put('repoPath', repoPath)
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.rpm")
                 break
-            case 'ubuntu':
+            case 'ubuntu-16.04':
                 String repoPath
 
                 switch (branchName) {
@@ -672,11 +719,32 @@ class SkilServerProject extends Project {
                 }
 
                 publishParameters.put('packageExtension','deb')
-                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/debs')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/deb-xenial')
                 publishParameters.put('repoPath', repoPath)
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.deb")
                 break
-            case 'windows':
+            case 'ubuntu-18.04':
+                String repoPath
+
+                switch (branchName) {
+                    case ~releaseBranchPattern:
+                    case 'master':
+                    default:
+                        repoPath = [
+                                osName,
+                                'bionic',
+                                'main',
+                                baseArch
+                        ].findAll().join('/')
+                        break
+                }
+
+                publishParameters.put('packageExtension','deb')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/deb-bionic')
+                publishParameters.put('repoPath', repoPath)
+                publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.deb")
+                break
+            case ~/^windows*/:
                 String repoPath
 
                 switch (branchName) {
