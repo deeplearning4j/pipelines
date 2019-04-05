@@ -656,10 +656,19 @@ class SkilServerProject extends Project {
         ]) {
             for (def art in artifacts) {
                 def artifact = art
-                def artifactName = artifact.name
-                def artifactPath = artifact.path
+                String artifactName = artifact.name
+                String artifactPath = artifact.path
+                String uploadUrl = [
+                        repoUrl,
+                        repoPath,
+                        artifactName
+                ].findAll().join('')
 
-                script.sh "curl --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${repoUrl}/${repoPath}/${artifactName}"
+                if (publishParameters.packageExtension == 'deb') {
+                    script.sh "curl --user \${RPM_REPO_CREDS} -X POST -H \"Content-Type: multipart/form-data\" --data-binary \"@${artifactPath}\" ${uploadUrl}"
+                } else {
+                    script.sh "curl --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${uploadUrl}"
+                }
             }
         }
     }
@@ -703,45 +712,15 @@ class SkilServerProject extends Project {
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.rpm")
                 break
             case 'ubuntu-16.04':
-                String repoPath
-
-                switch (branchName) {
-                    case ~releaseBranchPattern:
-                    case 'master':
-                    default:
-                        repoPath = [
-                                osName,
-                                'xenial',
-                                'main',
-                                baseArch
-                        ].findAll().join('/')
-                        break
-                }
-
                 publishParameters.put('packageExtension','deb')
-                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/deb-xenial')
-                publishParameters.put('repoPath', repoPath)
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/deb-xenial/')
+                publishParameters.put('repoPath', '')
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.deb")
                 break
             case 'ubuntu-18.04':
-                String repoPath
-
-                switch (branchName) {
-                    case ~releaseBranchPattern:
-                    case 'master':
-                    default:
-                        repoPath = [
-                                osName,
-                                'bionic',
-                                'main',
-                                baseArch
-                        ].findAll().join('/')
-                        break
-                }
-
                 publishParameters.put('packageExtension','deb')
-                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/deb-bionic')
-                publishParameters.put('repoPath', repoPath)
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/deb-bionic/')
+                publishParameters.put('repoPath', '')
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.deb")
                 break
             case ~/^windows*/:
