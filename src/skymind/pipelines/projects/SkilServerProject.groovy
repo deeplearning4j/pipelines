@@ -640,8 +640,8 @@ class SkilServerProject extends Project {
         }
     }
 
-    private void publishArtifacts(String osName, String skilDockerImageTag) {
-        def publishParameters = getPublishParameters(osName, skilDockerImageTag)
+    private void publishArtifacts(String osName, String osVersion, String skilDockerImageTag) {
+        def publishParameters = getPublishParameters(osName, osVersion, skilDockerImageTag)
         def artifacts = script.findFiles glob: publishParameters.searchPattern
         def repoUrl = publishParameters.repoUrl
         def repoPath = publishParameters.repoPath
