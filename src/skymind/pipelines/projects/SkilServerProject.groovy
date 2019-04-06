@@ -677,7 +677,7 @@ class SkilServerProject extends Project {
         def publishParameters = [:]
 
         switch (platform) {
-            case ~/^centos*/:
+            case ~/^centos.*/:
                 String repoPath
 
                 switch (branchName) {
@@ -721,7 +721,7 @@ class SkilServerProject extends Project {
                 publishParameters.put('repoPath', '')
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.deb")
                 break
-            case ~/^windows*/:
+            case ~/^windows.*/:
                 String repoPath
 
                 switch (branchName) {
