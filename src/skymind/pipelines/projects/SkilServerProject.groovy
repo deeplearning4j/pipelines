@@ -401,168 +401,166 @@ class SkilServerProject extends Project {
                                                 script.sh "./build-skil.sh"
                                             }
                                         }
+                                    }
 
-                                        if (release) {
-                                            if (osName in ['centos', 'ubuntu']) {
-                                                script.stage('Build SKIL docker image') {
-                                                    script.sh """\
-                                                        docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-                                                    """.stripIndent()
+                                    if (release) {
+                                        if (osName in ['centos', 'ubuntu']) {
+                                            script.stage('Build SKIL docker image') {
+                                                script.sh """\
+                                                    docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                """.stripIndent()
 
-                                                    if (staticPackageBuild) {
-                                                        if (osName == 'centos') {
-                                                            script.sh """\
-                                                               docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
-                                                                run \
-                                                                -u root \
-                                                                -v \${HOME}/.m2:/root/.m2 \
-                                                                -v \$(pwd):/opt/skil/build \
-                                                                -e OS_NAME=${osName} \
-                                                                -e OS_VERSION=${osVersion} \
-                                                                -e STATIC_PACKAGE_BUILD=${
-                                                                staticPackageBuild
-                                                            } \
-                                                                -e PYTHON_VERSION=${
-                                                                pythonVersion
-                                                            } \
-                                                                -e CUDA_VERSION=${cudaVersion} \
-                                                                -e CONDA_VERSION=${condaVersion} \
-                                                                -e HADOOP_VERSION=${
-                                                                hadoopVersion
-                                                            } \
-                                                                -e SCALA_VERSION=${scalaVersion} \
-                                                                --rm \
-                                                                --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
-                                                                --workdir=/opt/skil/build \
-                                                                skil
-                                                            """
-
-                                                            script.sh """\
-                                                                docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-                                                            """.stripIndent()
-                                                        } else {
-                                                            script.echo "[WARNING] OS is not supported."
-                                                        }
-                                                    }
-
-                                                    script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
-                                                    script.sh 'docker images'
-                                                    script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
-
-                                                    // Workaround for archiving artifacts by Jenkins
-                                                    script.sh """\
-                                                        mv ${buildArtifactsPath}/${osName} ${
-                                                        buildArtifactsPath
-                                                    }/${skilDockerImageTag}
-                                                    """.stripIndent()
-
-                                                    /* FIXME: Place archiveArtifacts after mv command call,
-                                                        to not overwrite artifacts in case of build failure.
-                                                    */
-//                                                      script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
-                                                }
-                                            }
-
-                                            script.stage('Publish artifacts') {
-                                                publishArtifacts(osName, osVersion, skilDockerImageTag)
-
-                                                if (osName == 'centos') {
-                                                    // Tarball upload
-                                                    publishTarball(skilVersion, backend)
-                                                }
-
-                                                if (osName in ['centos', 'ubuntu']) {
-                                                    def dockerRegistryUrl = "https://docker-ci.skymind.io"
-                                                    def dockerRegistryCredentialsId = "skymind-docker-registry"
-                                                    def skilDockerImageName = "skil:${skilVersion}-${skilDockerImageTag}"
-
-                                                    script.docker.withRegistry(
-                                                            "${dockerRegistryUrl}",
-                                                            "${dockerRegistryCredentialsId}"
-                                                    ) {
-                                                        def skilDockerImage = script.docker.image(skilDockerImageName)
-
-                                                        skilDockerImage.push()
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            script.stage('Install test resources') {
-                                                script.dir('skil-test-resources') {
-                                                    String installTestResourcesMavenArguments = [
-                                                            mavenBaseCommand,
-                                                            'clean',
-                                                            'install',
-                                                            '-DskipTests',
-                                                            '-Dmaven.test.skip=true',
-                                                            '-Dmaven.javadoc.skip=true'
-                                                    ].findAll().join(' ')
-
-                                                    if (osName in ['centos', 'ubuntu']) {
+                                                if (staticPackageBuild) {
+                                                    if (osName == 'centos') {
                                                         script.sh """\
-                                                            docker-compose \
-                                                            -f ../skil-build/docker/docker-compose.yml \
-                                                            --project-directory ../skil-build/docker run \
-                                                            -v \${HOME}/.m2:/home/skil/.m2 \
+                                                           docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
+                                                            run \
+                                                            -u root \
+                                                            -v \${HOME}/.m2:/root/.m2 \
                                                             -v \$(pwd):/opt/skil/build \
+                                                            -e OS_NAME=${osName} \
+                                                            -e OS_VERSION=${osVersion} \
+                                                            -e STATIC_PACKAGE_BUILD=${
+                                                            staticPackageBuild
+                                                        } \
+                                                            -e PYTHON_VERSION=${
+                                                            pythonVersion
+                                                        } \
+                                                            -e CUDA_VERSION=${cudaVersion} \
+                                                            -e CONDA_VERSION=${condaVersion} \
+                                                            -e HADOOP_VERSION=${
+                                                            hadoopVersion
+                                                        } \
+                                                            -e SCALA_VERSION=${scalaVersion} \
                                                             --rm \
-                                                            skil-build \
-                                                            sh -c '${installTestResourcesMavenArguments}'
+                                                            --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
+                                                            --workdir=/opt/skil/build \
+                                                            skil
                                                         """
+
+                                                        script.sh """\
+                                                            docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                        """.stripIndent()
                                                     } else {
-                                                        script.sh "${installTestResourcesMavenArguments}"
+                                                        script.echo "[WARNING] OS is not supported."
                                                     }
                                                 }
+
+                                                script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
+                                                script.sh 'docker images'
+                                                script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
+
+                                                // Workaround for archiving artifacts by Jenkins
+                                                script.sh """\
+                                                    mv ${buildArtifactsPath}/${osName} ${buildArtifactsPath}/${skilDockerImageTag}
+                                                """.stripIndent()
+
+                                                /* FIXME: Place archiveArtifacts after mv command call,
+                                                    to not overwrite artifacts in case of build failure.
+                                                */
+//                                                      script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
+                                            }
+                                        }
+
+                                        script.stage('Publish artifacts') {
+                                            publishArtifacts(osName, osVersion, skilDockerImageTag)
+
+                                            if (osName == 'centos') {
+                                                // Tarball upload
+                                                publishTarball(skilVersion, backend)
                                             }
 
-                                            script.stage('Run tests') {
-                                                String runTestsMavenArguments = [
+                                            if (osName in ['centos', 'ubuntu']) {
+                                                def dockerRegistryUrl = "https://docker-ci.skymind.io"
+                                                def dockerRegistryCredentialsId = "skymind-docker-registry"
+                                                def skilDockerImageName = "skil:${skilVersion}-${skilDockerImageTag}"
+
+                                                script.docker.withRegistry(
+                                                        "${dockerRegistryUrl}",
+                                                        "${dockerRegistryCredentialsId}"
+                                                ) {
+                                                    def skilDockerImage = script.docker.image(skilDockerImageName)
+
+                                                    skilDockerImage.push()
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        script.stage('Install test resources') {
+                                            script.dir('skil-test-resources') {
+                                                String installTestResourcesMavenArguments = [
                                                         mavenBaseCommand,
-                                                        'test',
-                                                        '-P ci',
-                                                        '-P ci-nexus',
-                                                        "-P ${sparkVersion}",
-                                                        "-P modelhistoryserver",
-                                                        '-P test',
-                                                        '-P test-nd4j-native'
+                                                        'clean',
+                                                        'install',
+                                                        '-DskipTests',
+                                                        '-Dmaven.test.skip=true',
+                                                        '-Dmaven.javadoc.skip=true'
                                                 ].findAll().join(' ')
 
                                                 if (osName in ['centos', 'ubuntu']) {
                                                     script.sh """\
                                                         docker-compose \
-                                                        -f ./skil-build/docker/docker-compose.yml \
-                                                        --project-directory ./skil-build/docker run \
+                                                        -f ../skil-build/docker/docker-compose.yml \
+                                                        --project-directory ../skil-build/docker run \
                                                         -v \${HOME}/.m2:/home/skil/.m2 \
                                                         -v \$(pwd):/opt/skil/build \
                                                         --rm \
                                                         skil-build \
-                                                        sh -c '${runTestsMavenArguments}'
+                                                        sh -c '${installTestResourcesMavenArguments}'
                                                     """
                                                 } else {
-                                                    script.sh "${runTestsMavenArguments}"
+                                                    script.sh "${installTestResourcesMavenArguments}"
                                                 }
                                             }
+                                        }
+
+                                        script.stage('Run tests') {
+                                            String runTestsMavenArguments = [
+                                                    mavenBaseCommand,
+                                                    'test',
+                                                    '-P ci',
+                                                    '-P ci-nexus',
+                                                    "-P ${sparkVersion}",
+                                                    "-P modelhistoryserver",
+                                                    '-P test',
+                                                    '-P test-nd4j-native'
+                                            ].findAll().join(' ')
 
                                             if (osName in ['centos', 'ubuntu']) {
-                                                script.dir('skil-ui-modules/src/main/typescript/dashboard') {
-                                                    script.stage('Clear cache and build docker image from scratch') {
-                                                        script.sh '''\
-                                                            docker-compose rm -f
-                                                            docker-compose build
-                                                        '''.stripIndent()
-                                                    }
+                                                script.sh """\
+                                                    docker-compose \
+                                                    -f ./skil-build/docker/docker-compose.yml \
+                                                    --project-directory ./skil-build/docker run \
+                                                    -v \${HOME}/.m2:/home/skil/.m2 \
+                                                    -v \$(pwd):/opt/skil/build \
+                                                    --rm \
+                                                    skil-build \
+                                                    sh -c '${runTestsMavenArguments}'
+                                                """
+                                            } else {
+                                                script.sh "${runTestsMavenArguments}"
+                                            }
+                                        }
 
-                                                    script.stage('SKIL Dashboard Unit Tests') {
-                                                        script.sh '''\
-                                                            docker-compose run --rm dev yarn run test-teamcity
-                                                        '''.stripIndent()
-                                                    }
+                                        if (osName in ['centos', 'ubuntu']) {
+                                            script.dir('skil-ui-modules/src/main/typescript/dashboard') {
+                                                script.stage('Clear cache and build docker image from scratch') {
+                                                    script.sh '''\
+                                                        docker-compose rm -f
+                                                        docker-compose build
+                                                    '''.stripIndent()
+                                                }
 
-                                                    script.stage('SKIL Dashboard E2E Tests') {
-                                                        script.sh '''\
-                                                            docker-compose run --rm dev yarn run e2e-teamcity
-                                                        '''.stripIndent()
-                                                    }
+                                                script.stage('SKIL Dashboard Unit Tests') {
+                                                    script.sh '''\
+                                                        docker-compose run --rm dev yarn run test-teamcity
+                                                    '''.stripIndent()
+                                                }
+
+                                                script.stage('SKIL Dashboard E2E Tests') {
+                                                    script.sh '''\
+                                                        docker-compose run --rm dev yarn run e2e-teamcity
+                                                    '''.stripIndent()
                                                 }
                                             }
                                         }
