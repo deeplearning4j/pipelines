@@ -10,8 +10,8 @@ class SkilServerProject extends Project {
 
     String zeppelinBranchName = 'skymind-0.7-skil-1.2.0'
     String zeppelinGitUrl = 'https://github.com/SkymindIO/zeppelin.git'
-//    String releaseBranchPattern = /^release\/(\d+\.)?(\d+\.)?(\*|\d+)?(-\w+)$/
-    protected static releaseBranchPattern = /^v[\d.]+?[-]?[\w]+$/
+    // Release branch pattern examples: release/1.0.0 or v1.0.0
+    protected static releaseBranchPattern = /^(release\/[\d.]+?[-]?[\w]+|v[\d.]+?[-]?[\w]+)$/
     String buildArtifactsPath = 'skil-distro-parent/skil-distro-docker/build-artifacts'
 
     protected def getBuildMappings() {
