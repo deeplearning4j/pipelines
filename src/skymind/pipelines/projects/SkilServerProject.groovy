@@ -300,7 +300,7 @@ class SkilServerProject extends Project {
             String backend = platform.get('backend')
 
             def pythonVersion = platform.get('pythonVersion')
-            def pythonPackageBuild = platform.get('pythonPackageBuild') ?: 'false'
+            def pythonPackageBuild = release ? true : false
 
             def cudaVersion = backend?.contains('cuda') ? backend.split('-')[1] : ''
             def cudnnVersion = platform.get('cudnnVersion')
@@ -383,7 +383,7 @@ class SkilServerProject extends Project {
                                         "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
                                         "SPARK_VERSION=${sparkVersion}",
                                         "BUILD_ZEPPELIN=${buildZeppelin}",
-                                        "STATIC_PACKAGE_BUILD=${staticPackageBuild}",
+                                        "STATIC_PACKAGE_BUILD=${staticPackageBuild}"
                                 ]) {
                                     script.stage('Build SKIL and its dependencies') {
                                         script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
