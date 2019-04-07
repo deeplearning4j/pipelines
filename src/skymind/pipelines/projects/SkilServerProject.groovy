@@ -652,7 +652,7 @@ class SkilServerProject extends Project {
                         repoUrl,
                         repoPath,
                         artifactName
-                ].findAll().join('')
+                ].findAll().join('/')
 
                 if (publishParameters.packageExtension == 'deb') {
                     script.sh "curl --user \${RPM_REPO_CREDS} -X POST -H \"Content-Type: multipart/form-data\" --data-binary \"@${artifactPath}\" ${repoUrl}"
@@ -697,7 +697,7 @@ class SkilServerProject extends Project {
                 }
 
                 publishParameters.put('packageExtension', 'rpm')
-                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/rpms/')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/rpms')
                 publishParameters.put('repoPath', repoPath)
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.rpm")
                 break
