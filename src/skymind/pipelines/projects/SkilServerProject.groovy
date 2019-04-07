@@ -411,7 +411,7 @@ class SkilServerProject extends Project {
                                                 """.stripIndent()
 
                                                 if (staticPackageBuild) {
-                                                    if (osName == 'centos') {
+                                                    if (osName == 'centos' && backend == 'cpu') {
                                                         script.sh """\
                                                            docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
                                                             run \
@@ -454,11 +454,6 @@ class SkilServerProject extends Project {
                                                 script.sh """\
                                                     mv ${buildArtifactsPath}/${osName} ${buildArtifactsPath}/${skilDockerImageTag}
                                                 """.stripIndent()
-
-                                                /* FIXME: Place archiveArtifacts after mv command call,
-                                                    to not overwrite artifacts in case of build failure.
-                                                */
-//                                                      script.archiveArtifacts artifacts: "${buildArtifactsPath}/**/*.${getPackageExtension(osName)}"
                                             }
                                         }
 
@@ -576,10 +571,6 @@ class SkilServerProject extends Project {
                                     testResults: parseTestResults(tr)
                             ])
 
-//                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-//                                script.archiveArtifacts artifacts: 'skil-distro-parent/skildistro/target/*-dist.tar.gz'
-//                                script.archiveArtifacts artifacts: 'skil-distro-parent/skil-distro-rpm/target/rpm/skil-server/RPMS/x86_64/*.rpm'
-
                             script.cleanWs deleteDirs: true
 
                             // FIXME: Workaround to clean workspace
@@ -663,7 +654,7 @@ class SkilServerProject extends Project {
                 ].findAll().join('')
 
                 if (publishParameters.packageExtension == 'deb') {
-                    script.sh "curl --user \${RPM_REPO_CREDS} -X POST -H \"Content-Type: multipart/form-data\" --data-binary \"@${artifactPath}\" ${uploadUrl}"
+                    script.sh "curl --user \${RPM_REPO_CREDS} -X POST -H \"Content-Type: multipart/form-data\" --data-binary \"@${artifactPath}\" ${repoUrl}"
                 } else {
                     script.sh "curl --user \${RPM_REPO_CREDS} --upload-file ./${artifactPath} ${uploadUrl}"
                 }
