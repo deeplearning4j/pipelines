@@ -635,7 +635,7 @@ class SkilServerProject extends Project {
                 def tarballName = tarball.name
                 def tarballPath = tarball.path
 
-                script.sh "curl -v --user \${RPM_REPO_CREDS} --upload-file ./${tarballPath} ${repoUrl}/${repoPath}/${tarballName}"
+                script.sh "curl --user \${RPM_REPO_CREDS} --upload-file ./${tarballPath} ${repoUrl}/${repoPath}/${tarballName}"
             }
         }
     }
@@ -705,7 +705,7 @@ class SkilServerProject extends Project {
                 }
 
                 publishParameters.put('packageExtension', 'rpm')
-                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/rpms')
+                publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/rpms/')
                 publishParameters.put('repoPath', repoPath)
                 publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.rpm")
                 break
