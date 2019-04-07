@@ -382,8 +382,7 @@ class SkilServerProject extends Project {
                                         "SCALA_VERSION=${scalaVersion}",
                                         "SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall}",
                                         "SPARK_VERSION=${sparkVersion}",
-                                        "BUILD_ZEPPELIN=${buildZeppelin}",
-                                        "STATIC_PACKAGE_BUILD=${staticPackageBuild}"
+                                        "BUILD_ZEPPELIN=${buildZeppelin}"
                                 ]) {
                                     script.stage('Build SKIL and its dependencies') {
                                         script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
@@ -411,41 +410,44 @@ class SkilServerProject extends Project {
                                                     docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
                                                 """.stripIndent()
 
-//                                                if (staticPackageBuild) {
-//                                                    if (osName == 'centos' && backend == 'cpu') {
-//                                                        script.sh """\
-//                                                           docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
-//                                                            run \
-//                                                            -u root \
-//                                                            -v \${HOME}/.m2:/root/.m2 \
-//                                                            -v \$(pwd):/opt/skil/build \
-//                                                            -e OS_NAME=${osName} \
-//                                                            -e OS_VERSION=${osVersion} \
-//                                                            -e STATIC_PACKAGE_BUILD=${
-//                                                            staticPackageBuild
-//                                                        } \
-//                                                            -e PYTHON_VERSION=${
-//                                                            pythonVersion
-//                                                        } \
-//                                                            -e CUDA_VERSION=${cudaVersion} \
-//                                                            -e CONDA_VERSION=${condaVersion} \
-//                                                            -e HADOOP_VERSION=${
-//                                                            hadoopVersion
-//                                                        } \
-//                                                            -e SCALA_VERSION=${scalaVersion} \
-//                                                            --rm \
-//                                                            --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
-//                                                            --workdir=/opt/skil/build \
-//                                                            skil
-//                                                        """
-//
-//                                                        script.sh """\
-//                                                            docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-//                                                        """.stripIndent()
-//                                                    } else {
-//                                                        script.echo "[WARNING] OS is not supported."
-//                                                    }
-//                                                }
+                                                if (staticPackageBuild) {
+                                                    if (osName == 'centos' && backend == 'cpu') {
+                                                        script.sh """\
+                                                           docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
+                                                            run \
+                                                            -u root \
+                                                            -v \${HOME}/.m2:/root/.m2 \
+                                                            -v \$(pwd):/opt/skil/build \
+                                                            -e OS_NAME=${osName} \
+                                                            -e OS_VERSION=${osVersion} \
+                                                            -e STATIC_PACKAGE_BUILD=${
+                                                            staticPackageBuild
+                                                        } \
+                                                            -e PYTHON_VERSION=${
+                                                            pythonVersion
+                                                        } \
+                                                            -e CUDA_VERSION=${cudaVersion} \
+                                                            -e CONDA_VERSION=${condaVersion} \
+                                                            -e HADOOP_VERSION=${
+                                                            hadoopVersion
+                                                        } \
+                                                            -e SCALA_VERSION=${scalaVersion} \
+                                                            -e RELEASE=${release} \
+                                                            -e PYTHON_PACKAGE_BUILD=${pythonPackageBuild} \
+                                                            -e SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall} \
+                                                            --rm \
+                                                            --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
+                                                            --workdir=/opt/skil/build \
+                                                            skil
+                                                        """
+
+                                                        script.sh """\
+                                                            docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                        """.stripIndent()
+                                                    } else {
+                                                        script.echo "[WARNING] OS is not supported."
+                                                    }
+                                                }
 
                                                 script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
                                                 script.sh 'docker images'
