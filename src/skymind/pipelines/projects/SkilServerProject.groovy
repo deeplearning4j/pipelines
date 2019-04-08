@@ -398,7 +398,7 @@ class SkilServerProject extends Project {
                                                      skil-build
                                                 """
                                             } else {
-                                                script.sh "./build-skil.sh"
+                                                script.bat "bash -c ./build-skil.sh"
                                             }
                                         }
                                     }
