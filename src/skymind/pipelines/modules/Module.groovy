@@ -267,6 +267,7 @@ class Module implements Serializable {
 
                 if (stageName == 'test') {
                     mavenArguments.push('-P test-nd4j-native')
+                    mavenArguments.push('-P nd4j-tests-cpu')
                 }
 
                 if (cpuExtension) {
@@ -325,6 +326,7 @@ class Module implements Serializable {
                 }
 
                 if (stageName == 'test') {
+                    mavenArguments.push('-P nd4j-tests-cuda')
                     mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
                 }
             }
