@@ -328,6 +328,9 @@ class SkilServerProject extends Project {
 
             def streamName = skilDockerImageTag
 
+            // Workaround to fix zeppelin build
+            String wsFolderName = 'ws/' + 'ss/' + branchName.replaceAll('/', '_')
+
             /* Create stream body */
             streams["$streamName"] = {
                 script.stage(streamName) {
@@ -397,11 +400,12 @@ class SkilServerProject extends Project {
                                                      --rm \
                                                      skil-build
                                                 """
-                                            } else {
-                                                script.bat "bash -c ./build-skil.sh"
+                                                } else {
+                                                    script.bat "bash -c ./build-skil.sh"
+                                                    script.sh "ls -lRa ${buildArtifactsPath}"
+                                                }
                                             }
                                         }
-                                    }
 
                                     if (release) {
                                         if (osName in ['centos', 'ubuntu']) {
@@ -449,9 +453,9 @@ class SkilServerProject extends Project {
                                                     }
                                                 }
 
-                                                script.sh "ls -lRa ./skil-distro-parent/skil-distro-docker/build-artifacts/${osName}"
-                                                script.sh 'docker images'
-                                                script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
+                                                    script.sh "ls -lRa ${buildArtifactsPath}/${osName}"
+                                                    script.sh 'docker images'
+                                                    script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
 
                                                 // Workaround for archiving artifacts by Jenkins
                                                 script.sh """\
