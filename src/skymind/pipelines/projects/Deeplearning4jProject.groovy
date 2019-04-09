@@ -211,7 +211,7 @@ class Deeplearning4jProject implements Serializable {
         }
 
         // Workaround to build docs for any master job run
-        if (!('docs' in changesRelatedToModules) && branchName == 'master') {
+        if (!('docs' in changesRelatedToModules) && changesRelatedToModules && branchName == 'master') {
             changesRelatedToModules.add('docs')
         }
 
