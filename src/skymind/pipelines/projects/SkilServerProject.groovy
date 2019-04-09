@@ -185,38 +185,6 @@ class SkilServerProject extends Project {
             ]
         } else {
             return [
-//                    [
-//                            osType   : 'Linux',
-//                            platforms: [
-//                                    [
-//                                            name         : 'linux-x86_64-generic',
-//                                            osName       : 'centos',
-//                                            osVersion    : '7',
-//                                            backend      : 'cpu',
-//                                            sparkVersion : 'spark-1.6',
-//                                            scalaVersion : '2.11',
-//                                            hadoopVersion: 'hadoop-2.7',
-//                                            condaVersion : '4.3.27',
-//                                            pythonVersion: '2'
-//                                    ]
-//                            ]
-//                    ],
-//                    [
-//                            osType   : 'Windows',
-//                            platforms: [
-//                                    [
-//                                            name         : 'windows-x86_64-cpu',
-//                                            osName       : 'windows',
-//                                            osVersion    : '-server-2016',
-//                                            backend      : 'cpu',
-//                                            sparkVersion : 'spark-1.6',
-//                                            scalaVersion : '2.10',
-//                                            hadoopVersion: 'hadoop-2.7',
-//                                            condaVersion : '4.3.27',
-//                                            pythonVersion: '2'
-//                                    ]
-//                            ]
-//                    ]
                 [
                     platforms: [
                         [
@@ -257,13 +225,9 @@ class SkilServerProject extends Project {
 
             for (def m : buildMappings) {
                 def mapping = m
-//                def osType = mapping.osType
                 def platforms = mapping.platforms
 
-//                script.stage(osType) {
                 script.parallel getBuildStreams(platforms)
-//                    script.parallel getBuildStreams(platforms, osType)
-//                }
             }
         }
         catch (error) {
@@ -327,9 +291,6 @@ class SkilServerProject extends Project {
             ].findAll().join('-')
 
             def streamName = skilDockerImageTag
-
-            // Workaround to fix zeppelin build
-            String wsFolderName = 'ws/' + 'ss/' + branchName.replaceAll('/', '_')
 
             /* Create stream body */
             streams["$streamName"] = {
@@ -400,12 +361,12 @@ class SkilServerProject extends Project {
                                                      --rm \
                                                      skil-build
                                                 """
-                                                } else {
-                                                    script.bat "bash -c ./build-skil.sh"
-                                                    script.sh "ls -lRa ${buildArtifactsPath}"
-                                                }
+                                            } else {
+                                                script.bat "bash -c ./build-skil.sh"
+                                                script.sh "ls -lRa ${buildArtifactsPath}"
                                             }
                                         }
+                                    }
 
                                     if (release) {
                                         if (osName in ['centos', 'ubuntu']) {
@@ -424,17 +385,11 @@ class SkilServerProject extends Project {
                                                             -v \$(pwd):/opt/skil/build \
                                                             -e OS_NAME=${osName} \
                                                             -e OS_VERSION=${osVersion} \
-                                                            -e STATIC_PACKAGE_BUILD=${
-                                                            staticPackageBuild
-                                                        } \
-                                                            -e PYTHON_VERSION=${
-                                                            pythonVersion
-                                                        } \
+                                                            -e STATIC_PACKAGE_BUILD=${staticPackageBuild} \
+                                                            -e PYTHON_VERSION=${pythonVersion} \
                                                             -e CUDA_VERSION=${cudaVersion} \
                                                             -e CONDA_VERSION=${condaVersion} \
-                                                            -e HADOOP_VERSION=${
-                                                            hadoopVersion
-                                                        } \
+                                                            -e HADOOP_VERSION=${hadoopVersion} \
                                                             -e SCALA_VERSION=${scalaVersion} \
                                                             -e RELEASE=${release} \
                                                             -e PYTHON_PACKAGE_BUILD=${pythonPackageBuild} \
@@ -453,9 +408,9 @@ class SkilServerProject extends Project {
                                                     }
                                                 }
 
-                                                    script.sh "ls -lRa ${buildArtifactsPath}/${osName}"
-                                                    script.sh 'docker images'
-                                                    script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
+                                                script.sh "ls -lRa ${buildArtifactsPath}/${osName}"
+                                                script.sh 'docker images'
+                                                script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
 
                                                 // Workaround for archiving artifacts by Jenkins
                                                 script.sh """\
@@ -749,7 +704,7 @@ class SkilServerProject extends Project {
                 publishParameters.put('packageExtension', 'zip')
                 publishParameters.put('repoUrl', 'https://nexus-ci.skymind.io/repository/tarballs')
                 publishParameters.put('repoPath', repoPath)
-                publishParameters.put('searchPattern', "${buildArtifactsPath}/${skilDockerImageTag}/*.zip")
+                publishParameters.put('searchPattern', "${buildArtifactsPath}/*.zip")
                 break
             default:
                 script.error('Unsupported OS name!')
