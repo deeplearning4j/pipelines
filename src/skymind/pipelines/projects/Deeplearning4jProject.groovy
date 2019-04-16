@@ -118,7 +118,7 @@ class Deeplearning4jProject implements Serializable {
 
                         script.echo "[INFO] Changed modules: ${modulesToBuild}"
 
-                        userProvidedPlatforms = parseTargetPlatforms(script.params.RELEASE_PLATFORMS.trim())
+                        userProvidedPlatforms = parseTargetPlatforms(script.params.RELEASE_PLATFORMS?.trim())
                     }
                 }
             }
@@ -684,7 +684,7 @@ class Deeplearning4jProject implements Serializable {
     private List parseTargetPlatforms(String targetPlatforms) {
         List platforms = []
 
-        for (tgplt in targetPlatforms.tokenize(',')) {
+        for (tgplt in targetPlatforms?.tokenize(',')) {
             String targetPlatform = tgplt
             String targetPlatformModifiedString = targetPlatform.replaceAll(/\|/, ', ')
             platforms.add(Eval.me(targetPlatformModifiedString))
