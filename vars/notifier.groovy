@@ -19,6 +19,7 @@ void sendSlackNotification(Map args) {
     String jobName = currentBuild.rawBuild.fullDisplayName
     String jobUrl = env.RUN_DISPLAY_URL
     String subject = "${jobResult.toLowerCase().capitalize()} | ${jobName}"
+    String commiterFullName = checkoutDetails.GIT_COMMITER_NAME
     String committerFirstName = (checkoutDetails.GIT_COMMITER_NAME =~ /(\w+)/)[0][1]
     String committerEmail = checkoutDetails.GIT_COMMITER_EMAIL
     String committer = checkoutDetails.GIT_COMMITER_NAME + (committerEmail ? " (${committerEmail})" : '')
@@ -120,7 +121,12 @@ void sendSlackNotification(Map args) {
 
     /* Send Slack notifications to member */
     if (isMember) {
+        // Sending same notifications to both variants of committer name...
+
         slackSend color: notificationColor, channel: "@${committerFirstName}",
+                attachments: attachments.toString()
+
+        slackSend color: notificationColor, channel: "@${commiterFullName}",
                 attachments: attachments.toString()
     }
 
