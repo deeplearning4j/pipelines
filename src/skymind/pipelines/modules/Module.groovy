@@ -214,6 +214,30 @@ class Module implements Serializable {
                 if (cpuExtension) {
                     mavenArguments.push("-Dlibnd4j.extension=${cpuExtension}")
                 }
+
+                if (stageName in ['test', 'deploy']) {
+                    mavenArguments.push('-Djavacpp.parser.skip=true')
+                    mavenArguments.push('-Djavacpp.compiler.skip=true')
+                }
+
+                if (stageName == 'test') {
+                    mavenArguments.push('-P test-nd4j-native')
+                    mavenArguments.push('-P nd4j-tests-cpu')
+                }
+
+                /*
+                    FIXME: Workaround for maven-surefire-plugin,
+                    to fix macOS number of threads limitation and linux JVM crashes,
+                    during Nd4j tests for CPU
+
+                    Otherwise, getting following exception:
+                        java.lang.OutOfMemoryError: unable to create new native thread
+                 */
+                if (((platformName == 'macosx-x86_64' || platformName == 'linux-x86_64') && backend == 'cpu') &&
+                        stageName == 'test'
+                ) {
+                    mavenArguments.push('-DreuseForks=false')
+                }
             }
 
             if (backend?.contains('cuda')) {
@@ -234,11 +258,16 @@ class Module implements Serializable {
                     mavenArguments.push("-Dlibnd4j.compute=37")
                 }
 
-//                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
+                // FIXME: Workaround to skip tests for libnd4j (because we have no libnd4j tests for CUDA backend)
 //                mavenArguments.push('-Dlibnd4j.test.skip=true')
 
                 // FIXME: Workaround to fix dependencies problem if there is nd4j, datavec or deeplearning4j in project reactor, but changes were made only for libnd4j
                 mavenArguments.push("-Djavacpp.platform=${platformName}")
+
+                if (stageName == 'test') {
+                    mavenArguments.push('-P nd4j-tests-cuda')
+                    mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
+                }
             }
         }
 
@@ -332,7 +361,7 @@ class Module implements Serializable {
             }
         }
 
-        if (modules.any { it =~ /nd4j/ }) {
+        if (modules.any { it =~ /nd4j|libnd4j/ }) {
             if (platformName == 'linux-x86_64') {
                 if (backend == 'cpu') {
                     if (!cpuExtension) {
