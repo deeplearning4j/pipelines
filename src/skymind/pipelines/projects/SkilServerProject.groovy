@@ -384,7 +384,7 @@ class SkilServerProject extends Project {
                                         "BUILD_ZEPPELIN=${buildZeppelin}"
                                 ]) {
                                     script.stage('Build SKIL and its dependencies') {
-                                        script.withCredentials([script.file(credentialsId: 'jenkins-gpg-keyring', variable: 'GPG_KEYRING_PATH')]) {
+                                        script.withCredentials([script.file(credentialsId: 'jenkins-gpg-private-key', variable: 'GPG_KEYRING_PATH')]) {
                                             if (osName in ['centos', 'ubuntu']) {
                                                 script.sh """\
                                                     docker-compose \
