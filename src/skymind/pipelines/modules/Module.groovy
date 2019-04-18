@@ -523,7 +523,7 @@ class Module implements Serializable {
                         (stageName == 'test') ? 'test' :
                                 (stageName == 'deploy') ? 'deploy' : '',
                 getMavenProjects(stageName),
-                (stageName != 'test') ? '-Dmaven.test.skip=true' : '',
+                (stageName != 'test') ? '-Dmaven.test.skip=true' : '--fail-at-end',
                 (releaseApproved) ? "-P staging" : '',
                 (releaseApproved && stageName == 'deploy') ?
                         "-DstagingRepositoryId=${script.env.STAGING_REPOSITORY}" : '',
