@@ -452,6 +452,10 @@ class Module implements Serializable {
                     projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
                 }
 
+                if (stageName == 'test') {
+                    projects.addAll(['nd4j/nd4j-backends/nd4j-tests'])
+                }
+
                 mvnArguments = getMvnArguments(stageName, projects).findAll().join(' ')
 
                 return '-am -pl \'' + (projects).findAll().join(',') + '\'' + ' ' + mvnArguments
