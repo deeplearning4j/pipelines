@@ -594,9 +594,9 @@ class Deeplearning4jProject implements Serializable {
             )
 
             commonJobParameters << platformParameter
-        }
 
-        commonJobProperties << script.parameters(commonJobParameters)
+            commonJobProperties << script.parameters(commonJobParameters)
+        }
 
         script.properties(commonJobProperties)
     }
