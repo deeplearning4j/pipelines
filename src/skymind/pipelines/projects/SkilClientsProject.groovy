@@ -9,7 +9,7 @@ class SkilClientsProject extends Project {
             '-s ${MAVEN_SETTINGS}'
     ].findAll().join(' ')
 
-    protected static releaseBranchPattern = /^master$/
+//    protected static releaseBranchPattern = /^master$/
 
     void initPipeline() {
         script.node(platforms[0].name) {
