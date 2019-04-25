@@ -283,6 +283,8 @@ class SkilServerProject extends Project {
                     (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
+            script.cleanWs deleteDirs: true
+
             script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
                     checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
         }
