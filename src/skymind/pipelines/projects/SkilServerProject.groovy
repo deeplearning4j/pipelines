@@ -478,61 +478,61 @@ class SkilServerProject extends Project {
                                             }
                                         }
                                     } else {
-                                        script.stage('Install test resources') {
-                                            script.dir('skil-test-resources') {
-                                                String installTestResourcesMavenArguments = [
-                                                        mavenBaseCommand,
-                                                        'clean',
-                                                        'install',
-                                                        '-DskipTests',
-                                                        '-Dmaven.test.skip=true',
-                                                        '-Dmaven.javadoc.skip=true'
-                                                ].findAll().join(' ')
-
-                                                if (osName in ['centos', 'ubuntu']) {
-                                                    script.sh """\
-                                                        docker-compose \
-                                                        -f ../skil-build/docker/docker-compose.yml \
-                                                        --project-directory ../skil-build/docker run \
-                                                        -v \${HOME}/.m2:/home/skil/.m2 \
-                                                        -v \$(pwd):/opt/skil/build \
-                                                        --rm \
-                                                        skil-build \
-                                                        sh -c '${installTestResourcesMavenArguments}'
-                                                    """
-                                                } else {
-                                                    script.sh "${installTestResourcesMavenArguments}"
-                                                }
-                                            }
-                                        }
-
-                                        script.stage('Run tests') {
-                                            String runTestsMavenArguments = [
-                                                    mavenBaseCommand,
-                                                    'test',
-                                                    '-P ci',
-                                                    '-P ci-nexus',
-                                                    "-P ${sparkVersion}",
-                                                    "-P modelhistoryserver",
-                                                    '-P test',
-                                                    '-P test-nd4j-native'
-                                            ].findAll().join(' ')
-
-                                            if (osName in ['centos', 'ubuntu']) {
-                                                script.sh """\
-                                                    docker-compose \
-                                                    -f ./skil-build/docker/docker-compose.yml \
-                                                    --project-directory ./skil-build/docker run \
-                                                    -v \${HOME}/.m2:/home/skil/.m2 \
-                                                    -v \$(pwd):/opt/skil/build \
-                                                    --rm \
-                                                    skil-build \
-                                                    sh -c '${runTestsMavenArguments}'
-                                                """
-                                            } else {
-                                                script.sh "${runTestsMavenArguments}"
-                                            }
-                                        }
+//                                        script.stage('Install test resources') {
+//                                            script.dir('skil-test-resources') {
+//                                                String installTestResourcesMavenArguments = [
+//                                                        mavenBaseCommand,
+//                                                        'clean',
+//                                                        'install',
+//                                                        '-DskipTests',
+//                                                        '-Dmaven.test.skip=true',
+//                                                        '-Dmaven.javadoc.skip=true'
+//                                                ].findAll().join(' ')
+//
+//                                                if (osName in ['centos', 'ubuntu']) {
+//                                                    script.sh """\
+//                                                        docker-compose \
+//                                                        -f ../skil-build/docker/docker-compose.yml \
+//                                                        --project-directory ../skil-build/docker run \
+//                                                        -v \${HOME}/.m2:/home/skil/.m2 \
+//                                                        -v \$(pwd):/opt/skil/build \
+//                                                        --rm \
+//                                                        skil-build \
+//                                                        sh -c '${installTestResourcesMavenArguments}'
+//                                                    """
+//                                                } else {
+//                                                    script.sh "${installTestResourcesMavenArguments}"
+//                                                }
+//                                            }
+//                                        }
+//
+//                                        script.stage('Run tests') {
+//                                            String runTestsMavenArguments = [
+//                                                    mavenBaseCommand,
+//                                                    'test',
+//                                                    '-P ci',
+//                                                    '-P ci-nexus',
+//                                                    "-P ${sparkVersion}",
+//                                                    "-P modelhistoryserver",
+//                                                    '-P test',
+//                                                    '-P test-nd4j-native'
+//                                            ].findAll().join(' ')
+//
+//                                            if (osName in ['centos', 'ubuntu']) {
+//                                                script.sh """\
+//                                                    docker-compose \
+//                                                    -f ./skil-build/docker/docker-compose.yml \
+//                                                    --project-directory ./skil-build/docker run \
+//                                                    -v \${HOME}/.m2:/home/skil/.m2 \
+//                                                    -v \$(pwd):/opt/skil/build \
+//                                                    --rm \
+//                                                    skil-build \
+//                                                    sh -c '${runTestsMavenArguments}'
+//                                                """
+//                                            } else {
+//                                                script.sh "${runTestsMavenArguments}"
+//                                            }
+//                                        }
 
                                         if (osName in ['centos', 'ubuntu']) {
                                             script.dir('skil-ui-modules/src/main/typescript/dashboard') {
