@@ -398,7 +398,6 @@ class SkilServerProject extends Project {
                                                 """
                                             } else {
                                                 script.bat "bash -c ./build-skil.sh"
-                                                // script.bat "ls -lRa ${buildArtifactsPath}"
                                             }
                                         }
                                     }
