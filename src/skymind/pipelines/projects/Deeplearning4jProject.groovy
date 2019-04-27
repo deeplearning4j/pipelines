@@ -371,7 +371,8 @@ class Deeplearning4jProject implements Serializable {
                                 }
 
                                 script.container('builder') {
-                                    module.stagesToRun()
+//                                    module.stagesToRun()
+                                    script.sh 'env'
                                 }
                             }
                             finally {
