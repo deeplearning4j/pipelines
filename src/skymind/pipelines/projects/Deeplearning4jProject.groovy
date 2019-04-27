@@ -474,10 +474,10 @@ class Deeplearning4jProject implements Serializable {
 //                        [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
 //                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
-                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
-//                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
+//                        [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
+                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
 //                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.1'],
+//                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.1'],
 //
 //                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
 //                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
