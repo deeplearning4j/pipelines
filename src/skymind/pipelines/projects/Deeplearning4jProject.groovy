@@ -417,7 +417,7 @@ class Deeplearning4jProject implements Serializable {
                                         script.sh '''
                                             echo ${HOME}
                                             ls -la ${HOME}
-                                            mkdir -p ${HOME}/.gnupg
+                                            # mkdir -p ${HOME}/.gnupg
                                             rm -rf ${HOME}/.gnupg/*.gpg
                                             mkdir -p ${HOME}/.gnupg
                                         '''.stripIndent()
