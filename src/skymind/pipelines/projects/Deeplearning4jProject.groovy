@@ -460,56 +460,56 @@ class Deeplearning4jProject implements Serializable {
         switch (module) {
             case ['libnd4j', 'nd4j']:
                 platforms = [
-                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
-
-                        [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
-                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+//                        [name: 'android-arm', scalaVersion: '2.10', backend: 'cpu'],
+//                        [name: 'android-arm64', scalaVersion: '2.11', backend: 'cpu'],
+//                        [name: 'android-x86', scalaVersion: '2.10', backend: 'cpu'],
+//                        [name: 'android-x86_64', scalaVersion: '2.11', backend: 'cpu'],
+//
+//                        [name: 'ios-arm64', scalaVersion: '2.11', backend: 'cpu'],
+//                        [name: 'ios-x86_64', scalaVersion: '2.11', backend: 'cpu'],
 
                         [name: 'linux-ppc64le', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
+//                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-9.2'],
+//                        [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.0'],
                         [name: 'linux-ppc64le', scalaVersion: '2.11', backend: 'cuda-10.1'],
-
-                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
-                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
-                                [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
-
-                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
-                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'] :
-                                [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-
-                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
-                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'] :
-                                [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1'],
-
-                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        /*
-                         FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
-                         at the same time for CUDA - Xcode 8 required,
-                         which means that we can't enable avx512 builds at the moment
-                        */
-//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        // FIXME: CUDA for macOS has been disabled, because of https://github.com/deeplearning4j/deeplearning4j/issues/7186 issue
-//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
-//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
-//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
-
-                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
-                        /* FIXME: avx512 */
-//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
-                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.1'],
-                        [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
+//
+//                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+//                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'] :
+//                                [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.10', backend: 'cpu'],
+//
+//                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+//                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'] :
+//                                [name: 'linux-x86_64', sparkVersion: '1', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+//
+//                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+//                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'] :
+//                                [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+//
+//                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
+//                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
+//                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1'],
+//
+//                        [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+//                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+//                        /*
+//                         FIXME: avx512 required Xcode 9.2 to be installed on Mac slave,
+//                         at the same time for CUDA - Xcode 8 required,
+//                         which means that we can't enable avx512 builds at the moment
+//                        */
+////                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+//                        // FIXME: CUDA for macOS has been disabled, because of https://github.com/deeplearning4j/deeplearning4j/issues/7186 issue
+////                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.0'],
+////                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+////                        [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
+//
+//                        [name: 'windows-x86_64', scalaVersion: '2.10', backend: 'cpu'],
+//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],
+//                        /* FIXME: avx512 */
+////                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
+//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-9.2'],
+//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.0'],
+//                        [name: 'windows-x86_64', scalaVersion: '2.11', backend: 'cuda-10.1'],
+//                        [name: 'linux-armhf', scalaVersion: '2.10', backend: 'cpu']
                 ]
                 break
             case 'deeplearning4j':
