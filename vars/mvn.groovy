@@ -3,7 +3,7 @@
 def call(String command, Boolean inK8s = false) {
     Boolean isUnixNode = isUnix()
     String shell = isUnixNode ? 'sh' : 'bat'
-    String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$/) ?
+    String configFileName = (env.BRANCH_NAME =~ /^master$|^latest_release$|^deeplearning4j.*/) ?
             'global_mvn_settings_xml' : 'deeplearning4j-maven-global-settings'
 //    String fixedPath = (inK8s) ?
 //            (isUnixNode) ? sh(script: 'echo ${PATH}', returnStdout: true).trim() :
