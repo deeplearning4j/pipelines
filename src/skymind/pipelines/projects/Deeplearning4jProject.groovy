@@ -18,7 +18,7 @@ class Deeplearning4jProject implements Serializable {
     private final String branchName
     private final Map jobConfig
     private Boolean releaseApproved = false
-    private static String releaseBranchPattern = 'release'
+    private static String releaseBranchPattern = 'deeplearning4j'
     private static String releaseVersion
     private static String snapshotVersion
     private List testResults = []
