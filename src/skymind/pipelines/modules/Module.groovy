@@ -624,12 +624,11 @@ class Module implements Serializable {
     private void populateGpgKeys() {
         script.withCredentials([
                 /*  GPG public key for signing releases */
-                script.file(credentialsId: 'jenkins-gpg-pub-key', variable: 'GPG_PUBRING'),
+                script.file(credentialsId: 'gpg-pub-key-jenkins', variable: 'GPG_PUBRING'),
                 /*  GPG private key for signing releases */
-                script.file(credentialsId: 'jenkins-gpg-private-key', variable: 'GPG_SECRING'),
-//                script.usernameColonPassword(credentialsId: 'gpg-password-test-1', variable: 'GPG_PASS')
+                script.file(credentialsId: 'gpg-private-key-jenkins', variable: 'GPG_SECRING')
         ]) {
-            if (isUnixNode) {
+            if (script.isUnix()) {
                 script.sh '''
                     export GPG_TTY=$(tty)
                     rm -rf ${HOME}/.gnupg/*.gpg
