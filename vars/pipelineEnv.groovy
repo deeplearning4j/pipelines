@@ -41,17 +41,17 @@ Map getDockerConfig(String streamName) {
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cpu']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/jenkins-agent:ppc64le-ubuntu16.04-cuda9.2-cudnn7', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cuda-9.1']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda91-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/jenkins-agent:ppc64le-ubuntu16.04-cuda9.1-cudnn7', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cuda-9.2']:
-            return [image : 'skymindops/pipelines:ubuntu16cuda92-ppc64le', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
+            return [image : 'skymindops/jenkins-agent:ppc64le-ubuntu16.04-cuda9.2-cudnn7', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
             break
 
         case ['linux-ppc64le-cuda-10.0']:
