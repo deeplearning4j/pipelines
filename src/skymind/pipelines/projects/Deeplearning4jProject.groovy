@@ -371,8 +371,7 @@ class Deeplearning4jProject implements Serializable {
                                 }
 
                                 script.container('builder') {
-//                                    module.stagesToRun()
-                                    script.sh 'env'
+                                    module.stagesToRun()
                                 }
                             }
                             finally {
@@ -413,7 +412,8 @@ class Deeplearning4jProject implements Serializable {
                                             script.checkout script.scm
                                         }
 
-                                        module.stagesToRun()
+//                                        module.stagesToRun()
+                                        script.sh 'env'
                                     }
                                 } else {
                                     script.stage('Checkout') {
