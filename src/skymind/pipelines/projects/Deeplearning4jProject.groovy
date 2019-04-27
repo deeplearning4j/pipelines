@@ -414,6 +414,10 @@ class Deeplearning4jProject implements Serializable {
 
 //                                        module.stagesToRun()
                                         script.sh 'env'
+                                        script.sh '''
+                                            echo ${HOME}
+                                            ls -la ${HOME}
+                                        '''.stripIndent()
                                     }
                                 } else {
                                     script.stage('Checkout') {
