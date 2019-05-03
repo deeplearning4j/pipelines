@@ -20,12 +20,12 @@ Map getDockerConfig(String streamName) {
     switch (streamName) {
         case ['linux-x86_64-cuda-9.1']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/pipelines:centos6cuda91', params: dockerParams]
+            return [image: 'skymindops/jenkins-agent:amd64-centos6-cuda9.1-cudnn7', params: dockerParams]
             break
 
         case ['linux-x86_64-cuda-9.2']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/pipelines:centos6cuda92', params: dockerParams]
+            return [image: 'skymindops/jenkins-agent:amd64-centos6-cuda9.2-cudnn7', params: dockerParams]
             break
 
         case ['linux-x86_64-cuda-10.0']:
