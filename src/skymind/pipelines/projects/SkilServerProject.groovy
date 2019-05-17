@@ -535,7 +535,7 @@ class SkilServerProject extends Project {
 //                                            }
 //                                        }
 
-                                        if (osName == 'centos' && backend == 'cpu' && sparkVersion == '1.6') {
+                                        if (osName == 'centos' && backend == 'cpu' && sparkVersion == 'spark-1.6') {
                                             script.dir('skil-ui-modules/src/main/typescript/dashboard') {
                                                 script.stage('Clear cache and build docker image from scratch') {
                                                     script.sh '''\
