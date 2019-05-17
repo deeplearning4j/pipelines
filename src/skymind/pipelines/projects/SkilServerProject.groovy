@@ -534,26 +534,19 @@ class SkilServerProject extends Project {
 //                                                script.sh "${runTestsMavenArguments}"
 //                                            }
 //                                        }
-
                                         if (osName == 'centos' && backend == 'cpu' && sparkVersion == 'spark-1.6') {
                                             script.dir('skil-ui-modules/src/main/typescript/dashboard') {
                                                 script.stage('Clear cache and build docker image from scratch') {
-                                                    script.sh '''\
-                                                        docker-compose rm -f
-                                                        docker-compose build
-                                                    '''.stripIndent()
+                                                    script.sh 'docker-compose rm -f'
+                                                    script.sh 'docker-compose build'
                                                 }
 
                                                 script.stage('SKIL Dashboard Unit Tests') {
-                                                    script.sh '''\
-                                                        docker-compose run --rm dev yarn run test-teamcity
-                                                    '''.stripIndent()
+                                                    script.sh 'docker-compose run --rm dev yarn run test-teamcity'
                                                 }
 
                                                 script.stage('SKIL Dashboard E2E Tests') {
-                                                    script.sh '''\
-                                                        docker-compose run --rm dev yarn run e2e-teamcity
-                                                    '''.stripIndent()
+                                                    script.sh 'docker-compose run --rm dev yarn run e2e-teamcity'
                                                 }
                                             }
                                         }
@@ -562,7 +555,8 @@ class SkilServerProject extends Project {
                             }
                         }
                         finally {
-                            def tr = script.junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                            def tr = script.junit allowEmptyResults: true,
+                                    testResults: '**/target/surefire-reports/*.xml,skil-ui-modules/**/test-results.xml'
 
                             testResults.add([
                                     platform   : streamName,
