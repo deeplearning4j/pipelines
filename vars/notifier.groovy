@@ -123,8 +123,8 @@ void sendSlackNotification(Map args) {
     if (isMember) {
         // Sending same notifications to both variants of committer name...
 
-        slackSend color: notificationColor, channel: "@${committerFirstName}",
-                attachments: attachments.toString()
+//        slackSend color: notificationColor, channel: "@${committerFirstName}",
+//                attachments: attachments.toString()
 
         slackSend color: notificationColor, channel: "@${commiterFullName}",
                 attachments: attachments.toString()
