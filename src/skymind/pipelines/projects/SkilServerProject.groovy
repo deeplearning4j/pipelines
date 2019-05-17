@@ -386,6 +386,8 @@ class SkilServerProject extends Project {
                                         "BUILD_ZEPPELIN=${buildZeppelin}"
                                 ]) {
                                     script.stage('Build SKIL and its dependencies') {
+                                        script.echo "Building SKIL and its dependencies"
+
                                         script.withCredentials([script.file(credentialsId: 'jenkins-gpg-private-key', variable: 'GPG_KEYRING_PATH')]) {
                                             if (osName in ['centos', 'ubuntu']) {
                                                 script.sh """\
@@ -407,6 +409,8 @@ class SkilServerProject extends Project {
                                     if (release) {
                                         if (osName in ['centos', 'ubuntu']) {
                                             script.stage('Build SKIL docker image') {
+                                                script.echo "Building SKIL docker image"
+
                                                 script.sh """\
                                                     docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
                                                 """.stripIndent()
@@ -456,6 +460,8 @@ class SkilServerProject extends Project {
                                         }
 
                                         script.stage('Publish artifacts') {
+                                            script.echo "Publishing artifacts"
+
                                             publishArtifacts(osName, osVersion, skilDockerImageTag)
 
                                             if (osName == 'centos') {
@@ -535,6 +541,8 @@ class SkilServerProject extends Project {
 //                                            }
 //                                        }
                                         if (osName == 'centos' && backend == 'cpu' && sparkVersion == 'spark-1.6') {
+                                            script.echo 'Running UI tests'
+
                                             script.dir('skil-ui-modules/src/main/typescript/dashboard') {
                                                 script.stage('Clear cache and build docker image from scratch') {
                                                     script.sh 'docker-compose rm -f'
