@@ -385,7 +385,7 @@ class Module implements Serializable {
             }
 
 //            if (!modules.any { it =~ /^libnd4j|^nd4j/ }) {
-            if (!modules.any { it =~ /|^nd4j/ }) {
+            if (!modules.any { it =~ /^nd4j/ }) {
                 mavenArguments.push('-P libnd4j-assembly')
             }
         }
