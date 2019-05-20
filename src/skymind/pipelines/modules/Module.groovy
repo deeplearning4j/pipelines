@@ -297,6 +297,10 @@ class Module implements Serializable {
                 if (stageName == 'test') {
                     mavenArguments.push('-P test-nd4j-native')
                     mavenArguments.push('-P nd4j-tests-cpu')
+                    mavenArguments.push('-P tf-cpu')
+                    mavenArguments.push('-P nd4j-tf-cpu')
+                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxbytes=10G')
+                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxphysicalbytes=12G')
                 }
 
                 if (cpuExtension) {
@@ -357,22 +361,10 @@ class Module implements Serializable {
                 if (stageName == 'test') {
                     mavenArguments.push('-P nd4j-tests-cuda')
                     mavenArguments.push('-P test-nd4j-cuda-' + cudaVersion)
-                }
-            }
-        }
-
-        if (modules.any { it =~ /nd4j|libnd4j/ }) {
-            if (platformName == 'linux-x86_64') {
-                if (backend == 'cpu') {
-                    if (!cpuExtension) {
-                        mavenArguments.push('-P tf-cpu')
-                        mavenArguments.push('-P nd4j-tf-cpu')
-                    }
-                }
-
-                if (backend.contains('cuda')) {
                     mavenArguments.push('-P tf-gpu')
                     mavenArguments.push('-P nd4j-tf-gpu')
+                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxbytes=10G')
+                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxphysicalbytes=12G')
                 }
             }
         }
