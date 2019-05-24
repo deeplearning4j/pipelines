@@ -564,7 +564,7 @@ class SkilServerProject extends Project {
                         }
                         finally {
                             def tr = script.junit allowEmptyResults: true,
-                                    testResults: '**/target/surefire-reports/*.xml,**/test-results/*.xml'
+                                    testResults: '**/target/surefire-reports/*.xml,**/test-results/**/*.xml'
 
                             testResults.add([
                                     platform   : streamName,
