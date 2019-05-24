@@ -550,11 +550,11 @@ class SkilServerProject extends Project {
                                                 }
 
                                                 script.stage('SKIL Dashboard Unit Tests') {
-                                                    script.sh 'docker-compose run --rm dev yarn run test-teamcity'
+                                                    script.sh 'docker-compose run --rm dev yarn run test-jenkins'
                                                 }
 
                                                 script.stage('SKIL Dashboard E2E Tests') {
-                                                    script.sh 'docker-compose run --rm dev yarn run e2e-teamcity'
+                                                    script.sh 'docker-compose run --rm dev yarn run e2e-jenkins'
                                                 }
                                             }
                                         }
@@ -564,7 +564,7 @@ class SkilServerProject extends Project {
                         }
                         finally {
                             def tr = script.junit allowEmptyResults: true,
-                                    testResults: '**/target/surefire-reports/*.xml,skil-ui-modules/**/test-results.xml'
+                                    testResults: '**/target/surefire-reports/*.xml,**/test-results/*.xml'
 
                             testResults.add([
                                     platform   : streamName,
