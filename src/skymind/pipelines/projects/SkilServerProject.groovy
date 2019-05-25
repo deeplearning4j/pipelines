@@ -550,11 +550,11 @@ class SkilServerProject extends Project {
                                                 }
 
                                                 script.stage('SKIL Dashboard Unit Tests') {
-                                                    script.sh 'docker-compose run --rm dev yarn run test-jenkins'
+                                                    script.sh 'docker-compose run --rm dev yarn run test-' + ((branchName == 'master') ? 'teamcity' : 'jenkins')
                                                 }
 
                                                 script.stage('SKIL Dashboard E2E Tests') {
-                                                    script.sh 'docker-compose run --rm dev yarn run e2e-jenkins'
+                                                    script.sh 'docker-compose run --rm dev yarn run e2e-' + ((branchName == 'master') ? 'teamcity' : 'jenkins')
                                                 }
                                             }
                                         }
