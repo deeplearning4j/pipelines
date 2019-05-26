@@ -347,7 +347,7 @@ class Module implements Serializable {
                 }
             }
 
-            if (backend.contains('cuda')) {
+            if (backend?.contains('cuda')) {
                 if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
                     mavenArguments.push('-P cuda')
                 } else {
@@ -439,7 +439,7 @@ class Module implements Serializable {
                     projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-native'])
                 }
 
-                if (backend.contains('cuda')) {
+                if (backend?.contains('cuda')) {
                     // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
                     projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
                 }
@@ -491,7 +491,7 @@ class Module implements Serializable {
                     }
                 }
 
-                if (backend.contains('cuda')) {
+                if (backend?.contains('cuda')) {
                     projects.addAll(mavenExcludesForNd4jCuda)
                 }
             }
@@ -582,7 +582,7 @@ class Module implements Serializable {
     }
 
     private void updateDependencyVersions(String version) {
-        if (platformName == 'linux-x86_64' && backend.contains('cuda')) {
+        if (platformName == 'linux-x86_64' && backend?.contains('cuda')) {
             if (script.isUnix()) {
                 script.sh """
                     for item in 'libnd4j' 'nd4j' 'deeplearning4j' 'arbiter' 'datavec' 'gym-java-client' 'jumpy' 'rl4j' 'scalnet'; do
