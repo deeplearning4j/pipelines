@@ -29,13 +29,10 @@ class Module implements Serializable {
             'macosx-x86_64-cuda-9.2',
             'macosx-x86_64-cuda-10.0',
             'macosx-x86_64-cuda-10.1',
-            'linux-ppc64le-cuda-9.2',
             'linux-ppc64le-cuda-10.0',
             'linux-ppc64le-cuda-10.1',
-            'linux-x86_64-cuda-9.2',
             'linux-x86_64-cuda-10.0',
             'linux-x86_64-cuda-10.1',
-            'windows-x86_64-cuda-9.2',
             'windows-x86_64-cuda-10.0',
             'windows-x86_64-cuda-10.1',
             'linux-armhf-cpu'
