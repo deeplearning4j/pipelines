@@ -103,7 +103,7 @@ class Module implements Serializable {
 
     private void runTestLogic() {
         try {
-            fetchTestResources()
+//            fetchTestResources()
 
             script.mvn getMvnCommand('test')
         }
