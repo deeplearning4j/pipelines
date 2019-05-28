@@ -103,6 +103,8 @@ class Module implements Serializable {
 
     private void runTestLogic() {
         try {
+            fetchTestResources()
+
             script.mvn getMvnCommand('test')
         }
         finally {
@@ -194,7 +196,7 @@ class Module implements Serializable {
     private List getMvnArguments(String stageName, List modules) {
         List mavenArguments = []
 
-        if (modules.any { it =~ /libnd4j/ } ||
+        if (modules.any { it =~ /^libnd4j/ } ||
                 (platformName == 'linux-x86_64' && (!cpuExtension || backend?.contains('cuda')))
         ) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
@@ -271,8 +273,13 @@ class Module implements Serializable {
             }
         }
 
-        if (modules.any { it =~ /nd4j/ }) {
-            mavenArguments.push('-P uberjar')
+        if (modules.any { it =~ /^nd4j/ } ||
+                (platformName == 'linux-x86_64' && (!cpuExtension))
+        ) {
+            if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
+               mavenArguments.push('-P uberjar')
+            }
+
             mavenArguments.push("-Djavacpp.platform=${platformName}")
 
 //          if (!modules.any { it =~ /^libnd4j/ } &&
@@ -300,7 +307,7 @@ class Module implements Serializable {
                     mavenArguments.push('-P tf-cpu')
                     mavenArguments.push('-P nd4j-tf-cpu')
                     mavenArguments.push('-Dorg.bytedeco.javacpp.maxbytes=10G')
-                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxphysicalbytes=12G')
+                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxphysicalbytes=14G')
                 }
 
                 if (cpuExtension) {
@@ -364,7 +371,7 @@ class Module implements Serializable {
                     mavenArguments.push('-P tf-gpu')
                     mavenArguments.push('-P nd4j-tf-gpu')
                     mavenArguments.push('-Dorg.bytedeco.javacpp.maxbytes=10G')
-                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxphysicalbytes=12G')
+                    mavenArguments.push('-Dorg.bytedeco.javacpp.maxphysicalbytes=18G')
                 }
             }
         }
@@ -378,7 +385,7 @@ class Module implements Serializable {
 
 //            if (!modules.any { it =~ /^libnd4j|^nd4j/ }) {
             if (!modules.any { it =~ /^nd4j/ }) {
-                mavenArguments.push('-P libnd4j-assembly')
+//                mavenArguments.push('-P libnd4j-assembly')
             }
         }
 
@@ -736,6 +743,47 @@ class Module implements Serializable {
                     git push origin "${targetBranchName}"
                 """.stripIndent()
             }
+        }
+    }
+
+    private void fetchTestResources() {
+        String testResourcesGitBranch
+        String testResourcesGitRepository = 'https://github.com/deeplearning4j/dl4j-test-resources.git'
+        String testResourcesBuildCommand
+
+        switch (branchName) {
+            case ~/^dev.*/:
+                testResourcesGitBranch = branchName
+                break
+            case 'master':
+            default:
+                testResourcesGitBranch = 'master'
+                break
+        }
+
+        script.dir('dl4j-test-resources') {
+            script.echo "Checkout dl4j-test-resources source code"
+
+            script.git url: testResourcesGitRepository,
+                    credentialsId: 'github-username-and-ssh-key',
+                    branch: testResourcesGitBranch
+
+            if (isUnixNode) {
+                testResourcesBuildCommand = [
+                        "if [ -f /etc/redhat-release ]; " +
+                                "then source /opt/rh/devtoolset-7/enable; fi;",
+                        'mvn -U -B -e -s ${MAVEN_SETTINGS} clean install -Dresources.jar.compression=true'
+                ].findAll().join(' ')
+            } else {
+                testResourcesBuildCommand = [
+                        'vcvars64.bat',
+                        '&&',
+                        'bash -c',
+                        '"mvn -U -B -e -s ${MAVEN_SETTINGS} clean install -Dresources.jar.compression=true"'
+                ].findAll().join(' ')
+            }
+
+            script.mvn testResourcesBuildCommand
         }
     }
 }
