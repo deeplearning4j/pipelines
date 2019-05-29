@@ -198,6 +198,7 @@ class Module implements Serializable {
         ) {
             mavenArguments.push("-Dlibnd4j.platform=${platformName}")
             mavenArguments.push("-Dorg.bytedeco.javacpp.cachedir=${javacppCacheFolder}")
+            mavenArguments.push("-Dmaven.javadoc.skip=true")
 
             if (backend == 'cpu') {
                 // According to raver119 debug build mode for tests should be enable only for linux-x86_64-cpu
@@ -278,6 +279,7 @@ class Module implements Serializable {
             }
 
             mavenArguments.push("-Djavacpp.platform=${platformName}")
+            mavenArguments.push("-Dmaven.javadoc.skip=true")
 
 //          if (!modules.any { it =~ /^libnd4j/ } &&
 //                  (platformName != 'linux-x86_64' ||
