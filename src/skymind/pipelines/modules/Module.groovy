@@ -497,6 +497,9 @@ class Module implements Serializable {
 
                 if (backend?.contains('cuda')) {
                     projects.addAll(mavenExcludesForNd4jCuda)
+                    if (stageName == 'test') {
+                        projects.addAll(['!libnd4j'])
+                    }
                 }
             }
 
