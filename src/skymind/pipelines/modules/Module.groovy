@@ -448,6 +448,10 @@ class Module implements Serializable {
                 if (backend?.contains('cuda')) {
                     // FIXME: Temporary add nd4j to the list of projects to build to enable testresources profile (add test resources dependency).
                     projects.addAll(['nd4j', 'nd4j/nd4j-backends/nd4j-backend-impls/nd4j-cuda'])
+
+                    if (stageName == 'test') {
+                        projects.addAll(['!libnd4j'])
+                    }
                 }
 
                 if (stageName == 'test') {
@@ -478,6 +482,10 @@ class Module implements Serializable {
                     ) {
                         projects.addAll(mavenExcludesForNd4jCuda)
                     }
+
+                    if (stageName == 'test') {
+                        projects.addAll(['!libnd4j'])
+                    }
                 }
 
                 mvnArguments = getMvnArguments(stageName, projects).findAll().join(' ')
@@ -499,6 +507,7 @@ class Module implements Serializable {
 
                 if (backend?.contains('cuda')) {
                     projects.addAll(mavenExcludesForNd4jCuda)
+
                     if (stageName == 'test') {
                         projects.addAll(['!libnd4j'])
                     }
