@@ -541,6 +541,8 @@ class Module implements Serializable {
             mavenCommand = ([
                     "if [ -f /etc/redhat-release ]; " +
                             "then source /opt/rh/devtoolset-${devtoolsetVersion}/enable; fi;",
+                    (platformName.contains('ppc64le') && (backend?.contains('cuda-10.0') || backend?.contains('cuda-10.1'))) ?
+                            'export MAKEJ=2 &&' : '',
                     /* Pipeline withMaven step requires this line if it runs in Docker container */
 //                    (!(withMavenDockerFixPlatformsToIgnore.contains(streamName))) ?
 //                            'export PATH=$MVN_CMD_DIR:$PATH &&' : '',
