@@ -19,17 +19,17 @@ Map getDockerConfig(String streamName) {
     switch (streamName) {
         case ['linux-x86_64-cuda-9.2']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/jenkins-agent:amd64-centos7-cuda9.2-cudnn7', params: dockerParams]
+            return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos7-cuda9.2-cudnn7', params: dockerParams]
             break
 
         case ['linux-x86_64-cuda-10.0']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/jenkins-agent:amd64-centos7-cuda10.0-cudnn7', params: dockerParams]
+            return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos7-cuda10.0-cudnn7', params: dockerParams]
             break
 
         case ['linux-x86_64-cuda-10.1']:
             String dockerParams = nvidiaDockerParams()
-            return [image: 'skymindops/jenkins-agent:amd64-centos7-cuda10.1-cudnn7', params: dockerParams]
+            return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos7-cuda10.1-cudnn7', params: dockerParams]
             break
 
         // --init docker argument required to properly shutdown a container with multiple processes inside it
