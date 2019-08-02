@@ -22,7 +22,7 @@ class ZeppelinProject extends Project {
 
                         script.stage('Fetch skil-server sources') {
                             script.dir('skil-server') {
-                                script.git branch: 'develop/1.2.1',
+                                script.git branch: 'develop/1.3.0',
                                         changelog: false,
                                         poll: false,
                                         url: 'https://github.com/SkymindIO/skil-server.git',
