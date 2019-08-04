@@ -10,6 +10,7 @@ class ZeppelinProject extends Project {
     ].findAll().join(' ')
 
     protected static releaseBranchPattern = /^skymind-[\d.]+-skil-[\d.]+?[-]?[\w]+$/
+    protected static skilVersion
 
     void initPipeline() {
         script.node(platforms[0].name) {
@@ -18,11 +19,13 @@ class ZeppelinProject extends Project {
                     try {
                         script.stage('Checkout') {
                             runCheckout('skymindio')
+                            skilVersion = branchName.split('-')[3]
+                            script.echo "SKIL version: ${skilVersion}"
                         }
 
                         script.stage('Fetch skil-server sources') {
                             script.dir('skil-server') {
-                                script.git branch: 'develop/1.3.0',
+                                script.git branch: "develop/${skilVersion}",
                                         changelog: false,
                                         poll: false,
                                         url: 'https://github.com/SkymindIO/skil-server.git',
