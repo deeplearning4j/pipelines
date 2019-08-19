@@ -241,11 +241,11 @@ abstract class Project implements Serializable {
     }
 
     protected boolean isMemberOrCollaborator(String committerFullName, String gitHubOrganizationName = 'deeplearning4j') {
-        Boolean isMember = false
+        boolean isMember = false
         List gitHubUsers = []
         String authCredentialsId = 'github-username-and-token'
         String usersSearchUrl = "https://api.github.com/search/users?q=${committerFullName.replaceAll(' ', '+')}+in:fullname&type=Users"
-        Boolean doCommitterUsernameCheck = true
+        boolean doCommitterUsernameCheck = true
 
         if (doCommitterUsernameCheck) {
             String userDetails = script.httpRequest(url: usersSearchUrl,
@@ -265,10 +265,10 @@ abstract class Project implements Serializable {
                         timeout: 60,
                         authentication: authCredentialsId,
                         quiet: true,
-                        validResponseCodes: '100:404').status
+                        validResponseCodes: '100:404,302').status
 
-                return (isMemberResponse == 204)
-            }
+                return (isMemberResponse == 204 || isMemberResponse == 302)
+            }.asBoolean()
         }
 
         return isMember
