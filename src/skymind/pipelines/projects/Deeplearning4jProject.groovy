@@ -363,32 +363,32 @@ class Deeplearning4jProject implements Serializable {
                     ], script)
 
                     if (buildInContainer.contains(streamName)) {
-                        /* Redefine default workspace to fix Windows path length limitation */
-                        script.ws(wsFolderName) {
-                            try {
+                        try {
+                            script.container('builder') {
                                 script.stage('Checkout') {
                                     script.checkout script.scm
                                 }
 
-                                script.container('builder') {
-                                    module.stagesToRun()
-                                }
+                                module.stagesToRun()
                             }
-                            finally {
-                                testResults.add(module.testResults)
-                                script.archiveArtifacts allowEmptyArchive: true, artifacts: '**/hs_err_pid*.log'
-                                script.cleanWs deleteDirs: true
+                        }
+                        finally {
+                            testResults.add(module.testResults)
 
-                                // FIXME: Workaround to clean workspace
-                                script.dir("${script.env.WORKSPACE}@tmp") {
-                                    script.deleteDir()
-                                }
-                                script.dir("${script.env.WORKSPACE}@script") {
-                                    script.deleteDir()
-                                }
-                                script.dir("${script.env.WORKSPACE}@script@tmp") {
-                                    script.deleteDir()
-                                }
+                            script.archiveArtifacts allowEmptyArchive: true,
+                                    artifacts: '**/hs_err_pid*.log'
+
+                            script.cleanWs deleteDirs: true
+
+                            // FIXME: Workaround to clean workspace
+                            script.dir("${script.env.WORKSPACE}@tmp") {
+                                script.deleteDir()
+                            }
+                            script.dir("${script.env.WORKSPACE}@script") {
+                                script.deleteDir()
+                            }
+                            script.dir("${script.env.WORKSPACE}@script@tmp") {
+                                script.deleteDir()
                             }
                         }
                     } else {
