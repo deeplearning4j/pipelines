@@ -70,7 +70,7 @@ String getNvidiaDockerParams() {
             // FIXME: Change user and group id to match Jenkins user on host, because of permissions issue with protoc-jar-maven-plugin
             "--tmpfs /tmp:uid=1001,gid=1001,mode=1777,size=16g",
             '--shm-size=8g',
-            '--runtime=nvidia'
+//            '--runtime=nvidia'
     ].join(' ')
 
     return dockerParamsTmpfsNvidia
