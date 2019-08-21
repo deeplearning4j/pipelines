@@ -15,7 +15,7 @@ class ZeppelinProject extends Project {
     void initPipeline() {
         script.node(platforms[0].name) {
             pipelineWrapper {
-                script.container('jnlp') {
+                script.container('builder') {
                     try {
                         script.stage('Checkout') {
                             runCheckout('skymindio')
