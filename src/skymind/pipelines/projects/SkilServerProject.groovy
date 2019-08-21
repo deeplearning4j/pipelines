@@ -376,8 +376,7 @@ class SkilServerProject extends Project {
                             script.configFileProvider([
                                 script.configFile(
                                         fileId: 'global_mvn_settings_xml',
-                                        targetLocation: "${script.env.HOME}/.m2/settings.xml",
-                                        variable: ''
+                                        variable: 'MAVEN_GLOBAL_SETTINGS_FILE_PATH'
                                 )
                             ]) {
                                 script.withEnv([
@@ -404,16 +403,18 @@ class SkilServerProject extends Project {
 
                                             script.withCredentials([script.file(credentialsId: 'jenkins-gpg-private-key', variable: 'GPG_KEYRING_PATH')]) {
                                                 if (osName in ['centos', 'ubuntu']) {
-                                                    script.sh """\
-                                                    docker-compose \
-                                                     -f skil-build/docker/docker-compose.yml \
-                                                     run \
-                                                     -v \${GPG_KEYRING_PATH}:/home/skil/.gnupg/secring.gpg \
-                                                     -v \${HOME}/.m2:/home/skil/.m2 \
-                                                     -v \$(pwd):/opt/skil/build \
-                                                     --rm \
-                                                     skil-build
-                                                """
+                                                    script.container('builder') {
+                                                        script.sh """\
+                                                            docker-compose \
+                                                             -f skil-build/docker/docker-compose.yml \
+                                                             run \
+                                                             -v \${GPG_KEYRING_PATH}:/home/skil/.gnupg/secring.gpg \
+                                                             -v \${MAVEN_GLOBAL_SETTINGS_FILE_PATH}:/home/skil/.m2/settings.xml \
+                                                             -v \$(pwd):/opt/skil/build \
+                                                             --rm \
+                                                             skil-build
+                                                        """
+                                                    }
                                                 } else {
                                                     script.bat "bash -c ./build-skil.sh"
                                                 }
@@ -422,80 +423,92 @@ class SkilServerProject extends Project {
 
                                         if (release) {
                                             if (osName in ['centos', 'ubuntu']) {
-                                                script.stage('Build SKIL docker image') {
-                                                    script.echo "Building SKIL docker image"
+                                                script.container('builder') {
+                                                    script.stage('Build SKIL docker image') {
+                                                        script.echo "Building SKIL docker image"
 
-                                                    script.sh """\
-                                                    docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
-                                                """.stripIndent()
-
-                                                    if (staticPackageBuild) {
-                                                        if (osName == 'centos' && backend == 'cpu') {
-                                                            script.sh """\
-                                                           docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
-                                                            run \
-                                                            -u root \
-                                                            -v \${HOME}/.m2:/root/.m2 \
-                                                            -v \$(pwd):/opt/skil/build \
-                                                            -e OS_NAME=${osName} \
-                                                            -e OS_VERSION=${osVersion} \
-                                                            -e STATIC_PACKAGE_BUILD=${staticPackageBuild} \
-                                                            -e PYTHON_VERSION=${pythonVersion} \
-                                                            -e CUDA_VERSION=${cudaVersion} \
-                                                            -e CONDA_VERSION=${condaVersion} \
-                                                            -e HADOOP_VERSION=${hadoopVersion} \
-                                                            -e SCALA_VERSION=${scalaVersion} \
-                                                            -e RELEASE=${release} \
-                                                            -e PYTHON_PACKAGE_BUILD=${pythonPackageBuild} \
-                                                            -e SCIENCE_LIBRARIES_INSTALL=${scienceLibrariesInstall} \
-                                                            --rm \
-                                                            --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
-                                                            --workdir=/opt/skil/build \
-                                                            skil
-                                                        """
-
-                                                            script.sh """\
+                                                        script.sh """\
                                                             docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
                                                         """.stripIndent()
-                                                        } else {
-                                                            script.echo "[WARNING] OS is not supported."
+
+                                                        if (staticPackageBuild) {
+                                                            if (osName == 'centos' && backend == 'cpu') {
+                                                                script.sh """\
+                                                                   docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml \
+                                                                    run \
+                                                                    -u root \
+                                                                    -v \${HOME}/.m2:/root/.m2 \
+                                                                    -v \$(pwd):/opt/skil/build \
+                                                                    -e OS_NAME=${osName} \
+                                                                    -e OS_VERSION=${osVersion} \
+                                                                    -e STATIC_PACKAGE_BUILD=${
+                                                                        staticPackageBuild
+                                                                    } \
+                                                                    -e PYTHON_VERSION=${pythonVersion} \
+                                                                    -e CUDA_VERSION=${cudaVersion} \
+                                                                    -e CONDA_VERSION=${condaVersion} \
+                                                                    -e HADOOP_VERSION=${hadoopVersion} \
+                                                                    -e SCALA_VERSION=${scalaVersion} \
+                                                                    -e RELEASE=${release} \
+                                                                    -e PYTHON_PACKAGE_BUILD=${
+                                                                        pythonPackageBuild
+                                                                    } \
+                                                                    -e SCIENCE_LIBRARIES_INSTALL=${
+                                                                        scienceLibrariesInstall
+                                                                    } \
+                                                                    --rm \
+                                                                    --entrypoint='/bin/sh -c /opt/skil/build/build-skil.sh' \
+                                                                    --workdir=/opt/skil/build \
+                                                                    skil
+                                                                """
+
+                                                                script.sh """\
+                                                                    docker-compose -f skil-distro-parent/skil-distro-docker/docker-compose.yml build skil
+                                                                """.stripIndent()
+                                                            } else {
+                                                                script.echo "[WARNING] OS is not supported."
+                                                            }
                                                         }
+
+                                                        script.sh "ls -lRa ${buildArtifactsPath}/${osName}"
+                                                        script.sh 'docker images'
+                                                        script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
+
+                                                        // Workaround for archiving artifacts by Jenkins
+                                                        script.sh """\
+                                                            mv ${buildArtifactsPath}/${osName} ${buildArtifactsPath}/${skilDockerImageTag}
+                                                        """.stripIndent()
                                                     }
-
-                                                    script.sh "ls -lRa ${buildArtifactsPath}/${osName}"
-                                                    script.sh 'docker images'
-                                                    script.sh 'docker inspect skil:${SKIL_VERSION}-${SKIL_DOCKER_IMAGE_TAG}'
-
-                                                    // Workaround for archiving artifacts by Jenkins
-                                                    script.sh """\
-                                                    mv ${buildArtifactsPath}/${osName} ${buildArtifactsPath}/${skilDockerImageTag}
-                                                """.stripIndent()
                                                 }
                                             }
 
                                             script.stage('Publish artifacts') {
                                                 script.echo "Publishing artifacts"
 
-                                                publishArtifacts(osName, osVersion, skilDockerImageTag)
-
-                                                if (osName == 'centos') {
-                                                    // Tarball upload
-                                                    publishTarball(skilVersion, backend)
-                                                }
-
                                                 if (osName in ['centos', 'ubuntu']) {
-                                                    def dockerRegistryUrl = "https://docker-ci.skymind.io"
-                                                    def dockerRegistryCredentialsId = "skymind-docker-registry"
-                                                    def skilDockerImageName = "skil:${skilVersion}-${skilDockerImageTag}"
+                                                    script.container('builder') {
+                                                        publishArtifacts(osName, osVersion, skilDockerImageTag)
 
-                                                    script.docker.withRegistry(
-                                                            "${dockerRegistryUrl}",
-                                                            "${dockerRegistryCredentialsId}"
-                                                    ) {
-                                                        def skilDockerImage = script.docker.image(skilDockerImageName)
+                                                        if (osName == 'centos') {
+                                                            // Tarball upload
+                                                            publishTarball(skilVersion, backend)
+                                                        }
 
-                                                        skilDockerImage.push()
+                                                        def dockerRegistryUrl = "https://docker-ci.skymind.io"
+                                                        def dockerRegistryCredentialsId = "skymind-docker-registry"
+                                                        def skilDockerImageName = "skil:${skilVersion}-${skilDockerImageTag}"
+
+                                                        script.docker.withRegistry(
+                                                                "${dockerRegistryUrl}",
+                                                                "${dockerRegistryCredentialsId}"
+                                                        ) {
+                                                            def skilDockerImage = script.docker.image(skilDockerImageName)
+
+                                                            skilDockerImage.push()
+                                                        }
                                                     }
+                                                } else {
+                                                    publishArtifacts(osName, osVersion, skilDockerImageTag)
                                                 }
                                             }
                                         }
@@ -556,20 +569,22 @@ class SkilServerProject extends Project {
 //                                            }
 //                                        }
 
-                                        script.echo 'Running UI tests'
+                                        script.container('builder') {
+                                            script.echo 'Running UI tests'
 
-                                        script.dir('skil-ui-modules/src/main/typescript/dashboard') {
-                                            script.stage('Clear cache and build docker image from scratch') {
-                                                script.sh 'docker-compose rm -f'
-                                                script.sh 'docker-compose build'
-                                            }
+                                            script.dir('skil-ui-modules/src/main/typescript/dashboard') {
+                                                script.stage('Clear cache and build docker image from scratch') {
+                                                    script.sh 'docker-compose rm -f'
+                                                    script.sh 'docker-compose build'
+                                                }
 
-                                            script.stage('SKIL Dashboard Unit Tests') {
-                                                script.sh 'docker-compose run --rm dev yarn run test-' + ((branchName == 'master') ? 'teamcity' : 'jenkins')
-                                            }
+                                                script.stage('SKIL Dashboard Unit Tests') {
+                                                    script.sh 'docker-compose run --rm dev yarn run test-' + ((branchName == 'master') ? 'teamcity' : 'jenkins')
+                                                }
 
-                                            script.stage('SKIL Dashboard E2E Tests') {
-                                                script.sh 'docker-compose run --rm dev yarn run e2e-' + ((branchName == 'master') ? 'teamcity' : 'jenkins')
+                                                script.stage('SKIL Dashboard E2E Tests') {
+                                                    script.sh 'docker-compose run --rm dev yarn run e2e-' + ((branchName == 'master') ? 'teamcity' : 'jenkins')
+                                                }
                                             }
                                         }
                                     }
