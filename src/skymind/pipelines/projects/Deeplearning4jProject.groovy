@@ -485,9 +485,17 @@ class Deeplearning4jProject implements Serializable {
                                 [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'] :
                                 [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx512'],
 
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
-                        [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1'],
+                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'] :
+                                [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-9.2'],
+
+                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0']:
+                                [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.0'],
+
+                        (branchName == 'master' || branchName.contains(releaseBranchPattern)) ?
+                                [name: 'linux-x86_64', os: 'centos6', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1'] :
+                                [name: 'linux-x86_64', sparkVersion: '2', scalaVersion: '2.11', backend: 'cuda-10.1'],
 
                         [name: 'macosx-x86_64', scalaVersion: '2.10', backend: 'cpu'],
                         [name: 'macosx-x86_64', scalaVersion: '2.11', backend: 'cpu', cpuExtension: 'avx2'],

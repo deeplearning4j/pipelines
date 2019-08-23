@@ -32,6 +32,21 @@ Map getDockerConfig(String streamName) {
             return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos7-cuda10.1-cudnn7', params: dockerParams]
             break
 
+        case ['linux-x86_64-centos6-cuda-9.2']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos6-cuda9.2-cudnn7', params: dockerParams]
+            break
+
+        case ['linux-x86_64-centos6-cuda-10.0']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos6-cuda10.0-cudnn7', params: dockerParams]
+            break
+
+        case ['linux-x86_64-centos6-cuda-10.1']:
+            String dockerParams = nvidiaDockerParams()
+            return [image: 'docker.ci.skymind.io/skymindops/jenkins-agent:amd64-centos6-cuda10.1-cudnn7', params: dockerParams]
+            break
+
         // --init docker argument required to properly shutdown a container with multiple processes inside it
         case ['linux-ppc64le-cpu']:
             return [image : 'skymindops/jenkins-agent:ppc64le-ubuntu16.04-cuda9.2-cudnn7', params: '--init --shm-size=8g --tmpfs /tmp:size=8g']
