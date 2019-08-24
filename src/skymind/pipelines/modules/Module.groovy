@@ -357,6 +357,7 @@ class Module implements Serializable {
             if (backend?.contains('cuda')) {
                 if (branchName == 'master' || branchName.contains(releaseBranchPattern)) {
                     mavenArguments.push('-P cuda')
+                    mavenArguments.push('help:active-profiles')
                 } else {
                     mavenArguments.push('-P cuda-snapshots')
                 }
