@@ -86,10 +86,7 @@ class Module implements Serializable {
 
     private void runBuildLogic() {
         if (platformName in ['linux-x86_64', 'linux-x86_64-generic']) {
-            if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec/ }) {
-                updateVersion('scala', scalaVersion)
-                updateVersion('spark', sparkVersion)
-            } else if (modulesToBuild.any { it =~ /^arbiter|^scalnet|^nd4j/ }) {
+            if (modulesToBuild.any { it =~ /^deeplearning4j|^datavec|^arbiter|^scalnet|^nd4j/ }) {
                 updateVersion('scala', scalaVersion)
             }
         }
