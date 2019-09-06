@@ -111,8 +111,8 @@ class Deeplearning4jProject implements Serializable {
 
                         isMember = isMemberOrCollaborator(checkoutDetails.GIT_COMMITER_NAME)
 
-                        script.notifier.sendSlackNotification jobResult: 'STARTED',
-                                checkoutDetails: checkoutDetails, isMember: isMember
+//                        script.notifier.sendSlackNotification jobResult: 'STARTED',
+//                                checkoutDetails: checkoutDetails, isMember: isMember
 
                         modulesToBuild = getModulesToBuild(changes)
 
@@ -159,8 +159,8 @@ class Deeplearning4jProject implements Serializable {
                     (error.stackTrace ? '\n' + 'StackTrace: ' + error.stackTrace.join('\n') : '')
         }
         finally {
-            script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
-                    checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
+//            script.notifier.sendSlackNotification jobResult: script.currentBuild.result,
+//                    checkoutDetails: checkoutDetails, isMember: isMember, testResults: testResults
 
 //            script.notifier.sendEmailNotification(script.currentBuild.result)
         }
